@@ -1,0 +1,31 @@
+.cv-container h1 {
+    font-size: 1.8rem; /* Adjust as needed */
+    margin-top: 0.5em;
+    margin-bottom: 0.25em;
+    line-height: 1.2;
+}
+
+.cv-container h2 {
+    font-size: 1.5rem;
+    margin-top: 0.4em;
+    margin-bottom: 0.2em;
+    line-height: 1.2;
+}
+
+.cv-container h3 {
+    font-size: 1.25rem;
+    margin-top: 0.3em;
+    margin-bottom: 0.15em;
+    line-height: 1.2;
+}
+
+.cv-container p,
+.cv-container li {
+    font-size: 0.9rem;
+    margin-bottom: 0.1em;
+    line-height: 1.3;
+}
+
+.cv-container code {
+    font-size: 0.85rem;
+}
