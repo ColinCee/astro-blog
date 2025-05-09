@@ -15,7 +15,7 @@ description: 'Senior Software Engineer with 8+ years of experience building scal
 
 ## Professional Profile
 
-Senior Software Engineer with 8+ years of experience architecting, developing, and deploying high-impact, scalable full-stack solutions for complex business needs. Deep expertise in **Node.js, React, TypeScript, and distributed AWS systems (Serverless, Lambda, DynamoDB, S3, ECS, SQS, SNS)**. Proven ability to lead projects, optimize engineering practices (CI/CD, TDD, IaC), drive innovation, and significantly enhance developer productivity and system performance. Passionate about mentorship and building highly available, resilient systems.
+Senior Software Engineer with 8+ years of experience architecting, developing, and deploying high-impact, scalable full-stack solutions for complex business needs. Deep expertise in **Node.js, React, TypeScript, and distributed AWS systems (Lambda, DynamoDB, S3, Eventbridge, ECS, SQS, SNS)**. Proven ability to lead projects, optimize engineering practices (CI/CD, TDD, IaC), drive innovation, and significantly enhance developer productivity and system performance. Passionate about mentorship and building highly available, resilient systems.
 
 ----
 
@@ -27,13 +27,13 @@ Senior Software Engineer with 8+ years of experience architecting, developing, a
 
 *Developed and scaled solutions within Customer Complaints and Debt Collection, directly impacting multi-million pound revenue recovery.*
 
-*   Architected and deployed business-critical serverless automations on AWS Lambda for high-volume complaint resolution, **reducing manual workload by 50%** (1,000+ cases).
-*   Led migration of CI/CD pipelines (AWS CodePipeline to GitHub Actions) for a large monorepo, integrating Turborepo, **slashing build/test cycles from 20 to 5 minutes**.
-*   Championed and integrated TypeScript, Zod, and React Query, improving developer productivity and system robustness.
-*   Engineered core debt recovery state machine (internal DSL) handling significant transaction volumes, **recovering millions in debt monthly**.
-*   Engineered a secure and performant React frontend, integrated with AWS Cognito, to provide internal stakeholders with direct and efficient self-service access to critical outputs from the ETL pipeline.
-*   Designed and implemented event-driven microservices for critical Debt Collection Agency integrations, enhancing data throughput and system resilience in a distributed architecture.
-*   Drove cost optimization by identifying and implementing DynamoDB Point-in-Time Recovery (PITR), **saving ~$4,000 USD monthly** on AWS spend.
+* Architected and deployed business-critical serverless automations on AWS Lambda for high-volume complaint resolution, **reducing manual workload by 50%** (1,000+ cases).
+* Led migration of CI/CD pipelines (AWS CodePipeline to GitHub Actions) for a large monorepo, integrating Turborepo, **slashing build/test cycles from 20 to 5 minutes**.
+* Championed and integrated TypeScript, Zod, and React Query, improving developer productivity and system robustness.
+* Engineered core debt recovery state machine (internal DSL) handling significant transaction volumes, **recovering millions in debt monthly**.
+* Engineered a secure and performant React frontend, integrated with AWS Cognito, to provide internal stakeholders with direct and efficient self-service access to critical outputs from the ETL pipeline.
+* Designed and implemented event-driven microservices for critical Debt Collection Agency integrations, enhancing data throughput and system resilience in a distributed architecture.
+* Drove cost optimization by identifying and implementing DynamoDB Point-in-Time Recovery (PITR), **saving ~$4,000 USD monthly** on AWS spend.
 
 ### **BBC** - Senior Software Engineer (Contract) - *Nov 2022 - Apr 2023*
 
@@ -41,7 +41,7 @@ Senior Software Engineer with 8+ years of experience architecting, developing, a
 
 Improved developer productivity and engineering insights by enhancing internal tooling.
 
-* Architected and implemented a serverless data pipeline (AWS Lambda, DynamoDB) using **AWS CDK (IaC)** for tracking build failure statistics, enabling data-driven CI/CD optimization.
+* Architected and implemented a serverless data pipeline (AWS Lambda, DynamoDB) using AWS CDK (IaC) for tracking build failure statistics, enabling data-driven CI/CD optimization.
 * Led a key **developer experience initiative by automating PR comments** with code coverage reports, **reducing debugging time in CI logs by up to 90%** and accelerating delivery.
 
 ### **Hopper** - Software Engineer - *Mar 2022 - Oct 2022*
@@ -53,7 +53,7 @@ Contributed to scaling customer service platforms during hyper-growth, handling 
 * Engineered and launched cross-vertical VIP support features, **increasing service visibility by >200% and contributing to a 50% revenue uplift** for related services.
 * Developed and maintained business-critical Scala backend microservices serving **100k+ daily requests** via gRPC.
 * Implemented multi-tenancy in backend services using gRPC and GCP Pub/Sub for scalable asynchronous communication.
-* Established robust service monitoring, SLOs, and alerting in Datadog using **Terraform (IaC)**, ensuring high availability.
+* Established robust service monitoring, SLOs, and alerting in Datadog using Terraform (IaC), ensuring high availability.
 
 ### **Hometree** - Senior Software Engineer - *Jun 2021 - Mar 2022*
 
@@ -93,19 +93,17 @@ Full-stack development for a mobile ePOD application (10k+ daily drivers).
 
 ## Skills
 
-* **Programming Languages:** TypeScript, JavaScript (Node.js), Python, Scala, PHP, Java/Kotlin
-* **Cloud Platforms & Services:**
-  * AWS: Lambda, SQS, SNS, DynamoDB, S3, Cognito, API Gateway, CDK, CodePipeline, RDS (incl. Proxy), EC2, Serverless Stack
-  * GCP: Pub/Sub
-* **Backend Development:** Node.js (Express.js/Fastify), Microservices, Event-Driven Architecture, REST APIs, gRPC, Serverless Framework
+* **Programming Languages:** TypeScript, JavaScript (Node.js), Python
+* **Cloud Platform - AWS:**Lambda, SQS, SNS, DynamoDB, S3, Cognito, API Gateway, CDK, RDS, SST
+* **Backend Development:** Node.js, Microservices, Event-Driven Architecture, REST APIs, gRPC
 * **Frontend Development:** React, React Query, HTML5, CSS3, Electron
 * **Databases:** DynamoDB, MySQL, PostgreSQL, MongoDB, ORMs (MikroORM)
-* **CI/CD, DevOps & Observability:** GitHub Actions, AWS CodePipeline, Buildkite, Docker, Kubernetes (K8s), Terraform, Datadog, Prometheus, Grafana
-* **Testing & Quality:** Jest, React Testing Library, Cypress, JUnit, TDD, Zod (Schema Validation)
-* **Other Tools:** Git, JIRA, Monorepo tools (Turborepo/Nx concepts)
+* **CI/CD, DevOps & Observability:** GitHub Actions, Buildkite, Docker, Kubernetes (K8s), Terraform, Datadog, Prometheus, Grafana
+* **Testing & Quality:** Jest, React Testing Library, Cypress/Playwright, TDD, Zod
+* **Other Tools:** Git, JIRA, Monorepo tools Turborepo
 
 ## Personal Projects
 
-* **TypeScript Discord Bot:** Developed and deployed a feature-rich Discord bot (TypeScript) on a Raspberry Pi.
-* **Electron Chess App:** Created an Electron/React chess application with move analysis against a standard chess engine.
-* **Self-Hosted Minecraft Server:** Configured and maintain a self-hosted Minecraft server with Prometheus/Grafana for performance monitoring.
+* **TypeScript Discord Bot:** Engineered a feature-rich Discord bot using TypeScript and Node.js, leveraging the Discord.js library for robust command handling and event management. Implemented real-time chat message processing to trigger dynamic voice clip playback. Deployed and self-hosted on a Raspberry Pi, optimizing for resource-constrained environments.
+* **Electron Chess App:** Developed a cross-platform desktop chess application using Electron and React, providing a real-time, side-by-side move analysis overlay for popular online chess platforms. Integrated the Leela Chess Zero (Lc0) reinforcement learning engine via UCI protocol for advanced AI-powered insights during live gameplay.
+* **Self-Hosted Minecraft Server:** Deployed a dedicated Minecraft server within a Dockerized environment on a low-power (6W TDP) Linux machine. Utilized Docker Compose to orchestrate services including Minecraft, Prometheus (for metrics collection: JVM performance, player count, TPS), Grafana (for customizable dashboard visualization), and Traefik (as a reverse proxy). Configured DuckDNS for dynamic DNS resolution to a home IP address, enabling public accessibility.
