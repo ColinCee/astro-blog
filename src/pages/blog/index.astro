@@ -17,70 +17,65 @@ const posts = (await getCollection('blog')).sort(
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
 			main {
-				width: 960px;
+				width: 720px;
+				margin: 0 auto;
 			}
 			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
 				list-style-type: none;
 				margin: 0;
 				padding: 0;
 			}
 			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
 				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
+				margin-bottom: 2rem;
 			}
 			ul li a {
+				text-decoration: none;
+				transition: 0.2s ease;
 				display: block;
+				padding: 1.5rem;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 8px;
 			}
 			.title {
-				margin: 0;
+				margin: 0 0 0.25em 0;
 				color: rgb(var(--black));
-				line-height: 1;
+				line-height: 1.2;
+				font-size: 1.5rem;
 			}
 			.date {
-				margin: 0;
+				margin: 0 0 0.5em 0;
 				color: rgb(var(--gray));
+				font-size: 0.9rem;
 			}
-			ul li a:hover h4,
+			.description {
+				margin: 0;
+				color: rgb(var(--gray-dark));
+				font-size: 1rem;
+				line-height: 1.6;
+			}
+			ul li a:hover {
+				background-color: rgba(var(--accent), 0.05);
+				border-color: rgba(var(--accent), 0.5);
+			}
+			ul li a:hover .title {
+				color: rgb(var(--accent-dark));
+			}
 			ul li a:hover .date {
 				color: rgb(var(--accent));
 			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
 			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
+				main {
+					width: calc(100% - 2em);
 				}
-				ul li {
-					width: 100%;
-					text-align: center;
+				ul li a {
+					padding: 1rem;
 				}
-				ul li:first-child {
-					margin-bottom: 0;
+				.title {
+					font-size: 1.3rem;
 				}
-				ul li:first-child .title {
-					font-size: 1.563em;
+				.description {
+					font-size: 0.9rem;
 				}
 			}
 		</style>
@@ -94,11 +89,13 @@ const posts = (await getCollection('blog')).sort(
 						posts.map((post) => (
 							<li>
 								<a href={`/blog/${post.id}/`}>
-									<img width={720} height={360} src={post.data.heroImage} alt="" />
 									<h4 class="title">{post.data.title}</h4>
 									<p class="date">
 										<FormattedDate date={post.data.pubDate} />
 									</p>
+									{post.data.description && (
+										<p class="description">{post.data.description}</p>
+									)}
 								</a>
 							</li>
 						))
@@ -106,6 +103,5 @@ const posts = (await getCollection('blog')).sort(
 				</ul>
 			</section>
 		</main>
-		<Footer />
 	</body>
 </html>
