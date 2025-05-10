@@ -4,7 +4,7 @@ description: "Found a simple ts-jest tweak that cut our test suite time down by 
 pubDate: "Apr 03 2025"
 ---
 
-Okay, so our CI pipeline was starting to feel like a coffee break extending into lunch – TypeScript tests were the main culprit. After some digging, I stumbled upon a ridiculously simple one-liner for `ts-jest` that clawed back over 10 minutes for us. Figured I'd share the wealth!
+Okay, so our CI pipeline was starting to feel like a coffee break extending into lunch – TypeScript tests were the main culprit. After some digging, I stumbled upon a ridiculously simple one-liner for `ts-jest` that clawed back over **10 minutes** for us. Figured I'd share the wealth!
 
 Here's the little gem:
 
