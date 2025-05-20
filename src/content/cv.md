@@ -11,11 +11,12 @@ description: 'Senior Software Engineer with 8+ years of experience building scal
 
 # Colin Cheung
 
+Glasgow, UK - Working remotely.
 <[colincheung25@gmail.com](mailto:colincheung25@gmail.com)> | [linkedin/colin-cheung/](https://www.linkedin.com/in/colin-cheung/) | [github.com/ColinCee](https://github.com/ColinCee) | [colincheung.dev](https://colincheung.dev/)>
 
 ## Professional Profile
 
-Senior Software Engineer with 8+ years of experience architecting, developing, and deploying high-impact, scalable full-stack solutions for complex business needs. Deep expertise in **Node.js, React, TypeScript, and distributed AWS systems (Lambda, DynamoDB, S3, Eventbridge, ECS, SQS, SNS)**. Proven ability to lead projects, optimize engineering practices (CI/CD, TDD, IaC), drive innovation, and significantly enhance developer productivity and system performance. Passionate about mentorship and building highly available, resilient systems.
+Senior Software Engineer with 8+ years of experience architecting, developing, and deploying high-impact, scalable full-stack solutions for complex business needs. Deep expertise in **Node.js, React, TypeScript, and distributed AWS systems**. Proven ability to lead projects, optimize engineering practices, drive innovation, and significantly enhance developer productivity and system performance. Passionate about mentorship and building highly available, resilient systems.
 
 ----
 
@@ -27,12 +28,11 @@ Senior Software Engineer with 8+ years of experience architecting, developing, a
 
 *Developed and scaled solutions within Customer Complaints and Debt Collection, directly impacting multi-million pound revenue recovery.*
 
-* Architected and deployed business-critical serverless automations on AWS Lambda for high-volume complaint resolution, **reducing manual workload by 50%** (1,000+ cases).
 * Led migration of CI/CD pipelines (AWS CodePipeline to GitHub Actions) for a large monorepo, integrating Turborepo, **slashing build/test cycles from 20 to 5 minutes**.
-* Championed and integrated TypeScript, Zod, and React Query, improving developer productivity and system robustness.
-* Engineered core debt recovery state machine (internal DSL) handling significant transaction volumes, **recovering millions in debt monthly**.
-* Engineered a secure and performant React frontend, integrated with AWS Cognito, to provide internal stakeholders with direct and efficient self-service access to critical outputs from the ETL pipeline.
-* Designed and implemented event-driven microservices for critical Debt Collection Agency integrations, enhancing data throughput and system resilience in a distributed architecture.
+* Led migration from JavaScript to TypeScript and implemented Zod for runtime validation, reducing runtime errors through static type checking and strict data validation.
+* Enhanced the existing debt recovery state machine by developing additional customer journeys using its internal DSL, **directly contributing to the recovery of over £200k in debt**.
+* Developed a secure, high-performance React-based self-service portal, granting internal stakeholders direct access to critical ETL pipeline outputs and **eliminating hours of daily ad-hoc development requests**.
+* Architected event-driven microservices for critical B2B integrations with Debt Collection Agencies, powering the **engagement of 1,000+ high-debt customers (collectively owing £2M+)** by automating the complete data exchange cycle: dispatching targeted customer visitation lists to guide DCA field operations, and processing their subsequent collection status updates into our state machine.
 * Drove cost optimization by identifying and implementing DynamoDB Point-in-Time Recovery (PITR), **saving ~$4,000 USD monthly** on AWS spend.
 
 ### **BBC** - Senior Software Engineer (Contract) - *Nov 2022 - Apr 2023*
@@ -41,7 +41,7 @@ Senior Software Engineer with 8+ years of experience architecting, developing, a
 
 Improved developer productivity and engineering insights by enhancing internal tooling.
 
-* Architected and implemented a serverless data pipeline (AWS Lambda, DynamoDB) using AWS CDK (IaC) for tracking build failure statistics, enabling data-driven CI/CD optimization.
+* Architected and implemented a serverless data pipeline using AWS CDK for tracking build failure statistics, enabling data-driven CI/CD optimization.
 * Led a key **developer experience initiative by automating PR comments** with code coverage reports, **reducing debugging time in CI logs by up to 90%** and accelerating delivery.
 
 ### **Hopper** - Software Engineer - *Mar 2022 - Oct 2022*
