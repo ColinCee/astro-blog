@@ -26,14 +26,14 @@ Senior Software Engineer with 8+ years of experience architecting, developing, a
 
 **Technologies:** `TypeScript`, `Node.js`, `AWS (Lambda, SQS, SNS, DynamoDB, S3, Cognito)`, `React`, `React Query`, `Zod`, `GitHub Actions`
 
-*Developed and scaled solutions within Customer Complaints and Debt Collection, directly impacting multi-million pound revenue recovery.*
+*Developed and scaled solutions within Customer Complaints and Debt Collection, directly impacting debt recovery.*
 
 * Led migration of CI/CD pipelines (AWS CodePipeline to GitHub Actions) for a large monorepo, integrating Turborepo, **slashing build/test cycles from 20 to 5 minutes**.
 * Led migration from JavaScript to TypeScript and implemented Zod for runtime validation, reducing runtime errors through static type checking and strict data validation.
-* Enhanced the existing debt recovery state machine by developing additional customer journeys using its internal DSL, **directly contributing to the recovery of hundreds of thousands in debt**.
+* Enhanced the existing debt recovery state machine by developing additional customer journeys using its internal DSL, **directly contributing to the recovery of significant amounts in debt.**.
 * Developed a secure, high-performance React-based self-service portal, granting internal stakeholders direct access to critical ETL pipeline outputs and **eliminating hours of daily ad-hoc development requests**.
-* Architected event-driven microservices for critical B2B integrations with Debt Collection Agencies, powering the **engagement high-debt customers (collectively owing millions)** by automating the complete data exchange cycle: dispatching targeted customer visitation lists to guide DCA field operations, and processing their subsequent collection status updates into our state machine.
-* Drove cost optimization by identifying and implementing DynamoDB Point-in-Time Recovery (PITR), **saving ~$4,000 USD monthly** on AWS spend.
+* Architected event-driven microservices for critical B2B integrations with Debt Collection Agencies, powering the **engagement high-debt customers** by automating the complete data exchange cycle: dispatching targeted customer visitation lists to guide DCA field operations, and processing their subsequent collection status updates into our state machine.
+* Drove cost optimization by identifying and implementing DynamoDB Point-in-Time Recovery (PITR), **saving several thousand USD in savings per month** on AWS spend.
 
 ### **BBC** - Senior Software Engineer (Contract) - *Nov 2022 - Apr 2023*
 
