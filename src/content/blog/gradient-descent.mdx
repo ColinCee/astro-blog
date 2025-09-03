@@ -1,0 +1,489 @@
+---
+title: "Gradient Descent: The Algorithm That Learns By Rolling Downhill"
+description: "Ever wondered how machines learn? Let's walk through gradient descent from the ground up – with math that actually makes sense and code that shows exactly how it works."
+pubDate: "Aug 15 2025"
+---
+
+Gradient descent is how machines learn. Think of it like this: you're on a hillside in thick fog. Can't see the valley, but you need to get there. So you feel the slope with your feet and step downhill. Repeat until you hit bottom.
+
+That's literally the algorithm. Let's build it up from scratch.
+
+## Starting Simple: Making Predictions
+
+You run a bike rental shop near a park. You've noticed rentals depend on the weather. Here's last week's data:
+
+- 15°C → rented 21 bikes
+- 20°C → rented 34 bikes  
+- 25°C → rented 49 bikes
+- 18°C → rented 28 bikes
+- 22°C → rented 38 bikes
+
+There's clearly a pattern. Warmer weather = more rentals. Looks like about 3 bikes per degree, but there's also some baseline (people rent even when it's cool).
+
+The computer needs to find this pattern mathematically. Let's start simple - just figure out how temperature affects rentals. We'll call this effect $w$ (for "weight"):
+
+$$
+\hat{y} = w \cdot x \tag{1}
+$$
+
+where:
+- $x$ = temperature in °C
+- $w$ = bikes rented per degree (what we're learning)
+- $\hat{y}$ = predicted rentals (the hat means "predicted")
+
+## Measuring How Wrong We Are
+
+Let's test a guess. If $w = 2$ (2 bikes per degree):
+- At 20°C: predict $2 \times 20 = 40$ bikes
+- Actually rented: 34 bikes
+- Error: 6 bikes too many
+
+We measure error by squaring it:
+
+$$
+\begin{align}
+\text{error} &= (\text{predicted} - \text{actual})^2 \\
+&= (\hat{y} - y)^2 \\
+&= (w \cdot x - y)^2 \tag{2}
+\end{align}
+$$
+
+Why square? Prevents positive/negative errors canceling, and punishes big mistakes more.
+
+## The Key Insight: Follow the Slope
+
+Our error depends on $w$. Plot error vs $w$ and you get a curve:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Our rental data
+temps = np.array([15, 20, 25, 18, 22])  # °C
+rentals = np.array([21, 34, 49, 28, 38])
+
+# Try different values of w
+w_values = np.linspace(0, 3, 100)
+errors = []
+
+for w in w_values:
+    predictions = w * temps
+    total_error = np.mean((predictions - rentals) ** 2)
+    errors.append(total_error)
+
+plt.plot(w_values, errors)
+plt.xlabel('w (bikes per °C)')
+plt.ylabel('Mean Squared Error')
+plt.title('Error forms a valley')
+plt.show()
+```
+
+The curve has a minimum - the best $w$. But the computer doesn't know where. It only knows:
+- Its current position
+- The slope at that position (using calculus)
+
+## Finding the Slope
+
+The derivative gives us the slope. Starting with:
+
+$$
+f(w) = (w \cdot x - y)^2 \tag{3}
+$$
+
+Using the chain rule:
+
+$$
+\begin{align}
+\frac{df}{dw} &= \frac{d}{dw}[(w \cdot x - y)^2] \\
+&= 2(w \cdot x - y) \cdot \frac{d}{dw}[w \cdot x - y] \\
+&= 2(w \cdot x - y) \cdot x \\
+&= 2x(w \cdot x - y) \tag{4}
+\end{align}
+$$
+
+In code:
+
+```python
+def compute_gradient(w, x, y):
+    """Gradient of squared error (equation 4)"""
+    prediction = w * x
+    error = prediction - y
+    gradient = 2 * x * error
+    return gradient
+
+# Example: w=2, temp=20°C, rented=34
+grad = compute_gradient(2, 20, 34)
+print(f"Gradient: {grad}")  
+# Output: Gradient: 240
+# Positive means decrease w
+```
+
+## The Update Rule
+
+To improve, step opposite the gradient:
+
+$$
+w_{\text{new}} = w_{\text{old}} - \alpha \cdot \frac{df}{dw} \tag{5}
+$$
+
+where $\alpha$ (learning rate) controls step size.
+
+```python
+# One step of learning
+w = 2.0         # Current guess
+x = 20          # Temperature
+y = 34          # Actual rentals
+alpha = 0.0001  # Small steps!
+
+# Calculate gradient
+gradient = 2 * x * (w * x - y)
+
+# Update
+w_new = w - alpha * gradient
+print(f"w: {w:.3f} → {w_new:.3f}")
+# Output: w: 2.000 → 1.976
+```
+
+## Learning from All Data
+
+Use all data points, not just one:
+
+```python
+def gradient_descent(X, y, lr=0.0001, iterations=1000):
+    """Find optimal w via gradient descent"""
+    w = 0.0
+    history = []
+    
+    for i in range(iterations):
+        # Predictions for all data
+        predictions = w * X
+        
+        # Average squared error
+        errors = predictions - y
+        mse = np.mean(errors ** 2)
+        
+        # Average gradient
+        gradient = np.mean(2 * X * errors)
+        
+        # Update
+        w = w - lr * gradient
+        
+        history.append((i, w, mse))
+        
+        if abs(gradient) < 0.01:
+            break
+    
+    return w, history
+
+# Learn from our data
+temps = np.array([15, 20, 25, 18, 22])
+rentals = np.array([21, 34, 49, 28, 38])
+
+w_final, history = gradient_descent(temps, rentals)
+print(f"Learned: w = {w_final:.3f}")
+```
+
+## Adding the Baseline
+
+Our predictions are systematically off. We need a baseline - rentals even at 0°C:
+
+$$
+\hat{y} = b + w \cdot x \tag{6}
+$$
+
+Now we learn two parameters. Their gradients:
+
+$$
+\begin{align}
+\frac{\partial f}{\partial b} &= 2(\hat{y} - y) \tag{7a} \\
+\frac{\partial f}{\partial w} &= 2x(\hat{y} - y) \tag{7b}
+\end{align}
+$$
+
+```python
+def gradient_descent_2d(X, y, lr=0.001, iterations=2000):
+    """Learn both baseline and temperature effect"""
+    b = 0.0  # Baseline rentals
+    w = 0.0  # Per-degree effect
+    
+    for i in range(iterations):
+        # Predictions
+        predictions = b + w * X
+        
+        # Errors
+        errors = predictions - y
+        mse = np.mean(errors ** 2)
+        
+        # Gradients for both parameters
+        grad_b = np.mean(2 * errors)      # equation (7a)
+        grad_w = np.mean(2 * X * errors)  # equation (7b)
+        
+        # Update both
+        b = b - lr * grad_b
+        w = w - lr * grad_w
+        
+        if i % 400 == 0:
+            print(f"Step {i}: b={b:.1f}, w={w:.2f}, error={mse:.1f}")
+    
+    return b, w
+
+b_final, w_final = gradient_descent_2d(temps, rentals)
+print(f"\nLearned: rentals = {b_final:.1f} + {w_final:.2f} × temp")
+
+# Check predictions
+for temp, actual in zip(temps, rentals):
+    pred = b_final + w_final * temp
+    print(f"{temp}°C: predict {pred:.0f}, actual {actual}")
+```
+
+## Scaling Up: Multiple Factors
+
+Now here's where it gets interesting. Bike rentals don't just depend on temperature. What about:
+- Humidity (people avoid cycling when it's muggy)
+- Wind speed (harder to cycle)
+- Weekend vs weekday
+
+Our model becomes:
+
+$$
+\hat{y} = w_0 + w_1 \cdot \text{temp} + w_2 \cdot \text{humidity} + w_3 \cdot \text{wind} + w_4 \cdot \text{weekend} \tag{8}
+$$
+
+In vector form:
+
+$$
+\hat{y} = \mathbf{w}^T\mathbf{x} \tag{9}
+$$
+
+The gradient for all weights at once:
+
+$$
+\nabla f = \frac{2}{m}\mathbf{X}^T(\mathbf{X}\mathbf{w} - \mathbf{y}) \tag{10}
+$$
+
+```python
+def gradient_descent_multi(X, y, lr=0.01, iterations=1000):
+    """Multi-feature gradient descent"""
+    n_samples, n_features = X.shape
+    w = np.zeros(n_features)
+    
+    for i in range(iterations):
+        # All predictions at once
+        predictions = X @ w
+        
+        # Gradient for all weights (equation 10)
+        gradient = (2 / n_samples) * X.T @ (predictions - y)
+        
+        # Update all weights
+        w = w - lr * gradient
+        
+        if np.linalg.norm(gradient) < 0.001:
+            print(f"Converged at iteration {i}")
+            break
+    
+    return w
+
+# Extended data with more features
+# [1, temp, humidity, wind, weekend]
+X = np.array([
+    [1, 15, 0.7, 12, 0],  # Monday: 15°C, 70% humidity, 12 km/h wind
+    [1, 20, 0.5, 8,  0],  # Tuesday: 20°C, 50% humidity, 8 km/h wind
+    [1, 25, 0.6, 10, 1],  # Saturday: 25°C, 60% humidity, 10 km/h wind
+    [1, 18, 0.8, 15, 0],  # Wednesday: 18°C, 80% humidity, 15 km/h wind
+    [1, 22, 0.4, 5,  1],  # Sunday: 22°C, 40% humidity, 5 km/h wind
+])
+
+y = np.array([21, 34, 49, 28, 38])  # Rentals
+
+# Normalize features (different scales!)
+X_norm = X.copy()
+X_norm[:, 1] = X[:, 1] / 30    # Temp (max ~30°C)
+X_norm[:, 2] = X[:, 2]          # Humidity (already 0-1)
+X_norm[:, 3] = X[:, 3] / 20    # Wind (max ~20 km/h)
+
+w = gradient_descent_multi(X_norm, y, lr=0.1)
+
+# Interpret results
+print(f"Baseline: {w[0]:.1f} bikes")
+print(f"Temperature: {w[1]*30:.1f} bikes per °C")
+print(f"Humidity: {w[2]:.1f} bikes per % point")
+print(f"Wind: {w[3]*20:.1f} bikes per km/h")
+print(f"Weekend bonus: {w[4]:.1f} bikes")
+```
+
+Now we see the full picture:
+- Temperature increases rentals
+- Humidity decreases them
+- Wind decreases them
+- Weekends add a bonus
+
+## Stochastic Gradient Descent
+
+With millions of data points (think: years of rental data), computing the full gradient is expensive. SGD updates using one example at a time:
+
+```python
+def sgd(X, y, lr=0.01, epochs=10):
+    """Update using one example at a time"""
+    n_samples, n_features = X.shape
+    w = np.zeros(n_features)
+    
+    for epoch in range(epochs):
+        # Shuffle data each epoch
+        indices = np.random.permutation(n_samples)
+        
+        for idx in indices:
+            # One example
+            x_i = X[idx]
+            y_i = y[idx]
+            
+            # Gradient for this one example
+            prediction = x_i @ w
+            gradient = 2 * x_i * (prediction - y_i)
+            
+            # Update immediately
+            w = w - lr * gradient
+        
+        # Check progress
+        mse = np.mean((X @ w - y) ** 2)
+        print(f"Epoch {epoch + 1}: MSE = {mse:.2f}")
+    
+    return w
+```
+
+The noise actually helps escape local minima - like shaking a marble to help it settle deeper.
+
+## Visualizing the Journey
+
+```python
+# Track the learning path
+def visualize_learning(X, y):
+    b, w = 0, 0
+    path = []
+    
+    for i in range(100):
+        predictions = b + w * X
+        errors = predictions - y
+        mse = np.mean(errors ** 2)
+        
+        path.append((b, w, mse))
+        
+        # Gradients
+        grad_b = np.mean(2 * errors)
+        grad_w = np.mean(2 * X * errors)
+        
+        # Update
+        b = b - 0.01 * grad_b
+        w = w - 0.01 * grad_w
+    
+    # Create error surface
+    b_range = np.linspace(-10, 10, 50)
+    w_range = np.linspace(-1, 4, 50)
+    B, W = np.meshgrid(b_range, w_range)
+    
+    Z = np.zeros_like(B)
+    for i in range(B.shape[0]):
+        for j in range(B.shape[1]):
+            pred = B[i,j] + W[i,j] * X
+            Z[i,j] = np.mean((pred - y) ** 2)
+    
+    # Plot
+    plt.figure(figsize=(10, 8))
+    plt.contour(B, W, Z, levels=20)
+    
+    # Plot path taken
+    path = np.array(path)
+    plt.plot(path[:, 0], path[:, 1], 'r.-', label='Gradient descent path')
+    plt.plot(path[0, 0], path[0, 1], 'go', markersize=10, label='Start')
+    plt.plot(path[-1, 0], path[-1, 1], 'ro', markersize=10, label='End')
+    
+    plt.xlabel('b (baseline)')
+    plt.ylabel('w (per degree)')
+    plt.title('Gradient Descent Finding the Valley')
+    plt.legend()
+    plt.show()
+
+visualize_learning(temps, rentals)
+```
+
+## Real Challenges
+
+### Local Minima
+Sometimes there are multiple valleys:
+
+```python
+def f(w):
+    return (w + 2)**2 * (w - 1)**2
+
+def df(w):
+    return 2*(w + 2)*(w - 1)**2 + 2*(w + 2)**2*(w - 1)
+
+# Different starts → different minima
+for start in [-3, 0, 2]:
+    w = start
+    for _ in range(100):
+        w = w - 0.01 * df(w)
+    print(f"Start: {start:2d} → End: {w:.3f}")
+```
+
+### Learning Rate Sensitivity
+
+```python
+def test_learning_rates(X, y):
+    rates = [0.0001, 0.001, 0.01, 0.1]
+    
+    fig, axes = plt.subplots(1, 4, figsize=(12, 3))
+    
+    for ax, lr in zip(axes, rates):
+        w = 0
+        errors = []
+        
+        for i in range(100):
+            pred = w * X
+            error = np.mean((pred - y) ** 2)
+            errors.append(error)
+            
+            grad = np.mean(2 * X * (pred - y))
+            w = w - lr * grad
+            
+            if error > 1e6:  # Exploded
+                break
+        
+        ax.plot(errors)
+        ax.set_title(f'Learning rate = {lr}')
+        ax.set_xlabel('Iteration')
+        ax.set_ylabel('Error')
+    
+    plt.tight_layout()
+    plt.show()
+
+test_learning_rates(temps, rentals)
+```
+
+## The Big Picture
+
+That's gradient descent:
+1. Start with a guess
+2. Calculate error
+3. Find the slope
+4. Step downhill
+5. Repeat
+
+This same algorithm - with the same math - trains:
+- Linear regression (bike rentals)
+- Neural networks (image recognition)
+- Language models (GPT)
+- Recommendation systems (Netflix)
+
+The only difference is the complexity of the error function. The core algorithm stays the same.
+
+## Try It Yourself
+
+Pick any prediction problem:
+1. Gather data with inputs and outputs
+2. Define your model (start linear)
+3. Apply gradient descent
+4. Watch it learn
+
+The code is simple. The applications are endless.
+
+Now you understand the algorithm that's reshaping our world - by rolling downhill, one step at a time.
