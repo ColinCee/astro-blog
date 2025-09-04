@@ -1,5 +1,5 @@
 ---
-title: "From 4.5GB to 221MB: Story about Parquet"
+title: "From 4.5GB to 221MB: A Story about Parquet"
 description: "Downloaded a 4.5GB JSONL file from S3, converted it to Parquet, and it shrunk to 221MB. Here's what's actually happening under the hood."
 pubDate: "Sep 03 2025"
 ---
