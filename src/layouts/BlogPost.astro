@@ -29,10 +29,10 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				box-shadow: var(--box-shadow);
 			}
 			.prose {
-				width: 960px;
-				max-width: calc(100% - 2em);
+				width: 100%;
+				max-width: 1000px; /* Good balance for readability on larger screens */
 				margin: auto;
-				padding: 1em;
+				padding: 1em 2em;
 				color: rgb(var(--gray-dark));
 			}
 			.title {
@@ -50,6 +50,17 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			}
 			.last-updated-on {
 				font-style: italic;
+			}
+			/* Responsive font sizing for better readability */
+			@media (min-width: 1400px) {
+				.prose {
+					font-size: 1.05em;
+				}
+			}
+			@media (min-width: 1800px) {
+				.prose {
+					font-size: 1.1em;
+				}
 			}
 		</style>
 	</head>
