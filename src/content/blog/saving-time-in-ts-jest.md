@@ -1,5 +1,5 @@
 ---
-title: "Seriously, Slash Your ts-jest Test Times With This"
+title: "Slash Your ts-jest Test Times With This"
 description: "Found a simple ts-jest tweak that cut our test suite time down by over 10 minutes. You might want to try this."
 pubDate: "Apr 03 2025"
 ---
@@ -20,6 +20,7 @@ module.exports = {
   // ... rest of your config
 };
 ```
+
 ----
 
 **How this works**
