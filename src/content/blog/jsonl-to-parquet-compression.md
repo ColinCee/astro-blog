@@ -18,9 +18,9 @@ Here's what a typical record looks like (anonymized):
 {"customer_id": "C-12345678", "status": "ACTIVE", "contract_type": "STANDARD", "region": "NORTH", "is_premium": "TRUE", "last_updated": "2025-08-26", "balance": -569.04, ...}
 ```
 
-Now multiply that structure by 1.5 million. The field names alone (`customer_id`, `status`, `contract_type`, etc.) are repeated for every single record. That's roughly 100 bytes of field names × 1.5M records = 150MB just for the keys.
+Now multiply that structure by 1.5 million. The field names alone (`customer_id`, `status`, `contract_type`, etc.) are repeated for every single record. With 106 fields taking up 1.3KB per record, that's 1.3KB × 1.5M records = 1.9GB just for the keys!
 
-But it gets worse. Take the `status` field – it only has 6 possible values, but "ACTIVE" appears in 99.8% of records. We're storing that 6-character string 1.5 million times. Same with `contract_type` which only has 3 values ("STANDARD", "PREMIUM", "BASIC") split fairly evenly. That's millions of bytes for data that could be represented with 2 bits.
+But it gets worse. Take the `status` field – it only has 6 possible values, but "ACTIVE" appears in 99.8% of records. We're storing that 6-character string 1.5 million times. Or `contract_type` with just 3 values (split ~37%/33%/28%) – that could be represented with 2 bits instead of string literals.
 
 ### The Parquet Difference
 
@@ -50,15 +50,15 @@ Fields with few unique values compress incredibly well:
 This is where we see massive wins. That `status` field that was taking ~9MB (6 bytes × 1.5M) now takes about 570KB.
 
 *Boolean Fields Are Just Bits*  
-We have about 20 boolean flags (`is_premium`, `has_discount`, `auto_renew`, etc.):
+We have 32 boolean flags (`is_premium`, `has_discount`, `auto_renew`, etc.):
 
 - JSONL: "TRUE"/"FALSE" = 4-5 bytes each
 - Parquet: 1 bit each
 
-20 boolean fields × 1.5M records × 4 byte savings = 120MB saved right there.
+32 boolean fields × 1.5M records × ~5 byte savings = 230MB saved right there.
 
 *Smart Null Handling*  
-About 82% of our `termination_date` values are null (most customers are still active). In JSONL that's the string "null" repeated 1.2 million times. In Parquet it's a simple bitmap – one bit per row saying "has value" or "doesn't have value".
+About 21% of all field values are null. In JSONL that's the string "null" repeated millions of times. In Parquet it's a simple bitmap – one bit per row saying "has value" or "doesn't have value".
 
 *Numeric Types Stay Numeric*  
 Customer IDs like "C-12345678" take 10 bytes as text. Store just the numeric part as an integer: 4 bytes.
@@ -75,12 +75,12 @@ Reduction: 95.1%
 
 Where did 4.28GB of savings come from? Here's what I calculated:
 
-- **Field names stored once**: 106 columns × 1.7KB of names per row × 1.5M rows = **2.5GB saved**
-- **Boolean compression**: 32 boolean fields from "TRUE"/"FALSE" strings to bits = **325MB saved**
-- **Null optimization**: 21% of values are null, eliminating "null" strings = **194MB saved**
-- **Everything else**: Dictionary encoding on fields, Zstandard compression = **~1.2GB saved**
+- **Field names stored once**: 106 columns, 1.3KB of names per row × 1.5M rows = **1.9GB saved**
+- **Boolean compression**: 32 boolean fields from "TRUE"/"FALSE" strings to bits = **230MB saved**
+- **Null optimization**: 21% of values are null, eliminating "null" strings = **130MB saved**
+- **Everything else**: Dictionary encoding on remaining fields, Zstandard compression = **~2GB saved**
 
-The field name deduplication alone accounts for 58% of the savings. We're literally spending more bytes on metadata than data!
+The field name deduplication alone accounts for 44% of the savings. Nearly half the JSONL file is just repeated metadata!
 
 ### Trade-offs
 
