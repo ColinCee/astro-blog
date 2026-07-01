@@ -1,0 +1,540 @@
+---
+// Evolved "Dial Tone" — dark, terminal-native homepage concept inspired by
+// cocall.ai, built from Colin's real 2026 CV. Self-contained, non-destructive
+// preview (own <head> + styles). noindex. Once a direction + accent is locked,
+// this system rolls out site-wide.
+
+// Left pane — who Colin is, rendered as a real terminal session (.who__session).
+const name = "Colin Cheung";
+const nameCjk = "張志權";
+const whoLine = "Senior Software Engineer — Glasgow, UK / remote";
+const nowLine = "Tech lead @ EDF Energy — leading AI adoption across the team.";
+
+// Hero — static "highlights" stats (the real metrics, promoted out of the terminal;
+// static so all four are visible at once, not one-at-a-time). NB: "+50% revenue"
+// omitted for now (CV said "contributed to").
+const stats = [
+	{ big: "£1bn", label: "debt platform · 1.6M accounts/day" },
+	{ big: "30→5 min", label: "multi-team CI pipeline" },
+	{ big: "100k+/day", label: "Scala + gRPC services" },
+	{ big: "−50%", label: "delivery time, leading AI adoption" },
+];
+
+// Right-top pane — selected work. TODO(colin): confirm home-lab + flight-tracker
+// blurbs and repo links.
+const projects = [
+	{ name: "home-lab", desc: "self-hosted infra · Docker Compose, semantic search", href: "https://github.com/ColinCee/homelab" },
+	{ name: "anki-chinese", desc: "Mandarin deck builder · Python, Gemini + TTS", href: "https://github.com/ColinCee/anki-chinese" },
+	{ name: "colincheung.dev", desc: "this site · Astro, terminal-native", href: "https://github.com/ColinCee/astro-blog" },
+	{ name: "flight-tracker", desc: "home ADS-B receiver · live aircraft feed", href: "https://github.com/ColinCee/flight-tracker-at-home" },
+];
+
+// "Worked at" marquee — chronological by join date (oldest → newest), with years.
+const companies = [
+	{ name: "PodFather", year: "2017" },
+	{ name: "Skyscanner", year: "2020" },
+	{ name: "Hometree", year: "2021" },
+	{ name: "Hopper", year: "2022" },
+	{ name: "BBC", year: "2022" },
+	{ name: "EDF Energy", year: "2023" },
+];
+
+// Right-bottom pane — latest writing, as readable titles.
+const posts = [
+	{ title: "From 4.5GB to 221MB: a Parquet story", date: "Sep 2025", href: "/blog/jsonl-to-parquet-compression/" },
+	{ title: "Slash your ts-jest test times", date: "Apr 2025", href: "/blog/saving-time-in-ts-jest/" },
+	{ title: "All posts", date: "", href: "/blog", all: true },
+];
+
+const github = "https://github.com/ColinCee";
+const linkedin = "https://www.linkedin.com/in/colin-cheung/";
+
+// Brand accent: cyan (locked).
+
+// Left-pane hero: core skills as a live `top` process list. TIME+ = years of
+// experience (now − since) — a real, honest number, no invented scores.
+// TODO(colin): confirm the per-skill years.
+const skillSeed = [
+	{ name: "typescript", since: 2018 },
+	{ name: "react", since: 2017 },
+	{ name: "aws", since: 2019 },
+	{ name: "distributed-sys", since: 2020 },
+	{ name: "ai-development", since: 2024 },
+];
+const nowYear = new Date().getFullYear();
+const procs = skillSeed.map((s) => ({ ...s, years: nowYear - s.since }));
+const today = new Date().toLocaleDateString("en-CA");
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Terminal redesign — Colin Cheung</title>
+		<meta name="robots" content="noindex" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body>
+		<main class="t" data-accent="cyan">
+			<nav class="t-nav">
+				<a class="t-mark" href="/">colin<span>@</span>glasgow<b>:~$</b></a>
+				<div class="t-nav__links">
+					<a href="/blog">WRITING</a>
+					<a href="/about">ABOUT</a>
+					<a href="#contact">CONTACT</a>
+				</div>
+				<span class="t-badge"><i class="dotpulse"></i>OPEN TO WORK</span>
+			</nav>
+
+			<header class="t-hero">
+				<h1 class="t-title">COLIN<br />CHEUNG<span class="t-dot">.</span></h1>
+				<div class="t-hero__aside">
+					<p class="t-hook">I make big systems fast and boring.</p>
+					<p class="t-sub">Eight years across cloud, backend, and distributed systems.</p>
+					<ul class="t-stats">
+						{
+							stats.map((s) => (
+								<li><b>{s.big}</b> {s.label}</li>
+							))
+						}
+					</ul>
+					<div class="t-cta">
+						<a class="t-btn t-btn--solid" href="/blog">READ THE BLOG <span>→</span></a>
+						<a class="t-btn" href="#contact">GET IN TOUCH</a>
+					</div>
+				</div>
+			</header>
+
+			<section class="term" aria-label="Colin at a glance, as a terminal session">
+				<div class="term__bar">
+					<span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+					<span class="term__name">colin@glasgow: ~/ColinOS — tmux</span>
+				</div>
+
+				<div class="term__panes">
+					<!-- Left (full height) — who Colin is, plain words -->
+					<article class="pane pane--who">
+						<h2 class="pane__bar"><span class="pane__idx">0</span>whoami</h2>
+						<div class="pane__body">
+							<div class="who__session" aria-label="Colin, as a terminal session">
+								<p class="term-cmd"><span class="who__prompt">$</span> <span class="who__typed js-cmd">whoami</span><span class="who__caret"></span></p>
+								<div class="term-out js-out">
+									<p class="who__name">{name} <span class="cjk" lang="zh-Hant">{nameCjk}</span></p>
+									<p class="who__sub">{whoLine}</p>
+								</div>
+
+								<p class="term-cmd"><span class="who__prompt">$</span> <span class="who__typed js-cmd">top -u colin</span><span class="who__caret"></span></p>
+								<div class="term-out js-out who__mon">
+									<div class="who__cols"><span>COMMAND</span><span>SINCE</span><span>TIME+</span></div>
+									{
+										procs.map((p) => (
+											<div class="who__proc">
+												<span class="who__pname">{p.name}</span>
+												<span class="who__psince">{p.since}</span>
+												<span class="who__ptime">{p.years}y</span>
+											</div>
+										))
+									}
+								</div>
+
+								<p class="term-cmd"><span class="who__prompt">$</span> <span class="who__typed js-cmd">cat now.md</span><span class="who__caret"></span></p>
+								<div class="term-out js-out">
+									<p class="who__now">{nowLine}</p>
+								</div>
+
+								<p class="term-cmd"><span class="who__prompt">$</span> <span class="who__typed js-cmd">ls ~/contact</span><span class="who__caret"></span></p>
+								<div class="term-out js-out who__links">
+									<a href={github}><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>github.com/ColinCee</a>
+									<a href={linkedin}><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg>linkedin.com/in/colin-cheung</a>
+								</div>
+
+								<p class="term-cmd term-cmd--rest"><span class="who__prompt">$</span> <span class="who__caret"></span></p>
+							</div>
+						</div>
+					</article>
+
+					<!-- Right-top — selected work -->
+					<article class="pane pane--proj">
+						<h2 class="pane__bar"><span class="pane__idx">1</span>~/projects</h2>
+						<div class="pane__body">
+							<ul class="proj">
+								{
+									projects.map((p) => (
+										<li class="proj__row">
+											{p.href ? (
+												<a class="proj__name" href={p.href}>{p.name}</a>
+											) : (
+												<span class="proj__name proj__name--plain">{p.name}</span>
+											)}
+											<span class="proj__desc">{p.desc}</span>
+										</li>
+									))
+								}
+							</ul>
+						</div>
+					</article>
+
+					<!-- Right-bottom — latest writing -->
+					<article class="pane pane--writing is-active">
+						<h2 class="pane__bar"><span class="pane__idx">2</span>writing</h2>
+						<div class="pane__body">
+							<ul class="posts">
+								{
+									posts.map((p) => (
+										<li>
+											<a class:list={["post", { "post--all": p.all }]} href={p.href}>
+												<span class="post__title">{p.title}</span>
+												{p.date && <span class="post__date">{p.date}</span>}
+												<span class="post__go" aria-hidden="true">→</span>
+											</a>
+										</li>
+									))
+								}
+							</ul>
+						</div>
+					</article>
+				</div>
+
+				<div class="term__status" aria-hidden="true">
+					<span class="term__tabs"><b>[colin]</b> 0:whoami 1:projects <em>2:writing*</em></span>
+					<span class="term__ticker">
+						<span data-date>{today}</span>
+						<span class="term__clock" data-clock>--:--:--</span>
+					</span>
+				</div>
+			</section>
+
+			<section class="strip" aria-label="Companies I have worked at">
+				<span class="strip__label">// worked at</span>
+				<div class="strip__view" aria-hidden="true">
+					<div class="strip__track">
+						{
+							[...companies, ...companies, ...companies].map((c) => (
+								<span class="strip__item"><b class="strip__yr">{c.year}</b>{c.name}<i>/</i></span>
+							))
+						}
+					</div>
+				</div>
+				<ul class="sr-only">
+					{companies.map((c) => <li>{c.name} — {c.year}</li>)}
+				</ul>
+			</section>
+
+			<footer class="t-foot" id="contact">
+				<span>COLIN CHEUNG</span>
+				<span>colincheung.dev</span>
+				<span>© 2026 · BUILT IN GLASGOW</span>
+			</footer>
+		</main>
+
+		<script>
+			const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+			// Live date + clock in the tmux status bar.
+			const clocks = Array.from(document.querySelectorAll<HTMLElement>("[data-clock]"));
+			const dates = Array.from(document.querySelectorAll<HTMLElement>("[data-date]"));
+			function tickClock() {
+				const now = new Date();
+				const time = now.toLocaleTimeString("en-GB", { hour12: false });
+				clocks.forEach((c) => (c.textContent = time));
+				const date = now.toLocaleDateString("en-CA");
+				dates.forEach((d) => (d.textContent = date));
+			}
+			tickClock();
+			if (!reduce) setInterval(tickClock, 1000);
+
+			// Boot the whoami session: reveal each prompt, type its command, then reveal the
+			// output — one block at a time, like a real shell. All content is in the DOM (SSR);
+			// no-JS / reduced-motion shows the finished session, so nothing is gated.
+			const session = document.querySelector<HTMLElement>(".who__session");
+			if (session && !reduce) {
+				const cmds = Array.from(session.querySelectorAll<HTMLElement>(".js-cmd"));
+				const outs = Array.from(session.querySelectorAll<HTMLElement>(".js-out"));
+				const lines = cmds.map((c) => c.closest<HTMLElement>(".term-cmd"));
+				const rest = session.querySelector<HTMLElement>(".term-cmd--rest");
+				session.classList.add("is-booting");
+				cmds.forEach((c) => {
+					c.dataset.text = c.textContent || "";
+					c.textContent = "";
+				});
+				const finish = () => {
+					session.classList.remove("is-booting");
+					cmds.forEach((c) => (c.textContent = c.dataset.text || ""));
+					lines.forEach((l) => l?.classList.add("is-in"));
+					outs.forEach((o) => o.classList.add("is-in"));
+					rest?.classList.add("is-in");
+				};
+				const failsafe = window.setTimeout(finish, 6000);
+				let step = 0;
+				const run = () => {
+					if (step >= cmds.length) {
+						window.clearTimeout(failsafe);
+						rest?.classList.add("is-in");
+						session.classList.remove("is-booting");
+						return;
+					}
+					const cmd = cmds[step];
+					const line = lines[step];
+					line?.classList.add("is-in");
+					line?.classList.add("is-typing");
+					const full = cmd.dataset.text || "";
+					let i = 0;
+					const type = () => {
+						cmd.textContent = full.slice(0, (i += 1));
+						if (i < full.length) {
+							window.setTimeout(type, 38);
+							return;
+						}
+						line?.classList.remove("is-typing");
+						const out = outs[step];
+						if (out) {
+							window.setTimeout(() => {
+								out.classList.add("is-in");
+								step += 1;
+								window.setTimeout(run, 260);
+							}, 150);
+						} else {
+							step += 1;
+							window.setTimeout(run, 220);
+						}
+					};
+					window.setTimeout(type, 220);
+				};
+				run();
+			}
+		</script>
+
+		<style is:global>
+			:root {
+				--a-cyan: oklch(0.82 0.15 205);
+				--a-purple: oklch(0.67 0.21 300);
+				--a-pink: oklch(0.7 0.24 352);
+				--a-blue: oklch(0.7 0.17 250);
+				--a-green: oklch(0.82 0.2 150);
+				--a-orange: oklch(0.75 0.18 55);
+			}
+			* { box-sizing: border-box; }
+			html { -webkit-text-size-adjust: 100%; }
+			body { margin: 0; }
+			a { color: inherit; text-decoration: none; }
+			h1, h2, p, ul, dl, dd, dt { margin: 0; }
+			ul { padding: 0; list-style: none; }
+			pre { margin: 0; }
+			.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+			.t {
+				/* warm near-black — dark, not pure black */
+				--bg: oklch(0.165 0.012 80);
+				--panel: oklch(0.205 0.014 80);
+				--pane: oklch(0.185 0.013 80);
+				--line: oklch(0.31 0.018 80);
+				--ink: oklch(0.95 0.01 95);
+				--muted: oklch(0.72 0.02 95);
+				--faint: oklch(0.63 0.02 95);
+				--accent: var(--a-cyan);
+				--accent-ink: oklch(0.18 0.05 220);
+
+				--grotesk: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+				--mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+				--cjk: "PingFang TC", "Hiragino Sans", "Noto Sans TC", "Noto Sans SC", "Microsoft JhengHei", var(--grotesk);
+
+				background:
+					radial-gradient(48rem 36rem at 88% -8%, color-mix(in oklch, var(--accent) 12%, transparent), transparent 60%),
+					var(--bg);
+				color: var(--ink);
+				min-height: 100vh;
+				padding: 1.1rem clamp(1rem, 4vw, 3rem) 2.5rem;
+				font-family: var(--grotesk);
+				font-feature-settings: "ss01";
+				-webkit-font-smoothing: antialiased;
+			}
+
+			.t[data-accent="cyan"] { --accent: var(--a-cyan); --accent-ink: oklch(0.18 0.05 220); }
+			.t[data-accent="purple"] { --accent: var(--a-purple); --accent-ink: oklch(0.98 0.02 300); }
+			.t[data-accent="pink"] { --accent: var(--a-pink); --accent-ink: oklch(0.2 0.06 352); }
+			.t[data-accent="blue"] { --accent: var(--a-blue); --accent-ink: oklch(0.18 0.04 255); }
+			.t[data-accent="green"] { --accent: var(--a-green); --accent-ink: oklch(0.2 0.06 150); }
+			.t[data-accent="orange"] { --accent: var(--a-orange); --accent-ink: oklch(0.2 0.05 55); }
+
+			.t :focus-visible {
+				outline: 2px solid var(--accent);
+				outline-offset: 3px;
+				border-radius: 4px;
+			}
+
+			/* ---------------- nav ---------------- */
+			.t-nav {
+				display: flex; align-items: center; justify-content: space-between;
+				gap: 0.6rem 1rem; flex-wrap: wrap; max-width: 1440px; margin: 0 auto;
+				padding-bottom: clamp(2rem, 6vw, 3.6rem);
+			}
+			.t-mark { font-family: var(--mono); font-size: 0.92rem; letter-spacing: -0.01em; color: var(--ink); }
+			.t-mark span { color: var(--accent); }
+			.t-mark b { color: var(--faint); font-weight: 400; }
+			.t-nav__links { display: flex; gap: 1.4rem; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--muted); }
+			.t-nav__links a { padding: 0.2rem 0; border-bottom: 1px solid transparent; transition: color 0.16s ease, border-color 0.16s ease; }
+			.t-nav__links a:hover { color: var(--ink); border-color: var(--accent); }
+			.t-badge { display: inline-flex; align-items: center; gap: 0.1rem; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; color: var(--accent); border: 1px solid var(--line); padding: 0.42rem 0.7rem 0.42rem 0.6rem; border-radius: 999px; white-space: nowrap; }
+
+			/* ---------------- hero ---------------- */
+			.t-hero { max-width: 1440px; margin: 0 auto; padding-bottom: clamp(2rem, 5vw, 3.2rem); animation: rise 0.55s ease-out both; display: grid; gap: clamp(1.4rem, 3vw, 2.6rem); }
+			@media (min-width: 860px) { .t-hero { grid-template-columns: 1.05fr 0.95fr; align-items: start; } }
+			.t-title {
+				font-family: var(--grotesk); font-weight: 800; line-height: 0.9;
+				font-size: clamp(3rem, 11vw, 5.8rem); letter-spacing: -0.03em;
+				text-wrap: balance; margin: 0;
+			}
+			.t-dot { color: var(--accent); }
+			.t-hook { font-family: var(--grotesk); font-weight: 700; font-size: clamp(1.5rem, 2.6vw, 2.15rem); line-height: 1.12; letter-spacing: -0.02em; color: var(--ink); margin: 0 0 0.85rem; text-wrap: balance; }
+			.t-sub { max-width: 44ch; font-size: clamp(0.95rem, 1.2vw, 1.05rem); line-height: 1.6; color: var(--muted); margin: 0 0 1.1rem; text-wrap: pretty; }
+			.t-stats { list-style: none; margin: 0 0 1.6rem; padding: 0; display: grid; gap: 0.5rem; font-family: var(--mono); font-size: 0.86rem; }
+			.t-stats li { display: grid; grid-template-columns: 6.5rem 1fr; gap: 0.85rem; align-items: baseline; color: var(--muted); line-height: 1.4; }
+			.t-stats b { color: var(--accent); font-weight: 500; font-variant-numeric: tabular-nums; }
+			@media (prefers-reduced-motion: no-preference) {
+				.t-stats li { opacity: 0; animation: rise 0.5s ease-out both; }
+				.t-stats li:nth-child(1) { animation-delay: 0.15s; }
+				.t-stats li:nth-child(2) { animation-delay: 0.25s; }
+				.t-stats li:nth-child(3) { animation-delay: 0.35s; }
+				.t-stats li:nth-child(4) { animation-delay: 0.45s; }
+			}
+			.t-cta { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+			.t-btn { font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.05em; padding: 0.78rem 1.05rem; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); transition: border-color 0.16s ease, transform 0.16s ease, color 0.16s ease; }
+			.t-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+			.t-btn--solid { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+			.t-btn--solid:hover { color: var(--accent-ink); filter: brightness(1.05); }
+			.t-btn--solid span { display: inline-block; transition: transform 0.16s ease; }
+			.t-btn--solid:hover span { transform: translateX(3px); }
+
+			/* ---------------- terminal window ---------------- */
+			.term {
+				max-width: 1440px; margin: 0 auto;
+				background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+				overflow: hidden; box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.7);
+				animation: rise 0.6s ease-out 0.08s both;
+			}
+			.term__bar { display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 1rem; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+			.term__dots { display: inline-flex; gap: 0.42rem; }
+			.term__dots i { width: 11px; height: 11px; border-radius: 50%; background: var(--line); }
+			.term__dots i:first-child { background: color-mix(in oklch, var(--accent) 70%, var(--line)); }
+			.term__name { flex: 1; }
+
+			.term__panes {
+				display: grid; gap: 1px; background: var(--line);
+				grid-template-columns: 1fr 1fr;
+				grid-template-areas: "who hl" "who writing";
+			}
+			.pane--who { grid-area: who; }
+			.pane--proj { grid-area: hl; }
+			.pane--writing { grid-area: writing; }
+			.pane { background: var(--pane); display: flex; flex-direction: column; min-width: 0; animation: rise 0.5s ease-out both; }
+			.pane--who { animation-delay: 0.12s; }
+			.pane--proj { animation-delay: 0.2s; }
+			.pane--writing { animation-delay: 0.28s; }
+			.pane.is-active { box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--accent) 55%, transparent); }
+			.pane__bar { display: flex; align-items: center; gap: 0.55rem; padding: 0.6rem 0.95rem; font-family: var(--mono); font-size: 0.7rem; font-weight: 500; letter-spacing: 0.02em; color: var(--muted); border-bottom: 1px solid var(--line); background: color-mix(in oklch, var(--panel) 60%, transparent); }
+			.pane.is-active .pane__bar { color: var(--accent); }
+			.pane__idx { display: inline-grid; place-items: center; min-width: 1.15rem; height: 1.15rem; padding: 0 0.25rem; border-radius: 5px; background: color-mix(in oklch, var(--accent) 18%, transparent); color: var(--accent); font-size: 0.62rem; }
+			.pane__body { padding: 1.05rem 1.1rem 1.2rem; font-family: var(--mono); font-size: 0.82rem; line-height: 1.55; flex: 1; }
+
+			/* whoami — Colin as a real terminal session (boots top-to-bottom) */
+			.who__session { font-family: var(--mono); font-size: 0.8rem; line-height: 1.55; }
+			.term-cmd { margin: 0; white-space: nowrap; color: var(--ink); transition: opacity 0.25s ease; }
+			.is-booting .term-cmd { opacity: 0; }
+			.term-cmd.is-in { opacity: 1; }
+			.who__prompt { color: var(--accent); margin-right: 0.5ch; }
+			.who__typed { color: var(--muted); }
+			.who__caret { display: inline-block; width: 0.55ch; height: 1em; margin-left: 1px; vertical-align: -0.13em; background: var(--accent); animation: caret 1.05s steps(1, end) infinite; }
+			.term-cmd .who__caret { display: none; }
+			.term-cmd--rest .who__caret, .term-cmd.is-typing .who__caret { display: inline-block; }
+			@keyframes caret { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+			.term-out { margin: 0.25rem 0 0.95rem; }
+			.who__name { margin: 0; color: var(--ink); font-size: 1.05rem; font-weight: 500; letter-spacing: -0.01em; }
+			.who__name .cjk { font-family: var(--cjk); color: oklch(0.78 0.085 205); margin-left: 0.45ch; letter-spacing: 0.04em; }
+			.who__sub { margin: 0.12rem 0 0; color: var(--muted); }
+			.who__mon { font-size: 0.78rem; line-height: 1.5; }
+			.who__cols, .who__proc { display: grid; grid-template-columns: 9.4rem 3.2rem auto; gap: 0.6rem; align-items: baseline; }
+			.who__cols { font-size: 0.64rem; letter-spacing: 0.09em; color: var(--muted); margin-bottom: 0.15rem; }
+			.who__proc { padding: 0.06rem 0; }
+			.who__pname { color: var(--ink); }
+			.who__psince { color: var(--muted); font-variant-numeric: tabular-nums; }
+			.who__ptime { color: var(--muted); font-variant-numeric: tabular-nums; }
+			.who__now { margin: 0; color: var(--ink); max-width: 46ch; text-wrap: pretty; }
+			.who__links { display: flex; flex-wrap: wrap; gap: 0.35rem 1.4rem; }
+			.who__links a { display: inline-flex; align-items: center; gap: 0.55ch; color: var(--accent); transition: color 0.15s ease; }
+			.who__links .ico { width: 0.95em; height: 0.95em; fill: currentColor; flex: none; }
+			.who__links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+			/* boot choreography — enhances the SSR-visible default */
+			.js-out { transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+			.is-booting .js-out { opacity: 0; transform: translateY(3px); }
+			.js-out.is-in { opacity: 1; transform: none; }
+			@media (prefers-reduced-motion: reduce) { .who__caret { animation: none; } }
+
+			/* projects — selected work, terminal list */
+			.proj { display: grid; gap: 0.9rem; }
+			.proj__row { display: grid; gap: 0.12rem; }
+			.proj__name { color: var(--accent); font-weight: 500; width: fit-content; transition: color 0.15s ease; }
+			a.proj__name:hover { text-decoration: underline; text-underline-offset: 3px; }
+			.proj__name--plain { color: var(--ink); }
+			.proj__desc { color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
+
+			/* writing — readable titles, not raw ls */
+			.posts { display: grid; gap: 0.2rem; }
+			.post { display: grid; grid-template-columns: 1fr auto auto; gap: 0.5rem 0.85rem; align-items: baseline; padding: 0.4rem 0.45rem; margin: 0 -0.45rem; border-radius: 7px; color: var(--ink); transition: background-color 0.15s ease, transform 0.15s ease; }
+			.post:hover { background: color-mix(in oklch, var(--accent) 12%, transparent); transform: translateX(3px); }
+			.post__title { color: var(--ink); }
+			.post:hover .post__title { color: var(--accent); }
+			.post__date { color: var(--muted); font-size: 0.72rem; white-space: nowrap; }
+			.post__go { color: var(--accent); opacity: 0; transition: opacity 0.15s ease; }
+			.post:hover .post__go { opacity: 1; }
+			.post--all .post__title { color: var(--accent); }
+
+			/* status bar */
+			.term__status { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; padding: 0.55rem 1rem; border-top: 1px solid var(--line); background: color-mix(in oklch, var(--accent) 12%, var(--panel)); font-family: var(--mono); font-size: 0.68rem; color: var(--ink); }
+			.term__tabs b { color: var(--accent); }
+			.term__tabs em { color: var(--accent); font-style: normal; font-weight: 700; }
+			.term__ticker { display: inline-flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; color: var(--muted); }
+			.term__clock { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+			/* ---------------- companies strip (real content) ---------------- */
+			.strip { max-width: 1440px; margin: 1.6rem auto 0; display: flex; align-items: center; gap: 1rem; border-block: 1px solid var(--line); padding: 0.7rem 0; }
+			.strip__label { flex: none; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; color: var(--muted); }
+			.strip__view { flex: 1; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+			.strip__track { display: flex; width: max-content; animation: slide 42s linear infinite; }
+			.strip:hover .strip__track { animation-play-state: paused; }
+			.strip__item { display: inline-flex; align-items: baseline; font-family: var(--grotesk); font-weight: 700; font-size: clamp(1rem, 1.5vw, 1.25rem); letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; }
+			.strip__yr { font-family: var(--mono); font-weight: 500; font-size: 0.62em; letter-spacing: 0.02em; color: var(--accent); margin-right: 0.55rem; }
+			.strip__item i { color: color-mix(in oklch, var(--accent) 55%, transparent); padding: 0 2rem; font-style: normal; font-weight: 400; }
+
+			/* ---------------- footer ---------------- */
+			.t-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 1rem; max-width: 1440px; margin: clamp(2.5rem, 6vw, 4rem) auto 0; padding-top: 1.4rem; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; color: var(--muted); }
+
+			/* ---------------- motion ---------------- */
+			@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+			@keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--accent) 60%, transparent); } 70% { box-shadow: 0 0 0 7px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+			@keyframes slide { to { transform: translateX(-33.3333%); } }
+			.dotpulse { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 0.45rem; vertical-align: baseline; animation: pulse 2s infinite; }
+
+			/* ---------------- responsive ---------------- */
+			@media (max-width: 920px) {
+				.term__panes { grid-template-columns: 1fr; grid-template-areas: "who" "hl" "writing"; }
+			}
+			@media (max-width: 560px) {
+				.t-nav__links { display: none; }
+				.t-badge { display: none; }
+				.t-pick__label { display: none; }
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				.t *, .t *::before, .t *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+				.strip__view { overflow: visible; -webkit-mask-image: none; mask-image: none; }
+				.strip__track { flex-wrap: wrap; width: auto; gap: 0.2rem 0; }
+			}
+		</style>
+	</body>
+</html>

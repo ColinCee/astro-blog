@@ -1,0 +1,547 @@
+---
+// Redesign concept previews — three distinct directions inspired by cocall.ai,
+// built with Colin's real content. Self-contained (own <head>, own styles) so it
+// never touches the live site. Pick one and it gets rolled out site-wide.
+
+const role = "SENIOR SOFTWARE ENGINEER";
+const place = "GLASGOW, UK · REMOTE";
+
+const stack = [
+	"TYPESCRIPT", "NODE.JS", "REACT", "AWS", "DYNAMODB",
+	"SCALA", "TERRAFORM", "GRPC", "KUBERNETES", "POSTGRES",
+];
+
+const stats = [
+	{ n: "8+", l: "YEARS SHIPPING" },
+	{ n: "100K+", l: "REQ / DAY" },
+	{ n: "20→5", l: "MIN CI CYCLE" },
+	{ n: "6", l: "ENG TEAMS" },
+];
+
+const log = [
+	{ k: "~/career", v: "last 8 years, compiled" },
+	{ k: "→", v: "slashed CI 20m → 5m", ok: true },
+	{ k: "→", v: "100k+ req/day over gRPC", ok: true },
+	{ k: "→", v: "HRMS sync 8h → 2m", ok: true },
+	{ k: "→", v: "saved $1000s/mo on AWS", ok: true },
+	{ k: "status", v: "OPEN TO WORK" },
+];
+
+const posts = [
+	{
+		title: "From 4.5GB to 221MB: A Story about Parquet",
+		date: "Sep 3, 2025",
+		tag: "DATA",
+		href: "/blog/jsonl-to-parquet-compression/",
+		desc: "Downloaded a 4.5GB JSONL file from S3, converted it to Parquet, and it shrunk to 221MB. Here's what's actually happening under the hood.",
+	},
+	{
+		title: "Slash Your ts-jest Test Times With This",
+		date: "Apr 3, 2025",
+		tag: "DX",
+		href: "/blog/saving-time-in-ts-jest/",
+		desc: "Found a simple ts-jest tweak that cut our test suite time down by over 10 minutes. You might want to try this.",
+	},
+];
+
+const github = "https://github.com/ColinCee";
+const linkedin = "https://www.linkedin.com/in/colin-cheung/";
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Redesign concepts — Colin Cheung</title>
+		<meta name="robots" content="noindex" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body>
+		<!-- Direction switcher -->
+		<div class="switcher" role="group" aria-label="Choose a design direction">
+			<span class="switcher__label">PICK A DIRECTION</span>
+			<div class="switcher__btns">
+				<button type="button" data-go="dial" class="is-active">01 · DIAL TONE</button>
+				<button type="button" data-go="typeset">02 · TYPESET</button>
+				<button type="button" data-go="switchboard">03 · SWITCHBOARD</button>
+			</div>
+		</div>
+
+		<div class="stage" data-variant="dial">
+			<!-- ============ 01 · DIAL TONE (dark, terminal-native) ============ -->
+			<section class="concept concept--dial" data-concept="dial" aria-label="Dial Tone concept">
+				<nav class="d-nav">
+					<a class="d-mark" href="#">CC<span>.</span></a>
+					<div class="d-links">
+						<a href="#">WRITING</a>
+						<a href="#">ABOUT</a>
+						<a href="#">CONTACT</a>
+					</div>
+					<span class="d-badge"><i></i>OPEN TO WORK</span>
+				</nav>
+
+				<header class="d-hero">
+					<div class="d-hero__copy">
+						<p class="d-eyebrow">{role} · {place}</p>
+						<h1 class="d-title">COLIN<br />CHEUNG<span class="d-dot">.</span></h1>
+						<p class="d-lede">
+							I build scalable, resilient systems — Node, React, TypeScript and a
+							lot of AWS. Eight years in, mostly distributed, occasionally on fire.
+						</p>
+						<div class="d-cta">
+							<a class="d-btn d-btn--solid" href="/blog">READ THE BLOG <span>→</span></a>
+							<a class="d-btn" href={github}>GITHUB</a>
+							<a class="d-btn" href={linkedin}>LINKEDIN</a>
+						</div>
+					</div>
+
+					<div class="d-device" aria-hidden="true">
+						<div class="d-device__bar">
+							<span class="d-device__dot"></span>
+							<span class="d-device__title">session · colin.sh</span>
+							<span class="d-device__live">● LIVE</span>
+						</div>
+						<div class="d-device__body">
+							{log.map((line) => (
+								<div class="d-line">
+									<span class="d-line__k">{line.k}</span>
+									<span class={`d-line__v${line.ok ? " ok" : ""}${line.v === "OPEN TO WORK" ? " hot" : ""}`}>
+										{line.v}{line.ok && <i> ✓</i>}
+									</span>
+								</div>
+							))}
+							<div class="d-line"><span class="d-cursor"></span></div>
+						</div>
+					</div>
+				</header>
+
+				<div class="d-marquee" aria-hidden="true">
+					<div class="d-marquee__track">
+						{[...stack, ...stack].map((t) => (
+							<span class="d-marquee__item">{t}<i>/</i></span>
+						))}
+					</div>
+				</div>
+
+				<section class="d-stats">
+					{stats.map((s) => (
+						<div class="d-stat">
+							<span class="d-stat__n">{s.n}</span>
+							<span class="d-stat__l">{s.l}</span>
+						</div>
+					))}
+				</section>
+
+				<section class="d-writing">
+					<div class="d-writing__head">
+						<h2>SELECTED WRITING</h2>
+						<a href="/blog">ALL POSTS →</a>
+					</div>
+					<ul class="d-posts">
+						{posts.map((p) => (
+							<li>
+								<a href={p.href}>
+									<span class="d-post__meta">{p.date}<i>·</i>{p.tag}</span>
+									<span class="d-post__title">{p.title}</span>
+									<span class="d-post__desc">{p.desc}</span>
+									<span class="d-post__go">READ →</span>
+								</a>
+							</li>
+						))}
+					</ul>
+				</section>
+
+				<footer class="d-foot">
+					<span>COLIN CHEUNG</span>
+					<span>© 2026 · BUILT IN GLASGOW</span>
+				</footer>
+			</section>
+
+			<!-- ============ 02 · TYPESET (light, editorial-tech) ============ -->
+			<section class="concept concept--type" data-concept="typeset" aria-label="Typeset concept">
+				<nav class="t-nav">
+					<a class="t-mark" href="#">COLIN CHEUNG</a>
+					<div class="t-links">
+						<a href="#">Writing</a>
+						<a href="#">About</a>
+						<a class="t-cta" href="#">Get in touch</a>
+					</div>
+				</nav>
+
+				<header class="t-hero">
+					<p class="t-kicker"><span>{role}</span><span>{place}</span></p>
+					<h1 class="t-title">
+						Senior engineer<br />
+						who ships <mark>scale</mark><br />
+						without the drama.
+					</h1>
+					<div class="t-meta">
+						<div><span>STACK</span>TypeScript · Node · React · AWS</div>
+						<div><span>NOW</span>Contracting @ EDF Energy</div>
+						<div><span>BASED</span>Glasgow, UK · Remote</div>
+					</div>
+					<div class="t-cta-row">
+						<a class="t-btn" href="/blog">Read the blog</a>
+						<a class="t-link" href={github}>GitHub ↗</a>
+						<a class="t-link" href={linkedin}>LinkedIn ↗</a>
+					</div>
+				</header>
+
+				<section class="t-band">
+					{stats.map((s) => (
+						<div class="t-band__cell">
+							<span class="t-band__n">{s.n}</span>
+							<span class="t-band__l">{s.l}</span>
+						</div>
+					))}
+				</section>
+
+				<section class="t-writing">
+					<div class="t-writing__head">
+						<h2>Selected writing</h2>
+						<a href="/blog">All posts →</a>
+					</div>
+					{posts.map((p, i) => (
+						<a class="t-row" href={p.href}>
+							<span class="t-row__i">0{i + 1}</span>
+							<span class="t-row__main">
+								<span class="t-row__title">{p.title}</span>
+								<span class="t-row__desc">{p.desc}</span>
+							</span>
+							<span class="t-row__date">{p.date}</span>
+						</a>
+					))}
+				</section>
+
+				<footer class="t-foot">
+					<span>Colin Cheung</span>
+					<span>Senior Software Engineer</span>
+					<span>© 2026</span>
+				</footer>
+			</section>
+
+			<!-- ============ 03 · SWITCHBOARD (playful, colourful) ============ -->
+			<section class="concept concept--sb" data-concept="switchboard" aria-label="Switchboard concept">
+				<nav class="s-nav">
+					<a class="s-mark" href="#"><span class="s-blob"></span>colin.dev</a>
+					<div class="s-links">
+						<a href="#">writing</a>
+						<a href="#">about</a>
+						<a class="s-cta" href="#">say hi</a>
+					</div>
+				</nav>
+
+				<header class="s-hero">
+					<span class="s-pill">{role.toLowerCase()} · says hi 👋</span>
+					<h1 class="s-title">Hey, I'm Colin —<br />I make systems<br /><em>behave</em>.</h1>
+					<p class="s-lede">
+						Eight years turning gnarly, distributed, occasionally-on-fire problems
+						into things that just work. Node, React, TypeScript, far too much AWS.
+					</p>
+					<div class="s-cta-row">
+						<a class="s-btn s-btn--primary" href="/blog">Read the blog</a>
+						<a class="s-btn" href={github}>GitHub</a>
+						<a class="s-btn" href={linkedin}>LinkedIn</a>
+					</div>
+
+					<div class="s-dialpad" aria-hidden="true">
+						{["1","2","3","4","5","6","7","8","9","✱","0","#"].map((d) => (
+							<span class="s-key">{d}</span>
+						))}
+					</div>
+				</header>
+
+				<section class="s-chips" aria-label="Stats">
+					{stats.map((s) => (
+						<span class="s-chip"><b>{s.n}</b>{s.l}</span>
+					))}
+				</section>
+
+				<section class="s-writing">
+					<h2>fresh from the blog</h2>
+					<div class="s-posts">
+						{posts.map((p) => (
+							<a class="s-card" href={p.href}>
+								<span class="s-card__tag">{p.tag}</span>
+								<span class="s-card__title">{p.title}</span>
+								<span class="s-card__desc">{p.desc}</span>
+								<span class="s-card__foot">{p.date}<i>read →</i></span>
+							</a>
+						))}
+					</div>
+				</section>
+
+				<footer class="s-foot">made with care (and coffee) in glasgow · © 2026</footer>
+			</section>
+		</div>
+
+		<script>
+			const stage = document.querySelector(".stage");
+			const btns = document.querySelectorAll(".switcher__btns button");
+			function go(v: string) {
+				stage?.setAttribute("data-variant", v);
+				btns.forEach((b) => b.classList.toggle("is-active", (b as HTMLElement).dataset.go === v));
+				try { localStorage.setItem("redesign", v); } catch (e) {}
+				window.scrollTo({ top: 0 });
+			}
+			btns.forEach((b) => b.addEventListener("click", () => go((b as HTMLElement).dataset.go!)));
+			const valid = ["dial", "typeset", "switchboard"];
+			const fromUrl = () =>
+				new URLSearchParams(location.search).get("v") || location.hash.replace("#", "");
+			window.addEventListener("hashchange", () => {
+				const w = fromUrl();
+				if (valid.includes(w)) go(w);
+			});
+			try {
+				const want = fromUrl() || localStorage.getItem("redesign");
+				if (want && valid.includes(want)) go(want);
+			} catch (e) {}
+		</script>
+
+		<style is:global>
+			:root {
+				--mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+				--grotesk: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+			}
+			* { box-sizing: border-box; }
+			html { -webkit-text-size-adjust: 100%; }
+			body { margin: 0; font-family: var(--grotesk); }
+			a { color: inherit; text-decoration: none; }
+			h1, h2, p, ul { margin: 0; }
+			ul { padding: 0; list-style: none; }
+			img, svg { display: block; }
+			:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 4px; }
+
+			/* ---- Direction switcher (chrome, not part of the concepts) ---- */
+			.switcher {
+				position: fixed; inset: auto 0 1rem 0; z-index: 100;
+				display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+				pointer-events: none;
+			}
+			.switcher__label {
+				font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em;
+				color: #fff; background: #111; padding: 0.2rem 0.6rem; border-radius: 999px;
+				opacity: 0.8;
+			}
+			.switcher__btns {
+				display: flex; gap: 0.3rem; padding: 0.35rem;
+				background: rgba(20, 20, 22, 0.82); backdrop-filter: blur(12px);
+				border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 999px;
+				pointer-events: auto; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+			}
+			.switcher__btns button {
+				font-family: var(--mono); font-size: 0.7rem; font-weight: 500;
+				letter-spacing: 0.04em; color: #c9c9cf; background: transparent;
+				border: 0; padding: 0.5rem 0.85rem; border-radius: 999px; cursor: pointer;
+				transition: color 0.18s ease, background-color 0.18s ease;
+			}
+			.switcher__btns button:hover { color: #fff; }
+			.switcher__btns button.is-active { color: #111; background: #fff; }
+
+			/* Concept visibility */
+			.concept { display: none; }
+			.stage[data-variant="dial"] .concept--dial,
+			.stage[data-variant="typeset"] .concept--type,
+			.stage[data-variant="switchboard"] .concept--sb { display: block; }
+
+			@keyframes riseIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+			@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+			@keyframes slide { to { transform: translateX(-50%); } }
+
+			/* ===================== 01 · DIAL TONE ===================== */
+			.concept--dial {
+				--bg: oklch(0.16 0.012 80); --panel: oklch(0.205 0.014 80);
+				--line: oklch(0.33 0.02 80); --ink: oklch(0.96 0.01 90);
+				--muted: oklch(0.73 0.02 90); --accent: oklch(0.83 0.16 78);
+				--accent-ink: oklch(0.22 0.05 80);
+				background: var(--bg); color: var(--ink);
+				min-height: 100vh; padding: 1.25rem clamp(1rem, 4vw, 3rem) 0;
+				font-feature-settings: "ss01";
+			}
+			.d-nav {
+				display: flex; align-items: center; justify-content: space-between;
+				gap: 1rem; max-width: 1180px; margin: 0 auto; padding-bottom: clamp(2rem, 6vw, 4rem);
+			}
+			.d-mark { font-family: var(--grotesk); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em; }
+			.d-mark span { color: var(--accent); }
+			.d-links { display: flex; gap: 1.4rem; font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.08em; color: var(--muted); }
+			.d-links a:hover { color: var(--ink); }
+			.d-badge { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; color: var(--accent); border: 1px solid var(--line); padding: 0.4rem 0.7rem; border-radius: 999px; }
+			.d-badge i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 var(--accent); animation: pulse 2s infinite; }
+			@keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--accent) 60%, transparent); } 70% { box-shadow: 0 0 0 7px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+			.d-hero {
+				display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(1.5rem, 4vw, 3.5rem);
+				align-items: center; max-width: 1180px; margin: 0 auto;
+				padding-bottom: clamp(2.5rem, 6vw, 4.5rem);
+			}
+			.d-hero__copy { animation: riseIn 0.6s ease-out both; }
+			.d-eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; color: var(--muted); margin-bottom: 1.25rem; }
+			.d-title {
+				font-family: var(--grotesk); font-weight: 800; line-height: 0.92;
+				font-size: clamp(3rem, 10vw, 5.6rem); letter-spacing: -0.03em;
+				text-wrap: balance; margin-bottom: 1.5rem;
+			}
+			.d-dot { color: var(--accent); }
+			.d-lede { max-width: 46ch; font-size: clamp(1rem, 1.5vw, 1.18rem); line-height: 1.6; color: var(--muted); margin-bottom: 2rem; }
+			.d-cta { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+			.d-btn { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.04em; padding: 0.8rem 1.1rem; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); transition: border-color 0.18s ease, transform 0.18s ease; }
+			.d-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+			.d-btn--solid { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+			.d-btn--solid span { transition: transform 0.18s ease; display: inline-block; }
+			.d-btn--solid:hover span { transform: translateX(3px); }
+
+			.d-device { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6); animation: riseIn 0.7s ease-out 0.1s both; }
+			.d-device__bar { display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1rem; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+			.d-device__dot { width: 11px; height: 11px; border-radius: 50%; background: var(--accent); }
+			.d-device__title { flex: 1; }
+			.d-device__live { color: var(--accent); letter-spacing: 0.1em; font-size: 0.64rem; }
+			.d-device__body { padding: 1.1rem 1.2rem 1.4rem; font-family: var(--mono); font-size: 0.84rem; line-height: 1.95; }
+			.d-line { display: flex; gap: 0.7rem; }
+			.d-line__k { color: var(--muted); min-width: 3.4rem; }
+			.d-line__v { color: var(--ink); }
+			.d-line__v.ok i { color: var(--accent); }
+			.d-line__v.hot { color: var(--accent); font-weight: 700; letter-spacing: 0.06em; }
+			.d-cursor { display: inline-block; width: 9px; height: 1.05rem; background: var(--accent); animation: blink 1.1s steps(1) infinite; }
+
+			.d-marquee { border-block: 1px solid var(--line); overflow: hidden; }
+			.d-marquee__track { display: flex; width: max-content; animation: slide 26s linear infinite; }
+			.d-marquee__item { font-family: var(--grotesk); font-weight: 700; font-size: clamp(1.4rem, 3vw, 2.2rem); letter-spacing: -0.02em; color: var(--muted); padding: 0.7rem 0; }
+			.d-marquee__item i { color: var(--accent); padding: 0 1.4rem; font-style: normal; }
+
+			.d-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; max-width: 1180px; margin: clamp(2.5rem, 6vw, 4.5rem) auto; }
+			.d-stat { background: var(--bg); padding: clamp(1.4rem, 3vw, 2.2rem); display: flex; flex-direction: column; gap: 0.4rem; }
+			.d-stat__n { font-family: var(--grotesk); font-weight: 800; font-size: clamp(1.8rem, 4vw, 2.8rem); letter-spacing: -0.03em; color: var(--accent); }
+			.d-stat__l { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em; color: var(--muted); }
+
+			.d-writing { max-width: 1180px; margin: 0 auto; padding-bottom: clamp(3rem, 7vw, 5rem); }
+			.d-writing__head { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
+			.d-writing__head h2 { font-family: var(--grotesk); font-weight: 800; font-size: clamp(1.4rem, 3vw, 2rem); letter-spacing: -0.02em; }
+			.d-writing__head a { font-family: var(--mono); font-size: 0.74rem; color: var(--accent); letter-spacing: 0.06em; }
+			.d-posts li { border-bottom: 1px solid var(--line); }
+			.d-posts a { display: grid; grid-template-columns: 1fr auto; gap: 0.3rem 1rem; padding: 1.6rem 0; transition: padding-left 0.22s ease; }
+			.d-posts a:hover { padding-left: 0.8rem; }
+			.d-post__meta { grid-column: 1; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; color: var(--muted); }
+			.d-post__meta i { padding: 0 0.5rem; color: var(--accent); font-style: normal; }
+			.d-post__title { grid-column: 1; font-family: var(--grotesk); font-weight: 700; font-size: clamp(1.2rem, 2.4vw, 1.6rem); letter-spacing: -0.02em; }
+			.d-post__desc { grid-column: 1; max-width: 64ch; color: var(--muted); line-height: 1.55; }
+			.d-post__go { grid-row: 1 / span 3; grid-column: 2; align-self: center; font-family: var(--mono); font-size: 0.72rem; color: var(--accent); opacity: 0; transition: opacity 0.2s ease; }
+			.d-posts a:hover .d-post__go { opacity: 1; }
+			.d-foot { display: flex; justify-content: space-between; gap: 1rem; max-width: 1180px; margin: 0 auto; padding: 1.6rem 0 2.4rem; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; color: var(--muted); }
+
+			/* ===================== 02 · TYPESET ===================== */
+			.concept--type {
+				--bg: oklch(0.985 0.003 250); --ink: oklch(0.19 0.02 260);
+				--muted: oklch(0.46 0.02 260); --line: oklch(0.9 0.01 260);
+				--accent: oklch(0.52 0.21 255); --accent-ink: oklch(0.99 0.01 255);
+				background: var(--bg); color: var(--ink); min-height: 100vh;
+				padding: 1.4rem clamp(1rem, 5vw, 4rem) 0;
+			}
+			.t-nav { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding-bottom: clamp(3rem, 8vw, 6rem); }
+			.t-mark { font-weight: 800; letter-spacing: -0.02em; font-size: 1.05rem; }
+			.t-links { display: flex; align-items: center; gap: 1.6rem; font-size: 0.95rem; color: var(--muted); }
+			.t-links a:hover { color: var(--ink); }
+			.t-cta { color: var(--ink); font-weight: 600; border-bottom: 2px solid var(--accent); }
+			.t-hero { max-width: 1100px; margin: 0 auto; padding-bottom: clamp(2.5rem, 6vw, 4rem); animation: riseIn 0.6s ease-out both; }
+			.t-kicker { display: flex; gap: 1.2rem; font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 1.6rem; }
+			.t-kicker span:first-child { color: var(--accent); }
+			.t-title { font-weight: 800; font-size: clamp(2.6rem, 8.5vw, 5.4rem); line-height: 0.98; letter-spacing: -0.035em; text-wrap: balance; }
+			.t-title mark { background: var(--accent); color: var(--accent-ink); padding: 0 0.18em; border-radius: 6px; }
+			.t-meta { display: flex; flex-wrap: wrap; gap: 1.6rem 2.6rem; margin: 2.4rem 0; }
+			.t-meta div { font-size: 1rem; max-width: 22ch; }
+			.t-meta span { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em; color: var(--muted); margin-bottom: 0.35rem; }
+			.t-cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 1.4rem; }
+			.t-btn { background: var(--ink); color: var(--bg); font-weight: 600; padding: 0.85rem 1.5rem; border-radius: 10px; transition: transform 0.18s ease; }
+			.t-btn:hover { transform: translateY(-2px); }
+			.t-link { font-family: var(--mono); font-size: 0.82rem; color: var(--muted); }
+			.t-link:hover { color: var(--accent); }
+			.t-band { display: grid; grid-template-columns: repeat(4, 1fr); max-width: 1100px; margin: clamp(2rem, 5vw, 3.5rem) auto; border-block: 1px solid var(--line); }
+			.t-band__cell { padding: clamp(1.4rem, 3vw, 2.2rem) 0.5rem; text-align: left; }
+			.t-band__cell + .t-band__cell { border-left: 1px solid var(--line); padding-left: clamp(1rem, 2vw, 1.6rem); }
+			.t-band__n { display: block; font-weight: 800; font-size: clamp(1.8rem, 4vw, 2.8rem); letter-spacing: -0.03em; }
+			.t-band__l { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; color: var(--muted); }
+			.t-writing { max-width: 1100px; margin: 0 auto; padding-bottom: clamp(3rem, 7vw, 5rem); }
+			.t-writing__head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.5rem; }
+			.t-writing__head h2 { font-weight: 800; font-size: clamp(1.4rem, 3vw, 2rem); letter-spacing: -0.02em; }
+			.t-writing__head a { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); }
+			.t-row { display: grid; grid-template-columns: auto 1fr auto; gap: 1.4rem; align-items: baseline; padding: 1.8rem 0; border-top: 1px solid var(--line); transition: background-color 0.2s ease; }
+			.t-row:hover { background: color-mix(in oklch, var(--accent) 6%, transparent); }
+			.t-row__i { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); }
+			.t-row__title { display: block; font-weight: 700; font-size: clamp(1.2rem, 2.4vw, 1.7rem); letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+			.t-row__desc { color: var(--muted); line-height: 1.55; max-width: 60ch; }
+			.t-row__date { font-family: var(--mono); font-size: 0.74rem; color: var(--muted); white-space: nowrap; }
+			.t-foot { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; max-width: 1100px; margin: 0 auto; padding: 1.6rem 0 2.6rem; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 0.74rem; color: var(--muted); }
+
+			/* ===================== 03 · SWITCHBOARD ===================== */
+			.concept--sb {
+				--bg: oklch(0.96 0.022 285); --surface: oklch(0.99 0.01 285);
+				--ink: oklch(0.23 0.04 290); --muted: oklch(0.45 0.04 290);
+				--line: oklch(0.86 0.03 285); --accent: oklch(0.64 0.2 18);
+				--accent2: oklch(0.55 0.16 280); --accent-ink: oklch(0.99 0.02 18);
+				background: radial-gradient(60rem 40rem at 80% -10%, color-mix(in oklch, var(--accent2) 18%, transparent), transparent 60%), var(--bg);
+				color: var(--ink); min-height: 100vh; padding: 1.4rem clamp(1rem, 5vw, 4rem) 0;
+			}
+			.s-nav { display: flex; align-items: center; justify-content: space-between; max-width: 1040px; margin: 0 auto; padding-bottom: clamp(2rem, 6vw, 4rem); }
+			.s-mark { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em; }
+			.s-blob { width: 16px; height: 16px; border-radius: 6px; background: var(--accent); transform: rotate(12deg); }
+			.s-links { display: flex; align-items: center; gap: 1.3rem; color: var(--muted); }
+			.s-links a:hover { color: var(--ink); }
+			.s-cta { color: var(--accent-ink); background: var(--ink); padding: 0.5rem 1rem; border-radius: 999px; }
+			.s-hero { position: relative; max-width: 1040px; margin: 0 auto; padding-bottom: clamp(2rem, 5vw, 3.5rem); animation: riseIn 0.6s ease-out both; }
+			.s-pill { display: inline-block; font-family: var(--mono); font-size: 0.74rem; background: var(--surface); border: 1px solid var(--line); padding: 0.45rem 0.9rem; border-radius: 999px; margin-bottom: 1.6rem; }
+			.s-title { font-weight: 800; font-size: clamp(2.6rem, 8.5vw, 5.2rem); line-height: 0.96; letter-spacing: -0.035em; text-wrap: balance; max-width: 16ch; }
+			.s-title em { font-style: italic; color: var(--accent); }
+			.s-lede { margin: 1.6rem 0 2rem; max-width: 48ch; font-size: clamp(1rem, 1.5vw, 1.18rem); line-height: 1.6; color: var(--muted); }
+			.s-cta-row { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+			.s-btn { background: var(--surface); border: 1px solid var(--line); padding: 0.8rem 1.3rem; border-radius: 999px; font-weight: 600; transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1); }
+			.s-btn:hover { transform: translateY(-3px); }
+			.s-btn--primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+			.s-dialpad { position: absolute; top: 0; right: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; width: 168px; }
+			.s-key { display: grid; place-items: center; aspect-ratio: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; font-family: var(--mono); font-size: 0.9rem; color: var(--muted); transition: transform 0.16s ease, background-color 0.16s ease, color 0.16s ease; }
+			.s-key:hover { transform: translateY(-2px) rotate(-3deg); background: var(--accent); color: var(--accent-ink); }
+			.s-chips { display: flex; flex-wrap: wrap; gap: 0.7rem; max-width: 1040px; margin: 1.5rem auto clamp(2.5rem, 6vw, 4rem); }
+			.s-chip { display: inline-flex; align-items: baseline; gap: 0.5rem; background: var(--surface); border: 1px solid var(--line); padding: 0.6rem 1rem; border-radius: 999px; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; color: var(--muted); }
+			.s-chip b { font-family: var(--grotesk); font-size: 1.2rem; letter-spacing: -0.02em; color: var(--accent2); }
+			.s-writing { max-width: 1040px; margin: 0 auto; padding-bottom: clamp(3rem, 7vw, 5rem); }
+			.s-writing h2 { font-weight: 800; font-size: clamp(1.5rem, 3.5vw, 2.2rem); letter-spacing: -0.02em; margin-bottom: 1.4rem; }
+			.s-posts { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+			.s-card { display: flex; flex-direction: column; gap: 0.6rem; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 1.5rem; transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1); }
+			.s-card:hover { transform: translateY(-4px); }
+			.s-card__tag { align-self: flex-start; font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.1em; color: var(--accent-ink); background: var(--accent2); padding: 0.25rem 0.55rem; border-radius: 6px; }
+			.s-card__title { font-weight: 700; font-size: 1.25rem; letter-spacing: -0.02em; line-height: 1.15; }
+			.s-card__desc { color: var(--muted); line-height: 1.55; font-size: 0.95rem; }
+			.s-card__foot { display: flex; justify-content: space-between; margin-top: auto; padding-top: 0.5rem; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+			.s-card__foot i { font-style: normal; color: var(--accent); }
+			.s-foot { max-width: 1040px; margin: 0 auto; padding: 1.6rem 0 2.6rem; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 0.74rem; color: var(--muted); text-align: center; }
+
+			/* ===================== responsive ===================== */
+			@media (max-width: 860px) {
+				.d-hero { grid-template-columns: 1fr; }
+				.d-stats { grid-template-columns: repeat(2, 1fr); }
+				.t-band { grid-template-columns: repeat(2, 1fr); }
+				.t-band__cell:nth-child(3) { border-left: 0; padding-left: 0.5rem; }
+				.s-dialpad { display: none; }
+				.d-links, .d-badge { display: none; }
+			}
+			@media (max-width: 520px) {
+				.d-stats { grid-template-columns: 1fr 1fr; }
+				.t-meta { gap: 1.2rem; }
+				.t-links a:not(.t-cta), .s-links a:not(.s-cta) { display: none; }
+				.switcher__btns button { padding: 0.5rem 0.6rem; font-size: 0.64rem; }
+			}
+
+			/* ===================== reduced motion ===================== */
+			@media (prefers-reduced-motion: reduce) {
+				*, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+				.d-marquee__track { animation: none; }
+				.d-cursor { animation: none; opacity: 1; }
+			}
+		</style>
+	</body>
+</html>

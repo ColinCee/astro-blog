@@ -17,6 +17,20 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- Apply the saved theme + accent before paint to avoid a flash of the wrong theme. -->
+<script is:inline>
+	(function () {
+		try {
+			const stored = localStorage.getItem("theme");
+			const dark = stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+			document.documentElement.classList.toggle("dark", dark);
+			const accent = localStorage.getItem("accent");
+			if (accent) document.documentElement.setAttribute("data-accent", accent);
+		} catch (e) {}
+	})();
+</script>
+
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <meta name="generator" content={Astro.generator} />
 

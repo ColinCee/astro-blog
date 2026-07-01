@@ -1,19 +1,103 @@
-/*
-  The CSS in this style tag is based off of Bear Blog's default CSS.
-  https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
-  License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
- */
+@import "tailwindcss";
 
+/*
+  Design system for the blog.
+  - Tailwind v4 utilities + design tokens via @theme
+  - Semantic tokens with light / dark themes
+  - Swappable accent presets via [data-accent] on <html>
+  - Legacy variables kept as theme-aware aliases so existing
+    component styles inherit the theme (including dark mode).
+*/
+
+/* Enable class-based dark mode, toggled by .dark on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Atkinson", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+/* Expose the runtime theme variables as Tailwind color utilities. */
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-accent-text: var(--accent-text);
+}
+
+/* ---- Accent presets (default: amber). Swap via data-accent on <html>. ---- */
+:root,
+[data-accent="amber"] {
+  --accent: oklch(0.79 0.15 73);
+  --accent-strong: oklch(0.7 0.16 60);
+  --accent-contrast: oklch(0.24 0.05 70);
+}
+[data-accent="violet"] {
+  --accent: oklch(0.62 0.2 292);
+  --accent-strong: oklch(0.55 0.22 292);
+  --accent-contrast: oklch(0.98 0.01 292);
+}
+[data-accent="emerald"] {
+  --accent: oklch(0.72 0.14 165);
+  --accent-strong: oklch(0.63 0.15 165);
+  --accent-contrast: oklch(0.22 0.04 165);
+}
+[data-accent="rose"] {
+  --accent: oklch(0.66 0.2 14);
+  --accent-strong: oklch(0.59 0.22 14);
+  --accent-contrast: oklch(0.98 0.01 14);
+}
+[data-accent="sky"] {
+  --accent: oklch(0.68 0.15 232);
+  --accent-strong: oklch(0.58 0.17 245);
+  --accent-contrast: oklch(0.98 0.01 232);
+}
+
+/* ---- Light theme (default) ---- */
 :root {
-  --accent: #2337ff;
-  --accent-dark: #000d8a;
-  --black: 15, 18, 25;
-  --gray: 96, 115, 159;
-  --gray-light: 229, 233, 240;
-  --gray-dark: 34, 41, 57;
-  --gray-gradient: rgba(var(--gray-light), 50%), #fff;
-  --box-shadow: 0 2px 6px rgba(var(--gray), 25%),
-    0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);
+  color-scheme: light;
+  --background: oklch(0.99 0.006 95);
+  --surface: oklch(0.975 0.008 95);
+  --surface-2: oklch(0.95 0.01 95);
+  --foreground: oklch(0.26 0.02 75);
+  --muted-foreground: oklch(0.53 0.02 75);
+  --border: oklch(0.9 0.012 95);
+  --accent-text: color-mix(in oklch, var(--accent) 76%, var(--foreground));
+
+  /* Legacy aliases (theme-aware) so existing component CSS keeps working. */
+  --black: 38, 34, 30;
+  --gray: 120, 113, 108;
+  --gray-light: 231, 229, 228;
+  --gray-dark: 60, 54, 50;
+  --gray-gradient: color-mix(in oklch, var(--surface), transparent 30%), var(--background);
+  --box-shadow:
+    0 2px 6px rgba(var(--gray), 12%),
+    0 8px 24px rgba(var(--gray), 12%),
+    0 16px 32px rgba(var(--gray), 12%);
+}
+
+/* ---- Dark theme ---- */
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.17 0.012 75);
+  --surface: oklch(0.21 0.014 75);
+  --surface-2: oklch(0.25 0.016 75);
+  --foreground: oklch(0.93 0.012 90);
+  --muted-foreground: oklch(0.72 0.02 90);
+  --border: oklch(0.31 0.02 75);
+  --accent-text: color-mix(in oklch, var(--accent) 82%, var(--foreground));
+
+  --black: 244, 244, 242;
+  --gray: 168, 162, 158;
+  --gray-light: 64, 60, 56;
+  --gray-dark: 214, 211, 209;
+  --gray-gradient: color-mix(in oklch, var(--surface), transparent 55%), var(--background);
 }
 
 @font-face {
@@ -33,17 +117,23 @@
 }
 
 body {
-  font-family: "Atkinson", sans-serif;
+  font-family: var(--font-sans);
   margin: 0;
   padding: 0;
   text-align: left;
-  background: linear-gradient(var(--gray-gradient)) no-repeat;
-  background-size: 100% 600px;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(42rem 42rem at 100% -10%, color-mix(in oklch, var(--accent) 14%, transparent), transparent 60%),
+    radial-gradient(38rem 38rem at -10% 0%, color-mix(in oklch, var(--accent-strong) 10%, transparent), transparent 55%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  color: rgb(var(--gray-dark));
+  color: var(--foreground);
   font-size: 18px;
   line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 main {
@@ -91,11 +181,14 @@ b {
 }
 
 a {
-  color: var(--accent);
+  color: var(--accent-text);
+  text-decoration-color: color-mix(in oklch, var(--accent) 50%, transparent);
+  text-underline-offset: 2px;
 }
 
 a:hover {
-  color: var(--accent);
+  color: var(--accent-strong);
+  text-decoration-color: var(--accent);
 }
 
 p {
