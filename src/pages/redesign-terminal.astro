@@ -229,6 +229,15 @@ const today = new Date().toLocaleDateString("en-CA");
 
                 <p class="term-cmd">
                   <span class="who__prompt">$</span>
+                  <span class="who__typed js-cmd">weather</span><span
+                    class="who__caret"></span>
+                </p>
+                <div class="term-out js-out">
+                  <p class="who__wx" data-weather>Glasgow</p>
+                </div>
+
+                <p class="term-cmd">
+                  <span class="who__prompt">$</span>
                   <span class="who__typed js-cmd">ls ~/contact</span><span
                     class="who__caret"></span>
                 </p>
@@ -351,7 +360,6 @@ const today = new Date().toLocaleDateString("en-CA");
       <section class="takes" aria-label="Strong opinions, loosely held">
         <div class="takes__head">
           <p class="takes__tag">// hot takes</p>
-          <h2 class="takes__title">Strong opinions,<br />loosely held.</h2>
         </div>
         <ul class="takes__list">
           {
@@ -391,6 +399,84 @@ const today = new Date().toLocaleDateString("en-CA");
       }
       tickClock();
       if (!reduce) setInterval(tickClock, 1000);
+
+      // Live Glasgow weather in the eyebrow (open-meteo, no API key). Fails silently.
+      const wxEl = document.querySelector<HTMLElement>("[data-weather]");
+      if (wxEl) {
+        const wxCodes: Record<number, string> = {
+          0: "clear",
+          1: "mainly clear",
+          2: "partly cloudy",
+          3: "overcast",
+          45: "fog",
+          48: "fog",
+          51: "light drizzle",
+          53: "drizzle",
+          55: "heavy drizzle",
+          56: "freezing drizzle",
+          57: "freezing drizzle",
+          61: "light rain",
+          63: "rain",
+          65: "heavy rain",
+          66: "freezing rain",
+          67: "freezing rain",
+          71: "light snow",
+          73: "snow",
+          75: "heavy snow",
+          77: "snow grains",
+          80: "light showers",
+          81: "showers",
+          82: "heavy showers",
+          85: "snow showers",
+          86: "snow showers",
+          95: "thunderstorm",
+          96: "thunderstorm",
+          99: "thunderstorm",
+        };
+        const wxIcon: Record<number, string> = {
+          0: "☀️",
+          1: "🌤️",
+          2: "⛅",
+          3: "☁️",
+          45: "🌫️",
+          48: "🌫️",
+          51: "🌦️",
+          53: "🌦️",
+          55: "🌧️",
+          56: "🌧️",
+          57: "🌧️",
+          61: "🌧️",
+          63: "🌧️",
+          65: "🌧️",
+          66: "🌧️",
+          67: "🌧️",
+          71: "🌨️",
+          73: "🌨️",
+          75: "❄️",
+          77: "🌨️",
+          80: "🌦️",
+          81: "🌧️",
+          82: "🌧️",
+          85: "🌨️",
+          86: "🌨️",
+          95: "⛈️",
+          96: "⛈️",
+          99: "⛈️",
+        };
+        fetch(
+          "https://api.open-meteo.com/v1/forecast?latitude=55.8642&longitude=-4.2518&current=temperature_2m,weather_code",
+        )
+          .then((r) => r.json())
+          .then((d: any) => {
+            const c = d && d.current;
+            if (!c || typeof c.temperature_2m !== "number") return;
+            const temp = Math.round(c.temperature_2m);
+            const desc = wxCodes[c.weather_code] || "";
+            const icon = wxIcon[c.weather_code] || "";
+            wxEl.textContent = `Glasgow · ${icon ? icon + " " : ""}${temp}°C${desc ? " · " + desc : ""}`;
+          })
+          .catch(() => {});
+      }
 
       // Rotating dry one-liners — the accent token swaps (reduced-motion shows one).
       // Runs for every [data-quip] (hero one-liner + masthead beat).
@@ -540,6 +626,7 @@ const today = new Date().toLocaleDateString("en-CA");
         --faint: oklch(0.63 0.02 95);
         --accent: var(--a-cyan);
         --accent-ink: oklch(0.18 0.05 220);
+        --accent-soft: oklch(0.8 0.08 205);
 
         --grotesk: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
         --mono:
@@ -1862,6 +1949,10 @@ const today = new Date().toLocaleDateString("en-CA");
         max-width: 46ch;
         text-wrap: pretty;
       }
+      .who__wx {
+        margin: 0;
+        color: var(--ink);
+      }
       .who__links {
         display: flex;
         flex-wrap: wrap;
@@ -2134,27 +2225,36 @@ const today = new Date().toLocaleDateString("en-CA");
       .takes__list {
         display: grid;
         grid-template-columns: 1fr;
+        row-gap: clamp(0.1rem, 0.6vw, 0.4rem);
       }
       @media (min-width: 760px) {
         .takes__list {
           grid-template-columns: 1fr 1fr;
-          column-gap: clamp(2rem, 5vw, 4.5rem);
+          column-gap: clamp(2.4rem, 6vw, 5rem);
         }
       }
       .take {
+        position: relative;
         font-family: var(--grotesk);
-        font-weight: 600;
-        font-size: clamp(1.15rem, 2vw, 1.5rem);
+        font-weight: 500;
+        font-size: clamp(1.15rem, 1.9vw, 1.45rem);
         line-height: 1.32;
         letter-spacing: -0.01em;
-        color: var(--ink);
-        padding: clamp(0.85rem, 1.8vw, 1.15rem) 0;
-        border-top: 1px solid var(--line);
+        color: var(--muted);
+        padding: clamp(0.55rem, 1.4vw, 0.85rem) 0 clamp(0.55rem, 1.4vw, 0.85rem)
+          1.75rem;
         text-wrap: pretty;
       }
+      .take::before {
+        content: "—";
+        position: absolute;
+        left: 0;
+        color: var(--faint);
+        font-weight: 400;
+      }
       .take b {
-        color: var(--accent);
-        font-weight: 700;
+        font-weight: 500;
+        color: var(--accent-soft);
       }
 
       /* ---------------- motion ---------------- */
