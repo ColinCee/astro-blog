@@ -559,7 +559,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
           outs.forEach((o) => o.classList.add("is-in"));
           rest?.classList.add("is-in");
         };
-        const failsafe = window.setTimeout(finish, 6000);
+        const failsafe = window.setTimeout(finish, 9000);
         let step = 0;
         const run = () => {
           if (step >= cmds.length) {
@@ -577,7 +577,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
           const type = () => {
             cmd.textContent = full.slice(0, (i += 1));
             if (i < full.length) {
-              window.setTimeout(type, 38);
+              window.setTimeout(type, 60);
               return;
             }
             line?.classList.remove("is-typing");
