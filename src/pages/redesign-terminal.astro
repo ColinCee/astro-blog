@@ -61,20 +61,11 @@ const takes = [
     hi: "not need Kubernetes",
     after: ".",
   },
-  { before: "", hi: "Serverless", after: " until you can't." },
   {
     before: "The best code is no code; the next best is ",
     hi: "deleted",
     after: ".",
   },
-  {
-    before: "If it isn't in ",
-    hi: "version control",
-    after: ", it didn't happen.",
-  },
-  { before: "Rewrites feel productive. They rarely ", hi: "are", after: "." },
-  { before: "Most “AI strategy” is a prompt and a ", hi: "prayer", after: "." },
-  { before: "", hi: "Boring", after: " technology wins." },
 ];
 
 // "Worked at" marquee — chronological by join date (oldest → newest), with years.
@@ -148,8 +139,8 @@ const today = new Date().toLocaleDateString("en-CA");
         <span class="t-badge"><i class="dotpulse"></i>OPEN TO WORK</span>
       </nav>
 
-      <!-- Hero — poster (locked) -->
-      <section class="kin" aria-label="Colin Cheung">
+      <!-- Hero — name (kept smaller); quiet text links -->
+      <section class="kin" aria-label="Colin Cheung — Senior Software Engineer">
         <p class="kin__eyebrow">Senior Software Engineer</p>
         <h1 class="kin__name">COLIN CHEUNG</h1>
         <p class="kin__rot">
@@ -157,12 +148,10 @@ const today = new Date().toLocaleDateString("en-CA");
             >{quips[0].before}<b>{quips[0].num}</b>{quips[0].after}</span
           >
         </p>
-        <div class="t-cta">
-          <a class="t-btn t-btn--solid" href="/blog"
-            >READ THE BLOG <span>→</span></a
-          >
-          <a class="t-btn" href="#contact">GET IN TOUCH</a>
-        </div>
+        <p class="kin__links">
+          <a href="/blog">read the blog <span aria-hidden="true">↗</span></a>
+          <a href="#contact">get in touch <span aria-hidden="true">↗</span></a>
+        </p>
       </section>
 
       <section
@@ -738,48 +727,6 @@ const today = new Date().toLocaleDateString("en-CA");
         white-space: nowrap;
       }
 
-      /* ---------------- hero — CTA buttons ---------------- */
-      .t-cta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.7rem;
-      }
-      .t-btn {
-        font-family: var(--mono);
-        font-size: 0.76rem;
-        letter-spacing: 0.05em;
-        padding: 0.78rem 1.05rem;
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        color: var(--ink);
-        transition:
-          border-color 0.16s ease,
-          transform 0.16s ease,
-          color 0.16s ease;
-      }
-      .t-btn:hover {
-        border-color: var(--accent);
-        color: var(--accent);
-        transform: translateY(-2px);
-      }
-      .t-btn--solid {
-        background: var(--accent);
-        color: var(--accent-ink);
-        border-color: var(--accent);
-        font-weight: 700;
-      }
-      .t-btn--solid:hover {
-        color: var(--accent-ink);
-        filter: brightness(1.05);
-      }
-      .t-btn--solid span {
-        display: inline-block;
-        transition: transform 0.16s ease;
-      }
-      .t-btn--solid:hover span {
-        transform: translateX(3px);
-      }
-
       /* ---------------- page — bottom spacing ---------------- */
       .t {
         padding-bottom: clamp(5rem, 9vw, 6.5rem);
@@ -792,7 +739,7 @@ const today = new Date().toLocaleDateString("en-CA");
         display: grid;
         justify-items: center;
         text-align: center;
-        gap: clamp(1.4rem, 3.5vw, 2.4rem);
+        gap: clamp(1.1rem, 2.8vw, 1.9rem);
         padding: clamp(1rem, 4vw, 3rem) 0 clamp(2rem, 5vw, 3.2rem);
       }
       .kin__eyebrow {
@@ -806,7 +753,7 @@ const today = new Date().toLocaleDateString("en-CA");
       .kin__name {
         font-family: var(--grotesk);
         font-weight: 800;
-        font-size: clamp(3rem, 13vw, 9rem);
+        font-size: clamp(2.6rem, 11vw, 7.5rem);
         line-height: 0.86;
         letter-spacing: -0.04em;
         color: var(--ink);
@@ -814,15 +761,18 @@ const today = new Date().toLocaleDateString("en-CA");
         text-wrap: balance;
       }
       .kin__rot {
-        font-family: var(--grotesk);
-        font-weight: 600;
-        font-size: clamp(1.3rem, 3vw, 2.1rem);
-        line-height: 1.2;
-        letter-spacing: -0.02em;
+        font-family: var(--mono);
+        font-size: clamp(0.82rem, 1.4vw, 0.95rem);
+        letter-spacing: 0.01em;
+        line-height: 1.5;
         color: var(--muted);
         margin: 0;
-        max-width: 22ch;
-        min-height: 2.4em;
+        max-width: 44ch;
+        min-height: 1.5em;
+      }
+      .kin__rot::before {
+        content: "// ";
+        color: var(--faint);
       }
       .kin__rot [data-quip] {
         display: inline-block;
@@ -830,11 +780,38 @@ const today = new Date().toLocaleDateString("en-CA");
       }
       .kin__rot b {
         color: var(--accent);
-        font-weight: 800;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
       }
-
-      .kin .t-cta {
+      .kin__links {
+        display: flex;
+        flex-wrap: wrap;
         justify-content: center;
+        gap: 0.4rem 1.6rem;
+        font-family: var(--mono);
+        font-size: 0.82rem;
+        letter-spacing: 0.02em;
+        margin: 0;
+      }
+      .kin__links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--muted);
+        transition: color 0.16s ease;
+      }
+      .kin__links a span {
+        color: var(--faint);
+        transition:
+          transform 0.16s ease,
+          color 0.16s ease;
+      }
+      .kin__links a:hover {
+        color: var(--accent);
+      }
+      .kin__links a:hover span {
+        color: var(--accent);
+        transform: translate(2px, -2px);
       }
 
       /* ---------------- terminal window ---------------- */
