@@ -8,7 +8,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://example.com",
+  site: "https://colincheung.dev",
   integrations: [expressiveCode({
     // Try changing the theme(s) here:
     themes: ['github-dark'], // Example: Try this if you were using another
