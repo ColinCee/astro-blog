@@ -141,10 +141,9 @@ const today = new Date().toLocaleDateString("en-CA");
           <a href="/about">ABOUT</a>
           <a href="#contact">CONTACT</a>
         </div>
-        <span class="t-badge"><i class="dotpulse"></i>OPEN TO WORK</span>
       </nav>
 
-      <!-- Hero — name (kept smaller); quiet text links -->
+      <!-- Hero — name + social icons -->
       <section class="kin" aria-label="Colin Cheung — Senior Software Engineer">
         <p class="kin__eyebrow">Senior Software Engineer</p>
         <h1 class="kin__name">COLIN CHEUNG</h1>
@@ -165,13 +164,6 @@ const today = new Date().toLocaleDateString("en-CA");
             ><svg viewBox="0 0 24 24" aria-hidden="true"
               ><path
                 d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"
-              ></path></svg
-            ></a
-          >
-          <a class="kin__ico" href="mailto:you@example.com" aria-label="Email"
-            ><svg viewBox="0 0 24 24" aria-hidden="true"
-              ><path
-                d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"
               ></path></svg
             ></a
           >
@@ -383,12 +375,18 @@ const today = new Date().toLocaleDateString("en-CA");
         </ul>
       </section>
 
-      <footer class="t-foot" id="contact">
+      <!-- Contact — closing call to connect -->
+      <section class="reach" id="contact" aria-label="Get in touch">
+        <p class="reach__tag">// reach out</p>
+        <p class="reach__line">
+          Best way to reach me is <a href={linkedin}
+            >LinkedIn <span aria-hidden="true">↗</span></a
+          > — I usually reply.
+        </p>
+      </section>
+
+      <footer class="t-foot">
         <span>COLIN CHEUNG</span>
-        <span class="t-foot__social">
-          <a href={github}>GitHub</a>
-          <a href={linkedin}>LinkedIn</a>
-        </span>
         <span>© 2026 · BUILT IN GLASGOW</span>
       </footer>
     </main>
@@ -737,20 +735,6 @@ const today = new Date().toLocaleDateString("en-CA");
         color: var(--ink);
         border-color: var(--accent);
       }
-      .t-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.1rem;
-        font-family: var(--mono);
-        font-size: 0.66rem;
-        letter-spacing: 0.12em;
-        color: var(--accent);
-        border: 1px solid var(--line);
-        padding: 0.42rem 0.7rem 0.42rem 0.6rem;
-        border-radius: 999px;
-        white-space: nowrap;
-      }
-
       /* ---------------- page — bottom spacing ---------------- */
       .t {
         padding-bottom: clamp(5rem, 9vw, 6.5rem);
@@ -1280,6 +1264,44 @@ const today = new Date().toLocaleDateString("en-CA");
         font-weight: 400;
       }
 
+      /* ---------------- reach out ---------------- */
+      .reach {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: clamp(3rem, 7vw, 5rem) 0 clamp(1rem, 3vw, 2rem);
+      }
+      .reach__tag {
+        font-family: var(--mono);
+        font-size: 0.74rem;
+        letter-spacing: 0.14em;
+        color: var(--muted);
+        margin: 0 0 clamp(1rem, 2.5vw, 1.6rem);
+      }
+      .reach__line {
+        font-family: var(--grotesk);
+        font-weight: 600;
+        font-size: clamp(1.4rem, 3vw, 2.2rem);
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        margin: 0;
+        max-width: 24ch;
+        text-wrap: balance;
+      }
+      .reach__line a {
+        color: var(--accent);
+        border-bottom: 1px solid
+          color-mix(in oklch, var(--accent) 40%, transparent);
+        transition: border-color 0.16s ease;
+      }
+      .reach__line a span {
+        font-size: 0.7em;
+        margin-left: 0.1em;
+      }
+      .reach__line a:hover {
+        border-color: var(--accent);
+      }
+
       /* ---------------- footer ---------------- */
       .t-foot {
         display: flex;
@@ -1295,18 +1317,6 @@ const today = new Date().toLocaleDateString("en-CA");
         letter-spacing: 0.06em;
         color: var(--muted);
       }
-      .t-foot__social {
-        display: inline-flex;
-        gap: 1.1rem;
-      }
-      .t-foot__social a {
-        color: var(--muted);
-        transition: color 0.16s ease;
-      }
-      .t-foot__social a:hover {
-        color: var(--accent);
-      }
-
       /* ---------------- hot takes ---------------- */
       .takes {
         max-width: 1440px;
@@ -1369,32 +1379,10 @@ const today = new Date().toLocaleDateString("en-CA");
           transform: none;
         }
       }
-      @keyframes pulse {
-        0% {
-          box-shadow: 0 0 0 0
-            color-mix(in oklch, var(--accent) 60%, transparent);
-        }
-        70% {
-          box-shadow: 0 0 0 7px transparent;
-        }
-        100% {
-          box-shadow: 0 0 0 0 transparent;
-        }
-      }
       @keyframes slide {
         to {
           transform: translateX(-33.3333%);
         }
-      }
-      .dotpulse {
-        display: inline-block;
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: var(--accent);
-        margin-right: 0.45rem;
-        vertical-align: baseline;
-        animation: pulse 2s infinite;
       }
 
       /* ---------------- responsive ---------------- */
@@ -1406,9 +1394,6 @@ const today = new Date().toLocaleDateString("en-CA");
       }
       @media (max-width: 560px) {
         .t-nav__links {
-          display: none;
-        }
-        .t-badge {
           display: none;
         }
         /* reserve 2 lines so a wrapped subtitle doesn't shift the page */
