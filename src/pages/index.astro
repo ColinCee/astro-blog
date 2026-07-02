@@ -1,8 +1,8 @@
 ---
-// Evolved "Dial Tone" — dark, terminal-native homepage concept inspired by
-// cocall.ai, built from Colin's real 2026 CV. Self-contained, non-destructive
-// preview (own <head> + styles). noindex. Once a direction + accent is locked,
-// this system rolls out site-wide.
+import "../styles/terminal.css";
+
+// Terminal-native homepage for colincheung.dev — dark, cyan accent.
+// Shared design tokens + fonts live in src/styles/terminal.css (the design system).
 
 // Left pane — who Colin is, rendered as a real terminal session (.who__session).
 const name = "Colin Cheung";
@@ -147,15 +147,9 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       content="Senior Software Engineer in Glasgow. Tech lead at EDF Energy, leading AI adoption."
     />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
-    <main class="t" data-accent="cyan">
+    <main class="t">
       <nav class="t-nav">
         <a class="t-mark" href="/">colin<span>@</span>glasgow<b>:~$</b></a>
         <div class="t-nav__links">
@@ -600,28 +594,11 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
     </script>
 
     <style is:global>
-      :root {
-        color-scheme: dark;
-        --a-cyan: oklch(0.82 0.15 205);
-        --a-purple: oklch(0.67 0.21 300);
-        --a-pink: oklch(0.7 0.24 352);
-        --a-blue: oklch(0.7 0.17 250);
-        --a-green: oklch(0.82 0.2 150);
-        --a-orange: oklch(0.75 0.18 55);
-      }
       * {
         box-sizing: border-box;
       }
       html {
         -webkit-text-size-adjust: 100%;
-      }
-      @media (prefers-reduced-motion: no-preference) {
-        html {
-          scroll-behavior: smooth;
-        }
-      }
-      ::selection {
-        background: color-mix(in oklch, var(--a-cyan) 26%, transparent);
       }
       body {
         margin: 0;
@@ -659,26 +636,6 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       }
 
       .t {
-        /* warm near-black — dark, not pure black */
-        --bg: oklch(0.165 0.012 80);
-        --panel: oklch(0.205 0.014 80);
-        --pane: oklch(0.185 0.013 80);
-        --sur: oklch(0.31 0.045 216);
-        --line: oklch(0.31 0.018 80);
-        --ink: oklch(0.95 0.01 95);
-        --muted: oklch(0.72 0.02 95);
-        --faint: oklch(0.63 0.02 95);
-        --accent: var(--a-cyan);
-        --accent-ink: oklch(0.18 0.05 220);
-        --accent-soft: oklch(0.8 0.08 205);
-
-        --grotesk: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
-        --mono:
-          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-        --cjk:
-          "PingFang TC", "Hiragino Sans", "Noto Sans TC", "Noto Sans SC",
-          "Microsoft JhengHei", var(--grotesk);
-
         background:
           radial-gradient(
             48rem 36rem at 88% -8%,
@@ -692,31 +649,6 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         font-family: var(--grotesk);
         font-feature-settings: "ss01";
         -webkit-font-smoothing: antialiased;
-      }
-
-      .t[data-accent="cyan"] {
-        --accent: var(--a-cyan);
-        --accent-ink: oklch(0.18 0.05 220);
-      }
-      .t[data-accent="purple"] {
-        --accent: var(--a-purple);
-        --accent-ink: oklch(0.98 0.02 300);
-      }
-      .t[data-accent="pink"] {
-        --accent: var(--a-pink);
-        --accent-ink: oklch(0.2 0.06 352);
-      }
-      .t[data-accent="blue"] {
-        --accent: var(--a-blue);
-        --accent-ink: oklch(0.18 0.04 255);
-      }
-      .t[data-accent="green"] {
-        --accent: var(--a-green);
-        --accent-ink: oklch(0.2 0.06 150);
-      }
-      .t[data-accent="orange"] {
-        --accent: var(--a-orange);
-        --accent-ink: oklch(0.2 0.05 55);
       }
 
       .t :focus-visible {

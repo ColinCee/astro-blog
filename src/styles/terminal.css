@@ -1,0 +1,51 @@
+/*
+  Terminal design system — the single source of truth for colincheung.dev.
+
+  Dark-only, cyan accent. Import this file (globally via BaseHead, or per page)
+  and build UI with the var(--token) values below. That is the whole system:
+  colour, type, and a couple of global niceties. Nothing here is page-specific.
+
+  Fonts: Bricolage Grotesque (display/sans) + JetBrains Mono (mono).
+  TODO: self-host these to drop the Google Fonts request chain.
+*/
+
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap");
+
+:root {
+  color-scheme: dark;
+
+  /* Surfaces — warm near-black; dark, not pure black */
+  --bg: oklch(0.165 0.012 80);
+  --panel: oklch(0.205 0.014 80);
+  --pane: oklch(0.185 0.013 80);
+  --line: oklch(0.31 0.018 80);
+
+  /* Text */
+  --ink: oklch(0.95 0.01 95);
+  --muted: oklch(0.72 0.02 95);
+  --faint: oklch(0.63 0.02 95);
+
+  /* Accent — cyan */
+  --accent: oklch(0.82 0.15 205);
+  --accent-ink: oklch(0.18 0.05 220);
+  --accent-soft: oklch(0.8 0.08 205);
+
+  /* Type */
+  --grotesk: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --cjk:
+    "PingFang TC", "Hiragino Sans", "Noto Sans TC", "Noto Sans SC",
+    "Microsoft JhengHei", var(--grotesk);
+}
+
+/* Branded text selection */
+::selection {
+  background: color-mix(in oklch, var(--accent) 26%, transparent);
+}
+
+/* Smooth in-page scrolling (anchors), unless the user prefers less motion */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
