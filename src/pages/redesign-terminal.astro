@@ -123,6 +123,7 @@ const today = new Date().toLocaleDateString("en-CA");
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
     <title>Terminal redesign — Colin Cheung</title>
     <meta name="robots" content="noindex" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -577,6 +578,7 @@ const today = new Date().toLocaleDateString("en-CA");
 
     <style is:global>
       :root {
+        color-scheme: dark;
         --a-cyan: oklch(0.82 0.15 205);
         --a-purple: oklch(0.67 0.21 300);
         --a-pink: oklch(0.7 0.24 352);
@@ -589,6 +591,14 @@ const today = new Date().toLocaleDateString("en-CA");
       }
       html {
         -webkit-text-size-adjust: 100%;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        html {
+          scroll-behavior: smooth;
+        }
+      }
+      ::selection {
+        background: color-mix(in oklch, var(--a-cyan) 26%, transparent);
       }
       body {
         margin: 0;
@@ -1269,6 +1279,7 @@ const today = new Date().toLocaleDateString("en-CA");
         max-width: 1440px;
         margin: 0 auto;
         padding: clamp(3rem, 7vw, 5rem) 0 clamp(1rem, 3vw, 2rem);
+        scroll-margin-top: clamp(1.5rem, 5vw, 3rem);
       }
       .reach__tag {
         font-family: var(--mono);
