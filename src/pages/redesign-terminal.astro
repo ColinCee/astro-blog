@@ -116,6 +116,14 @@ const skillSeed = [
 const nowYear = new Date().getFullYear();
 const procs = skillSeed.map((s) => ({ ...s, years: nowYear - s.since }));
 const today = new Date().toLocaleDateString("en-CA");
+
+// Classic shell greeting for the whoami session (rendered at build/SSR time).
+const _lg = new Date();
+const _lgDays = "Sun Mon Tue Wed Thu Fri Sat".split(" ");
+const _lgMonths = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
+const _lgH = String(_lg.getHours()).padStart(2, "0");
+const _lgM = String(_lg.getMinutes()).padStart(2, "0");
+const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.getDate()} ${_lgH}:${_lgM}`;
 ---
 
 <!doctype html>
@@ -191,6 +199,7 @@ const today = new Date().toLocaleDateString("en-CA");
                 class="who__session"
                 aria-label="Colin, as a terminal session"
               >
+                <p class="who__login">Last login: {lastLogin} on ttys001</p>
                 <p class="term-cmd">
                   <span class="who__prompt">$</span>
                   <span class="who__typed js-cmd">whoami</span><span
@@ -951,6 +960,10 @@ const today = new Date().toLocaleDateString("en-CA");
         font-family: var(--mono);
         font-size: 0.8rem;
         line-height: 1.55;
+      }
+      .who__login {
+        margin: 0 0 0.7rem;
+        color: var(--faint);
       }
       .term-cmd {
         margin: 0;
