@@ -38,11 +38,13 @@ const projects = [
 // Rotating dry one-liners — the accent token (num) swaps; some true, some cheeky.
 const quips = [
   { before: "", num: "1", after: " day since the last prod incident" },
-  { before: "still googling git after ", num: "8", after: " years" },
-  { before: "homelab uptime beating my ", num: "houseplants", after: "" },
+  { before: "still waiting to reverse a ", num: "linked list", after: " at work" },
+  { before: "homelab: ", num: "1", after: " powercut from downtime" },
   { before: "", num: "47", after: " browser tabs, allegedly" },
-  { before: "turning coffee into ", num: "distributed systems", after: "" },
-  { before: "making systems ", num: "boring", after: " on purpose" },
+  { before: "converting coffee into ", num: "code", after: "" },
+  { before: "waiting for ", num: "Claude", after: " to do my job" },
+  { before: "still on ", num: "16GB", after: " of RAM in 2026" },
+  { before: "", num: "10 billion", after: " tokens burned today" },
 ];
 
 // Hot takes — the closing section. Strong opinions, loosely held; the spicy bit is
@@ -769,10 +771,6 @@ const today = new Date().toLocaleDateString("en-CA");
         margin: 0;
         max-width: 44ch;
         min-height: 1.5em;
-      }
-      .kin__rot::before {
-        content: "// ";
-        color: var(--faint);
       }
       .kin__rot [data-quip] {
         display: inline-block;
