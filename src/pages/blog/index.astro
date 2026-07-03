@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import LedField from "../../components/LedField.astro";
 import { getCollection } from "astro:content";
 
 const posts = (await getCollection("blog")).sort(
@@ -57,6 +58,7 @@ const entries = posts.map((post) => {
   title="Blog — Colin Cheung"
   description="Short engineering notes from Colin Cheung — things that got faster, smaller, or cheaper."
 >
+  <LedField />
   <section class="log">
     <header class="log__head">
       <h1 class="log__sr">Blog</h1>
