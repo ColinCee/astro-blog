@@ -10,16 +10,25 @@ const posts = (await getCollection("blog")).sort(
 // Short-form on purpose — the full title and the story live on the post page.
 const cards: Record<
   string,
-  { short: string; from?: string; to?: string; value?: string; label: string }
+  {
+    short: string;
+    hook: string;
+    from?: string;
+    to?: string;
+    value?: string;
+    label: string;
+  }
 > = {
   "jsonl-to-parquet-compression": {
     short: "A story about Parquet",
+    hook: "What columnar storage is doing under the hood.",
     from: "4.5 GB",
     to: "221 MB",
     label: "95% smaller",
   },
   "saving-time-in-ts-jest": {
     short: "Slash your ts-jest test times",
+    hook: "One config flag skips the type-check tax.",
     value: "−10 min",
     label: "off CI",
   },
@@ -30,6 +39,7 @@ const entries = posts.map((post) => {
   return {
     href: `/blog/${post.id}/`,
     title: c?.short ?? post.data.title,
+    hook: c?.hook ?? post.data.description,
     year: post.data.pubDate.getFullYear(),
     mon: post.data.pubDate.toLocaleDateString("en-GB", { month: "short" }),
     metric:
@@ -61,6 +71,7 @@ const entries = posts.map((post) => {
               </div>
               <div class="log__body">
                 <h2 class="log__title">{e.title}</h2>
+                {e.hook && <p class="log__hook">{e.hook}</p>}
                 {e.metric && (
                   <p class="log__sig" aria-hidden="true">
                     {e.metric}
@@ -191,8 +202,16 @@ const entries = posts.map((post) => {
   .log__link:focus-visible .log__title {
     color: var(--ink);
   }
+  .log__hook {
+    margin: 0.35rem 0 0;
+    max-width: 48ch;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
   .log__sig {
-    margin: 0.4rem 0 0;
+    margin: 0.55rem 0 0;
     font-family: var(--grotesk);
     font-weight: 600;
     font-size: clamp(1.05rem, 1.7vw, 1.2rem);
