@@ -60,7 +60,10 @@ const ogImage = image ? new URL(image, Astro.site) : undefined;
   }
 
   .shell {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
+    min-height: 100svh;
     padding: 1.1rem clamp(1rem, 4vw, 3rem) 3rem;
     background:
       radial-gradient(
@@ -73,6 +76,10 @@ const ogImage = image ? new URL(image, Astro.site) : undefined;
     font-family: var(--grotesk);
     font-feature-settings: "ss01";
     -webkit-font-smoothing: antialiased;
+  }
+  /* Push the footer to the bottom when content is short. */
+  .shell__main {
+    flex: 1 0 auto;
   }
 
   :where(.shell) :focus-visible {

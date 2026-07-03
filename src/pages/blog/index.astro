@@ -5,6 +5,7 @@ import { getCollection } from "astro:content";
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+const [latest, ...rest] = posts;
 
 const fmtDate = (d: Date) =>
   d.toLocaleDateString("en-GB", {
@@ -20,54 +21,160 @@ const readMin = (body?: string) =>
   title="Writing — Colin Cheung"
   description="Engineering notes, discoveries, and opinions from Colin Cheung — senior software engineer in Glasgow."
 >
-  <div class="idx">
-    <header class="idx__head">
-      <h1 class="idx__title">Writing</h1>
-      <p class="idx__sub">
-        {posts.length} posts, newest first — mostly things I wish I'd known
-        earlier.
-      </p>
-    </header>
+  <div class="blog" data-v="list">
+    {/* ── Variation A: reading-first list ───────────────────────────── */}
+    <section class="v v--list" aria-label="Writing">
+      <header class="lh">
+        <h1 class="lh__title">Writing</h1>
+        <p class="lh__sub">{posts.length} posts · newest first</p>
+      </header>
+      <ol class="llist">
+        {
+          posts.map((post) => (
+            <li class="lrow">
+              <a class="lrow__link" href={`/blog/${post.id}/`}>
+                <p class="lrow__meta">
+                  <time datetime={post.data.pubDate.toISOString()}>
+                    {fmtDate(post.data.pubDate)}
+                  </time>
+                  <span aria-hidden="true">·</span>
+                  <span>{readMin(post.body)} min read</span>
+                </p>
+                <h2 class="lrow__title">
+                  {post.data.title}
+                  <span class="lrow__arrow" aria-hidden="true">
+                    →
+                  </span>
+                </h2>
+                {post.data.description && (
+                  <p class="lrow__desc">{post.data.description}</p>
+                )}
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
 
-    <ol class="idx__list">
-      {
-        posts.map((post) => (
-          <li class="entry">
-            <a class="entry__link" href={`/blog/${post.id}/`}>
-              <p class="entry__meta">
-                <time datetime={post.data.pubDate.toISOString()}>
-                  {fmtDate(post.data.pubDate)}
-                </time>
-                <span aria-hidden="true">·</span>
-                <span>{readMin(post.body)} min read</span>
-              </p>
-              <h2 class="entry__title">
+    {/* ── Variation B: terminal `ls` directory ──────────────────────── */}
+    <section class="v v--terminal" aria-label="Writing">
+      <header class="th">
+        <p class="th__cmd">
+          <span class="th__user">colin@glasgow</span>
+          <span class="th__path">~/writing</span>
+          <span class="th__dollar">$</span> ls -lt
+        </p>
+        <p class="th__total">{posts.length} entries · newest first</p>
+      </header>
+      <div class="tlist">
+        <div class="trow trow--head" aria-hidden="true">
+          <span>modified</span>
+          <span>read</span>
+          <span>title</span>
+        </div>
+        {
+          posts.map((post) => (
+            <a class="trow" href={`/blog/${post.id}/`}>
+              <span class="trow__date">{fmtDate(post.data.pubDate)}</span>
+              <span class="trow__read">{readMin(post.body)}m</span>
+              <span class="trow__name">
                 {post.data.title}
-                <span class="entry__arrow" aria-hidden="true">
-                  →
-                </span>
-              </h2>
-              {post.data.description && (
-                <p class="entry__desc">{post.data.description}</p>
-              )}
+                <span class="trow__desc">{post.data.description}</span>
+              </span>
             </a>
-          </li>
-        ))
+          ))
+        }
+      </div>
+    </section>
+
+    {/* ── Variation C: featured latest + compact rest ───────────────── */}
+    <section class="v v--feature" aria-label="Writing">
+      <header class="fh">
+        <h1 class="fh__title">Writing</h1>
+        <p class="fh__sub">{posts.length} posts</p>
+      </header>
+      {
+        latest && (
+          <a class="feat" href={`/blog/${latest.id}/`}>
+            <p class="feat__meta">
+              <span class="feat__tag">Latest</span>
+              <time datetime={latest.data.pubDate.toISOString()}>
+                {fmtDate(latest.data.pubDate)}
+              </time>
+              <span aria-hidden="true">·</span>
+              <span>{readMin(latest.body)} min read</span>
+            </p>
+            <h2 class="feat__title">{latest.data.title}</h2>
+            {latest.data.description && (
+              <p class="feat__desc">{latest.data.description}</p>
+            )}
+            <span class="feat__go">
+              read the post
+              <span aria-hidden="true">→</span>
+            </span>
+          </a>
+        )
       }
-    </ol>
+      {
+        rest.length > 0 && (
+          <ol class="frest">
+            {rest.map((post) => (
+              <li class="frow">
+                <a class="frow__link" href={`/blog/${post.id}/`}>
+                  <span class="frow__title">{post.data.title}</span>
+                  <span class="frow__meta">{fmtDate(post.data.pubDate)}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        )
+      }
+    </section>
+  </div>
+
+  <div class="vswitch" aria-label="Layout variation">
+    <span class="vswitch__tag">layout</span>
+    <button type="button" data-set="list" class="is-on">list</button>
+    <button type="button" data-set="terminal">terminal</button>
+    <button type="button" data-set="feature">feature</button>
   </div>
 </Base>
 
 <style>
-  .idx {
+  .blog {
     max-width: 52rem;
     margin: 0 auto;
   }
+  .v {
+    display: none;
+  }
+  .blog[data-v="list"] .v--list,
+  .blog[data-v="terminal"] .v--terminal,
+  .blog[data-v="feature"] .v--feature {
+    display: block;
+  }
 
-  .idx__head {
+  /* ── shared entrance ─────────────────────────────────────────────── */
+  @media (prefers-reduced-motion: no-preference) {
+    .v > * {
+      animation: rise 0.5s ease-out both;
+    }
+    .v > :nth-child(2) {
+      animation-delay: 0.08s;
+    }
+    .v > :nth-child(3) {
+      animation-delay: 0.15s;
+    }
+    .v > :nth-child(4) {
+      animation-delay: 0.22s;
+    }
+  }
+
+  /* ═══ Variation A — list ═════════════════════════════════════════ */
+  .lh {
     margin-bottom: clamp(2.25rem, 5vw, 3.5rem);
   }
-  .idx__title {
+  .lh__title {
     margin: 0;
     font-family: var(--grotesk);
     font-weight: 800;
@@ -77,33 +184,31 @@ const readMin = (body?: string) =>
     color: var(--ink);
     text-wrap: balance;
   }
-  .idx__sub {
-    margin: 1rem 0 0;
-    max-width: 48ch;
+  .lh__sub {
+    margin: 0.9rem 0 0;
     font-family: var(--mono);
-    font-size: 0.85rem;
-    line-height: 1.65;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
     color: var(--muted);
   }
-
-  .idx__list {
+  .llist {
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  .entry {
+  .lrow {
     border-top: 1px solid var(--line);
   }
-  .entry:last-child {
+  .lrow:last-child {
     border-bottom: 1px solid var(--line);
   }
-  .entry__link {
+  .lrow__link {
     display: grid;
     gap: 0.55rem;
     padding: clamp(1.5rem, 3.5vw, 2.4rem) 0;
     transition: transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
-  .entry__meta {
+  .lrow__meta {
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -113,7 +218,7 @@ const readMin = (body?: string) =>
     letter-spacing: 0.04em;
     color: var(--faint);
   }
-  .entry__title {
+  .lrow__title {
     margin: 0;
     font-family: var(--grotesk);
     font-weight: 700;
@@ -124,7 +229,7 @@ const readMin = (body?: string) =>
     text-wrap: balance;
     transition: color 0.16s ease;
   }
-  .entry__arrow {
+  .lrow__arrow {
     display: inline-block;
     margin-left: 0.5ch;
     color: var(--faint);
@@ -132,7 +237,7 @@ const readMin = (body?: string) =>
       transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1),
       color 0.16s ease;
   }
-  .entry__desc {
+  .lrow__desc {
     margin: 0;
     max-width: 62ch;
     font-size: clamp(1rem, 1.4vw, 1.1rem);
@@ -140,41 +245,302 @@ const readMin = (body?: string) =>
     color: var(--muted);
     text-wrap: pretty;
   }
-
-  /* Hover: the row leans in; title + arrow take the accent. */
-  .entry__link:hover {
+  .lrow__link:hover {
     transform: translateX(6px);
   }
-  .entry__link:hover .entry__title {
+  .lrow__link:hover .lrow__title,
+  .lrow__link:hover .lrow__arrow {
     color: var(--accent);
   }
-  .entry__link:hover .entry__arrow {
+  .lrow__link:hover .lrow__arrow {
     transform: translateX(5px);
+  }
+
+  /* ═══ Variation B — terminal ls ══════════════════════════════════ */
+  .th {
+    margin-bottom: clamp(1.5rem, 3.5vw, 2.4rem);
+  }
+  .th__cmd {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: clamp(0.85rem, 1.6vw, 1rem);
+    color: var(--ink);
+    word-break: break-word;
+  }
+  .th__user {
+    color: var(--accent);
+  }
+  .th__path {
+    color: var(--accent-soft);
+    margin-left: 0.6ch;
+  }
+  .th__dollar {
+    color: var(--faint);
+    margin: 0 0.4ch 0 0.6ch;
+  }
+  .th__total {
+    margin: 0.7rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--faint);
+  }
+  .tlist {
+    font-family: var(--mono);
+  }
+  .trow {
+    display: grid;
+    grid-template-columns: 7.5rem 2.5rem 1fr;
+    gap: 1.2rem;
+    align-items: baseline;
+    padding: 0.85rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .trow--head {
+    border-top: 0;
+    padding-bottom: 0.5rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .trow:not(.trow--head) {
+    transition: background 0.16s ease;
+  }
+  .trow:not(.trow--head):hover {
+    background: color-mix(in oklch, var(--panel) 55%, transparent);
+  }
+  .trow__date {
+    font-size: 0.8rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .trow__read {
+    font-size: 0.8rem;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .trow__name {
+    display: grid;
+    gap: 0.3rem;
+    min-width: 0;
+    font-family: var(--grotesk);
+    font-weight: 600;
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    transition: color 0.16s ease;
+  }
+  .trow:hover .trow__name {
+    color: var(--accent);
+  }
+  .trow__desc {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0;
+    color: var(--muted);
+    max-width: 60ch;
+  }
+  .trow:hover .trow__desc {
+    color: var(--muted);
+  }
+
+  /* ═══ Variation C — feature ══════════════════════════════════════ */
+  .fh {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+  }
+  .fh__title {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 800;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .fh__sub {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+  .feat {
+    display: block;
+    padding: clamp(1.6rem, 3.5vw, 2.4rem) 0 clamp(2rem, 4vw, 2.8rem);
+    border-top: 2px solid var(--accent);
+  }
+  .feat__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 1rem;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.04em;
+    color: var(--faint);
+  }
+  .feat__tag {
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .feat__title {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 800;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-wrap: balance;
+    transition: color 0.16s ease;
+  }
+  .feat:hover .feat__title {
+    color: var(--accent);
+  }
+  .feat__desc {
+    margin: 1rem 0 0;
+    max-width: 60ch;
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .feat__go {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+  }
+  .feat__go span {
+    transition: transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .feat:hover .feat__go span {
+    transform: translateX(5px);
+  }
+  .frest {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .frow {
+    border-top: 1px solid var(--line);
+  }
+  .frow:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .frow__link {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.3rem 1rem;
+    padding: 1.1rem 0;
+    transition: padding-left 0.2s ease;
+  }
+  .frow__title {
+    font-family: var(--grotesk);
+    font-weight: 600;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    transition: color 0.16s ease;
+  }
+  .frow__meta {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+  .frow__link:hover .frow__title {
     color: var(--accent);
   }
 
-  /* First-load choreography — enhances an already-visible default. */
-  @media (prefers-reduced-motion: no-preference) {
-    .idx__head {
-      animation: rise 0.5s ease-out both;
+  /* ═══ floating variation switcher (preview only) ═════════════════ */
+  .vswitch {
+    position: fixed;
+    right: clamp(1rem, 3vw, 1.8rem);
+    bottom: clamp(1rem, 3vw, 1.8rem);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.34rem 0.4rem 0.34rem 0.75rem;
+    background: color-mix(in oklch, var(--panel) 90%, transparent);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 40px -22px rgb(0 0 0 / 0.75);
+  }
+  .vswitch__tag {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding-right: 0.35rem;
+  }
+  .vswitch button {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.4rem 0.7rem;
+    cursor: pointer;
+    transition:
+      color 0.16s ease,
+      background 0.16s ease;
+  }
+  .vswitch button:hover {
+    color: var(--ink);
+  }
+  .vswitch button.is-on {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  @media (max-width: 560px) {
+    .trow {
+      grid-template-columns: 5.5rem 1fr;
+      gap: 0.8rem;
     }
-    .entry {
-      animation: rise 0.5s ease-out both;
+    .trow__read {
+      display: none;
     }
-    .entry:nth-child(1) {
-      animation-delay: 0.08s;
+    .vswitch {
+      right: 50%;
+      transform: translateX(50%);
     }
-    .entry:nth-child(2) {
-      animation-delay: 0.15s;
-    }
-    .entry:nth-child(3) {
-      animation-delay: 0.22s;
-    }
-    .entry:nth-child(4) {
-      animation-delay: 0.29s;
-    }
-    .entry:nth-child(5) {
-      animation-delay: 0.36s;
+    .vswitch__tag {
+      display: none;
     }
   }
 </style>
+
+<script>
+  const blog = document.querySelector<HTMLElement>(".blog");
+  const btns = Array.from(
+    document.querySelectorAll<HTMLButtonElement>(".vswitch button"),
+  );
+  if (blog) {
+    btns.forEach((b) =>
+      b.addEventListener("click", () => {
+        blog.dataset.v = b.dataset.set || "list";
+        btns.forEach((x) => x.classList.toggle("is-on", x === b));
+      }),
+    );
+  }
+</script>
