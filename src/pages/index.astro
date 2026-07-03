@@ -38,13 +38,21 @@ const projects = [
 // Rotating dry one-liners — the accent token (num) swaps; some true, some cheeky.
 const quips = [
   { before: "", num: "1", after: " day since the last prod incident" },
-  { before: "still waiting to reverse a ", num: "linked list", after: " at work" },
+  {
+    before: "still waiting to reverse a ",
+    num: "linked list",
+    after: " at work",
+  },
   { before: "converting coffee into ", num: "code", after: "" },
-  { before: "waiting for ", num: "Claude", after: " to do my job" },
+  { before: "", num: "claude", after: " implement this, make no mistakes." },
   { before: "homelab: ", num: "1", after: " powercut from downtime" },
   { before: "another meeting that could've been an ", num: "email", after: "" },
   { before: "still on ", num: "16GB", after: " of RAM in 2026" },
-  { before: "never seen a ", num: "linear", after: " burndown chart in my life" },
+  {
+    before: "never seen a ",
+    num: "linear",
+    after: " burndown chart in my life",
+  },
   { before: "", num: "10 billion", after: " tokens burned today" },
   { before: "git blame says it was ", num: "me", after: "" },
   { before: "testing in ", num: "production", after: "…" },
@@ -114,7 +122,10 @@ const skillSeed = [
   { name: "ai-development", since: 2024 },
 ];
 const nowYear = new Date().getFullYear();
-const procs = skillSeed.map((s) => ({ ...s, years: nowYear - s.since }));
+// top sorts by usage; here TIME+ (years of experience) runs highest-first.
+const procs = skillSeed
+  .map((s) => ({ ...s, years: nowYear - s.since }))
+  .sort((a, b) => b.years - a.years);
 const today = new Date().toLocaleDateString("en-CA");
 
 // Classic shell greeting for the whoami session (rendered at build/SSR time).
@@ -141,7 +152,10 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
     <link rel="canonical" href="https://colincheung.dev/" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://colincheung.dev/" />
-    <meta property="og:title" content="Colin Cheung — Senior Software Engineer" />
+    <meta
+      property="og:title"
+      content="Colin Cheung — Senior Software Engineer"
+    />
     <meta
       property="og:description"
       content="Senior Software Engineer in Glasgow. Tech lead at EDF Energy, leading AI adoption."
@@ -387,7 +401,11 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         <ul class="takes__list">
           {
             takes.map((t) => (
-              <li class="take">{t.before}<b>{t.hi}</b>{t.after}</li>
+              <li class="take">
+                {t.before}
+                <b>{t.hi}</b>
+                {t.after}
+              </li>
             ))
           }
         </ul>
@@ -509,24 +527,26 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
 
       // Rotating dry one-liners — the accent token swaps (reduced-motion shows one).
       // Runs for every [data-quip] (hero one-liner + masthead beat).
-      document.querySelectorAll<HTMLElement>("[data-quip]").forEach((quipEl) => {
-        if (reduce) return;
-        let quipList: { before: string; num: string; after: string }[] = [];
-        try {
-          quipList = JSON.parse(quipEl.dataset.quips || "[]");
-        } catch {}
-        if (quipList.length < 2) return;
-        let qi = 0;
-        setInterval(() => {
-          qi = (qi + 1) % quipList.length;
-          quipEl.style.opacity = "0";
-          window.setTimeout(() => {
-            const q = quipList[qi];
-            quipEl.innerHTML = `${q.before}<b>${q.num}</b>${q.after}`;
-            quipEl.style.opacity = "1";
-          }, 380);
-        }, 3600);
-      });
+      document
+        .querySelectorAll<HTMLElement>("[data-quip]")
+        .forEach((quipEl) => {
+          if (reduce) return;
+          let quipList: { before: string; num: string; after: string }[] = [];
+          try {
+            quipList = JSON.parse(quipEl.dataset.quips || "[]");
+          } catch {}
+          if (quipList.length < 2) return;
+          let qi = 0;
+          setInterval(() => {
+            qi = (qi + 1) % quipList.length;
+            quipEl.style.opacity = "0";
+            window.setTimeout(() => {
+              const q = quipList[qi];
+              quipEl.innerHTML = `${q.before}<b>${q.num}</b>${q.after}`;
+              quipEl.style.opacity = "1";
+            }, 380);
+          }, 3600);
+        });
 
       // Boot the whoami session: reveal each prompt, type its command, then reveal the
       // output — one block at a time, like a real shell. All content is in the DOM (SSR);
