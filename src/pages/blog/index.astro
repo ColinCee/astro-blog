@@ -34,6 +34,9 @@ const cards: Record<
   },
 };
 
+const readMin = (body?: string) =>
+  Math.max(1, Math.round((body?.trim().split(/\s+/).length || 0) / 200));
+
 const entries = posts.map((post) => {
   const c = cards[post.id];
   return {
@@ -42,6 +45,7 @@ const entries = posts.map((post) => {
     hook: c?.hook ?? post.data.description,
     year: post.data.pubDate.getFullYear(),
     mon: post.data.pubDate.toLocaleDateString("en-GB", { month: "short" }),
+    read: readMin(post.body),
     metric:
       c?.from && c?.to ? `${c.from} → ${c.to}` : (c?.to ?? c?.value ?? null),
     label: c?.label ?? null,
@@ -56,7 +60,11 @@ const entries = posts.map((post) => {
   <section class="log">
     <header class="log__head">
       <h1 class="log__sr">Blog</h1>
-      <p class="log__sub">Faster, smaller, cheaper.</p>
+      <p class="log__kicker">// writing</p>
+      <p class="log__lede">
+        Short notes on the things I've made faster, smaller, or cheaper — with
+        the numbers to back them up.
+      </p>
     </header>
 
     <ol class="log__list">
@@ -68,6 +76,7 @@ const entries = posts.map((post) => {
               <div class="log__date">
                 <span class="log__year">{e.year}</span>
                 <span class="log__mon">{e.mon}</span>
+                <span class="log__read">{e.read} min</span>
               </div>
               <div class="log__body">
                 <h2 class="log__title">{e.title}</h2>
@@ -84,6 +93,11 @@ const entries = posts.map((post) => {
         ))
       }
     </ol>
+
+    <p class="log__end">
+      <span class="log__end-note">That's everything so far — more soon.</span>
+      <a class="log__rss" href="/rss.xml">RSS →</a>
+    </p>
   </section>
 </Base>
 
@@ -107,12 +121,23 @@ const entries = posts.map((post) => {
     white-space: nowrap;
     border: 0;
   }
-  .log__sub {
-    margin: 0;
+  .log__kicker {
+    margin: 0 0 1rem;
     font-family: var(--mono);
-    font-size: 0.86rem;
-    letter-spacing: 0.02em;
-    color: var(--muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--accent-soft);
+  }
+  .log__lede {
+    margin: 0;
+    max-width: 40ch;
+    font-family: var(--grotesk);
+    font-weight: 500;
+    font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    text-wrap: balance;
   }
 
   .log__list {
@@ -182,6 +207,12 @@ const entries = posts.map((post) => {
     text-transform: uppercase;
     color: var(--faint);
   }
+  .log__read {
+    margin-top: 0.35rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--faint);
+  }
 
   .log__body {
     min-width: 0;
@@ -229,6 +260,29 @@ const entries = posts.map((post) => {
     color: var(--faint);
   }
 
+  .log__end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin: clamp(2rem, 5vw, 3.25rem) 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+  }
+  .log__rss {
+    color: var(--accent-soft);
+    transition: color 0.16s ease;
+  }
+  .log__rss:hover,
+  .log__rss:focus-visible {
+    color: var(--accent);
+  }
+
   @media (max-width: 640px) {
     .log__list::before {
       left: 4px;
@@ -247,6 +301,9 @@ const entries = posts.map((post) => {
       gap: 0.55rem;
       text-align: left;
     }
+    .log__read {
+      margin-top: 0;
+    }
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -261,6 +318,9 @@ const entries = posts.map((post) => {
     }
     .log__item:nth-child(2) {
       animation-delay: 0.15s;
+    }
+    .log__end {
+      animation: rise 0.5s ease-out 0.22s both;
     }
   }
 </style>
