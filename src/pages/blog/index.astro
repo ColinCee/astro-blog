@@ -96,7 +96,6 @@ const entries = posts.map((post) => {
 
     <p class="log__end">
       <span class="log__end-note">That's everything so far — more soon.</span>
-      <a class="log__rss" href="/rss.xml">RSS →</a>
     </p>
   </section>
 </Base>
@@ -273,14 +272,6 @@ const entries = posts.map((post) => {
     font-size: 0.76rem;
     letter-spacing: 0.02em;
     color: var(--faint);
-  }
-  .log__rss {
-    color: var(--accent-soft);
-    transition: color 0.16s ease;
-  }
-  .log__rss:hover,
-  .log__rss:focus-visible {
-    color: var(--accent);
   }
 
   @media (max-width: 640px) {
