@@ -5,204 +5,659 @@ import { getCollection } from "astro:content";
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
 const readMin = (body?: string) =>
   Math.max(1, Math.round((body?.trim().split(/\s+/).length || 0) / 200));
-const dayMonth = (d: Date) =>
+
+const fmtDay = (d: Date) =>
   d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
+const fmtLong = (d: Date) =>
+  d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+// The "signal" each post is about: the real before→after it documents.
+// (Direction A only — would graduate to a frontmatter field if we ship it.)
+const signals: Record<
+  string,
+  { from?: string; to?: string; value?: string; label: string }
+> = {
+  "jsonl-to-parquet-compression": {
+    from: "4.5 GB",
+    to: "221 MB",
+    label: "95% smaller",
+  },
+  "saving-time-in-ts-jest": {
+    value: "−10 min",
+    label: "off CI",
+  },
+};
+
+const entries = posts.map((post) => ({
+  href: `/blog/${post.id}/`,
+  title: post.data.title,
+  desc: post.data.description,
+  year: post.data.pubDate.getFullYear(),
+  day: fmtDay(post.data.pubDate),
+  long: fmtLong(post.data.pubDate),
+  read: readMin(post.body),
+  signal: signals[post.id],
+}));
 ---
 
 <Base
   title="Blog — Colin Cheung"
   description="Engineering notes, discoveries, and opinions from Colin Cheung — senior software engineer in Glasgow."
 >
-  <div class="blog">
-    <header class="masthead">
-      <h1 class="masthead__title">Blog</h1>
-      <p class="masthead__note">
-        {posts.length} posts — notes on shipping software, mostly.
-      </p>
-    </header>
+  <div class="lab">
+    <div class="lab__bar">
+      <span class="lab__tag">preview — pick one</span>
+      <div class="lab__tabs" role="tablist" aria-label="Layout variation">
+        <button type="button" data-go="signal" aria-pressed="true">signal</button>
+        <button type="button" data-go="notes" aria-pressed="false">
+          field notes
+        </button>
+        <button type="button" data-go="editorial" aria-pressed="false">
+          editorial
+        </button>
+      </div>
+    </div>
 
-    <ol class="entries">
-      {
-        posts.map((post) => (
-          <li class="post">
-            <a class="post__link" href={`/blog/${post.id}/`}>
-              <div class="post__aside">
-                <span class="post__year">{post.data.pubDate.getFullYear()}</span>
-                <span class="post__day">{dayMonth(post.data.pubDate)}</span>
-                <span class="post__read">{readMin(post.body)} min</span>
-              </div>
-              <div class="post__main">
-                <h2 class="post__title">{post.data.title}</h2>
-                {post.data.description && (
-                  <p class="post__desc">{post.data.description}</p>
-                )}
-                <span class="post__go">
-                  read the post
-                  <span class="post__arrow" aria-hidden="true">
-                    →
+    {/* ── A · Signal — lead with the number the piece is about ───────── */}
+    <section class="v v--sig" data-variant="signal">
+      <header class="sig__head">
+        <h1 class="sig__title">Things I made faster, smaller, or cheaper.</h1>
+        <p class="sig__sub">
+          Selected writing — {entries.length} posts, each one a number that
+          moved.
+        </p>
+      </header>
+
+      <ol class="sig__list">
+        {
+          entries.map((e) => (
+            <li class="sig__item">
+              <a class="sig__link" href={e.href}>
+                <div class="sig__metric" aria-hidden="true">
+                  {e.signal?.from && e.signal?.to ? (
+                    <>
+                      <span class="sig__from">{e.signal.from}</span>
+                      <span class="sig__mark" />
+                      <span class="sig__to">{e.signal.to}</span>
+                    </>
+                  ) : (
+                    <span class="sig__to sig__to--solo">
+                      {e.signal?.value ?? `${e.read}m`}
+                    </span>
+                  )}
+                  <span class="sig__label">{e.signal?.label ?? "read"}</span>
+                </div>
+                <div class="sig__body">
+                  <h2 class="sig__post-title">{e.title}</h2>
+                  <p class="sig__desc">{e.desc}</p>
+                  <span class="sig__meta">
+                    {e.long} · {e.read} min read
                   </span>
-                </span>
-              </div>
-            </a>
-          </li>
-        ))
-      }
-    </ol>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    {/* ── B · Field notes — a dated engineering logbook ─────────────── */}
+    <section class="v v--notes" data-variant="notes" hidden>
+      <header class="notes__head">
+        <h1 class="notes__title">Field notes</h1>
+        <p class="notes__sub">An engineering logbook — Glasgow, mostly at night.</p>
+      </header>
+
+      <ol class="notes__list">
+        {
+          entries.map((e) => (
+            <li class="notes__item">
+              <a class="notes__link" href={e.href}>
+                <span class="notes__node" aria-hidden="true" />
+                <div class="notes__date">
+                  <span class="notes__year">{e.year}</span>
+                  <span class="notes__day">{e.day}</span>
+                </div>
+                <div class="notes__body">
+                  <h2 class="notes__post-title">{e.title}</h2>
+                  <p class="notes__desc">{e.desc}</p>
+                  <span class="notes__read">{e.read} min read →</span>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    {/* ── C · Editorial — pure type, no metaphor ────────────────────── */}
+    <section class="v v--ed" data-variant="editorial" hidden>
+      <header class="ed__head">
+        <h1 class="ed__title">Blog</h1>
+        <p class="ed__sub">{entries.length} posts — notes on shipping software.</p>
+      </header>
+
+      <ol class="ed__list">
+        {
+          entries.map((e) => (
+            <li class="ed__post">
+              <a class="ed__link" href={e.href}>
+                <p class="ed__meta">
+                  {e.long} · {e.read} min read
+                </p>
+                <h2 class="ed__post-title">{e.title}</h2>
+                <p class="ed__desc">{e.desc}</p>
+                <span class="ed__more">Read →</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
   </div>
 </Base>
 
 <style>
-  .blog {
-    max-width: 60rem;
+  /* ── lab / switcher (temporary preview affordance) ─────────────────── */
+  .lab {
+    --w: 72rem;
+    max-width: var(--w);
     margin: 0 auto;
   }
-
-  /* ── masthead ────────────────────────────────────────────────────── */
-  .masthead {
+  .lab__bar {
     display: flex;
-    align-items: baseline;
+    align-items: center;
+    justify-content: space-between;
     flex-wrap: wrap;
-    gap: 0.4rem 1.4rem;
-    margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+    gap: 0.75rem 1rem;
+    padding-bottom: 1.4rem;
+    margin-bottom: clamp(1.75rem, 4vw, 3rem);
+    border-bottom: 1px dashed var(--line);
   }
-  .masthead__title {
-    margin: 0;
-    font-family: var(--grotesk);
-    font-weight: 800;
-    font-size: clamp(3rem, 8vw, 5.5rem);
-    line-height: 0.9;
-    letter-spacing: -0.035em;
+  .lab__tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .lab__tabs {
+    display: inline-flex;
+    gap: 0.3rem;
+    padding: 0.25rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--pane);
+  }
+  .lab__tabs button {
+    appearance: none;
+    border: 0;
+    cursor: pointer;
+    padding: 0.4rem 0.85rem;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    transition:
+      background 0.16s ease,
+      color 0.16s ease;
+  }
+  .lab__tabs button:hover {
     color: var(--ink);
   }
-  .masthead__note {
-    margin: 0;
-    font-family: var(--mono);
-    font-size: 0.82rem;
-    letter-spacing: 0.02em;
-    color: var(--muted);
+  .lab__tabs button[aria-pressed="true"] {
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 500;
   }
 
-  /* ── entries ─────────────────────────────────────────────────────── */
-  .entries {
+  .v[hidden] {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .v.is-in {
+      animation: rise 0.4s ease-out both;
+    }
+  }
+
+  .sig__list,
+  .notes__list,
+  .ed__list {
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  .post {
+
+  /* ══ A · Signal — lead with the number ═════════════════════════════ */
+  .v--sig {
+    max-width: 72rem;
+    margin: 0 auto;
+  }
+  .sig__head {
+    margin-bottom: clamp(2.5rem, 6vw, 4rem);
+  }
+  .sig__title {
+    margin: 0;
+    max-width: 20ch;
+    font-family: var(--grotesk);
+    font-weight: 700;
+    font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .sig__sub {
+    margin: 1.1rem 0 0;
+    max-width: 48ch;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .sig__item {
     border-top: 1px solid var(--line);
   }
-  .post:last-child {
+  .sig__item:last-child {
     border-bottom: 1px solid var(--line);
   }
-  .post__link {
+  .sig__link {
     display: grid;
-    grid-template-columns: 6.5rem 1fr;
-    gap: clamp(1.25rem, 4vw, 3rem);
+    grid-template-columns: 11rem 1fr;
+    gap: clamp(1.5rem, 5vw, 4rem);
     align-items: start;
-    padding: clamp(2rem, 4vw, 3.25rem) 0;
+    padding: clamp(2rem, 4vw, 3rem) 0;
+  }
+  .sig__metric {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-family: var(--grotesk);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .sig__from {
+    font-size: clamp(1rem, 1.8vw, 1.3rem);
+    font-weight: 500;
+    color: var(--faint);
+  }
+  .sig__mark {
+    margin: 0.28rem 0;
+    color: var(--accent);
+    font-size: 1.05rem;
+    line-height: 1;
+    transition: transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .sig__mark::before {
+    content: "↓";
+  }
+  .sig__to {
+    font-size: clamp(2rem, 4.4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .sig__to--solo {
+    font-size: clamp(1.7rem, 3.6vw, 2.5rem);
+  }
+  .sig__label {
+    margin-top: 0.7rem;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .sig__body {
+    min-width: 0;
+  }
+  .sig__post-title {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 600;
+    font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-wrap: balance;
+    transition: color 0.18s ease;
+  }
+  .sig__desc {
+    margin: 0.75rem 0 0;
+    max-width: 60ch;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .sig__meta {
+    display: block;
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+  }
+  .sig__link:hover .sig__post-title,
+  .sig__link:focus-visible .sig__post-title {
+    color: var(--accent);
+  }
+  .sig__link:hover .sig__mark,
+  .sig__link:focus-visible .sig__mark {
+    transform: translateY(3px);
   }
 
-  .post__aside {
+  @media (max-width: 640px) {
+    .sig__link {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    .sig__metric {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 0.55rem;
+    }
+    .sig__mark {
+      margin: 0;
+    }
+    .sig__mark::before {
+      content: "→";
+    }
+    .sig__to,
+    .sig__to--solo {
+      font-size: 1.7rem;
+    }
+    .sig__from {
+      font-size: 1.05rem;
+    }
+    .sig__label {
+      margin: 0 0 0 0.35rem;
+    }
+  }
+
+  /* ══ B · Field notes — a dated logbook ═════════════════════════════ */
+  .v--notes {
+    max-width: 60rem;
+    margin: 0 auto;
+  }
+  .notes__head {
+    margin-bottom: clamp(2.5rem, 6vw, 4rem);
+  }
+  .notes__title {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .notes__sub {
+    margin: 0.9rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .notes__list {
+    position: relative;
+  }
+  .notes__list::before {
+    content: "";
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 6.25rem;
+    width: 1px;
+    background: var(--line);
+  }
+  .notes__link {
+    --pad: clamp(1.75rem, 4vw, 2.75rem);
+    position: relative;
+    display: grid;
+    grid-template-columns: 5rem 1fr;
+    gap: 2.5rem;
+    align-items: start;
+    padding: var(--pad) 0;
+  }
+  .notes__node {
+    position: absolute;
+    left: 6.25rem;
+    top: calc(var(--pad) + 0.35rem);
+    width: 9px;
+    height: 9px;
+    translate: -50% 0;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--faint);
+    transition:
+      border-color 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+  .notes__link:hover .notes__node,
+  .notes__link:focus-visible .notes__node {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
+  }
+  .notes__date {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-    padding-top: 0.4rem;
+    padding-top: 0.1rem;
+    text-align: right;
     font-family: var(--mono);
-    font-size: 0.76rem;
-    letter-spacing: 0.03em;
   }
-  .post__year {
-    font-size: 1.05rem;
+  .notes__year {
+    font-size: 1rem;
     font-weight: 500;
     color: var(--ink);
     font-variant-numeric: tabular-nums;
   }
-  .post__day {
+  .notes__day {
+    font-size: 0.76rem;
     color: var(--muted);
   }
-  .post__read {
-    color: var(--faint);
-  }
-
-  .post__main {
+  .notes__body {
     min-width: 0;
   }
-  .post__title {
+  .notes__post-title {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 600;
+    font-size: clamp(1.25rem, 2vw, 1.7rem);
+    line-height: 1.14;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    text-wrap: balance;
+    transition: color 0.18s ease;
+  }
+  .notes__desc {
+    margin: 0.7rem 0 0;
+    max-width: 58ch;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .notes__read {
+    display: inline-block;
+    margin-top: 0.9rem;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.03em;
+    color: var(--faint);
+    transition: color 0.18s ease;
+  }
+  .notes__link:hover .notes__post-title,
+  .notes__link:hover .notes__read,
+  .notes__link:focus-visible .notes__post-title,
+  .notes__link:focus-visible .notes__read {
+    color: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    .notes__list::before {
+      left: 4px;
+    }
+    .notes__link {
+      grid-template-columns: 1fr;
+      gap: 0.55rem;
+      padding-left: 1.5rem;
+    }
+    .notes__node {
+      left: 4px;
+    }
+    .notes__date {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 0.6rem;
+      text-align: left;
+    }
+  }
+
+  /* ══ C · Editorial — pure type ═════════════════════════════════════ */
+  .v--ed {
+    max-width: 68rem;
+    margin: 0 auto;
+  }
+  .ed__head {
+    margin-bottom: clamp(2.5rem, 6vw, 4rem);
+  }
+  .ed__title {
     margin: 0;
     font-family: var(--grotesk);
     font-weight: 700;
-    font-size: clamp(1.9rem, 4vw, 3.4rem);
-    line-height: 1.06;
+    font-size: clamp(2rem, 4.5vw, 2.8rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .ed__sub {
+    margin: 0.9rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .ed__post {
+    border-top: 1px solid var(--line);
+  }
+  .ed__post:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .ed__link {
+    display: block;
+    padding: clamp(1.75rem, 4vw, 2.75rem) 0;
+  }
+  .ed__meta {
+    margin: 0 0 0.85rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    color: var(--faint);
+  }
+  .ed__post-title {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 2.8vw, 2.15rem);
+    line-height: 1.1;
     letter-spacing: -0.025em;
     color: var(--ink);
     text-wrap: balance;
     transition: color 0.18s ease;
   }
-  .post__desc {
-    margin: 1rem 0 0;
-    max-width: 58ch;
-    font-size: clamp(1rem, 1.4vw, 1.12rem);
+  .ed__desc {
+    margin: 0.85rem 0 0;
+    max-width: 64ch;
+    font-size: 1.05rem;
     line-height: 1.6;
     color: var(--muted);
     text-wrap: pretty;
   }
-  .post__go {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    margin-top: 1.3rem;
+  .ed__more {
+    display: inline-block;
+    margin-top: 1rem;
     font-family: var(--mono);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     letter-spacing: 0.04em;
     color: var(--faint);
     transition: color 0.18s ease;
   }
-  .post__arrow {
-    transition: transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1);
-  }
-
-  .post__link:hover .post__title,
-  .post__link:hover .post__go {
+  .ed__link:hover .ed__post-title,
+  .ed__link:hover .ed__more,
+  .ed__link:focus-visible .ed__post-title,
+  .ed__link:focus-visible .ed__more {
     color: var(--accent);
   }
-  .post__link:hover .post__arrow {
-    transform: translateX(5px);
-  }
 
-  @media (max-width: 640px) {
-    .post__link {
-      grid-template-columns: 1fr;
-      gap: 0.9rem;
-    }
-    .post__aside {
-      flex-direction: row;
-      align-items: baseline;
-      gap: 0.85rem;
-      padding-top: 0;
-    }
-    .post__year {
-      font-size: 0.9rem;
-    }
-  }
-
-  /* ── entrance ────────────────────────────────────────────────────── */
+  /* ══ shared entrance ═══════════════════════════════════════════════ */
   @media (prefers-reduced-motion: no-preference) {
-    .masthead {
+    .v.is-in .sig__head,
+    .v.is-in .notes__head,
+    .v.is-in .ed__head {
+      animation: rise 0.45s ease-out both;
+    }
+    .v.is-in .sig__item,
+    .v.is-in .notes__item,
+    .v.is-in .ed__post {
       animation: rise 0.5s ease-out both;
     }
-    .post {
-      animation: rise 0.5s ease-out both;
+    .v.is-in .sig__item:nth-child(1),
+    .v.is-in .notes__item:nth-child(1),
+    .v.is-in .ed__post:nth-child(1) {
+      animation-delay: 0.09s;
     }
-    .post:nth-child(1) {
-      animation-delay: 0.08s;
-    }
-    .post:nth-child(2) {
-      animation-delay: 0.15s;
-    }
-    .post:nth-child(3) {
-      animation-delay: 0.22s;
+    .v.is-in .sig__item:nth-child(2),
+    .v.is-in .notes__item:nth-child(2),
+    .v.is-in .ed__post:nth-child(2) {
+      animation-delay: 0.16s;
     }
   }
 </style>
+
+<script>
+  const lab = document.querySelector<HTMLElement>(".lab");
+  if (lab) {
+    const tabs = [...lab.querySelectorAll<HTMLButtonElement>("[data-go]")];
+    const variants = [...lab.querySelectorAll<HTMLElement>("[data-variant]")];
+    const KEY = "blog-variant";
+
+    const show = (name: string) => {
+      variants.forEach((v) => {
+        const on = v.dataset.variant === name;
+        v.hidden = !on;
+        v.classList.toggle("is-in", on);
+      });
+      tabs.forEach((t) =>
+        t.setAttribute("aria-pressed", String(t.dataset.go === name)),
+      );
+      try {
+        localStorage.setItem(KEY, name);
+      } catch {
+        /* ignore */
+      }
+    };
+
+    let initial = "signal";
+    try {
+      const saved = localStorage.getItem(KEY);
+      if (saved && variants.some((v) => v.dataset.variant === saved))
+        initial = saved;
+    } catch {
+      /* ignore */
+    }
+    show(initial);
+
+    tabs.forEach((t) =>
+      t.addEventListener("click", () => t.dataset.go && show(t.dataset.go)),
+    );
+  }
+</script>
