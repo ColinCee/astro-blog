@@ -1,6 +1,5 @@
 ---
 import Base from "../../layouts/Base.astro";
-import LedField from "../../components/LedField.astro";
 import { getCollection } from "astro:content";
 
 const posts = (await getCollection("blog")).sort(
@@ -58,8 +57,7 @@ const entries = posts.map((post) => {
   title="Blog — Colin Cheung"
   description="Short engineering notes from Colin Cheung — things that got faster, smaller, or cheaper."
 >
-  <div class="log__wrap">
-    <section class="log">
+  <section class="log">
     <header class="log__head">
       <h1 class="log__sr">Blog</h1>
       <p class="log__kicker">// writing</p>
@@ -100,39 +98,13 @@ const entries = posts.map((post) => {
       <span class="log__end-note">That's everything so far — more soon.</span>
       <a class="log__rss" href="/rss.xml">RSS →</a>
     </p>
-    </section>
-
-    <aside class="log__rail" aria-hidden="true">
-      <LedField />
-    </aside>
-  </div>
+  </section>
 </Base>
 
 <style>
   .log {
     max-width: 54rem;
-  }
-
-  .log__wrap {
-    display: grid;
-    grid-template-columns: minmax(0, 54rem) clamp(120px, 13vw, 175px);
-    gap: clamp(1.25rem, 3vw, 2.5rem);
-    justify-content: center;
-    align-items: stretch;
-    padding-top: clamp(1.5rem, 6vh, 4.5rem);
-  }
-  .log__rail {
-    position: relative;
-    min-height: 18rem;
-  }
-  @media (max-width: 900px) {
-    .log__wrap {
-      grid-template-columns: 1fr;
-      padding-top: clamp(1rem, 4vh, 2.5rem);
-    }
-    .log__rail {
-      display: none;
-    }
+    margin: 0 auto;
   }
 
   .log__head {
