@@ -71,13 +71,13 @@ const entries = posts.map((post) => {
               </div>
               <div class="log__body">
                 <h2 class="log__title">{e.title}</h2>
-                {e.hook && <p class="log__hook">{e.hook}</p>}
                 {e.metric && (
                   <p class="log__sig" aria-hidden="true">
                     {e.metric}
                     {e.label && <span class="log__label">{e.label}</span>}
                   </p>
                 )}
+                {e.hook && <p class="log__hook">{e.hook}</p>}
               </div>
             </a>
           </li>
@@ -202,22 +202,22 @@ const entries = posts.map((post) => {
   .log__link:focus-visible .log__title {
     color: var(--ink);
   }
-  .log__hook {
-    margin: 0.35rem 0 0;
-    max-width: 48ch;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    color: var(--muted);
-    text-wrap: pretty;
-  }
   .log__sig {
-    margin: 0.55rem 0 0;
+    margin: 0.5rem 0 0;
     font-family: var(--grotesk);
     font-weight: 600;
     font-size: clamp(1.05rem, 1.7vw, 1.2rem);
     letter-spacing: -0.01em;
     color: var(--accent-soft);
     font-variant-numeric: tabular-nums;
+  }
+  .log__hook {
+    margin: 0.3rem 0 0;
+    max-width: 52ch;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--muted);
+    text-wrap: pretty;
   }
   .log__label {
     margin-left: 0.5rem;
