@@ -6,249 +6,86 @@ const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
-const readMin = (body?: string) =>
-  Math.max(1, Math.round((body?.trim().split(/\s+/).length || 0) / 200));
-
-const fmtDay = (d: Date) =>
-  d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
-const fmtLong = (d: Date) =>
-  d.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-
-// The "signal" each post is about: the real before→after it documents.
-// (Direction A only — would graduate to a frontmatter field if we ship it.)
-const signals: Record<
+// Each index row: a trimmed display title + the one metric the post moved.
+// Short-form on purpose — the full title and the story live on the post page.
+const cards: Record<
   string,
-  { from?: string; to?: string; value?: string; label: string }
+  { short: string; from?: string; to?: string; value?: string; label: string }
 > = {
   "jsonl-to-parquet-compression": {
+    short: "A story about Parquet",
     from: "4.5 GB",
     to: "221 MB",
     label: "95% smaller",
   },
   "saving-time-in-ts-jest": {
+    short: "Slash your ts-jest test times",
     value: "−10 min",
     label: "off CI",
   },
 };
 
-const entries = posts.map((post) => ({
-  href: `/blog/${post.id}/`,
-  title: post.data.title,
-  desc: post.data.description,
-  year: post.data.pubDate.getFullYear(),
-  day: fmtDay(post.data.pubDate),
-  long: fmtLong(post.data.pubDate),
-  read: readMin(post.body),
-  signal: signals[post.id],
-}));
+const entries = posts.map((post) => {
+  const c = cards[post.id];
+  return {
+    href: `/blog/${post.id}/`,
+    title: c?.short ?? post.data.title,
+    year: post.data.pubDate.getFullYear(),
+    mon: post.data.pubDate.toLocaleDateString("en-GB", { month: "short" }),
+    metric:
+      c?.from && c?.to ? `${c.from} → ${c.to}` : (c?.to ?? c?.value ?? null),
+    label: c?.label ?? null,
+  };
+});
 ---
 
 <Base
   title="Blog — Colin Cheung"
-  description="Engineering notes, discoveries, and opinions from Colin Cheung — senior software engineer in Glasgow."
+  description="Short engineering notes from Colin Cheung — things that got faster, smaller, or cheaper."
 >
-  <div class="lab">
-    <div class="lab__bar">
-      <span class="lab__tag">preview — pick one</span>
-      <div class="lab__tabs" role="tablist" aria-label="Metric prominence">
-        <button type="button" data-go="signal" aria-pressed="true">signal</button>
-        <button type="button" data-go="rail" aria-pressed="false">rail</button>
-        <button type="button" data-go="quiet" aria-pressed="false">quiet</button>
-      </div>
-    </div>
+  <section class="log">
+    <header class="log__head">
+      <h1 class="log__sr">Blog</h1>
+      <p class="log__sub">Faster, smaller, cheaper.</p>
+    </header>
 
-    {/* ── signal — metric is the one loud thing, title muted ────────── */}
-    <section class="v tl tl--signal" data-variant="signal">
-      <header class="tl__head">
-        <h1 class="tl__sronly">Blog</h1>
-        <p class="tl__sub">An engineering logbook — Glasgow, mostly at night.</p>
-      </header>
-
-      <ol class="tl__list">
-        {
-          entries.map((e) => (
-            <li class="tl__item">
-              <a class="tl__link" href={e.href}>
-                <span class="tl__node" aria-hidden="true" />
-                <div class="tl__date">
-                  <span class="tl__year">{e.year}</span>
-                  <span class="tl__day">{e.day}</span>
-                </div>
-                <div class="tl__body">
-                  <p class="sig2" aria-hidden="true">
-                    {e.signal?.from && e.signal?.to ? (
-                      <>
-                        <span class="sig2__from">{e.signal.from}</span>
-                        <span class="sig2__mark" />
-                        <span class="sig2__to">{e.signal.to}</span>
-                      </>
-                    ) : (
-                      <span class="sig2__to">
-                        {e.signal?.to ?? e.signal?.value ?? `${e.read} min`}
-                      </span>
-                    )}
-                    <span class="sig2__label">{e.signal?.label ?? "read"}</span>
+    <ol class="log__list">
+      {
+        entries.map((e) => (
+          <li class="log__item">
+            <a class="log__link" href={e.href}>
+              <span class="log__node" aria-hidden="true" />
+              <div class="log__date">
+                <span class="log__year">{e.year}</span>
+                <span class="log__mon">{e.mon}</span>
+              </div>
+              <div class="log__body">
+                <h2 class="log__title">{e.title}</h2>
+                {e.metric && (
+                  <p class="log__sig" aria-hidden="true">
+                    {e.metric}
+                    {e.label && <span class="log__label">{e.label}</span>}
                   </p>
-                  <h2 class="tl__title">{e.title}</h2>
-                  <p class="tl__desc">{e.desc}</p>
-                </div>
-              </a>
-            </li>
-          ))
-        }
-      </ol>
-    </section>
-
-    {/* ── rail — metric sits in the timeline rail, body stays calm ──── */}
-    <section class="v tl tl--rail" data-variant="rail" hidden>
-      <header class="tl__head">
-        <h1 class="tl__sronly">Blog</h1>
-        <p class="tl__sub">An engineering logbook — Glasgow, mostly at night.</p>
-      </header>
-
-      <ol class="tl__list">
-        {
-          entries.map((e) => (
-            <li class="tl__item">
-              <a class="tl__link" href={e.href}>
-                <span class="tl__node" aria-hidden="true" />
-                <div class="tl__date">
-                  <span class="tl__year">{e.year}</span>
-                  <span class="tl__day">{e.day}</span>
-                  <span class="railsig" aria-hidden="true">
-                    <span class="railsig__to">
-                      {e.signal?.to ?? e.signal?.value ?? `${e.read} min`}
-                    </span>
-                    <span class="railsig__label">
-                      {e.signal?.label ?? "read"}
-                    </span>
-                  </span>
-                </div>
-                <div class="tl__body">
-                  <h2 class="tl__title">{e.title}</h2>
-                  <p class="tl__desc">{e.desc}</p>
-                </div>
-              </a>
-            </li>
-          ))
-        }
-      </ol>
-    </section>
-
-    {/* ── quiet — metric is a soft cyan line, nothing shouts ────────── */}
-    <section class="v tl tl--quiet" data-variant="quiet" hidden>
-      <header class="tl__head">
-        <h1 class="tl__sronly">Blog</h1>
-        <p class="tl__sub">An engineering logbook — Glasgow, mostly at night.</p>
-      </header>
-
-      <ol class="tl__list">
-        {
-          entries.map((e) => (
-            <li class="tl__item">
-              <a class="tl__link" href={e.href}>
-                <span class="tl__node" aria-hidden="true" />
-                <div class="tl__date">
-                  <span class="tl__year">{e.year}</span>
-                  <span class="tl__day">{e.day}</span>
-                </div>
-                <div class="tl__body">
-                  <h2 class="tl__title">{e.title}</h2>
-                  <p class="qsig" aria-hidden="true">
-                    {e.signal?.from && e.signal?.to
-                      ? `${e.signal.from} → ${e.signal.to}`
-                      : (e.signal?.to ?? e.signal?.value ?? `${e.read} min`)}
-                    <span class="qsig__label">{e.signal?.label ?? "read"}</span>
-                  </p>
-                  <p class="tl__desc">{e.desc}</p>
-                </div>
-              </a>
-            </li>
-          ))
-        }
-      </ol>
-    </section>
-  </div>
+                )}
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
 </Base>
 
 <style>
-  /* ── lab / switcher (temporary preview affordance) ─────────────────── */
-  .lab {
-    --w: 62rem;
-    max-width: var(--w);
+  .log {
+    max-width: 54rem;
     margin: 0 auto;
   }
-  .lab__bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.75rem 1rem;
-    padding-bottom: 1.4rem;
-    margin-bottom: clamp(1.75rem, 4vw, 3rem);
-    border-bottom: 1px dashed var(--line);
-  }
-  .lab__tag {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--faint);
-  }
-  .lab__tabs {
-    display: inline-flex;
-    gap: 0.3rem;
-    padding: 0.25rem;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    background: var(--pane);
-  }
-  .lab__tabs button {
-    appearance: none;
-    border: 0;
-    cursor: pointer;
-    padding: 0.4rem 0.85rem;
-    border-radius: 7px;
-    background: transparent;
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 0.8rem;
-    letter-spacing: 0.02em;
-    transition:
-      background 0.16s ease,
-      color 0.16s ease;
-  }
-  .lab__tabs button:hover {
-    color: var(--ink);
-  }
-  .lab__tabs button[aria-pressed="true"] {
-    background: var(--accent);
-    color: var(--accent-ink);
-    font-weight: 500;
-  }
 
-  .v[hidden] {
-    display: none;
+  .log__head {
+    margin-bottom: clamp(2.5rem, 6vw, 4rem);
   }
-  @media (prefers-reduced-motion: no-preference) {
-    .v.is-in {
-      animation: rise 0.4s ease-out both;
-    }
-  }
-
-  /* ══ timeline base (shared by all three) ═══════════════════════════ */
-  .tl {
-    max-width: 62rem;
-    margin: 0 auto;
-  }
-  .tl__head {
-    margin-bottom: clamp(2rem, 5vw, 3.25rem);
-  }
-  .tl__sronly {
+  .log__sr {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -259,42 +96,44 @@ const entries = posts.map((post) => ({
     white-space: nowrap;
     border: 0;
   }
-  .tl__sub {
+  .log__sub {
     margin: 0;
     font-family: var(--mono);
-    font-size: 0.84rem;
-    letter-spacing: 0.01em;
+    font-size: 0.86rem;
+    letter-spacing: 0.02em;
     color: var(--muted);
   }
-  .tl__list {
+
+  .log__list {
     position: relative;
     margin: 0;
     padding: 0;
     list-style: none;
   }
   /* continuous timeline spine */
-  .tl__list::before {
+  .log__list::before {
     content: "";
     position: absolute;
     top: 0.5rem;
     bottom: 0.5rem;
-    left: var(--spine, 6.5rem);
+    left: 5.5rem;
     width: 1px;
     background: var(--line);
   }
-  .tl__link {
-    --pad: clamp(1.6rem, 3.6vw, 2.5rem);
+
+  .log__link {
+    --pad: clamp(1.35rem, 3vw, 2rem);
     position: relative;
     display: grid;
-    grid-template-columns: var(--rail, 5.25rem) 1fr;
-    gap: var(--gap, 2.5rem);
+    grid-template-columns: 4.5rem 1fr;
+    gap: 2.25rem;
     align-items: start;
     padding: var(--pad) 0;
   }
-  .tl__node {
+  .log__node {
     position: absolute;
-    left: var(--spine, 6.5rem);
-    top: calc(var(--pad) + 0.42rem);
+    left: 5.5rem;
+    top: calc(var(--pad) + 0.4rem);
     width: 8px;
     height: 8px;
     translate: -50% 0;
@@ -306,161 +145,63 @@ const entries = posts.map((post) => ({
       box-shadow 0.18s ease;
     z-index: 1;
   }
-  .tl__link:hover .tl__node,
-  .tl__link:focus-visible .tl__node {
+  .log__link:hover .log__node,
+  .log__link:focus-visible .log__node {
     border-color: var(--accent);
     box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
   }
-  .tl__date {
+
+  .log__date {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
-    padding-top: 0.15rem;
+    gap: 0.15rem;
+    padding-top: 0.2rem;
     text-align: right;
     font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
   }
-  .tl__year {
+  .log__year {
     font-size: 0.9rem;
     font-weight: 500;
     color: var(--muted);
-    font-variant-numeric: tabular-nums;
   }
-  .tl__day {
+  .log__mon {
     font-size: 0.72rem;
-    color: var(--faint);
-  }
-  .tl__body {
-    min-width: 0;
-  }
-  /* muted title — deliberately not the loudest thing on the row */
-  .tl__title {
-    margin: 0;
-    font-family: var(--grotesk);
-    font-weight: 500;
-    font-size: clamp(1.1rem, 1.9vw, 1.4rem);
-    line-height: 1.2;
-    letter-spacing: -0.005em;
-    color: var(--muted);
-    text-wrap: balance;
-    transition: color 0.18s ease;
-  }
-  .tl__desc {
-    margin: 0.6rem 0 0;
-    max-width: 60ch;
-    font-size: 0.98rem;
-    line-height: 1.6;
-    color: var(--muted);
-    text-wrap: pretty;
-  }
-  .tl__link:hover .tl__title,
-  .tl__link:focus-visible .tl__title {
-    color: var(--ink);
-  }
-
-  /* ══ mode: signal — one big ink number per row ═════════════════════ */
-  .tl--signal {
-    --rail: 5.25rem;
-    --gap: 2.5rem;
-    --spine: 6.5rem;
-  }
-  .sig2 {
-    margin: 0 0 0.55rem;
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    font-family: var(--grotesk);
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-  }
-  .sig2__from {
-    font-size: clamp(0.95rem, 1.6vw, 1.15rem);
-    font-weight: 500;
-    color: var(--faint);
-  }
-  .sig2__mark {
-    align-self: center;
-    color: var(--accent-soft);
-    font-size: 0.95rem;
-    transition: transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1);
-  }
-  .sig2__mark::before {
-    content: "→";
-  }
-  .sig2__to {
-    font-size: clamp(1.8rem, 3.6vw, 2.6rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    color: var(--ink);
-  }
-  .sig2__label {
-    align-self: center;
-    font-family: var(--mono);
-    font-size: 0.64rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--faint);
-  }
-  .tl--signal .tl__link:hover .sig2__mark,
-  .tl--signal .tl__link:focus-visible .sig2__mark {
-    transform: translateX(3px);
-  }
-
-  /* ══ mode: rail — metric in the rail, body reads calm ══════════════ */
-  .tl--rail {
-    --rail: 8rem;
-    --gap: 2.25rem;
-    --spine: 9.25rem;
-  }
-  .tl--rail .tl__title {
-    font-size: clamp(1.15rem, 2vw, 1.5rem);
-    font-weight: 600;
-  }
-  .railsig {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.1rem;
-    margin-top: 0.6rem;
-    font-family: var(--grotesk);
-    font-variant-numeric: tabular-nums;
-  }
-  .railsig__to {
-    font-size: clamp(1.25rem, 2.2vw, 1.6rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1;
-    color: var(--ink);
-  }
-  .railsig__label {
-    font-family: var(--mono);
-    font-size: 0.6rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--faint);
   }
 
-  /* ══ mode: quiet — metric is a soft cyan line ══════════════════════ */
-  .tl--quiet {
-    --rail: 5.25rem;
-    --gap: 2.5rem;
-    --spine: 6.5rem;
+  .log__body {
+    min-width: 0;
   }
-  .tl--quiet .tl__title {
-    font-size: clamp(1.15rem, 2vw, 1.5rem);
-    font-weight: 600;
-  }
-  .qsig {
-    margin: 0.5rem 0 0;
+  /* muted title — the metric is the accent, not this */
+  .log__title {
+    margin: 0;
     font-family: var(--grotesk);
     font-weight: 600;
-    font-size: clamp(1.05rem, 1.7vw, 1.25rem);
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--muted);
+    text-wrap: balance;
+    transition: color 0.18s ease;
+  }
+  .log__link:hover .log__title,
+  .log__link:focus-visible .log__title {
+    color: var(--ink);
+  }
+  .log__sig {
+    margin: 0.4rem 0 0;
+    font-family: var(--grotesk);
+    font-weight: 600;
+    font-size: clamp(1.05rem, 1.7vw, 1.2rem);
     letter-spacing: -0.01em;
     color: var(--accent-soft);
     font-variant-numeric: tabular-nums;
   }
-  .qsig__label {
-    margin-left: 0.45rem;
+  .log__label {
+    margin-left: 0.5rem;
     font-family: var(--mono);
     font-size: 0.62rem;
     font-weight: 400;
@@ -469,86 +210,38 @@ const entries = posts.map((post) => ({
     color: var(--faint);
   }
 
-  /* ══ responsive ════════════════════════════════════════════════════ */
   @media (max-width: 640px) {
-    .tl__list::before {
+    .log__list::before {
       left: 4px;
     }
-    .tl__link {
+    .log__link {
       grid-template-columns: 1fr;
-      gap: 0.55rem;
+      gap: 0.4rem;
       padding-left: 1.5rem;
     }
-    .tl__node {
+    .log__node {
       left: 4px;
     }
-    .tl__date {
+    .log__date {
       flex-direction: row;
       align-items: baseline;
-      gap: 0.6rem;
+      gap: 0.55rem;
       text-align: left;
-    }
-    .railsig {
-      flex-direction: row;
-      align-items: baseline;
-      gap: 0.5rem;
-      margin-top: 0;
-      margin-left: auto;
     }
   }
 
-  /* ══ shared entrance ═══════════════════════════════════════════════ */
   @media (prefers-reduced-motion: no-preference) {
-    .v.is-in .tl__head {
+    .log__head {
       animation: rise 0.45s ease-out both;
     }
-    .v.is-in .tl__item {
+    .log__item {
       animation: rise 0.5s ease-out both;
     }
-    .v.is-in .tl__item:nth-child(1) {
-      animation-delay: 0.09s;
+    .log__item:nth-child(1) {
+      animation-delay: 0.08s;
     }
-    .v.is-in .tl__item:nth-child(2) {
-      animation-delay: 0.16s;
+    .log__item:nth-child(2) {
+      animation-delay: 0.15s;
     }
   }
 </style>
-
-<script>
-  const lab = document.querySelector<HTMLElement>(".lab");
-  if (lab) {
-    const tabs = [...lab.querySelectorAll<HTMLButtonElement>("[data-go]")];
-    const variants = [...lab.querySelectorAll<HTMLElement>("[data-variant]")];
-    const KEY = "blog-variant";
-
-    const show = (name: string) => {
-      variants.forEach((v) => {
-        const on = v.dataset.variant === name;
-        v.hidden = !on;
-        v.classList.toggle("is-in", on);
-      });
-      tabs.forEach((t) =>
-        t.setAttribute("aria-pressed", String(t.dataset.go === name)),
-      );
-      try {
-        localStorage.setItem(KEY, name);
-      } catch {
-        /* ignore */
-      }
-    };
-
-    let initial = "signal";
-    try {
-      const saved = localStorage.getItem(KEY);
-      if (saved && variants.some((v) => v.dataset.variant === saved))
-        initial = saved;
-    } catch {
-      /* ignore */
-    }
-    show(initial);
-
-    tabs.forEach((t) =>
-      t.addEventListener("click", () => t.dataset.go && show(t.dataset.go)),
-    );
-  }
-</script>
