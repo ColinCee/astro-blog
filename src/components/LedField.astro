@@ -11,7 +11,7 @@ interface Props {
   /** ms between animation swaps */
   rotateMs?: number;
 }
-const { opacity = 0.15, pitch = 15, rotateMs = 20000 } = Astro.props;
+const { opacity = 0.16, pitch = 16, rotateMs = 20000 } = Astro.props;
 ---
 
 <canvas
@@ -25,15 +25,26 @@ const { opacity = 0.15, pitch = 15, rotateMs = 20000 } = Astro.props;
 <style>
   .ledbg {
     position: fixed;
-    inset: 0;
-    width: 100%;
+    top: 0;
+    right: 0;
     height: 100%;
+    width: var(--led-strip, clamp(130px, 16vw, 230px));
     z-index: -1;
     pointer-events: none;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 42%);
+    mask-image: linear-gradient(to right, transparent, #000 42%);
+  }
+  @media (max-width: 900px) {
+    .ledbg {
+      display: none;
+    }
   }
 </style>
 
 <style is:global>
+  :root {
+    --led-strip: clamp(130px, 16vw, 230px);
+  }
   /* Move the page backdrop to <html> so the fixed z-index:-1 canvas shows
      above it, and let the shell/content be transparent on top of the dots. */
   html {
@@ -47,6 +58,12 @@ const { opacity = 0.15, pitch = 15, rotateMs = 20000 } = Astro.props;
   }
   .shell {
     background: transparent !important;
+  }
+  /* Reserve the strip's width on the right so content clears it (not under). */
+  @media (min-width: 901px) {
+    .shell {
+      padding-right: calc(var(--led-strip) + clamp(1rem, 4vw, 3rem)) !important;
+    }
   }
 </style>
 
@@ -89,7 +106,7 @@ const { opacity = 0.15, pitch = 15, rotateMs = 20000 } = Astro.props;
     // ---- Life ----
     let lifeStable = 0;
     const lifeSeed = () => {
-      for (let i = 0; i < grid.length; i++) grid[i] = Math.random() < 0.3 ? 1 : 0;
+      for (let i = 0; i < grid.length; i++) grid[i] = Math.random() < 0.16 ? 1 : 0;
       lifeStable = 0;
     };
     const lifeStep = () => {
@@ -377,7 +394,7 @@ const { opacity = 0.15, pitch = 15, rotateMs = 20000 } = Astro.props;
       else if (a === "snake") snakeStep();
       else tetStep();
     };
-    const interval = () => (anim === "life" ? 110 : anim === "snake" ? 90 : 70);
+    const interval = () => (anim === "life" ? 150 : anim === "snake" ? 90 : 70);
 
     let fade = 1;
     const draw = () => {
@@ -391,14 +408,15 @@ const { opacity = 0.15, pitch = 15, rotateMs = 20000 } = Astro.props;
     };
 
     const resize = () => {
-      cssW = Math.max(1, window.innerWidth);
-      cssH = Math.max(1, window.innerHeight);
+      const r = canvas.getBoundingClientRect();
+      cssW = Math.max(1, r.width);
+      cssH = Math.max(1, r.height);
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.round(cssW * dpr);
       canvas.height = Math.round(cssH * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      gw = Math.max(8, Math.floor(cssW / pitch));
-      gh = Math.max(8, Math.floor(cssH / pitch));
+      gw = Math.max(6, Math.floor(cssW / pitch));
+      gh = Math.max(6, Math.floor(cssH / pitch));
       grid = new Uint8Array(gw * gh);
       scratch = new Uint8Array(gw * gh);
       board = new Uint8Array(gw * gh);
@@ -406,7 +424,8 @@ const { opacity = 0.15, pitch = 15, rotateMs = 20000 } = Astro.props;
       draw();
     };
 
-    window.addEventListener("resize", resize);
+    const ro = new ResizeObserver(() => resize());
+    ro.observe(canvas);
     resize();
 
     if (reduce) {
@@ -420,6 +439,10 @@ const { opacity = 0.15, pitch = 15, rotateMs = 20000 } = Astro.props;
       const loop = (t: number) => {
         const dt = Math.min(48, t - last);
         last = t;
+        if (!canvas.clientWidth || !canvas.clientHeight) {
+          requestAnimationFrame(loop);
+          return;
+        }
         if (phase === "run" && t > nextSwap) phase = "out";
         if (phase === "out") {
           fade -= dt / 600;
