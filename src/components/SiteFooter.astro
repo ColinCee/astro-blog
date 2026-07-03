@@ -1,0 +1,47 @@
+---
+// Site footer — the shell's bottom bar. Shared across content pages.
+const github = "https://github.com/ColinCee";
+const linkedin = "https://www.linkedin.com/in/colin-cheung/";
+const year = new Date().getFullYear();
+---
+
+<footer class="foot">
+  <span class="foot__name">COLIN CHEUNG</span>
+  <span class="foot__links">
+    <a href={github}>GitHub</a>
+    <a href={linkedin}>LinkedIn</a>
+  </span>
+  <span class="foot__meta">© {year} · BUILT IN GLASGOW</span>
+</footer>
+
+<style>
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem 1.4rem;
+    max-width: 72rem;
+    margin: clamp(4rem, 10vw, 7rem) auto 0;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+  .foot__links {
+    display: inline-flex;
+    gap: 1.1rem;
+  }
+  .foot__links a {
+    color: var(--muted);
+    transition: color 0.16s ease;
+  }
+  .foot__links a:hover {
+    color: var(--accent);
+  }
+  .foot__meta {
+    color: var(--faint);
+  }
+</style>

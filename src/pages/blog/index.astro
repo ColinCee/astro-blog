@@ -1,107 +1,180 @@
 ---
-import BaseHead from '../../components/BaseHead.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
-import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+const readMin = (body?: string) =>
+  Math.max(1, Math.round((body?.trim().split(/\s+/).length || 0) / 200));
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 720px;
-				margin: 0 auto;
-			}
-			ul {
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: 100%;
-				margin-bottom: 2rem;
-			}
-			ul li a {
-				text-decoration: none;
-				transition: 0.2s ease;
-				display: block;
-				padding: 1.5rem;
-				border: 1px solid rgb(var(--gray-light));
-				border-radius: 8px;
-			}
-			.title {
-				margin: 0 0 0.25em 0;
-				color: rgb(var(--black));
-				line-height: 1.2;
-				font-size: 1.5rem;
-			}
-			.date {
-				margin: 0 0 0.5em 0;
-				color: rgb(var(--gray));
-				font-size: 0.9rem;
-			}
-			.description {
-				margin: 0;
-				color: rgb(var(--gray-dark));
-				font-size: 1rem;
-				line-height: 1.6;
-			}
-			ul li a:hover {
-				background-color: rgba(var(--accent), 0.05);
-				border-color: rgba(var(--accent), 0.5);
-			}
-			ul li a:hover .title {
-				color: rgb(var(--accent-dark));
-			}
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			@media (max-width: 720px) {
-				main {
-					width: calc(100% - 2em);
-				}
-				ul li a {
-					padding: 1rem;
-				}
-				.title {
-					font-size: 1.3rem;
-				}
-				.description {
-					font-size: 0.9rem;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-									{post.data.description && (
-										<p class="description">{post.data.description}</p>
-									)}
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-	</body>
-</html>
+<Base
+  title="Writing — Colin Cheung"
+  description="Engineering notes, discoveries, and opinions from Colin Cheung — senior software engineer in Glasgow."
+>
+  <div class="idx">
+    <header class="idx__head">
+      <h1 class="idx__title">Writing</h1>
+      <p class="idx__sub">
+        {posts.length} posts, newest first — mostly things I wish I'd known
+        earlier.
+      </p>
+    </header>
+
+    <ol class="idx__list">
+      {
+        posts.map((post) => (
+          <li class="entry">
+            <a class="entry__link" href={`/blog/${post.id}/`}>
+              <p class="entry__meta">
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {fmtDate(post.data.pubDate)}
+                </time>
+                <span aria-hidden="true">·</span>
+                <span>{readMin(post.body)} min read</span>
+              </p>
+              <h2 class="entry__title">
+                {post.data.title}
+                <span class="entry__arrow" aria-hidden="true">
+                  →
+                </span>
+              </h2>
+              {post.data.description && (
+                <p class="entry__desc">{post.data.description}</p>
+              )}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</Base>
+
+<style>
+  .idx {
+    max-width: 52rem;
+    margin: 0 auto;
+  }
+
+  .idx__head {
+    margin-bottom: clamp(2.25rem, 5vw, 3.5rem);
+  }
+  .idx__title {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 800;
+    font-size: clamp(2.6rem, 7vw, 4.4rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .idx__sub {
+    margin: 1rem 0 0;
+    max-width: 48ch;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+
+  .idx__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .entry {
+    border-top: 1px solid var(--line);
+  }
+  .entry:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .entry__link {
+    display: grid;
+    gap: 0.55rem;
+    padding: clamp(1.5rem, 3.5vw, 2.4rem) 0;
+    transition: transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .entry__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--faint);
+  }
+  .entry__title {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3vw, 2.15rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-wrap: balance;
+    transition: color 0.16s ease;
+  }
+  .entry__arrow {
+    display: inline-block;
+    margin-left: 0.5ch;
+    color: var(--faint);
+    transition:
+      transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1),
+      color 0.16s ease;
+  }
+  .entry__desc {
+    margin: 0;
+    max-width: 62ch;
+    font-size: clamp(1rem, 1.4vw, 1.1rem);
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  /* Hover: the row leans in; title + arrow take the accent. */
+  .entry__link:hover {
+    transform: translateX(6px);
+  }
+  .entry__link:hover .entry__title {
+    color: var(--accent);
+  }
+  .entry__link:hover .entry__arrow {
+    transform: translateX(5px);
+    color: var(--accent);
+  }
+
+  /* First-load choreography — enhances an already-visible default. */
+  @media (prefers-reduced-motion: no-preference) {
+    .idx__head {
+      animation: rise 0.5s ease-out both;
+    }
+    .entry {
+      animation: rise 0.5s ease-out both;
+    }
+    .entry:nth-child(1) {
+      animation-delay: 0.08s;
+    }
+    .entry:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+    .entry:nth-child(3) {
+      animation-delay: 0.22s;
+    }
+    .entry:nth-child(4) {
+      animation-delay: 0.29s;
+    }
+    .entry:nth-child(5) {
+      animation-delay: 0.36s;
+    }
+  }
+</style>

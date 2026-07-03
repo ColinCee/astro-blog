@@ -1,0 +1,88 @@
+---
+// Site navigation — the terminal shell's top bar. Shared across content pages.
+// Mirrors the homepage mark so the whole site reads as one machine.
+const path = Astro.url.pathname;
+const links = [
+  { href: "/blog", label: "WRITING" },
+  { href: "/about", label: "ABOUT" },
+  { href: "/cv", label: "CV" },
+  { href: "/#contact", label: "CONTACT" },
+];
+const active = (href: string) => {
+  if (href.startsWith("/#")) return false;
+  const p = path.replace(/\/$/, "") || "/";
+  return href === "/" ? p === "/" : p === href || p.startsWith(href + "/");
+};
+---
+
+<nav class="nav" aria-label="Primary">
+  <a class="nav__mark" href="/">colin<span>@</span>glasgow<b>:~$</b></a>
+  <div class="nav__links">
+    {
+      links.map((l) => (
+        <a
+          href={l.href}
+          class:list={["nav__link", { "is-active": active(l.href) }]}
+          aria-current={active(l.href) ? "page" : undefined}
+        >
+          {l.label}
+        </a>
+      ))
+    }
+  </div>
+</nav>
+
+<style>
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.6rem 1rem;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding-bottom: clamp(2.5rem, 6vw, 4.5rem);
+  }
+  .nav__mark {
+    font-family: var(--mono);
+    font-size: 0.92rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .nav__mark span {
+    color: var(--accent);
+  }
+  .nav__mark b {
+    color: var(--faint);
+    font-weight: 400;
+  }
+  .nav__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .nav__link {
+    padding: 0.2rem 0;
+    border-bottom: 1px solid transparent;
+    transition:
+      color 0.16s ease,
+      border-color 0.16s ease;
+  }
+  .nav__link:hover {
+    color: var(--ink);
+    border-color: var(--accent);
+  }
+  .nav__link.is-active {
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  @media (max-width: 460px) {
+    .nav__links {
+      gap: 1rem;
+    }
+  }
+</style>
