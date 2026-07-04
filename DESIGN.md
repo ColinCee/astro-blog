@@ -44,8 +44,12 @@ typography:
     lineHeight: 1.4
     letterSpacing: "0.06em"
 rounded:
+  xs: "1px"
   sm: "4px"
+  badge: "5px"
+  row: "7px"
   md: "10px"
+  window: "14px"
   pill: "999px"
 spacing:
   section: "clamp(3rem, 7vw, 5rem)"
@@ -136,6 +140,14 @@ one accent used on well under 10% of any screen, against a warm dark ramp.
 - **Line** (`--line`, `oklch(0.31 0.018 80)`): All hairlines, borders, timeline
   spines, tag outlines, section rules.
 
+### Print (CV "Save PDF")
+The CV re-declares the tokens inside `@media print` to flip the terminal palette to
+ink-on-white for a clean PDF: `--bg`/`--panel`/`--pane` become `#ffffff`, `--ink`
+`#111111`, `--muted` `#333333`, `--faint` `#5a5a5a`, `--line` `#d5d5d5`, and both
+cyans become `#0e7490` (a print-safe teal). Site chrome (nav, footer, the Save-PDF
+button) is hidden and entries use `break-inside: avoid`. This is the only place the
+palette legitimately leaves the dark ramp.
+
 ### Named Rules
 **The One Signal Rule.** Cyan is the only hue on the page and marks the single most
 important element in view. Keep it under ~10% of any screen; its rarity is the
@@ -183,18 +195,24 @@ Letters must not touch.
 
 Flat by default. Depth comes from the warm-neutral ramp and 1px `--line`
 hairlines, not shadows. Surfaces (`--panel`, `--pane`) step up in lightness rather
-than casting shadows. The one sanctioned "shadow" is a **cyan focus/state glow**,
-used only as a response to state — never as ambient decoration.
+than casting shadows. Exactly two shadows are sanctioned: the **cyan focus/state
+glow** (a response to state, never ambient) and the **terminal window's ambient
+lift** (the one floating set-piece on the homepage).
 
-### Glow Vocabulary
+### Glow / Shadow Vocabulary
 - **Accent focus ring** (`box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent)`):
   The current timeline node and hovered/focused interactive nodes.
 - **Ambient hero wash** (`radial-gradient(... var(--accent) 12% ...)` on `.shell`):
   A single faint cyan bloom top-right of the page shell. Atmosphere, not a card shadow.
+- **Terminal window lift** (`box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.7)` on
+  `.term`): The only dark drop shadow in the system. It floats the tmux window over
+  the page as the homepage's one physical object. Never reuse it on cards, buttons,
+  or other surfaces.
 
 ### Named Rules
 **The Flat-By-Default Rule.** No drop shadows on cards, buttons, or inputs. Depth =
-tonal layering + hairlines. The only glow is cyan and only appears on state.
+tonal layering + hairlines. The two allowed shadows are the cyan state glow and the
+homepage terminal window's ambient lift, nothing else.
 
 ## 5. Components
 
@@ -235,10 +253,26 @@ tonal layering + hairlines. The only glow is cyan and only appears on state.
   entry: an 8–9px dot, `--bg` fill, `2px solid var(--faint)` ring. The **current /
   active** node switches its ring to `--accent` plus the cyan focus glow. A mono
   date rail sits to the left of the spine; body content to the right.
+- **CV date rail:** a `--rail` variable (5.75rem) drives the spine offset, the grid
+  column, and the node position together so they always line up. Each role shows the
+  end date on top (`now` in `--accent` for the current role, else month + year) and
+  the start date below, dialed down to `--muted`/`--faint` so it does not compete. On
+  mobile (≤640px) the rail collapses to one left spine with the dates inline.
 
 ### Metric Highlight (signature)
 - `.hl` — inline `<b>` in `--accent-soft`, weight 600, `tabular-nums`. Wraps the
   one number/outcome in a sentence. This is the visual thesis of the whole site.
+
+### Blog Post (long-form reading)
+- Posts render on the shared `Base` shell via `BlogPost.astro`, max-width `42rem`:
+  a `// writing` back-kicker, a Bricolage display title (`clamp(2rem, 5.5vw, 3.1rem)`,
+  weight 800), and a mono meta line (date · N min read).
+- **`.prose`** styles the slotted Markdown: body ink `oklch(0.87 0.012 95)` (a notch
+  brighter than `--muted` for sustained reading), line-height `1.72`, measure ~65ch.
+  Headings are Bricolage `--ink`; links are `--accent-soft` with a cyan bottom-border;
+  list markers and the blockquote rule are cyan.
+- **Code:** fenced blocks are rendered by Expressive Code (`github-dark`); inline code
+  is a mono chip on a faint `--ink` 10% wash. Never hand-restyle Expressive Code blocks.
 
 ### Terminal Session (homepage only)
 - The `.term` tmux mock: title bar with traffic-light dots, panes (`whoami`,
@@ -266,9 +300,12 @@ tonal layering + hairlines. The only glow is cyan and only appears on state.
   terminal metaphor is homepage-only — don't cosplay a terminal on other pages.
 - **Don't** add a second accent hue, gradient text, or `background-clip: text`.
 - **Don't** use cards as the default container, nested cards, or `border-left`/
-  `border-right` colored side-stripes. Depth is tonal + hairlines.
-- **Don't** add drop shadows on cards/buttons/inputs; the only shadow is the cyan
-  state glow.
-- **Don't** over-round: tags/buttons are full pills, everything else stays ≤ 10px.
+  `border-right` colored side-stripes on cards, list items, callouts, or alerts.
+  Depth is tonal + hairlines. (The sole exception: the prose blockquote's 2px cyan
+  left rule, a standard long-form convention, never a card stripe.)
+- **Don't** add drop shadows on cards, buttons, or inputs. The only shadows are the
+  cyan state glow and the homepage terminal window's ambient lift.
+- **Don't** over-round: the terminal window caps at `14px`, chips/buttons/nodes are
+  full pills, everything else stays ≤ `7px`. Never 16-32px "insanely rounded".
 - **Don't** ship the generic SaaS/Bootstrap/AI-blog-starter default look — if it
   reads as a template, it's wrong.

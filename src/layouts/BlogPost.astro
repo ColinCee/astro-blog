@@ -10,7 +10,7 @@ type Props = CollectionEntry<"blog">["data"] & { minutesRead?: number };
 const { title, description, pubDate, updatedDate, minutesRead } = Astro.props;
 ---
 
-<Base title={`${title} · Colin Cheung`} description={description}>
+<Base title={`${title} · Colin Cheung`} description={description} ogType="article">
   <article class="post">
     <header class="post__head">
       <a class="post__back" href="/blog">// writing</a>

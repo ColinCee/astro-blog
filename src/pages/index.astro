@@ -160,7 +160,9 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       property="og:description"
       content="Senior Software Engineer in Glasgow. Tech lead at EDF Energy, leading AI adoption."
     />
+    <meta property="og:image" content="https://colincheung.dev/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://colincheung.dev/og.png" />
   </head>
   <body>
     <main class="t">
@@ -982,7 +984,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       }
       .who__name .cjk {
         font-family: var(--cjk);
-        color: oklch(0.78 0.085 205);
+        color: var(--accent-soft);
         margin-left: 0.45ch;
         letter-spacing: 0.04em;
       }

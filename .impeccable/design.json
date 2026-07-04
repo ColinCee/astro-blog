@@ -64,6 +64,11 @@
         "name": "hero-wash",
         "value": "radial-gradient(48rem 36rem at 88% -8%, color-mix(in oklch, var(--accent) 12%, transparent), transparent 60%)",
         "purpose": "Single faint cyan atmosphere bloom on the page shell. Never a card shadow."
+      },
+      {
+        "name": "terminal-window-lift",
+        "value": "0 40px 80px -40px rgba(0, 0, 0, 0.7)",
+        "purpose": "The one sanctioned dark drop shadow: floats the homepage tmux window. Never reuse on cards/buttons."
       }
     ],
     "motion": [
@@ -116,7 +121,7 @@
       "kind": "custom",
       "refersTo": "metric",
       "description": "Wraps the one number/outcome in a sentence. The visual thesis of the site.",
-      "html": "<p style=\"font-family: var(--grotesk); color: var(--muted)\">cutting build + test cycles from <b class=\"ds-metric\">20 → 5 minutes</b>.</p>",
+      "html": "<p style=\"font-family: var(--grotesk); color: var(--muted)\">cutting build + test cycles from <b class=\"ds-metric\">30 → 5 minutes</b>.</p>",
       "css": ".ds-metric { color: var(--accent-soft); font-weight: 600; font-variant-numeric: tabular-nums; }"
     },
     {
@@ -126,6 +131,14 @@
       "description": "Dot on a 1px spine; the current/active node lights up cyan with a state glow.",
       "html": "<span class=\"ds-node ds-node--current\"></span>",
       "css": ".ds-node { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--bg); border: 2px solid var(--faint); } .ds-node--current { border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent); }"
+    },
+    {
+      "name": "Blog Post Prose",
+      "kind": "custom",
+      "refersTo": "prose",
+      "description": "Long-form reading styles for slotted Markdown on the Base shell. Brighter ink for sustained reading; cyan links and list markers; inline code chip.",
+      "html": "<div class=\"ds-prose\"><p>Same records. The 10-minute download is now <strong>30 seconds</strong>. Inline <code>duckdb</code> reads it instantly.</p></div>",
+      "css": ".ds-prose { --prose-ink: oklch(0.87 0.012 95); font-size: 1.06rem; line-height: 1.72; color: var(--prose-ink); max-width: 42rem; } .ds-prose strong { color: var(--ink); font-weight: 700; } .ds-prose :not(pre) > code { font-family: var(--mono); font-size: 0.86em; padding: 0.1em 0.38em; border-radius: 4px; background: color-mix(in oklch, var(--ink) 10%, transparent); color: var(--ink); }"
     }
   ],
   "narrative": {
@@ -143,7 +156,7 @@
       { "name": "The One Signal Rule", "body": "Cyan is the only hue on the page and marks the single most important element in view. Keep it under ~10% of any screen; its rarity is the whole point. Never introduce a second accent hue.", "section": "colors" },
       { "name": "The Metric Is The Accent Rule", "body": "In prose, the number or outcome gets --accent-soft; the surrounding sentence stays --muted. Titles are muted at rest and shift to --ink only on hover.", "section": "colors" },
       { "name": "The // Kicker System", "body": "Sections are marked with a lowercase mono comment — // experience, // writing — in --accent-soft or --muted. This is the deliberate named section grammar, NOT the banned all-caps tracked eyebrow. Keep it lowercase and comment-prefixed; never swap for 01/02 numbered markers.", "section": "typography" },
-      { "name": "The Flat-By-Default Rule", "body": "No drop shadows on cards, buttons, or inputs. Depth is tonal layering plus 1px hairlines. The only glow is cyan and only appears on state (hover/focus/current).", "section": "elevation" }
+      { "name": "The Flat-By-Default Rule", "body": "No drop shadows on cards, buttons, or inputs. Depth is tonal layering plus 1px hairlines. Exactly two shadows are allowed: the cyan state glow (hover/focus/current) and the homepage terminal window's ambient lift.", "section": "elevation" }
     ],
     "dos": [
       "Do keep the palette to the warm-neutral ramp plus one cyan. Body text ≥ 4.5:1, large/bold ≥ 3:1.",
@@ -157,9 +170,9 @@
       "Don't use the cream / beige / paper editorial-restraint background, or any light theme. Warm near-black, dark-only.",
       "Don't treat monospace as costume. The full terminal metaphor is homepage-only — don't cosplay a terminal on other pages.",
       "Don't add a second accent hue, gradient text, or background-clip: text.",
-      "Don't use cards as the default container, nested cards, or colored border-left/right side-stripes.",
-      "Don't add drop shadows on cards/buttons/inputs; the only shadow is the cyan state glow.",
-      "Don't over-round: tags/buttons are full pills, everything else stays ≤ 10px.",
+      "Don't use cards as the default container, nested cards, or colored border-left/right side-stripes on cards, list items, callouts, or alerts (the prose blockquote's 2px cyan left rule is the sole exception).",
+      "Don't add drop shadows on cards/buttons/inputs; the only shadows are the cyan state glow and the homepage terminal window's ambient lift.",
+      "Don't over-round: the terminal window caps at 14px, chips/buttons/nodes are full pills, everything else stays ≤ 7px. Never 16-32px.",
       "Don't ship the generic SaaS/Bootstrap/AI-blog-starter default look."
     ]
   }

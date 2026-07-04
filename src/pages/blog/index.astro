@@ -44,7 +44,7 @@ const entries = posts.map((post) => {
     title: c?.short ?? post.data.title,
     hook: c?.hook ?? post.data.description,
     year: post.data.pubDate.getFullYear(),
-    mon: post.data.pubDate.toLocaleDateString("en-GB", { month: "short" }),
+    mon: post.data.pubDate.toLocaleDateString("en-US", { month: "short" }),
     read: readMin(post.body),
     metric:
       c?.from && c?.to ? `${c.from} → ${c.to}` : (c?.to ?? c?.value ?? null),
