@@ -1,36 +1,28 @@
 ---
 title: "Slash Your ts-jest Test Times With This"
-description: "Found a simple ts-jest tweak that cut our test suite time down by over 10 minutes. You might want to try this."
+description: "One ts-jest config flag cut our CI test suite by over 10 minutes. Here is the line."
 pubDate: "Apr 03 2025"
 ---
 
-Okay, so our CI pipeline was starting to feel like a coffee break extending into lunch – TypeScript tests were the main culprit. After some digging, I stumbled upon a ridiculously simple one-liner for `ts-jest` that clawed back over **10 minutes** for us. Figured I'd share the wealth!
+Our CI test suite took 10+ minutes. The `ts-jest` type-check was the bottleneck. One flag fixed it.
 
-Here's the little gem:
-
-```diff lang="typescript"
-// jest.config.js
+```js title="jest.config.js"
 module.exports = {
-  preset: 'ts-jest',
+  preset: "ts-jest",
   globals: {
-    'ts-jest': {
-      isolatedModules: true,
-    }
+    "ts-jest": { isolatedModules: true },
   },
-  // ... rest of your config
 };
 ```
 
-----
+`isolatedModules` makes `ts-jest` compile each file on its own and skip the slow project-wide type analysis. The bigger the codebase, the bigger the win. Newer `ts-jest` reads it straight from your `tsconfig.json`.
 
-**How this works**
+**The catch:** Jest stops type-checking your code. Files compiled in isolation cannot catch errors that span files.
 
-Basically, `isolatedModules: true` tells `ts-jest` to process each TypeScript file as a completely separate unit. It skips the full project-wide type analysis that normally happens. Think of it like a quick, focused compilation for each file in isolation, rather than `tsc` looking at the whole picture. This is what gives you that *massive* speed boost, especially noticeable with larger codebases.
+So make type-checking its own CI step:
 
-**⚠️ The Crucial Caveat: Don't Skip Your Type Checks!**
+```bash
+tsc --noEmit
+```
 
-This speed-up comes with a big string attached: **Jest will no longer be doing type-checking for you.**
-
-Since `isolatedModules` treats files individually, it can't catch type errors that depend on understanding your whole project. So, it's *absolutely critical* that you have a separate, dedicated step in your CI pipeline to handle type verification (e.g., running `tsc --noEmit` or `vue-tsc --noEmit` for Vue projects). If you skip this, you're essentially flying blind on type safety during your tests, and you *will* risk introducing type-related bugs into your system.
-
-**Pro Tip / Future-Proofing:** While tweaking `globals` works, the `ts-jest` folks and general TypeScript wisdom now point towards sticking `isolatedModules: true` right into your `tsconfig.json` (under `compilerOptions`).
+Fast tests, types still checked, and two jobs that stopped fighting each other.
