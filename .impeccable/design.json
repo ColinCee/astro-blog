@@ -104,14 +104,6 @@
       "css": ".ds-tag { display: inline-block; padding: 0.18rem 0.62rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.01em; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; }"
     },
     {
-      "name": "Ghost Button",
-      "kind": "button",
-      "refersTo": "button-ghost",
-      "description": "The only button language — transparent cyan-outlined pill for the primary action.",
-      "html": "<button class=\"ds-btn-ghost\">SAVE PDF ↓</button>",
-      "css": ".ds-btn-ghost { padding: 0.5rem 1.05rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); background: transparent; border: 1px solid color-mix(in oklch, var(--accent) 40%, transparent); border-radius: 999px; cursor: pointer; transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease; } .ds-btn-ghost:hover { color: var(--ink); border-color: var(--accent); background: color-mix(in oklch, var(--accent) 14%, transparent); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }"
-    },
-    {
       "name": "Nav Link",
       "kind": "nav",
       "refersTo": "nav-link",

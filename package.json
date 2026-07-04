@@ -3,8 +3,6 @@
   "description": "Colin Cheung's terminal-native personal site and engineering blog (colincheung.dev).",
   "dependencies": {
     "@astrojs/cloudflare": "12.1.0",
-    "@astrojs/mdx": "4.0.3",
-    "@astrojs/rss": "4.0.11",
     "@astrojs/sitemap": "3.2.1",
     "astro": "5.1.3",
     "astro-expressive-code": "^0.40.2",

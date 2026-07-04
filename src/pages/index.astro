@@ -10,8 +10,7 @@ const nameCjk = "張志權";
 const whoLine = "Open to remote · UK-based";
 const nowLine = "Tech lead @ EDF Energy, leading AI adoption across the team.";
 
-// Right-top pane — selected work. TODO(colin): confirm home-lab + flight-tracker
-// blurbs and repo links.
+// Right-top pane — selected work.
 const projects = [
   {
     name: "home-lab",
@@ -59,7 +58,7 @@ const quips = [
 ];
 
 // Hot takes — the closing section. Strong opinions, loosely held; the spicy bit is
-// the accent. Some true, some cheeky. TODO(colin): keep the ones you'd defend.
+// the accent.
 const takes = [
   { before: "You don't need DynamoDB. ", hi: "SQL is the GOAT", after: "." },
   { before: "Working software ", hi: "is not enough", after: "." },
@@ -113,7 +112,6 @@ const linkedin = "https://www.linkedin.com/in/colin-cheung/";
 
 // Left-pane hero: core skills as a live `top` process list. TIME+ = years of
 // experience (now − since) — a real, honest number, no invented scores.
-// TODO(colin): confirm the per-skill years.
 const skillSeed = [
   { name: "typescript", since: 2018 },
   { name: "react", since: 2017 },
@@ -447,9 +445,15 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       tickClock();
       if (!reduce) setInterval(tickClock, 1000);
 
-      // Live Glasgow weather in the terminal (open-meteo, no API key). Fails silently.
+      // Live Glasgow weather in the terminal (open-meteo, no API key).
       const wxEl = document.querySelector<HTMLElement>("[data-weather]");
       if (wxEl) {
+        type WeatherResponse = {
+          current?: {
+            temperature_2m?: unknown;
+            weather_code?: number;
+          };
+        };
         const wxCodes: Record<number, string> = {
           0: "clear",
           1: "mainly clear",
@@ -514,9 +518,15 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
           "https://api.open-meteo.com/v1/forecast?latitude=55.8642&longitude=-4.2518&current=temperature_2m,weather_code",
         )
           .then((r) => r.json())
-          .then((d: any) => {
-            const c = d && d.current;
-            if (!c || typeof c.temperature_2m !== "number") return;
+          .then((d: WeatherResponse) => {
+            const c = d.current;
+            if (
+              !c ||
+              typeof c.temperature_2m !== "number" ||
+              typeof c.weather_code !== "number"
+            ) {
+              return;
+            }
             const temp = Math.round(c.temperature_2m);
             const desc = wxCodes[c.weather_code] || "";
             const icon = wxIcon[c.weather_code] || "";
@@ -531,10 +541,11 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         .querySelectorAll<HTMLElement>("[data-quip]")
         .forEach((quipEl) => {
           if (reduce) return;
-          let quipList: { before: string; num: string; after: string }[] = [];
-          try {
-            quipList = JSON.parse(quipEl.dataset.quips || "[]");
-          } catch {}
+          const quipList = JSON.parse(quipEl.dataset.quips || "[]") as {
+            before: string;
+            num: string;
+            after: string;
+          }[];
           if (quipList.length < 2) return;
           let qi = 0;
           setInterval(() => {

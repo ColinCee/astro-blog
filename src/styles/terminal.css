@@ -1,12 +1,11 @@
 /*
   Terminal design system — the single source of truth for colincheung.dev.
 
-  Dark-only, cyan accent. Import this file (globally via BaseHead, or per page)
+  Dark-only, cyan accent. Import this file globally or per page
   and build UI with the var(--token) values below. That is the whole system:
   colour, type, and a couple of global niceties. Nothing here is page-specific.
 
   Fonts: Bricolage Grotesque (display/sans) + JetBrains Mono (mono).
-  TODO: self-host these to drop the Google Fonts request chain.
 */
 
 @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap");

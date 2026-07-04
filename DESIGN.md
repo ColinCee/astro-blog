@@ -69,11 +69,6 @@ components:
     backgroundColor: "transparent"
     rounded: "{rounded.pill}"
     padding: "0.18rem 0.62rem"
-  button-ghost:
-    textColor: "{colors.accent}"
-    backgroundColor: "transparent"
-    rounded: "{rounded.pill}"
-    padding: "0.5rem 1.05rem"
   metric:
     textColor: "{colors.accent-soft}"
 ---
@@ -146,13 +141,13 @@ one accent used on well under 10% of any screen, against a warm dark ramp.
 - **Line** (`--line`, `oklch(0.31 0.018 80)`): All hairlines, borders, timeline
   spines, tag outlines, section rules.
 
-### Print (CV "Save PDF")
+### Print
 The CV re-declares the tokens inside `@media print` to flip the terminal palette to
 ink-on-white for a clean PDF: `--bg`/`--panel`/`--pane` become `#ffffff`, `--ink`
 `#111111`, `--muted` `#333333`, `--faint` `#5a5a5a`, `--line` `#d5d5d5`, and both
-cyans become `#0e7490` (a print-safe teal). Site chrome (nav, footer, the Save-PDF
-button) is hidden and entries use `break-inside: avoid`. This is the only place the
-palette legitimately leaves the dark ramp.
+cyans become `#0e7490` (a print-safe teal). Site chrome (nav and footer) is hidden
+and entries use `break-inside: avoid`. This is the only place the palette
+legitimately leaves the dark ramp.
 
 ### Named Rules
 **The One Signal Rule.** Cyan is the only hue on the page and marks the single most
@@ -173,7 +168,7 @@ rest and shift to `--ink` only on hover. The eye should land on the result first
 monospace — contrast on a real axis (proportional vs. fixed, warm vs. technical),
 never two similar sans-serifs. Bricolage carries voice and scale; JetBrains Mono
 is the machine chrome (labels, dates, code, terminal). Loaded via Google Fonts
-`@import` in `terminal.css` (self-hosting is a tracked TODO).
+`@import` in `terminal.css`.
 
 ### Hierarchy
 - **Display** (Bricolage 800, `clamp(2.4rem, 8vw, 7.5rem)`, lh 0.86–0.9, tracking −0.03em):
@@ -212,11 +207,11 @@ lift** (the one floating set-piece on the homepage).
   applied on `.shell` and the homepage `.t`. Atmosphere, not a card shadow.
 - **Terminal window lift** (`box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.7)` on
   `.term`): The only dark drop shadow in the system. It floats the tmux window over
-  the page as the homepage's one physical object. Never reuse it on cards, buttons,
+  the page as the homepage's one physical object. Never reuse it on cards, inputs,
   or other surfaces.
 
 ### Named Rules
-**The Flat-By-Default Rule.** No drop shadows on cards, buttons, or inputs. Depth =
+**The Flat-By-Default Rule.** No drop shadows on cards, inputs, or other surfaces. Depth =
 tonal layering + hairlines. The two allowed shadows are the cyan state glow and the
 homepage terminal window's ambient lift, nothing else.
 
@@ -243,13 +238,7 @@ homepage terminal window's ambient lift, nothing else.
 ### Tags / Chips
 - Mono, `0.68rem`, `--muted`, `1px solid var(--line)`, `border-radius: 999px`,
   `0.18rem 0.62rem` padding. Transparent fill. Used for skill and tech lists.
-- No fill, no hover state — they are quiet texture, not buttons.
-
-### Buttons
-- **Ghost (primary action, e.g. "Save PDF"):** transparent fill, `--accent` text,
-  `1px solid color-mix(accent 40%)`, full pill. Hover: border → solid `--accent`,
-  fill → `color-mix(accent 14%)`, text → `--ink`. Mono, uppercase, tracking 0.08em.
-- There is no heavy filled button; the ghost pill is the button language.
+- No fill and no hover state — they are quiet texture, not controls.
 
 ### Links (inline)
 - `--accent-soft` text with a `1px` **`--accent-line`** (`color-mix(accent 40%)`) `border-bottom`
@@ -318,9 +307,9 @@ homepage terminal window's ambient lift, nothing else.
   `border-right` colored side-stripes on cards, list items, callouts, or alerts.
   Depth is tonal + hairlines. (The sole exception: the prose blockquote's 2px cyan
   left rule, a standard long-form convention, never a card stripe.)
-- **Don't** add drop shadows on cards, buttons, or inputs. The only shadows are the
+- **Don't** add drop shadows on cards, inputs, or other surfaces. The only shadows are the
   cyan state glow and the homepage terminal window's ambient lift.
-- **Don't** over-round: the terminal window caps at `14px`, chips/buttons/nodes are
+- **Don't** over-round: the terminal window caps at `14px`, chips/nodes are
   full pills, everything else stays ≤ `7px`. Never 16-32px "insanely rounded".
 - **Don't** ship the generic SaaS/Bootstrap/AI-blog-starter default look — if it
   reads as a template, it's wrong.
