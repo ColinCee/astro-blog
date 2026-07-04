@@ -18,11 +18,12 @@ const contact = [
 ];
 
 type Point = { pre: string; hl?: string; post?: string };
+type Ym = { mon: string; yr: string };
 type Role = {
   co: string;
   pos: string;
-  yr: string;
-  span: string;
+  from: Ym;
+  to?: Ym;
   current?: boolean;
   ctx: string;
   points: Point[];
@@ -33,25 +34,20 @@ const experience: Role[] = [
   {
     co: "EDF Energy",
     pos: "Senior Software Engineer · Contract",
-    yr: "2023",
-    span: "Apr 2023 - Now",
+    from: { mon: "Apr", yr: "2023" },
     current: true,
     ctx: "Tech lead for the Retail/Debt team, driving architecture and delivery.",
     points: [
       {
-        pre: "Design and deliver services on a platform processing ",
-        hl: "1.6M accounts daily and ~£1bn in outstanding debt",
+        pre: "Design and deliver services on a ",
+        hl: "national-scale debt-collection platform serving millions of customer accounts",
         post: ".",
       },
       {
-        pre: "Initiated and led a major architectural simplification to an event-sourced shared-state model, replacing mutable duplicated state with a full audit trail, ",
-        hl: "cutting distributed-monolith complexity and accelerating new-service delivery",
-        post: ".",
+        pre: "Initiated and led a major architectural simplification to an event-sourced shared-state model, replacing mutable duplicated state with a full audit trail, cutting distributed-monolith complexity and accelerating new-service delivery.",
       },
       {
-        pre: "Closed a critical operational-visibility gap by driving OBD business metrics and log ingestion into Dynatrace, ",
-        hl: "unlocking dashboards for operational health and failure patterns",
-        post: ".",
+        pre: "Closed a critical operational-visibility gap by driving OBD business metrics and log ingestion into Dynatrace, unlocking dashboards for operational health and failure patterns.",
       },
       {
         pre: "Led migration of a large monorepo from AWS CodePipeline to GitHub Actions with Turborepo, ",
@@ -59,9 +55,7 @@ const experience: Role[] = [
         post: ".",
       },
       {
-        pre: "Raised team coding standards through ",
-        hl: "TypeScript migration patterns and Zod runtime validation",
-        post: ", plus review, documentation and reusable examples for safer delivery.",
+        pre: "Raised team coding standards through TypeScript migration patterns and Zod runtime validation, plus review, documentation and reusable examples for safer delivery.",
       },
       {
         pre: "Drove Copilot and AI-assisted development adoption via reusable skills, repo instructions and demos, ",
@@ -74,14 +68,12 @@ const experience: Role[] = [
   {
     co: "BBC",
     pos: "Senior Software Engineer · Contract",
-    yr: "2022",
-    span: "Nov 2022 - Apr 2023",
+    from: { mon: "Nov", yr: "2022" },
+    to: { mon: "Apr", yr: "2023" },
     ctx: "Lifted developer productivity by improving internal engineering tooling.",
     points: [
       {
-        pre: "Built a serverless data pipeline with AWS CDK to track build-failure statistics, ",
-        hl: "enabling data-driven CI/CD optimization",
-        post: ".",
+        pre: "Built a serverless data pipeline with AWS CDK to track build-failure statistics, enabling data-driven CI/CD optimization.",
       },
       {
         pre: "Automated PR comments with code-coverage reports, ",
@@ -94,8 +86,8 @@ const experience: Role[] = [
   {
     co: "Hopper",
     pos: "Software Engineer",
-    yr: "2022",
-    span: "Mar 2022 - Oct 2022",
+    from: { mon: "Mar", yr: "2022" },
+    to: { mon: "Oct", yr: "2022" },
     ctx: "Scaled customer-service platforms through hyper-growth.",
     points: [
       {
@@ -120,8 +112,8 @@ const experience: Role[] = [
   {
     co: "Hometree",
     pos: "Senior Software Engineer",
-    yr: "2021",
-    span: "Jun 2021 - Mar 2022",
+    from: { mon: "Jun", yr: "2021" },
+    to: { mon: "Mar", yr: "2022" },
     ctx: "Led full-stack initiatives and mentored engineers in a fast-paced startup.",
     points: [
       {
@@ -133,9 +125,7 @@ const experience: Role[] = [
         pre: "Embedded modern practices: E2E testing (Cypress), IaC via Serverless Stack, CloudWatch alarms and Buildkite CI/CD.",
       },
       {
-        pre: "Migrated to ",
-        hl: "AWS RDS Proxy and MikroORM",
-        post: ", hardening database security and transaction management.",
+        pre: "Migrated to AWS RDS Proxy and MikroORM, hardening database security and transaction management.",
       },
     ],
     stack: ["React", "Node.js", "TypeScript", "AWS", "Cypress", "Buildkite", "MikroORM"],
@@ -143,8 +133,8 @@ const experience: Role[] = [
   {
     co: "Skyscanner",
     pos: "Software Engineer",
-    yr: "2020",
-    span: "Feb 2020 - Apr 2021",
+    from: { mon: "Feb", yr: "2020" },
+    to: { mon: "Apr", yr: "2021" },
     ctx: "Built HR automation tooling over sensitive employee data.",
     points: [
       {
@@ -159,8 +149,8 @@ const experience: Role[] = [
   {
     co: "PodFather",
     pos: "Software Engineer",
-    yr: "2017",
-    span: "Jul 2017 - Feb 2020",
+    from: { mon: "Jul", yr: "2017" },
+    to: { mon: "Feb", yr: "2020" },
     ctx: "Full-stack development for a mobile ePOD app with 10k+ daily drivers.",
     points: [
       {
@@ -179,20 +169,10 @@ const experience: Role[] = [
 ];
 
 const skills: { label: string; items: string[] }[] = [
-  { label: "Languages", items: ["TypeScript", "JavaScript", "Python"] },
-  {
-    label: "AWS",
-    items: ["Lambda", "SQS", "SNS", "EventBridge", "DynamoDB", "S3", "Cognito", "API Gateway", "CDK", "RDS", "SST"],
-  },
-  { label: "Backend", items: ["Node.js", "Microservices", "Event-driven", "Distributed Systems", "REST", "gRPC"] },
-  { label: "Frontend", items: ["React", "React Query", "HTML5", "CSS3", "Electron"] },
-  { label: "Databases", items: ["DynamoDB", "MySQL", "PostgreSQL", "MongoDB", "MikroORM"] },
-  {
-    label: "DevOps & Obs",
-    items: ["GitHub Actions", "Buildkite", "Docker", "Kubernetes", "Terraform", "Datadog", "Dynatrace", "Prometheus", "Grafana"],
-  },
-  { label: "Testing", items: ["Jest", "RTL", "Cypress", "Playwright", "TDD", "Zod"] },
-  { label: "Tooling", items: ["Git", "Turborepo", "JIRA"] },
+  { label: "Core stack", items: ["TypeScript", "Node.js", "Python", "React"] },
+  { label: "Cloud & platform", items: ["Lambda", "API Gateway", "EventBridge", "DynamoDB", "Docker"] },
+  { label: "Systems", items: ["Event-driven", "Distributed systems", "APIs"] },
+  { label: "DevOps", items: ["CI/CD", "GitHub Actions", "Observability", "Terraform"] },
 ];
 
 const education = {
@@ -249,8 +229,23 @@ const projects = [
               <article class="role">
                 <span class="role__node" aria-hidden="true" />
                 <div class="role__when">
-                  <span class="role__yr">{r.yr}</span>
-                  <span class="role__span">{r.span}</span>
+                  <span class="role__date role__date--end">
+                    {r.current ? (
+                      <b class="role__now">now</b>
+                    ) : (
+                      r.to && (
+                        <>
+                          <span class="role__mon">{r.to.mon}</span>
+                          <span class="role__yr">{r.to.yr}</span>
+                        </>
+                      )
+                    )}
+                  </span>
+                  <span class="role__link" aria-hidden="true" />
+                  <span class="role__date role__date--start">
+                    <span class="role__mon">{r.from.mon}</span>
+                    <span class="role__yr">{r.from.yr}</span>
+                  </span>
                 </div>
                 <div class="role__body">
                   <h3 class="role__co">{r.co}</h3>
@@ -444,7 +439,7 @@ const projects = [
 
   /* ---------------- experience timeline ---------------- */
   .xp__list {
-    --rail: 8.5rem;
+    --rail: 5.75rem;
     position: relative;
     margin: 0;
     padding: 0;
@@ -492,27 +487,47 @@ const projects = [
   .role__when {
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
     gap: 0.3rem;
-    padding-top: 0.1rem;
+    padding-top: 0.02rem;
     padding-right: 0.95rem;
-    text-align: right;
     font-variant-numeric: tabular-nums;
+  }
+  .role__date {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+  .role__mon {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--faint);
   }
   .role__yr {
     font-family: var(--mono);
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 500;
-    color: var(--muted);
-  }
-  .role--current .role__yr {
     color: var(--accent-soft);
   }
-  .role__span {
+  .role__now {
     font-family: var(--mono);
-    font-size: 0.64rem;
-    letter-spacing: 0.02em;
-    color: var(--faint);
-    white-space: nowrap;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .role__date--start .role__yr {
+    font-size: 0.62rem;
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .role__link {
+    display: none;
+    width: 1px;
+    height: 0.6rem;
+    margin: 0.05rem 0;
+    background: var(--line);
   }
   .role__body {
     min-width: 0;
@@ -738,10 +753,20 @@ const projects = [
     }
     .role__when {
       flex-direction: row;
-      align-items: baseline;
-      gap: 0.6rem;
+      align-items: center;
+      gap: 0.5rem;
       padding-right: 0;
-      text-align: left;
+    }
+    .role__date--start {
+      order: 0;
+    }
+    .role__link {
+      order: 1;
+      display: block;
+      height: 0.75rem;
+    }
+    .role__date--end {
+      order: 2;
     }
     .skill {
       grid-template-columns: 1fr;
