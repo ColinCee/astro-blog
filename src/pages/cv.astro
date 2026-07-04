@@ -7,9 +7,9 @@
 import Base from "../layouts/Base.astro";
 
 const name = "Colin Cheung";
-const role = "Senior Software Engineer · 8+ years · Glasgow, UK — remote";
+const role = "Senior Software Engineer · 8+ years · Glasgow, UK · remote";
 const lede =
-  "I architect scalable, high-impact full-stack systems in TypeScript, Node.js, React and AWS. I lead migrations, mentor engineers, and make systems boring on purpose — resilient, observable, and cheap to run.";
+  "Senior Software Engineer with 8+ years building backend, platform and full-stack systems, currently focused on AWS serverless workflow automation and AI-assisted developer workflows in the energy sector. Strongest in TypeScript/Node.js, event-driven architecture, CI/CD and engineering productivity, with a track record of owning business-critical systems, raising coding standards and shortening delivery feedback loops.";
 
 const contact = [
   { label: "colincheung25@gmail.com", href: "mailto:colincheung25@gmail.com" },
@@ -34,48 +34,48 @@ const experience: Role[] = [
     co: "EDF Energy",
     pos: "Senior Software Engineer · Contract",
     yr: "2023",
-    span: "Apr 2023 — Now",
+    span: "Apr 2023 - Now",
     current: true,
-    ctx: "Scaling solutions across Customer Complaints and Debt Collection.",
+    ctx: "Tech lead for the Retail/Debt team, driving architecture and delivery.",
     points: [
       {
-        pre: "Led the CI/CD migration from AWS CodePipeline to GitHub Actions for a large Turborepo monorepo, ",
-        hl: "cutting build + test cycles from 20 → 5 minutes",
+        pre: "Design and deliver services on a platform processing ",
+        hl: "1.6M accounts daily and ~£1bn in outstanding debt",
         post: ".",
       },
       {
-        pre: "Migrated the codebase from JavaScript to TypeScript and added Zod runtime validation, ",
-        hl: "eliminating a class of runtime errors",
-        post: " with strict static and data checks.",
-      },
-      {
-        pre: "Extended the debt-recovery state machine with new customer journeys via its internal DSL, ",
-        hl: "directly contributing to significant debt recovered",
+        pre: "Initiated and led a major architectural simplification to an event-sourced shared-state model, replacing mutable duplicated state with a full audit trail, ",
+        hl: "cutting distributed-monolith complexity and accelerating new-service delivery",
         post: ".",
       },
       {
-        pre: "Built a secure, high-performance React self-service portal over critical ETL outputs, ",
-        hl: "eliminating hours of daily ad-hoc dev requests",
+        pre: "Closed a critical operational-visibility gap by driving OBD business metrics and log ingestion into Dynatrace, ",
+        hl: "unlocking dashboards for operational health and failure patterns",
         post: ".",
       },
       {
-        pre: "Architected event-driven microservices for B2B Debt Collection Agency integrations, automating the full data-exchange cycle to ",
-        hl: "engage high-debt customers end-to-end",
+        pre: "Led migration of a large monorepo from AWS CodePipeline to GitHub Actions with Turborepo, ",
+        hl: "cutting build + test cycles from 30 → 5 minutes",
         post: ".",
       },
       {
-        pre: "Enabled DynamoDB Point-in-Time Recovery and drove cost optimization, ",
-        hl: "saving several thousand USD / month",
-        post: " on AWS spend.",
+        pre: "Raised team coding standards through ",
+        hl: "TypeScript migration patterns and Zod runtime validation",
+        post: ", plus review, documentation and reusable examples for safer delivery.",
+      },
+      {
+        pre: "Drove Copilot and AI-assisted development adoption via reusable skills, repo instructions and demos, ",
+        hl: "delivering a comparable project with 3 developers in 1 month vs 6 over 2 months",
+        post: ".",
       },
     ],
-    stack: ["TypeScript", "Node.js", "AWS", "React", "React Query", "Zod", "GitHub Actions"],
+    stack: ["TypeScript", "Node.js", "AWS", "Event Sourcing", "EventBridge", "Dynatrace", "Zod", "GitHub Actions"],
   },
   {
     co: "BBC",
     pos: "Senior Software Engineer · Contract",
     yr: "2022",
-    span: "Nov 2022 — Apr 2023",
+    span: "Nov 2022 - Apr 2023",
     ctx: "Lifted developer productivity by improving internal engineering tooling.",
     points: [
       {
@@ -95,7 +95,7 @@ const experience: Role[] = [
     co: "Hopper",
     pos: "Software Engineer",
     yr: "2022",
-    span: "Mar 2022 — Oct 2022",
+    span: "Mar 2022 - Oct 2022",
     ctx: "Scaled customer-service platforms through hyper-growth.",
     points: [
       {
@@ -121,7 +121,7 @@ const experience: Role[] = [
     co: "Hometree",
     pos: "Senior Software Engineer",
     yr: "2021",
-    span: "Jun 2021 — Mar 2022",
+    span: "Jun 2021 - Mar 2022",
     ctx: "Led full-stack initiatives and mentored engineers in a fast-paced startup.",
     points: [
       {
@@ -130,7 +130,7 @@ const experience: Role[] = [
         post: " in React (Hooks) + TypeScript, improving UX, performance and maintainability.",
       },
       {
-        pre: "Embedded modern practices — E2E testing (Cypress), IaC via Serverless Stack, CloudWatch alarms and Buildkite CI/CD.",
+        pre: "Embedded modern practices: E2E testing (Cypress), IaC via Serverless Stack, CloudWatch alarms and Buildkite CI/CD.",
       },
       {
         pre: "Migrated to ",
@@ -144,7 +144,7 @@ const experience: Role[] = [
     co: "Skyscanner",
     pos: "Software Engineer",
     yr: "2020",
-    span: "Feb 2020 — Apr 2021",
+    span: "Feb 2020 - Apr 2021",
     ctx: "Built HR automation tooling over sensitive employee data.",
     points: [
       {
@@ -160,7 +160,7 @@ const experience: Role[] = [
     co: "PodFather",
     pos: "Software Engineer",
     yr: "2017",
-    span: "Jul 2017 — Feb 2020",
+    span: "Jul 2017 - Feb 2020",
     ctx: "Full-stack development for a mobile ePOD app with 10k+ daily drivers.",
     points: [
       {
@@ -182,14 +182,14 @@ const skills: { label: string; items: string[] }[] = [
   { label: "Languages", items: ["TypeScript", "JavaScript", "Python"] },
   {
     label: "AWS",
-    items: ["Lambda", "SQS", "SNS", "DynamoDB", "S3", "Cognito", "API Gateway", "CDK", "RDS", "SST"],
+    items: ["Lambda", "SQS", "SNS", "EventBridge", "DynamoDB", "S3", "Cognito", "API Gateway", "CDK", "RDS", "SST"],
   },
-  { label: "Backend", items: ["Node.js", "Microservices", "Event-driven", "REST", "gRPC"] },
+  { label: "Backend", items: ["Node.js", "Microservices", "Event-driven", "Distributed Systems", "REST", "gRPC"] },
   { label: "Frontend", items: ["React", "React Query", "HTML5", "CSS3", "Electron"] },
   { label: "Databases", items: ["DynamoDB", "MySQL", "PostgreSQL", "MongoDB", "MikroORM"] },
   {
     label: "DevOps & Obs",
-    items: ["GitHub Actions", "Buildkite", "Docker", "Kubernetes", "Terraform", "Datadog", "Prometheus", "Grafana"],
+    items: ["GitHub Actions", "Buildkite", "Docker", "Kubernetes", "Terraform", "Datadog", "Dynatrace", "Prometheus", "Grafana"],
   },
   { label: "Testing", items: ["Jest", "RTL", "Cypress", "Playwright", "TDD", "Zod"] },
   { label: "Tooling", items: ["Git", "Turborepo", "JIRA"] },
@@ -197,17 +197,17 @@ const skills: { label: string; items: string[] }[] = [
 
 const education = {
   school: "University of Strathclyde",
-  meta: "Glasgow, UK · 2013 — 2018",
+  meta: "Glasgow, UK · 2013 - 2018",
   degree: "BEng (Hons) Computer & Electronic Systems",
   honours: "1st Class Honours",
-  note: 'Dissertation: "Investigating learning-type algorithms for video games" — AI / Machine Learning.',
+  note: 'Dissertation: "Investigating learning-type algorithms for video games" (AI and machine learning).',
 };
 
 const projects = [
   {
-    name: "TypeScript Discord Bot",
-    desc: "Feature-rich Discord bot (discord.js) with real-time, chat-triggered voice-clip playback — self-hosted on a Raspberry Pi.",
-    stack: "TypeScript · Node.js · Raspberry Pi",
+    name: "Self-Hosted Platform & AI Automation",
+    desc: "Docker Compose homelab with GitHub Actions deploys and Grafana/Prometheus/Loki observability. Runs AI delivery workflows (Copilot CLI + FastAPI workers) and pgvector semantic search over my notes with incremental Markdown/PDF ingestion.",
+    stack: "Docker · GitHub Actions · pgvector · FastAPI · Grafana",
   },
   {
     name: "Electron Chess App",
@@ -215,16 +215,16 @@ const projects = [
     stack: "Electron · React · Lc0",
   },
   {
-    name: "Self-Hosted Minecraft",
-    desc: "Dockerized Minecraft with Prometheus + Grafana metrics, a Traefik reverse proxy and DuckDNS dynamic DNS on a 6 W Linux box.",
-    stack: "Docker · Prometheus · Grafana · Traefik",
+    name: "TypeScript Discord Bot",
+    desc: "Feature-rich Discord bot (discord.js) with real-time, chat-triggered voice-clip playback, self-hosted on a Raspberry Pi.",
+    stack: "TypeScript · Node.js · Raspberry Pi",
   },
 ];
 ---
 
 <Base
-  title="CV — Colin Cheung"
-  description="Colin Cheung — Senior Software Engineer with 8+ years across TypeScript, Node.js, React and AWS. Experience, skills, education and projects."
+  title="CV · Colin Cheung"
+  description="Colin Cheung, Senior Software Engineer with 8+ years across TypeScript, Node.js, React and AWS. Experience, skills, education and projects."
 >
   <article class="cv">
     <header class="cv__head">
@@ -258,11 +258,7 @@ const projects = [
                   <p class="role__ctx">{r.ctx}</p>
                   <ul class="role__points">
                     {r.points.map((p) => (
-                      <li class="role__point">
-                        {p.pre}
-                        {p.hl && <b class="hl">{p.hl}</b>}
-                        {p.post}
-                      </li>
+                      <li class="role__point">{p.pre}{p.hl && <b class="hl">{p.hl}</b>}{p.post}</li>
                     ))}
                   </ul>
                   <p class="role__stack">{r.stack.join("  ·  ")}</p>
@@ -448,6 +444,7 @@ const projects = [
 
   /* ---------------- experience timeline ---------------- */
   .xp__list {
+    --rail: 8.5rem;
     position: relative;
     margin: 0;
     padding: 0;
@@ -458,7 +455,7 @@ const projects = [
     position: absolute;
     top: 0.6rem;
     bottom: 0.6rem;
-    left: 7rem;
+    left: var(--rail);
     width: 1px;
     background: var(--line);
   }
@@ -466,7 +463,7 @@ const projects = [
     --pad: clamp(1.4rem, 3vw, 2.1rem);
     position: relative;
     display: grid;
-    grid-template-columns: 7rem 1fr;
+    grid-template-columns: var(--rail) 1fr;
     gap: clamp(1.5rem, 3vw, 2.75rem);
     padding: var(--pad) 0;
   }
@@ -475,7 +472,7 @@ const projects = [
   }
   .role__node {
     position: absolute;
-    left: 7rem;
+    left: var(--rail);
     top: calc(var(--pad) + 0.5rem);
     width: 9px;
     height: 9px;
@@ -515,6 +512,7 @@ const projects = [
     font-size: 0.64rem;
     letter-spacing: 0.02em;
     color: var(--faint);
+    white-space: nowrap;
   }
   .role__body {
     min-width: 0;

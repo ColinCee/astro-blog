@@ -8,7 +8,7 @@ import "../styles/terminal.css";
 const name = "Colin Cheung";
 const nameCjk = "張志權";
 const whoLine = "Open to remote · UK-based";
-const nowLine = "Tech lead @ EDF Energy — leading AI adoption across the team.";
+const nowLine = "Tech lead @ EDF Energy, leading AI adoption across the team.";
 
 // Right-top pane — selected work. TODO(colin): confirm home-lab + flight-tracker
 // blurbs and repo links.
@@ -144,17 +144,17 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Colin Cheung — Senior Software Engineer</title>
+    <title>Colin Cheung · Senior Software Engineer</title>
     <meta
       name="description"
-      content="Colin Cheung — Senior Software Engineer in Glasgow. Tech lead at EDF Energy, leading AI adoption. I make systems boring on purpose."
+      content="Colin Cheung, Senior Software Engineer in Glasgow. Tech lead at EDF Energy, leading AI adoption. I make systems boring on purpose."
     />
     <link rel="canonical" href="https://colincheung.dev/" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://colincheung.dev/" />
     <meta
       property="og:title"
-      content="Colin Cheung — Senior Software Engineer"
+      content="Colin Cheung · Senior Software Engineer"
     />
     <meta
       property="og:description"
@@ -173,7 +173,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       </nav>
 
       <!-- Hero — name + social icons -->
-      <section class="kin" aria-label="Colin Cheung — Senior Software Engineer">
+      <section class="kin" aria-label="Colin Cheung, Senior Software Engineer">
         <p class="kin__eyebrow">Senior Software Engineer</p>
         <h1 class="kin__name">COLIN CHEUNG</h1>
         <p class="kin__rot">
@@ -207,7 +207,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
           <span class="term__dots" aria-hidden="true"
             ><i></i><i></i><i></i></span
           >
-          <span class="term__name">~/ColinOS — tmux</span>
+          <span class="term__name">~/ColinOS - tmux</span>
         </div>
 
         <div class="term__panes">
@@ -384,7 +384,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
           {
             companies.map((c) => (
               <li>
-                {c.name} — {c.year}
+                {c.name}, {c.year}
               </li>
             ))
           }
@@ -399,11 +399,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         <ul class="takes__list">
           {
             takes.map((t) => (
-              <li class="take">
-                {t.before}
-                <b>{t.hi}</b>
-                {t.after}
-              </li>
+              <li class="take">{t.before}<b>{t.hi}</b>{t.after}</li>
             ))
           }
         </ul>
@@ -1345,11 +1341,14 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         text-wrap: pretty;
       }
       .take::before {
-        content: "—";
+        content: "";
         position: absolute;
         left: 0;
-        color: var(--faint);
-        font-weight: 400;
+        top: 1.2em;
+        width: 0.8rem;
+        height: 2px;
+        border-radius: 1px;
+        background: var(--faint);
       }
       .take b {
         font-weight: 500;
