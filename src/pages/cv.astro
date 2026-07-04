@@ -1,22 +1,833 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import { Content as CvContent } from '../content/cv.md';
-import '../styles/cv-styles.css';
+// CV — terminal-native résumé for colincheung.dev.
+// Same dark shell, cyan accent, Bricolage + JetBrains Mono as the rest of the
+// site (see src/styles/terminal.css and DESIGN.md). Content lives here as typed
+// data so the markup can highlight the metric in every line — the number is the
+// accent, the prose stays muted. Prints clean to ink-on-white via @media print.
+import Base from "../layouts/Base.astro";
+
+const name = "Colin Cheung";
+const role = "Senior Software Engineer · 8+ years · Glasgow, UK — remote";
+const lede =
+  "I architect scalable, high-impact full-stack systems in TypeScript, Node.js, React and AWS. I lead migrations, mentor engineers, and make systems boring on purpose — resilient, observable, and cheap to run.";
+
+const contact = [
+  { label: "colincheung25@gmail.com", href: "mailto:colincheung25@gmail.com" },
+  { label: "linkedin.com/in/colin-cheung", href: "https://www.linkedin.com/in/colin-cheung/" },
+  { label: "github.com/ColinCee", href: "https://github.com/ColinCee" },
+];
+
+type Point = { pre: string; hl?: string; post?: string };
+type Role = {
+  co: string;
+  pos: string;
+  yr: string;
+  span: string;
+  current?: boolean;
+  ctx: string;
+  points: Point[];
+  stack: string[];
+};
+
+const experience: Role[] = [
+  {
+    co: "EDF Energy",
+    pos: "Senior Software Engineer · Contract",
+    yr: "2023",
+    span: "Apr 2023 — Now",
+    current: true,
+    ctx: "Scaling solutions across Customer Complaints and Debt Collection.",
+    points: [
+      {
+        pre: "Led the CI/CD migration from AWS CodePipeline to GitHub Actions for a large Turborepo monorepo, ",
+        hl: "cutting build + test cycles from 20 → 5 minutes",
+        post: ".",
+      },
+      {
+        pre: "Migrated the codebase from JavaScript to TypeScript and added Zod runtime validation, ",
+        hl: "eliminating a class of runtime errors",
+        post: " with strict static and data checks.",
+      },
+      {
+        pre: "Extended the debt-recovery state machine with new customer journeys via its internal DSL, ",
+        hl: "directly contributing to significant debt recovered",
+        post: ".",
+      },
+      {
+        pre: "Built a secure, high-performance React self-service portal over critical ETL outputs, ",
+        hl: "eliminating hours of daily ad-hoc dev requests",
+        post: ".",
+      },
+      {
+        pre: "Architected event-driven microservices for B2B Debt Collection Agency integrations, automating the full data-exchange cycle to ",
+        hl: "engage high-debt customers end-to-end",
+        post: ".",
+      },
+      {
+        pre: "Enabled DynamoDB Point-in-Time Recovery and drove cost optimization, ",
+        hl: "saving several thousand USD / month",
+        post: " on AWS spend.",
+      },
+    ],
+    stack: ["TypeScript", "Node.js", "AWS", "React", "React Query", "Zod", "GitHub Actions"],
+  },
+  {
+    co: "BBC",
+    pos: "Senior Software Engineer · Contract",
+    yr: "2022",
+    span: "Nov 2022 — Apr 2023",
+    ctx: "Lifted developer productivity by improving internal engineering tooling.",
+    points: [
+      {
+        pre: "Built a serverless data pipeline with AWS CDK to track build-failure statistics, ",
+        hl: "enabling data-driven CI/CD optimization",
+        post: ".",
+      },
+      {
+        pre: "Automated PR comments with code-coverage reports, ",
+        hl: "cutting CI-log debugging time by up to 90%",
+        post: ".",
+      },
+    ],
+    stack: ["Node.js", "React", "AWS CDK", "DynamoDB", "CI/CD"],
+  },
+  {
+    co: "Hopper",
+    pos: "Software Engineer",
+    yr: "2022",
+    span: "Mar 2022 — Oct 2022",
+    ctx: "Scaled customer-service platforms through hyper-growth.",
+    points: [
+      {
+        pre: "Launched cross-vertical VIP support features, ",
+        hl: "lifting service visibility >200% and driving a 50% revenue uplift",
+        post: ".",
+      },
+      {
+        pre: "Built and maintained Scala backend microservices serving ",
+        hl: "100k+ daily requests",
+        post: " over gRPC.",
+      },
+      {
+        pre: "Implemented multi-tenancy with gRPC and GCP Pub/Sub for scalable async messaging.",
+      },
+      {
+        pre: "Established SLOs, monitoring and alerting in Datadog via Terraform (IaC) for high availability.",
+      },
+    ],
+    stack: ["Scala", "Kubernetes", "GCP Pub/Sub", "gRPC", "React", "Terraform", "Datadog"],
+  },
+  {
+    co: "Hometree",
+    pos: "Senior Software Engineer",
+    yr: "2021",
+    span: "Jun 2021 — Mar 2022",
+    ctx: "Led full-stack initiatives and mentored engineers in a fast-paced startup.",
+    points: [
+      {
+        pre: "",
+        hl: "Led the greenfield rebuild of a business-critical legacy checkout",
+        post: " in React (Hooks) + TypeScript, improving UX, performance and maintainability.",
+      },
+      {
+        pre: "Embedded modern practices — E2E testing (Cypress), IaC via Serverless Stack, CloudWatch alarms and Buildkite CI/CD.",
+      },
+      {
+        pre: "Migrated to ",
+        hl: "AWS RDS Proxy and MikroORM",
+        post: ", hardening database security and transaction management.",
+      },
+    ],
+    stack: ["React", "Node.js", "TypeScript", "AWS", "Cypress", "Buildkite", "MikroORM"],
+  },
+  {
+    co: "Skyscanner",
+    pos: "Software Engineer",
+    yr: "2020",
+    span: "Feb 2020 — Apr 2021",
+    ctx: "Built HR automation tooling over sensitive employee data.",
+    points: [
+      {
+        pre: "Engineered HRMS → Active Directory sync (Lambda, SQS), ",
+        hl: "cutting update times from 8 hours → 2 minutes",
+        post: ".",
+      },
+      { pre: "Built an AWS serverless Slack chatbot for structured HR feedback." },
+    ],
+    stack: ["Python", "React", "Docker", "AWS"],
+  },
+  {
+    co: "PodFather",
+    pos: "Software Engineer",
+    yr: "2017",
+    span: "Jul 2017 — Feb 2020",
+    ctx: "Full-stack development for a mobile ePOD app with 10k+ daily drivers.",
+    points: [
+      {
+        pre: "Optimized Android image capture, ",
+        hl: "improving processing speed 300%",
+        post: ".",
+      },
+      {
+        pre: "Migrated ",
+        hl: "terabytes of image data",
+        post: " from MySQL BLOBs to AWS S3.",
+      },
+    ],
+    stack: ["PHP", "Android · Kotlin", "MySQL", "TypeScript", "Node.js", "AWS S3"],
+  },
+];
+
+const skills: { label: string; items: string[] }[] = [
+  { label: "Languages", items: ["TypeScript", "JavaScript", "Python"] },
+  {
+    label: "AWS",
+    items: ["Lambda", "SQS", "SNS", "DynamoDB", "S3", "Cognito", "API Gateway", "CDK", "RDS", "SST"],
+  },
+  { label: "Backend", items: ["Node.js", "Microservices", "Event-driven", "REST", "gRPC"] },
+  { label: "Frontend", items: ["React", "React Query", "HTML5", "CSS3", "Electron"] },
+  { label: "Databases", items: ["DynamoDB", "MySQL", "PostgreSQL", "MongoDB", "MikroORM"] },
+  {
+    label: "DevOps & Obs",
+    items: ["GitHub Actions", "Buildkite", "Docker", "Kubernetes", "Terraform", "Datadog", "Prometheus", "Grafana"],
+  },
+  { label: "Testing", items: ["Jest", "RTL", "Cypress", "Playwright", "TDD", "Zod"] },
+  { label: "Tooling", items: ["Git", "Turborepo", "JIRA"] },
+];
+
+const education = {
+  school: "University of Strathclyde",
+  meta: "Glasgow, UK · 2013 — 2018",
+  degree: "BEng (Hons) Computer & Electronic Systems",
+  honours: "1st Class Honours",
+  note: 'Dissertation: "Investigating learning-type algorithms for video games" — AI / Machine Learning.',
+};
+
+const projects = [
+  {
+    name: "TypeScript Discord Bot",
+    desc: "Feature-rich Discord bot (discord.js) with real-time, chat-triggered voice-clip playback — self-hosted on a Raspberry Pi.",
+    stack: "TypeScript · Node.js · Raspberry Pi",
+  },
+  {
+    name: "Electron Chess App",
+    desc: "Cross-platform desktop app with a live side-by-side move-analysis overlay for online chess, powered by the Leela Chess Zero (Lc0) engine over UCI.",
+    stack: "Electron · React · Lc0",
+  },
+  {
+    name: "Self-Hosted Minecraft",
+    desc: "Dockerized Minecraft with Prometheus + Grafana metrics, a Traefik reverse proxy and DuckDNS dynamic DNS on a 6 W Linux box.",
+    stack: "Docker · Prometheus · Grafana · Traefik",
+  },
+];
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<div class="cv-container">
-				<CvContent />
-			</div>
-		</main>
-	</body>
-</html>
+<Base
+  title="CV — Colin Cheung"
+  description="Colin Cheung — Senior Software Engineer with 8+ years across TypeScript, Node.js, React and AWS. Experience, skills, education and projects."
+>
+  <article class="cv">
+    <header class="cv__head">
+      <p class="cv__kicker">// curriculum vitae</p>
+      <h1 class="cv__name">{name}</h1>
+      <p class="cv__role">{role}</p>
+      <p class="cv__lede">{lede}</p>
+      <div class="cv__actions">
+        <nav class="cv__contact" aria-label="Contact">
+          {contact.map((c) => <a href={c.href}>{c.label}</a>)}
+        </nav>
+        <button class="cv__print" type="button" data-print>Save PDF ↓</button>
+      </div>
+    </header>
+
+    <section class="cv__sec" aria-labelledby="xp-h">
+      <h2 class="cv__sec-head" id="xp-h">// experience</h2>
+      <ol class="xp__list">
+        {
+          experience.map((r) => (
+            <li class:list={["xp__item", { "role--current": r.current }]}>
+              <article class="role">
+                <span class="role__node" aria-hidden="true" />
+                <div class="role__when">
+                  <span class="role__yr">{r.yr}</span>
+                  <span class="role__span">{r.span}</span>
+                </div>
+                <div class="role__body">
+                  <h3 class="role__co">{r.co}</h3>
+                  <p class="role__pos">{r.pos}</p>
+                  <p class="role__ctx">{r.ctx}</p>
+                  <ul class="role__points">
+                    {r.points.map((p) => (
+                      <li class="role__point">
+                        {p.pre}
+                        {p.hl && <b class="hl">{p.hl}</b>}
+                        {p.post}
+                      </li>
+                    ))}
+                  </ul>
+                  <p class="role__stack">{r.stack.join("  ·  ")}</p>
+                </div>
+              </article>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="cv__sec" aria-labelledby="sk-h">
+      <h2 class="cv__sec-head" id="sk-h">// skills</h2>
+      <div class="skills">
+        {
+          skills.map((g) => (
+            <div class="skill">
+              <span class="skill__label">{g.label}</span>
+              <ul class="skill__items">
+                {g.items.map((it) => (
+                  <li class="tag">{it}</li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <div class="cv__lower">
+      <section class="cv__sec" aria-labelledby="ed-h">
+        <h2 class="cv__sec-head" id="ed-h">// education</h2>
+        <div class="edu">
+          <h3 class="edu__school">{education.school}</h3>
+          <p class="edu__meta">{education.meta}</p>
+          <p class="edu__degree">
+            {education.degree}
+            <b class="hl">{education.honours}</b>
+          </p>
+          <p class="edu__note">{education.note}</p>
+        </div>
+      </section>
+
+      <section class="cv__sec" aria-labelledby="pr-h">
+        <h2 class="cv__sec-head" id="pr-h">// projects</h2>
+        <ul class="proj">
+          {
+            projects.map((p) => (
+              <li class="proj__item">
+                <h3 class="proj__name">{p.name}</h3>
+                <p class="proj__desc">{p.desc}</p>
+                <p class="proj__stack">{p.stack}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
+
+    <p class="cv__end">
+      <span>Open to remote roles · Glasgow, UK</span>
+      <a href="https://www.linkedin.com/in/colin-cheung/"
+        >Let's talk <span aria-hidden="true">↗</span></a
+      >
+    </p>
+  </article>
+</Base>
+
+<script>
+  document
+    .querySelector<HTMLButtonElement>("[data-print]")
+    ?.addEventListener("click", () => window.print());
+</script>
+
+<style>
+  .cv {
+    max-width: 62rem;
+    margin: 0 auto;
+  }
+
+  /* ---------------- masthead ---------------- */
+  .cv__head {
+    margin-bottom: clamp(3rem, 7vw, 5rem);
+  }
+  .cv__kicker {
+    margin: 0 0 1rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--accent-soft);
+  }
+  .cv__name {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 800;
+    font-size: clamp(2.4rem, 8vw, 4.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cv__role {
+    margin: 0.9rem 0 0;
+    font-family: var(--mono);
+    font-size: clamp(0.8rem, 1.4vw, 0.9rem);
+    letter-spacing: 0.03em;
+    color: var(--muted);
+  }
+  .cv__lede {
+    margin: 1.6rem 0 0;
+    max-width: 56ch;
+    font-family: var(--grotesk);
+    font-weight: 500;
+    font-size: clamp(1.05rem, 1.8vw, 1.28rem);
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+  .cv__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    margin: 2rem 0 0;
+  }
+  .cv__contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.01em;
+  }
+  .cv__contact a {
+    padding-bottom: 2px;
+    color: var(--muted);
+    border-bottom: 1px solid transparent;
+    transition:
+      color 0.16s ease,
+      border-color 0.16s ease;
+  }
+  .cv__contact a:hover {
+    color: var(--ink);
+    border-color: var(--accent);
+  }
+  .cv__print {
+    flex: none;
+    padding: 0.5rem 1.05rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid color-mix(in oklch, var(--accent) 40%, transparent);
+    border-radius: 999px;
+    cursor: pointer;
+    transition:
+      border-color 0.16s ease,
+      background 0.16s ease,
+      color 0.16s ease;
+  }
+  .cv__print:hover {
+    color: var(--ink);
+    border-color: var(--accent);
+    background: color-mix(in oklch, var(--accent) 14%, transparent);
+  }
+
+  /* ---------------- section scaffold ---------------- */
+  .cv__sec {
+    margin-top: clamp(3rem, 7vw, 5rem);
+  }
+  .cv__sec-head {
+    margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--accent-soft);
+  }
+
+  /* ---------------- experience timeline ---------------- */
+  .xp__list {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .xp__list::before {
+    content: "";
+    position: absolute;
+    top: 0.6rem;
+    bottom: 0.6rem;
+    left: 7rem;
+    width: 1px;
+    background: var(--line);
+  }
+  .role {
+    --pad: clamp(1.4rem, 3vw, 2.1rem);
+    position: relative;
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: clamp(1.5rem, 3vw, 2.75rem);
+    padding: var(--pad) 0;
+  }
+  .xp__item:first-child .role {
+    padding-top: 0.2rem;
+  }
+  .role__node {
+    position: absolute;
+    left: 7rem;
+    top: calc(var(--pad) + 0.5rem);
+    width: 9px;
+    height: 9px;
+    translate: -50% 0;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--faint);
+    z-index: 1;
+  }
+  .xp__item:first-child .role__node {
+    top: 0.7rem;
+  }
+  .role--current .role__node {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
+  }
+  .role__when {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding-top: 0.1rem;
+    padding-right: 0.95rem;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .role__yr {
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .role--current .role__yr {
+    color: var(--accent-soft);
+  }
+  .role__span {
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+  }
+  .role__body {
+    min-width: 0;
+  }
+  .role__co {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 700;
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .role__pos {
+    margin: 0.25rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+  .role__ctx {
+    margin: 0.75rem 0 0;
+    max-width: 62ch;
+    font-family: var(--grotesk);
+    font-size: 0.94rem;
+    line-height: 1.5;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .role__points {
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .role__point {
+    position: relative;
+    padding-left: 1.15rem;
+    max-width: 66ch;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .role__point::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 5px;
+    height: 5px;
+    border-radius: 1px;
+    background: color-mix(in oklch, var(--accent) 65%, transparent);
+  }
+  .hl {
+    color: var(--accent-soft);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .role__stack {
+    margin: 0.95rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+  }
+
+  /* ---------------- skills ---------------- */
+  .skills {
+    display: grid;
+    gap: 0;
+  }
+  .skill {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr;
+    gap: 1.25rem;
+    align-items: baseline;
+    padding: clamp(0.7rem, 1.6vw, 0.95rem) 0;
+    border-top: 1px solid var(--line);
+  }
+  .skill:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .skill__label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--accent-soft);
+  }
+  .skill__items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tag {
+    padding: 0.18rem 0.62rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.01em;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+
+  /* ---------------- lower: education + projects ---------------- */
+  .cv__lower {
+    display: grid;
+    gap: clamp(0.5rem, 2vw, 1rem) clamp(2.5rem, 6vw, 4.5rem);
+  }
+  @media (min-width: 900px) {
+    .cv__lower {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+  .edu__school {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 700;
+    font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .edu__meta {
+    margin: 0.35rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+  .edu__degree {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 0.75rem;
+    margin: 1rem 0 0;
+    font-family: var(--grotesk);
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+  .edu__note {
+    margin: 0.75rem 0 0;
+    max-width: 48ch;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  .proj {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: clamp(1.3rem, 2.5vw, 1.8rem);
+  }
+  .proj__name {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 700;
+    font-size: 1.02rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .proj__desc {
+    margin: 0.35rem 0 0;
+    max-width: 54ch;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .proj__stack {
+    margin: 0.45rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+  }
+
+  /* ---------------- end cap ---------------- */
+  .cv__end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin: clamp(3rem, 6vw, 4.5rem) 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+  }
+  .cv__end a {
+    color: var(--accent-soft);
+    border-bottom: 1px solid color-mix(in oklch, var(--accent) 40%, transparent);
+    transition: border-color 0.16s ease;
+  }
+  .cv__end a:hover {
+    border-color: var(--accent);
+  }
+
+  /* ---------------- responsive ---------------- */
+  @media (max-width: 640px) {
+    .xp__list::before {
+      left: 4px;
+    }
+    .role {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      padding-left: 1.4rem;
+    }
+    .role__node,
+    .xp__item:first-child .role__node {
+      left: 4px;
+      top: 0.5rem;
+    }
+    .role__when {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 0.6rem;
+      padding-right: 0;
+      text-align: left;
+    }
+    .skill {
+      grid-template-columns: 1fr;
+      gap: 0.55rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cv__head,
+    .xp__item,
+    .cv__sec,
+    .cv__end {
+      animation: rise 0.5s ease-out both;
+    }
+    .xp__item:nth-child(2) {
+      animation-delay: 0.05s;
+    }
+    .xp__item:nth-child(3) {
+      animation-delay: 0.1s;
+    }
+    .xp__item:nth-child(4) {
+      animation-delay: 0.15s;
+    }
+    .xp__item:nth-child(5) {
+      animation-delay: 0.2s;
+    }
+    .xp__item:nth-child(6) {
+      animation-delay: 0.25s;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Print / Save-as-PDF: flip the whole terminal palette to ink-on-white by
+     re-declaring the design tokens, hide site chrome, and keep entries whole. */
+  @media print {
+    :root {
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --pane: #ffffff;
+      --line: #d5d5d5;
+      --ink: #111111;
+      --muted: #333333;
+      --faint: #5a5a5a;
+      --accent: #0e7490;
+      --accent-soft: #0e7490;
+    }
+    @page {
+      margin: 1.5cm;
+    }
+    .shell {
+      min-height: 0 !important;
+      padding: 0 !important;
+      background: #fff !important;
+      color: #111 !important;
+    }
+    .nav,
+    .foot,
+    .cv__print {
+      display: none !important;
+    }
+    .cv {
+      max-width: none;
+    }
+    .cv__head {
+      margin-bottom: 1.6rem;
+    }
+    .cv__sec {
+      margin-top: 1.6rem;
+    }
+    .role,
+    .proj__item,
+    .edu {
+      break-inside: avoid;
+    }
+    .tag {
+      border-color: #c8c8c8;
+    }
+    .cv__contact a {
+      color: #0e7490;
+    }
+    * {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>

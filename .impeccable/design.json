@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-04T00:00:00Z",
+  "title": "Design System: colincheung.dev",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Signal Cyan",
+        "canonical": "oklch(0.82 0.15 205)",
+        "tonalRamp": [
+          "oklch(0.30 0.08 205)",
+          "oklch(0.40 0.10 205)",
+          "oklch(0.50 0.12 205)",
+          "oklch(0.62 0.14 205)",
+          "oklch(0.72 0.15 205)",
+          "oklch(0.82 0.15 205)",
+          "oklch(0.88 0.10 205)",
+          "oklch(0.94 0.05 205)"
+        ]
+      },
+      "accent-soft": {
+        "role": "primary",
+        "displayName": "Soft Cyan",
+        "canonical": "oklch(0.8 0.08 205)",
+        "tonalRamp": [
+          "oklch(0.32 0.05 205)",
+          "oklch(0.42 0.06 205)",
+          "oklch(0.52 0.07 205)",
+          "oklch(0.62 0.08 205)",
+          "oklch(0.72 0.08 205)",
+          "oklch(0.80 0.08 205)",
+          "oklch(0.88 0.06 205)",
+          "oklch(0.94 0.03 205)"
+        ]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Warm Near-Black",
+        "canonical": "oklch(0.165 0.012 80)",
+        "tonalRamp": [
+          "oklch(0.165 0.012 80)",
+          "oklch(0.205 0.014 80)",
+          "oklch(0.31 0.018 82)",
+          "oklch(0.45 0.02 88)",
+          "oklch(0.63 0.02 95)",
+          "oklch(0.72 0.02 95)",
+          "oklch(0.86 0.015 95)",
+          "oklch(0.95 0.01 95)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero name and page titles only — one per view." },
+      "label": { "displayName": "Label / Mono", "purpose": "Kickers, dates, tags, nav, terminal chrome." }
+    },
+    "shadows": [
+      {
+        "name": "accent-focus-ring",
+        "value": "0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent)",
+        "purpose": "State-only cyan glow on the current/hovered timeline node and focused elements."
+      },
+      {
+        "name": "hero-wash",
+        "value": "radial-gradient(48rem 36rem at 88% -8%, color-mix(in oklch, var(--accent) 12%, transparent), transparent 60%)",
+        "purpose": "Single faint cyan atmosphere bloom on the page shell. Never a card shadow."
+      }
+    ],
+    "motion": [
+      { "name": "rise", "value": "@keyframes rise { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }", "purpose": "Default entrance; staggered across list items." },
+      { "name": "ease-out", "value": "ease-out", "purpose": "Standard easing (0.16s–0.5s). No bounce/elastic." },
+      { "name": "reduced-motion", "value": "@media (prefers-reduced-motion: reduce) { animation/transition durations → 0.001ms }", "purpose": "Mandatory fallback — collapses every animation." }
+    ],
+    "breakpoints": [
+      { "name": "xs", "value": "460px" },
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "760px" },
+      { "name": "lg", "value": "900px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Section Kicker",
+      "kind": "custom",
+      "refersTo": "kicker",
+      "description": "Lowercase mono comment that marks every section. The site's named section grammar.",
+      "html": "<p class=\"ds-kicker\">// experience</p>",
+      "css": ".ds-kicker { margin: 0 0 1rem; font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--accent-soft); }"
+    },
+    {
+      "name": "Tag",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Quiet mono pill for skill/tech lists. Texture, not a button — no hover.",
+      "html": "<span class=\"ds-tag\">TypeScript</span>",
+      "css": ".ds-tag { display: inline-block; padding: 0.18rem 0.62rem; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.01em; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "The only button language — transparent cyan-outlined pill for the primary action.",
+      "html": "<button class=\"ds-btn-ghost\">SAVE PDF ↓</button>",
+      "css": ".ds-btn-ghost { padding: 0.5rem 1.05rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); background: transparent; border: 1px solid color-mix(in oklch, var(--accent) 40%, transparent); border-radius: 999px; cursor: pointer; transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease; } .ds-btn-ghost:hover { color: var(--ink); border-color: var(--accent); background: color-mix(in oklch, var(--accent) 14%, transparent); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }"
+    },
+    {
+      "name": "Nav Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Mono uppercase nav item; cyan underline on hover/active.",
+      "html": "<a class=\"ds-nav-link\" href=\"/blog\">BLOG</a>",
+      "css": ".ds-nav-link { padding: 0.2rem 0; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--muted); border-bottom: 1px solid transparent; transition: color 0.16s ease, border-color 0.16s ease; } .ds-nav-link:hover { color: var(--ink); border-color: var(--accent); }"
+    },
+    {
+      "name": "Metric Highlight",
+      "kind": "custom",
+      "refersTo": "metric",
+      "description": "Wraps the one number/outcome in a sentence. The visual thesis of the site.",
+      "html": "<p style=\"font-family: var(--grotesk); color: var(--muted)\">cutting build + test cycles from <b class=\"ds-metric\">20 → 5 minutes</b>.</p>",
+      "css": ".ds-metric { color: var(--accent-soft); font-weight: 600; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Timeline Node",
+      "kind": "custom",
+      "refersTo": "timeline-node",
+      "description": "Dot on a 1px spine; the current/active node lights up cyan with a state glow.",
+      "html": "<span class=\"ds-node ds-node--current\"></span>",
+      "css": ".ds-node { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--bg); border: 2px solid var(--faint); } .ds-node--current { border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Warm Terminal",
+    "overview": "The site should feel like Colin's own machine booted up in a dark room: a warm near-black surface, precise monospace chrome, and a single cyan signal that only ever lights up the thing that matters. It is engineer-native without cosplay — the homepage runs a literal terminal session, and every other page inherits that machine's language (mono // labels, the warm-neutral ramp, one cyan accent) without re-staging the whole terminal. Confident and a little playful; the work — real metrics, real systems — does the talking, not adjectives. This system rejects the faceless blog-starter default and the cream/beige editorial-restraint background. Warmth comes from the near-black hue and the display type, never from a tinted-paper body.",
+    "keyCharacteristics": [
+      "Dark-only, warm near-black (--bg OKLCH L 0.165, hue 80) — never pure black, never light.",
+      "Exactly one chromatic color: cyan. Everything else is a warm-neutral ramp.",
+      "Big Bricolage Grotesque display against small JetBrains Mono technical chrome.",
+      "The metric is the accent: numbers/outcomes glow cyan, prose stays muted.",
+      "The literal terminal metaphor is scarce — reserved for the homepage.",
+      "Nav, content, and footer share a 1440px spine and line up."
+    ],
+    "rules": [
+      { "name": "The One Signal Rule", "body": "Cyan is the only hue on the page and marks the single most important element in view. Keep it under ~10% of any screen; its rarity is the whole point. Never introduce a second accent hue.", "section": "colors" },
+      { "name": "The Metric Is The Accent Rule", "body": "In prose, the number or outcome gets --accent-soft; the surrounding sentence stays --muted. Titles are muted at rest and shift to --ink only on hover.", "section": "colors" },
+      { "name": "The // Kicker System", "body": "Sections are marked with a lowercase mono comment — // experience, // writing — in --accent-soft or --muted. This is the deliberate named section grammar, NOT the banned all-caps tracked eyebrow. Keep it lowercase and comment-prefixed; never swap for 01/02 numbered markers.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "No drop shadows on cards, buttons, or inputs. Depth is tonal layering plus 1px hairlines. The only glow is cyan and only appears on state (hover/focus/current).", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the palette to the warm-neutral ramp plus one cyan. Body text ≥ 4.5:1, large/bold ≥ 3:1.",
+      "Do put the metric in --accent-soft and leave the sentence --muted — the number is the accent.",
+      "Do mark sections with the lowercase // kicker system.",
+      "Do pair big Bricolage Grotesque display with small JetBrains Mono chrome; keep display tracking ≥ −0.04em.",
+      "Do align nav, content, and footer on the 1440px spine.",
+      "Do provide a prefers-reduced-motion fallback for every animation; keep the cyan glow reserved for state."
+    ],
+    "donts": [
+      "Don't use the cream / beige / paper editorial-restraint background, or any light theme. Warm near-black, dark-only.",
+      "Don't treat monospace as costume. The full terminal metaphor is homepage-only — don't cosplay a terminal on other pages.",
+      "Don't add a second accent hue, gradient text, or background-clip: text.",
+      "Don't use cards as the default container, nested cards, or colored border-left/right side-stripes.",
+      "Don't add drop shadows on cards/buttons/inputs; the only shadow is the cyan state glow.",
+      "Don't over-round: tags/buttons are full pills, everything else stays ≤ 10px.",
+      "Don't ship the generic SaaS/Bootstrap/AI-blog-starter default look."
+    ]
+  }
+}

@@ -4,9 +4,7 @@
 const path = Astro.url.pathname;
 const links = [
   { href: "/blog", label: "BLOG" },
-  { href: "/about", label: "ABOUT" },
   { href: "/cv", label: "CV" },
-  { href: "/#contact", label: "CONTACT" },
 ];
 const active = (href: string) => {
   if (href.startsWith("/#")) return false;
