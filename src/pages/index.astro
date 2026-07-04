@@ -680,7 +680,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         justify-content: space-between;
         gap: 0.6rem 1rem;
         flex-wrap: wrap;
-        max-width: 1440px;
+        max-width: var(--w-poster);
         margin: 0 auto;
         padding-bottom: clamp(2rem, 6vw, 3.6rem);
       }
@@ -723,7 +723,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
 
       /* ---------------- hero — poster ---------------- */
       .kin {
-        max-width: 1100px;
+        max-width: var(--w-page);
         margin: 0 auto;
         display: grid;
         justify-items: center;
@@ -810,7 +810,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
 
       /* ---------------- terminal window ---------------- */
       .term {
-        max-width: 1440px;
+        max-width: var(--w-poster);
         margin: clamp(3rem, 8vw, 6rem) auto 0;
         background: var(--panel);
         border: 1px solid var(--line);
@@ -1183,7 +1183,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
 
       /* ---------------- companies strip (real content) ---------------- */
       .strip {
-        max-width: 1440px;
+        max-width: var(--w-poster);
         margin: 1.6rem auto 0;
         display: flex;
         align-items: center;
@@ -1251,7 +1251,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
 
       /* ---------------- reach out ---------------- */
       .reach {
-        max-width: 1440px;
+        max-width: var(--w-poster);
         margin: 0 auto;
         padding: clamp(3rem, 7vw, 5rem) 0 clamp(1rem, 3vw, 2rem);
         scroll-margin-top: clamp(1.5rem, 5vw, 3rem);
@@ -1294,7 +1294,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         flex-wrap: wrap;
         justify-content: space-between;
         gap: 0.5rem 1rem;
-        max-width: 1440px;
+        max-width: var(--w-poster);
         margin: clamp(2.5rem, 6vw, 4rem) auto 0;
         padding-top: 1.4rem;
         border-top: 1px solid var(--line);
@@ -1305,7 +1305,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       }
       /* ---------------- hot takes ---------------- */
       .takes {
-        max-width: 1440px;
+        max-width: var(--w-poster);
         margin: 0 auto;
         padding: clamp(4rem, 10vw, 8rem) 0 clamp(1rem, 3vw, 2rem);
       }

@@ -36,6 +36,13 @@
   --cjk:
     "PingFang TC", "Hiragino Sans", "Noto Sans TC", "Noto Sans SC",
     "Microsoft JhengHei", var(--grotesk);
+
+  /* Layout — the shared content frame (see DESIGN.md). Nav, footer, the CV and
+     the blog index all center on --w-page so their edges line up; long-form
+     posts use the narrower --w-prose reading measure. */
+  --w-page: 68rem;
+  --w-prose: 46rem;
+  --w-poster: 1440px;
 }
 
 /* Branded text selection */

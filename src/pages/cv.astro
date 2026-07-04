@@ -7,13 +7,16 @@
 import Base from "../layouts/Base.astro";
 
 const name = "Colin Cheung";
-const role = "Senior Software Engineer · 8+ years · Glasgow, UK · remote";
+const role = "Senior Software Engineer · 9+ years · Glasgow, UK · remote";
 const lede =
-  "Senior Software Engineer with 8+ years building backend, platform and full-stack systems, currently focused on AWS serverless workflow automation and AI-assisted developer workflows in the energy sector. Strongest in TypeScript/Node.js, event-driven architecture, CI/CD and engineering productivity, with a track record of owning business-critical systems, raising coding standards and shortening delivery feedback loops.";
+  "Senior Software Engineer with 9+ years building backend, platform and full-stack systems, currently focused on AWS serverless workflow automation and AI-assisted developer workflows in the energy sector. Strongest in TypeScript/Node.js, event-driven architecture, CI/CD and engineering productivity, with a track record of owning business-critical systems, raising coding standards and shortening delivery feedback loops.";
 
 const contact = [
   { label: "colincheung25@gmail.com", href: "mailto:colincheung25@gmail.com" },
-  { label: "linkedin.com/in/colin-cheung", href: "https://www.linkedin.com/in/colin-cheung/" },
+  {
+    label: "linkedin.com/in/colin-cheung",
+    href: "https://www.linkedin.com/in/colin-cheung/",
+  },
   { label: "github.com/ColinCee", href: "https://github.com/ColinCee" },
 ];
 
@@ -63,7 +66,16 @@ const experience: Role[] = [
         post: ".",
       },
     ],
-    stack: ["TypeScript", "Node.js", "AWS", "Event Sourcing", "EventBridge", "Dynatrace", "Zod", "GitHub Actions"],
+    stack: [
+      "TypeScript",
+      "Node.js",
+      "AWS",
+      "Event Sourcing",
+      "EventBridge",
+      "Dynatrace",
+      "Zod",
+      "GitHub Actions",
+    ],
   },
   {
     co: "BBC",
@@ -107,7 +119,15 @@ const experience: Role[] = [
         pre: "Established SLOs, monitoring and alerting in Datadog via Terraform (IaC) for high availability.",
       },
     ],
-    stack: ["Scala", "Kubernetes", "GCP Pub/Sub", "gRPC", "React", "Terraform", "Datadog"],
+    stack: [
+      "Scala",
+      "Kubernetes",
+      "GCP Pub/Sub",
+      "gRPC",
+      "React",
+      "Terraform",
+      "Datadog",
+    ],
   },
   {
     co: "Hometree",
@@ -128,7 +148,15 @@ const experience: Role[] = [
         pre: "Migrated to AWS RDS Proxy and MikroORM, hardening database security and transaction management.",
       },
     ],
-    stack: ["React", "Node.js", "TypeScript", "AWS", "Cypress", "Buildkite", "MikroORM"],
+    stack: [
+      "React",
+      "Node.js",
+      "TypeScript",
+      "AWS",
+      "Cypress",
+      "Buildkite",
+      "MikroORM",
+    ],
   },
   {
     co: "Skyscanner",
@@ -142,7 +170,9 @@ const experience: Role[] = [
         hl: "cutting update times from 8 hours → 2 minutes",
         post: ".",
       },
-      { pre: "Built an AWS serverless Slack chatbot for structured HR feedback." },
+      {
+        pre: "Built an AWS serverless Slack chatbot for structured HR feedback.",
+      },
     ],
     stack: ["Python", "React", "Docker", "AWS"],
   },
@@ -164,15 +194,28 @@ const experience: Role[] = [
         post: " from MySQL BLOBs to AWS S3.",
       },
     ],
-    stack: ["PHP", "Android · Kotlin", "MySQL", "TypeScript", "Node.js", "AWS S3"],
+    stack: [
+      "PHP",
+      "Android · Kotlin",
+      "MySQL",
+      "TypeScript",
+      "Node.js",
+      "AWS S3",
+    ],
   },
 ];
 
 const skills: { label: string; items: string[] }[] = [
   { label: "Core stack", items: ["TypeScript", "Node.js", "Python", "React"] },
-  { label: "Cloud & platform", items: ["Lambda", "API Gateway", "EventBridge", "DynamoDB", "Docker"] },
+  {
+    label: "Cloud & platform",
+    items: ["Lambda", "API Gateway", "EventBridge", "DynamoDB", "Docker"],
+  },
   { label: "Systems", items: ["Event-driven", "Distributed systems", "APIs"] },
-  { label: "DevOps", items: ["CI/CD", "GitHub Actions", "Observability", "Terraform"] },
+  {
+    label: "DevOps",
+    items: ["CI/CD", "GitHub Actions", "Observability", "Terraform"],
+  },
 ];
 
 const education = {
@@ -204,7 +247,7 @@ const projects = [
 
 <Base
   title="CV · Colin Cheung"
-  description="Colin Cheung, Senior Software Engineer with 8+ years across TypeScript, Node.js, React and AWS. Experience, skills, education and projects."
+  description="Colin Cheung, Senior Software Engineer with 9+ years across TypeScript, Node.js, React and AWS. Experience, skills, education and projects."
 >
   <article class="cv">
     <header class="cv__head">
@@ -216,7 +259,6 @@ const projects = [
         <nav class="cv__contact" aria-label="Contact">
           {contact.map((c) => <a href={c.href}>{c.label}</a>)}
         </nav>
-        <button class="cv__print" type="button" data-print>Save PDF ↓</button>
       </div>
     </header>
 
@@ -253,7 +295,9 @@ const projects = [
                   <p class="role__ctx">{r.ctx}</p>
                   <ul class="role__points">
                     {r.points.map((p) => (
-                      <li class="role__point">{p.pre}{p.hl && <b class="hl">{p.hl}</b>}{p.post}</li>
+                      <li class="role__point">
+                        {p.pre}{p.hl && <b class="hl">{p.hl}</b>}{p.post}
+                      </li>
                     ))}
                   </ul>
                   <p class="role__stack">{r.stack.join("  ·  ")}</p>
@@ -322,15 +366,9 @@ const projects = [
   </article>
 </Base>
 
-<script>
-  document
-    .querySelector<HTMLButtonElement>("[data-print]")
-    ?.addEventListener("click", () => window.print());
-</script>
-
 <style>
   .cv {
-    max-width: 62rem;
+    max-width: var(--w-page);
     margin: 0 auto;
   }
 
@@ -364,11 +402,11 @@ const projects = [
   }
   .cv__lede {
     margin: 1.6rem 0 0;
-    max-width: 56ch;
+    max-width: 74ch;
     font-family: var(--grotesk);
     font-weight: 500;
-    font-size: clamp(1.05rem, 1.8vw, 1.28rem);
-    line-height: 1.5;
+    font-size: 0.95rem;
+    line-height: 1.6;
     letter-spacing: -0.01em;
     color: var(--ink);
     text-wrap: pretty;
@@ -400,28 +438,6 @@ const projects = [
   .cv__contact a:hover {
     color: var(--ink);
     border-color: var(--accent);
-  }
-  .cv__print {
-    flex: none;
-    padding: 0.5rem 1.05rem;
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--accent);
-    background: transparent;
-    border: 1px solid color-mix(in oklch, var(--accent) 40%, transparent);
-    border-radius: 999px;
-    cursor: pointer;
-    transition:
-      border-color 0.16s ease,
-      background 0.16s ease,
-      color 0.16s ease;
-  }
-  .cv__print:hover {
-    color: var(--ink);
-    border-color: var(--accent);
-    background: color-mix(in oklch, var(--accent) 14%, transparent);
   }
 
   /* ---------------- section scaffold ---------------- */
@@ -549,7 +565,7 @@ const projects = [
   }
   .role__ctx {
     margin: 0.75rem 0 0;
-    max-width: 62ch;
+    max-width: 72ch;
     font-family: var(--grotesk);
     font-size: 0.94rem;
     line-height: 1.5;
@@ -566,7 +582,7 @@ const projects = [
   .role__point {
     position: relative;
     padding-left: 1.15rem;
-    max-width: 66ch;
+    max-width: 74ch;
     font-size: 0.9rem;
     line-height: 1.55;
     color: var(--muted);
@@ -824,8 +840,7 @@ const projects = [
       color: #111 !important;
     }
     .nav,
-    .foot,
-    .cv__print {
+    .foot {
       display: none !important;
     }
     .cv {

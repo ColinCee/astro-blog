@@ -150,7 +150,7 @@
       "Big Bricolage Grotesque display against small JetBrains Mono technical chrome.",
       "The metric is the accent: numbers/outcomes glow cyan, prose stays muted.",
       "The literal terminal metaphor is scarce — reserved for the homepage.",
-      "Nav, content, and footer share a 1440px spine and line up."
+      "Widths are one three-tier scale: --w-prose (46rem, reading), --w-page (68rem, content pages), --w-poster (1440px, homepage). Content pages center nav/footer/content on --w-page so edges line up; the homepage centers nav/terminal/sections on --w-poster. Same system, wider tier."
     ],
     "rules": [
       { "name": "The One Signal Rule", "body": "Cyan is the only hue on the page and marks the single most important element in view. Keep it under ~10% of any screen; its rarity is the whole point. Never introduce a second accent hue.", "section": "colors" },

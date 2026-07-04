@@ -54,7 +54,9 @@ rounded:
 spacing:
   section: "clamp(3rem, 7vw, 5rem)"
   gutter: "clamp(1rem, 4vw, 3rem)"
-  maxWidth: "1440px"
+  page: "68rem"
+  prose: "46rem"
+  poster: "1440px"
 components:
   nav-link:
     textColor: "{colors.muted}"
@@ -109,7 +111,11 @@ type, never from a tinted-paper body.
 - Big Bricolage Grotesque display against small JetBrains Mono technical chrome.
 - The metric is the accent: numbers/outcomes glow cyan, prose stays muted.
 - The literal terminal metaphor is scarce — reserved for the homepage.
-- Nav, content, and footer share a 1440px spine and line up.
+- Widths are one three-tier scale: `--w-prose` (`46rem`, reading), `--w-page`
+  (`68rem`, content pages) and `--w-poster` (`1440px`, the homepage). Content
+  pages center nav, footer, and content on `--w-page` so their edges line up; the
+  homepage centers its nav, terminal, and sections on `--w-poster` for the wide
+  "booted-up machine" feel. Same system, wider tier, not an exception.
 
 ## 2. Colors
 
@@ -222,11 +228,13 @@ homepage terminal window's ambient lift, nothing else.
   (`0.72rem`, tracking 0.1em, `--muted`) on the right.
 - **Hover/active:** color shifts to `--ink` with a cyan `border-bottom`.
 - Links: **BLOG**, **CV**. (No About; contact lives on the homepage.)
-- Spans the 1440px spine and lines up with the footer.
+- Centered on `--w-page`, so the mark lines up with the content's left edge and
+  the links line up with its right edge (and with the footer).
 
 ### Footer
 - Shared `SiteFooter.astro`: `COLIN CHEUNG` (mono, `--muted`) + `© {year} · BUILT
-  IN GLASGOW` (`--faint`), 1440px spine, `1px` top rule. Same width as the nav.
+  IN GLASGOW` (`--faint`), centered on `--w-page`, `1px` top rule. Same width as
+  the nav.
 
 ### Kicker
 - The `//` mono section label. `--accent-soft` (or `--muted`), `0.75rem`, tracking
@@ -278,6 +286,8 @@ homepage terminal window's ambient lift, nothing else.
 - The `.term` tmux mock: title bar with traffic-light dots, panes (`whoami`,
   `~/projects`, `writing`), a live status bar with clock/date/weather. This is the
   scarce set-piece — do not reproduce it on other pages.
+- The homepage centers its nav, terminal, and sections on `--w-poster` (the widest
+  scale tier); the hero name sits at `--w-page` so it stays inset from the terminal.
 
 ## 6. Do's and Don'ts
 
@@ -289,7 +299,8 @@ homepage terminal window's ambient lift, nothing else.
 - **Do** mark sections with the lowercase `// kicker` system.
 - **Do** pair big Bricolage Grotesque display with small JetBrains Mono chrome; keep
   display tracking ≥ −0.04em.
-- **Do** align nav, content, and footer on the 1440px spine.
+- **Do** center nav, footer, and page content on `--w-page` so their edges line up;
+  give long-form posts the narrower `--w-prose` reading measure.
 - **Do** provide a `prefers-reduced-motion` fallback for every animation; keep the
   cyan glow reserved for state (hover/focus/current).
 
