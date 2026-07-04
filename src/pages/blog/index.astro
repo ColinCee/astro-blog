@@ -175,14 +175,14 @@ const entries = posts.map((post) => {
     background: var(--bg);
     border: 2px solid var(--faint);
     transition:
-      border-color 0.18s ease,
-      box-shadow 0.18s ease;
+      border-color var(--dur-fast) var(--ease),
+      box-shadow var(--dur-fast) var(--ease);
     z-index: 1;
   }
   .log__link:hover .log__node,
   .log__link:focus-visible .log__node {
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
+    box-shadow: var(--ring);
   }
 
   .log__date {
@@ -225,7 +225,7 @@ const entries = posts.map((post) => {
     letter-spacing: -0.01em;
     color: var(--muted);
     text-wrap: balance;
-    transition: color 0.18s ease;
+    transition: color var(--dur-fast) var(--ease);
   }
   .log__link:hover .log__title,
   .log__link:focus-visible .log__title {
@@ -298,10 +298,10 @@ const entries = posts.map((post) => {
 
   @media (prefers-reduced-motion: no-preference) {
     .log__head {
-      animation: rise 0.45s ease-out both;
+      animation: rise var(--dur-slow) var(--ease-out) both;
     }
     .log__item {
-      animation: rise 0.5s ease-out both;
+      animation: rise var(--dur-slow) var(--ease-out) both;
     }
     .log__item:nth-child(1) {
       animation-delay: 0.08s;
@@ -310,7 +310,7 @@ const entries = posts.map((post) => {
       animation-delay: 0.15s;
     }
     .log__end {
-      animation: rise 0.5s ease-out 0.22s both;
+      animation: rise var(--dur-slow) var(--ease-out) 0.22s both;
     }
   }
 </style>

@@ -296,7 +296,9 @@ const projects = [
                   <ul class="role__points">
                     {r.points.map((p) => (
                       <li class="role__point">
-                        {p.pre}{p.hl && <b class="hl">{p.hl}</b>}{p.post}
+                        {p.pre}
+                        {p.hl && <b class="hl">{p.hl}</b>}
+                        {p.post}
                       </li>
                     ))}
                   </ul>
@@ -432,8 +434,8 @@ const projects = [
     color: var(--muted);
     border-bottom: 1px solid transparent;
     transition:
-      color 0.16s ease,
-      border-color 0.16s ease;
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
   }
   .cv__contact a:hover {
     color: var(--ink);
@@ -498,7 +500,7 @@ const projects = [
   }
   .role--current .role__node {
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
+    box-shadow: var(--ring);
   }
   .role__when {
     display: flex;
@@ -745,8 +747,8 @@ const projects = [
   }
   .cv__end a {
     color: var(--accent-soft);
-    border-bottom: 1px solid color-mix(in oklch, var(--accent) 40%, transparent);
-    transition: border-color 0.16s ease;
+    border-bottom: 1px solid var(--accent-line);
+    transition: border-color var(--dur-fast) var(--ease);
   }
   .cv__end a:hover {
     border-color: var(--accent);
@@ -795,7 +797,7 @@ const projects = [
     .xp__item,
     .cv__sec,
     .cv__end {
-      animation: rise 0.5s ease-out both;
+      animation: rise var(--dur-slow) var(--ease-out) both;
     }
     .xp__item:nth-child(2) {
       animation-delay: 0.05s;

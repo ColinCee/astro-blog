@@ -206,10 +206,10 @@ glow** (a response to state, never ambient) and the **terminal window's ambient
 lift** (the one floating set-piece on the homepage).
 
 ### Glow / Shadow Vocabulary
-- **Accent focus ring** (`box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent)`):
-  The current timeline node and hovered/focused interactive nodes.
-- **Ambient hero wash** (`radial-gradient(... var(--accent) 12% ...)` on `.shell`):
-  A single faint cyan bloom top-right of the page shell. Atmosphere, not a card shadow.
+- **Accent focus ring** — the **`--ring`** token (`0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent)`):
+  the current timeline node and hovered/focused interactive nodes.
+- **Ambient hero wash** — the **`--wash`** token (a faint `var(--accent) 12%` radial bloom),
+  applied on `.shell` and the homepage `.t`. Atmosphere, not a card shadow.
 - **Terminal window lift** (`box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.7)` on
   `.term`): The only dark drop shadow in the system. It floats the tmux window over
   the page as the homepage's one physical object. Never reuse it on cards, buttons,
@@ -252,8 +252,8 @@ homepage terminal window's ambient lift, nothing else.
 - There is no heavy filled button; the ghost pill is the button language.
 
 ### Links (inline)
-- `--accent-soft` text with a `1px` `color-mix(accent 40%)` `border-bottom` that
-  goes solid `--accent` on hover. Never underlined by default; the border is the
+- `--accent-soft` text with a `1px` **`--accent-line`** (`color-mix(accent 40%)`) `border-bottom`
+  that goes solid `--accent` on hover. Never underlined by default; the border is the
   affordance.
 
 ### Timeline (signature component)
@@ -303,6 +303,10 @@ homepage terminal window's ambient lift, nothing else.
   give long-form posts the narrower `--w-prose` reading measure.
 - **Do** provide a `prefers-reduced-motion` fallback for every animation; keep the
   cyan glow reserved for state (hover/focus/current).
+- **Do** reach for the derived tokens instead of re-mixing or hardcoding: `--accent-line`
+  (inline borders), `--ring` (focus/current glow), `--wash` (hero bloom), the motion
+  scale (`--dur-fast`/`--dur-slow`, `--ease`/`--ease-out`) with the shared `rise`
+  keyframe, and the width scale (`--w-prose`/`--w-page`/`--w-poster`).
 
 ### Don't:
 - **Don't** use the cream / beige / paper "editorial-restraint" body background, or

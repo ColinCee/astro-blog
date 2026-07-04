@@ -401,7 +401,11 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         <ul class="takes__list">
           {
             takes.map((t) => (
-              <li class="take">{t.before}<b>{t.hi}</b>{t.after}</li>
+              <li class="take">
+                {t.before}
+                <b>{t.hi}</b>
+                {t.after}
+              </li>
             ))
           }
         </ul>
@@ -652,13 +656,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       }
 
       .t {
-        background:
-          radial-gradient(
-            48rem 36rem at 88% -8%,
-            color-mix(in oklch, var(--accent) 12%, transparent),
-            transparent 60%
-          ),
-          var(--bg);
+        background: var(--wash), var(--bg);
         color: var(--ink);
         min-height: 100vh;
         padding: 1.1rem clamp(1rem, 4vw, 3rem) 2.5rem;
@@ -709,8 +707,8 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         padding: 0.2rem 0;
         border-bottom: 1px solid transparent;
         transition:
-          color 0.16s ease,
-          border-color 0.16s ease;
+          color var(--dur-fast) var(--ease),
+          border-color var(--dur-fast) var(--ease);
       }
       .t-nav__links a:hover {
         color: var(--ink);
@@ -787,10 +785,10 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         border: 1px solid transparent;
         color: var(--muted);
         transition:
-          color 0.16s ease,
-          border-color 0.16s ease,
-          background 0.16s ease,
-          transform 0.16s ease;
+          color var(--dur-fast) var(--ease),
+          border-color var(--dur-fast) var(--ease),
+          background var(--dur-fast) var(--ease),
+          transform var(--dur-fast) var(--ease);
       }
       .kin__ico svg {
         width: 1.2rem;
@@ -817,7 +815,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         border-radius: 14px;
         overflow: hidden;
         box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.7);
-        animation: rise 0.6s ease-out 0.08s both;
+        animation: rise var(--dur-slow) var(--ease-out) 0.08s both;
       }
       .term__bar {
         display: flex;
@@ -867,7 +865,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         display: flex;
         flex-direction: column;
         min-width: 0;
-        animation: rise 0.5s ease-out both;
+        animation: rise var(--dur-slow) var(--ease-out) both;
       }
       .pane--who {
         animation-delay: 0.12s;
@@ -1043,7 +1041,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         align-items: center;
         gap: 0.55ch;
         color: var(--accent);
-        transition: color 0.15s ease;
+        transition: color var(--dur-fast) var(--ease);
       }
       .who__links .ico {
         width: 0.95em;
@@ -1088,7 +1086,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         color: var(--accent);
         font-weight: 500;
         width: fit-content;
-        transition: color 0.15s ease;
+        transition: color var(--dur-fast) var(--ease);
       }
       a.proj__name:hover {
         text-decoration: underline;
@@ -1118,8 +1116,8 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         border-radius: 7px;
         color: var(--ink);
         transition:
-          background-color 0.15s ease,
-          transform 0.15s ease;
+          background-color var(--dur-fast) var(--ease),
+          transform var(--dur-fast) var(--ease);
       }
       .post:hover {
         background: color-mix(in oklch, var(--accent) 12%, transparent);
@@ -1139,7 +1137,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       .post__go {
         color: var(--accent);
         opacity: 0;
-        transition: opacity 0.15s ease;
+        transition: opacity var(--dur-fast) var(--ease);
       }
       .post:hover .post__go {
         opacity: 1;
@@ -1276,9 +1274,8 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       }
       .reach__line a {
         color: var(--accent);
-        border-bottom: 1px solid
-          color-mix(in oklch, var(--accent) 40%, transparent);
-        transition: border-color 0.16s ease;
+        border-bottom: 1px solid var(--accent-line);
+        transition: border-color var(--dur-fast) var(--ease);
       }
       .reach__line a span {
         font-size: 0.7em;
@@ -1358,16 +1355,6 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       }
 
       /* ---------------- motion ---------------- */
-      @keyframes rise {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: none;
-        }
-      }
       @keyframes slide {
         to {
           transform: translateX(-33.3333%);
@@ -1375,7 +1362,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       }
 
       /* ---------------- responsive ---------------- */
-      @media (max-width: 920px) {
+      @media (max-width: 900px) {
         .term__panes {
           grid-template-columns: 1fr;
           grid-template-areas: "who" "hl" "writing";

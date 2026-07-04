@@ -67,13 +67,7 @@ const ogImage = new URL(image ?? "/og.png", Astro.site);
     min-height: 100vh;
     min-height: 100svh;
     padding: 1.1rem clamp(1rem, 4vw, 3rem) 3rem;
-    background:
-      radial-gradient(
-        48rem 36rem at 88% -8%,
-        color-mix(in oklch, var(--accent) 12%, transparent),
-        transparent 60%
-      ),
-      var(--bg);
+    background: var(--wash), var(--bg);
     color: var(--ink);
     font-family: var(--grotesk);
     font-feature-settings: "ss01";
@@ -88,17 +82,6 @@ const ogImage = new URL(image ?? "/og.png", Astro.site);
     outline: 2px solid var(--accent);
     outline-offset: 3px;
     border-radius: 4px;
-  }
-
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {

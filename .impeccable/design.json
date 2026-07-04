@@ -56,14 +56,14 @@
     },
     "shadows": [
       {
-        "name": "accent-focus-ring",
+        "name": "--ring",
         "value": "0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent)",
-        "purpose": "State-only cyan glow on the current/hovered timeline node and focused elements."
+        "purpose": "Token. State-only cyan glow on the current/hovered timeline node and focused elements."
       },
       {
-        "name": "hero-wash",
+        "name": "--wash",
         "value": "radial-gradient(48rem 36rem at 88% -8%, color-mix(in oklch, var(--accent) 12%, transparent), transparent 60%)",
-        "purpose": "Single faint cyan atmosphere bloom on the page shell. Never a card shadow."
+        "purpose": "Token in terminal.css. Faint cyan atmosphere bloom on .shell and the homepage .t. Never a card shadow."
       },
       {
         "name": "terminal-window-lift",
@@ -72,12 +72,15 @@
       }
     ],
     "motion": [
-      { "name": "rise", "value": "@keyframes rise { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }", "purpose": "Default entrance; staggered across list items." },
-      { "name": "ease-out", "value": "ease-out", "purpose": "Standard easing (0.16s–0.5s). No bounce/elastic." },
-      { "name": "reduced-motion", "value": "@media (prefers-reduced-motion: reduce) { animation/transition durations → 0.001ms }", "purpose": "Mandatory fallback — collapses every animation." }
+      { "name": "--dur-fast", "value": "0.16s", "purpose": "Token. Interactive transitions (hover colour/border/background/transform)." },
+      { "name": "--dur-slow", "value": "0.5s", "purpose": "Token. Entrance reveals (the rise keyframe)." },
+      { "name": "--ease", "value": "ease", "purpose": "Token. Default transition timing function." },
+      { "name": "--ease-out", "value": "ease-out", "purpose": "Token. Reveal easing. No bounce/elastic." },
+      { "name": "rise", "value": "@keyframes rise { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }", "purpose": "Shared keyframe in terminal.css; staggered via animation-delay." },
+      { "name": "reduced-motion", "value": "@media (prefers-reduced-motion: reduce) { animation/transition durations to 0.001ms }", "purpose": "Mandatory fallback that collapses every animation." }
     ],
     "breakpoints": [
-      { "name": "xs", "value": "460px" },
+      { "name": "xs", "value": "480px" },
       { "name": "sm", "value": "640px" },
       { "name": "md", "value": "760px" },
       { "name": "lg", "value": "900px" }

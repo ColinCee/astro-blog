@@ -68,8 +68,8 @@ const active = (href: string) => {
     padding: 0.2rem 0;
     border-bottom: 1px solid transparent;
     transition:
-      color 0.16s ease,
-      border-color 0.16s ease;
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
   }
   .nav__link:hover {
     color: var(--ink);
@@ -79,7 +79,7 @@ const active = (href: string) => {
     color: var(--ink);
     border-color: var(--line);
   }
-  @media (max-width: 460px) {
+  @media (max-width: 480px) {
     .nav__links {
       gap: 1rem;
     }

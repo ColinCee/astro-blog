@@ -43,11 +43,40 @@
   --w-page: 68rem;
   --w-prose: 46rem;
   --w-poster: 1440px;
+
+  /* Motion */
+  --dur-fast: 0.16s;
+  --dur-slow: 0.5s;
+  --ease: ease;
+  --ease-out: ease-out;
+
+  /* Accent states — derived from --accent, reused across components */
+  --accent-line: color-mix(in oklch, var(--accent) 40%, transparent);
+  --ring: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
+  --wash:
+    radial-gradient(
+      48rem 36rem at 88% -8%,
+      color-mix(in oklch, var(--accent) 12%, transparent),
+      transparent 60%
+    );
 }
 
 /* Branded text selection */
 ::selection {
   background: color-mix(in oklch, var(--accent) 26%, transparent);
+}
+
+/* Shared entrance: fade + rise. Consumers gate it behind
+   prefers-reduced-motion in their own scope. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Smooth in-page scrolling (anchors), unless the user prefers less motion */
