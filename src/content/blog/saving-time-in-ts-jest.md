@@ -1,5 +1,6 @@
 ---
 title: "Slash Your ts-jest Test Times With This"
+shortTitle: "Slash your ts-jest test times"
 description: "One ts-jest config flag cut our CI test suite by over 10 minutes. Here is the line."
 pubDate: "Apr 03 2025"
 ---

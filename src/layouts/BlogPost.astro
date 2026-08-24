@@ -3,11 +3,83 @@
 // SiteFooter) so posts match the rest of the site, then styles the rendered
 // Markdown as terminal-native prose. Fenced code is handled by Expressive Code.
 import type { CollectionEntry } from "astro:content";
+import type { MarkdownHeading } from "astro";
 import Base from "./Base.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 
-type Props = CollectionEntry<"blog">["data"] & { minutesRead?: number };
-const { title, description, pubDate, updatedDate, minutesRead } = Astro.props;
+type Props = CollectionEntry<"blog">["data"] & {
+  minutesRead?: number;
+  headings?: MarkdownHeading[];
+};
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  minutesRead,
+  headings = [],
+} = Astro.props;
+
+// Timeline rail: one node per H2. Headings read as prose ("16 December: they
+// move the flight") but the rail wants a date, so parse the prefix before the
+// colon into an ISO stamp. The headings carry no year, so anchor the final
+// dated beat to the post's publication year and walk backwards, stepping back
+// a year each time the month jumps forward as we move up the page.
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+const pad = (n: number) => String(n).padStart(2, "0");
+
+const parsed = headings
+  .filter((h) => h.depth === 2)
+  .map((h) => {
+    const head = h.text.includes(":")
+      ? h.text.slice(0, h.text.indexOf(":"))
+      : h.text;
+    // "16 December", "Late April", "8 June" — day and qualifier both optional.
+    const m = head.match(
+      /^(?:(\d{1,2})\s+)?(?:(?:Late|Early|Mid)\s+)?([A-Z][a-z]+)$/,
+    );
+    const month = m ? MONTHS.indexOf(m[2]) + 1 : 0;
+    return {
+      slug: h.slug,
+      full: h.text,
+      head,
+      month,
+      day: m?.[1] ? Number(m[1]) : 0,
+      year: 0,
+    };
+  });
+
+let year = pubDate.getFullYear();
+let laterMonth = 0;
+for (let i = parsed.length - 1; i >= 0; i--) {
+  const p = parsed[i];
+  if (!p.month) continue;
+  if (laterMonth && p.month > laterMonth) year -= 1;
+  p.year = year;
+  laterMonth = p.month;
+}
+
+const nodes = parsed.map((p) => ({
+  slug: p.slug,
+  full: p.full,
+  // Undated headings (the closing reflections) keep their own words.
+  label: p.month
+    ? `${p.year}-${pad(p.month)}${p.day ? `-${pad(p.day)}` : ""}`
+    : p.head,
+}));
 ---
 
 <Base
@@ -16,8 +88,26 @@ const { title, description, pubDate, updatedDate, minutesRead } = Astro.props;
   ogType="article"
 >
   <article class="post">
-    <header class="post__head">
-      <a class="post__back" href="/blog">// writing</a>
+    {
+      nodes.length > 2 && (
+        <nav class="rail" aria-label="Article timeline" data-rail>
+          <ol class="rail__list">
+            {nodes.map((n) => (
+              <li>
+                <a class="rail__link" href={`#${n.slug}`} data-node>
+                  <span class="rail__label">{n.label}</span>
+                  <span class="rail__sr">{n.full}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+
+    <div class="post__col">
+      <header class="post__head">
+        <a class="post__back" href="/blog">// writing</a>
       <h1 class="post__title">{title}</h1>
       <p class="post__meta">
         <FormattedDate date={pubDate} />
@@ -55,6 +145,7 @@ const { title, description, pubDate, updatedDate, minutesRead } = Astro.props;
         ><span aria-hidden="true">←</span> more writing</a
       >
     </footer>
+    </div>
   </article>
 </Base>
 
@@ -63,6 +154,139 @@ const { title, description, pubDate, updatedDate, minutesRead } = Astro.props;
     max-width: var(--w-prose);
     margin: 0 auto;
   }
+  .post__col {
+    min-width: 0;
+  }
+
+  /* Timeline rail — the site's signature spine (blog index, CV) reused as a
+     scroll-linked reading rail. Wide viewports only; there is no room for it
+     otherwise and the headings already carry the sequence. */
+  .rail {
+    display: none;
+  }
+  .rail__list {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .rail__list::before,
+  .rail__list::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1rem;
+    bottom: 1rem;
+    width: 1px;
+    /* Behind the nodes. These are pseudo-elements of the list, so without an
+       explicit order they paint after the nodes and the progress line draws
+       straight through every dot. */
+    z-index: 0;
+  }
+  .rail__list::before {
+    background: var(--line);
+  }
+  /* Reading progress. --progress is written by the script below. */
+  .rail__list::after {
+    background: var(--accent);
+    transform: scaleY(var(--progress, 0));
+    transform-origin: top;
+  }
+  .rail__link {
+    position: relative;
+    z-index: 1;
+    display: block;
+    padding: 0.46rem 0 0.46rem 1.75rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+    transition:
+      color var(--dur-fast) var(--ease),
+      transform var(--dur-fast) var(--ease);
+  }
+  .rail__link::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.72rem;
+    width: 11px;
+    height: 11px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--faint);
+    transition:
+      border-color var(--dur-fast) var(--ease),
+      transform var(--dur-fast) var(--ease),
+      box-shadow var(--dur-fast) var(--ease);
+  }
+  /* Read/unread. Every dot keeps the --bg fill so the progress line is cleanly
+     interrupted at each node rather than running through it; the ring colour
+     alone carries the state. The line is the progress, the dots are the beats. */
+  .rail__link[data-passed] {
+    color: var(--muted);
+  }
+  .rail__link[data-passed]::before {
+    border-color: var(--muted);
+  }
+  .rail__link:hover {
+    color: var(--ink);
+    transform: translateX(2px);
+  }
+  .rail__link:hover::before {
+    border-color: var(--muted);
+  }
+  .rail__link[data-active] {
+    color: var(--ink);
+  }
+  .rail__link[data-active]::before {
+    border-color: var(--accent);
+    transform: scale(1.2);
+    box-shadow: var(--ring);
+  }
+  .rail__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (min-width: 64rem) {
+    .post {
+      display: grid;
+      grid-template-columns: 11rem minmax(0, 1fr);
+      gap: 3.25rem;
+      max-width: var(--w-page);
+    }
+    /* Floats centred in the viewport rather than pinned under the nav, so the
+       rail reads as an instrument beside the article instead of a sidebar. */
+    .rail {
+      display: block;
+      position: sticky;
+      top: 50%;
+      align-self: start;
+      transform: translateY(-50%);
+      max-height: calc(100vh - 4rem);
+      /* overflow-y forces overflow-x to compute to auto, which would crop the
+         active node's scaled dot and its 4px --ring glow where they overhang
+         the left edge. Pad for the glow and pull the box back by the same
+         amount so the rail still lines up with the nav mark. */
+      padding-left: 8px;
+      margin-left: -8px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .rail::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
   .post__head {
     margin-bottom: clamp(2rem, 5vw, 3rem);
   }
@@ -130,15 +354,83 @@ const { title, description, pubDate, updatedDate, minutesRead } = Astro.props;
     .post__foot {
       animation-delay: 0.1s;
     }
+    /* Animate the list, not .rail — .rail owns the centring transform and a
+       `both`-filled animation would overwrite it for good. */
+    .rail__list {
+      animation: rise var(--dur-slow) var(--ease-out) 0.12s both;
+    }
   }
 </style>
+
+<script>
+  // Scroll-linked timeline rail: marks the section currently being read and
+  // drives the cyan progress fill on the spine. Cheap enough to run on every
+  // frame-throttled scroll; no observers to keep in sync with the DOM.
+  const rail = document.querySelector<HTMLElement>("[data-rail]");
+  const prose = document.querySelector<HTMLElement>(".prose");
+
+  if (rail && prose) {
+    const links = Array.from(
+      rail.querySelectorAll<HTMLAnchorElement>("a[data-node]"),
+    );
+    const targets = links.map((a) =>
+      document.getElementById(decodeURIComponent(a.hash.slice(1))),
+    );
+
+    let queued = false;
+
+    const update = () => {
+      queued = false;
+      const line = window.innerHeight * 0.3;
+
+      // Within a pixel or two of the bottom, nothing more can cross the line,
+      // so the final section is the one being read. Without this the last
+      // node never lights up on a short closing section.
+      const bottom =
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 2;
+
+      let active = 0;
+      targets.forEach((t, i) => {
+        if (t && t.getBoundingClientRect().top <= line) active = i;
+      });
+      if (bottom) active = links.length - 1;
+
+      links.forEach((a, i) => {
+        const on = i === active;
+        a.toggleAttribute("data-active", on);
+        a.toggleAttribute("data-passed", i < active);
+        if (on) a.setAttribute("aria-current", "true");
+        else a.removeAttribute("aria-current");
+      });
+
+      const box = prose.getBoundingClientRect();
+      const span = Math.max(box.height - line, 1);
+      const done = bottom
+        ? 1
+        : Math.min(Math.max((line - box.top) / span, 0), 1);
+      rail.style.setProperty("--progress", String(done));
+    };
+
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", onScroll);
+    update();
+  }
+</script>
 
 <style is:global>
   /* Prose: terminal-native long-form, scoped under .prose. Slotted Markdown is
      not reachable by scoped styles, so these are global but namespaced. */
   .prose {
     --prose-ink: oklch(0.87 0.012 95);
-    font-size: 1.06rem;
+    max-width: 58ch;
+    font-size: clamp(1.06rem, 0.95rem + 0.25vw, 1.19rem);
     line-height: 1.72;
     color: var(--prose-ink);
   }
@@ -151,6 +443,7 @@ const { title, description, pubDate, updatedDate, minutesRead } = Astro.props;
   }
   .prose h2 {
     margin: 2.6rem 0 0.85rem;
+    scroll-margin-top: 3.5rem;
     font-family: var(--grotesk);
     font-weight: 700;
     font-size: clamp(1.35rem, 3vw, 1.6rem);
@@ -204,6 +497,70 @@ const { title, description, pubDate, updatedDate, minutesRead } = Astro.props;
     border: 0;
     border-top: 1px solid var(--line);
   }
+  /* Inline metric highlight — the site's "the metric is the accent" rule,
+     carried into long-form. Use it on the one number that is the point. */
+  .prose .hl {
+    color: var(--accent-soft);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Tables: a data rail, not a card. Hairlines only, no fill, no zebra —
+     depth is tonal per DESIGN.md. The first column is the mono date/key rail,
+     mirroring the timeline rails on the blog index and CV. */
+  .prose table {
+    width: 100%;
+    margin: 1.8rem 0;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    text-align: left;
+  }
+  .prose thead th {
+    padding: 0 0 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--faint);
+    vertical-align: bottom;
+    border-bottom: 1px solid var(--line);
+  }
+  .prose tbody td {
+    padding: 0.72rem 0;
+    vertical-align: baseline;
+    border-bottom: 1px solid
+      color-mix(in oklch, var(--line) 55%, transparent);
+    text-wrap: pretty;
+  }
+  .prose tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  .prose th + th,
+  .prose td + td {
+    padding-left: 1.35rem;
+  }
+  /* Author-controlled data column: Markdown's `---:` alignment marks the
+     column that holds values, which then gets the mono/tabular treatment. */
+  .prose th[align="right"],
+  .prose td[align="right"] {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .prose td[align="right"] {
+    color: var(--ink);
+  }
+  @media (max-width: 34rem) {
+    .prose table {
+      font-size: 0.9rem;
+    }
+    .prose th + th,
+    .prose td + td {
+      padding-left: 0.85rem;
+    }
+  }
   /* Inline code only. Fenced blocks are styled by Expressive Code. */
   .prose :not(pre) > code {
     font-family: var(--mono);
@@ -215,5 +572,10 @@ const { title, description, pubDate, updatedDate, minutesRead } = Astro.props;
   }
   .prose .expressive-code {
     margin: 1.6rem 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :root {
+      scroll-behavior: smooth;
+    }
   }
 </style>

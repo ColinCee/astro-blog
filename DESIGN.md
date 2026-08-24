@@ -246,28 +246,66 @@ homepage terminal window's ambient lift, nothing else.
   affordance.
 
 ### Timeline (signature component)
-- Blog index and CV share a vertical spine (`1px var(--line)`) with a **node** per
-  entry: an 8–9px dot, `--bg` fill, `2px solid var(--faint)` ring. The **current /
-  active** node switches its ring to `--accent` plus the cyan focus glow. A mono
-  date rail sits to the left of the spine; body content to the right.
+- Blog index, CV, and long-form article navigation share a vertical spine
+  (`1px var(--line)`) with a **node** per entry: an 8–9px dot, `--bg` fill,
+  `2px solid var(--faint)` ring. The **current / active** node switches its ring to
+  `--accent` plus the cyan focus glow. A mono date rail sits to the left of the
+  spine; body content to the right.
 - **CV date rail:** a `--rail` variable (5.75rem) drives the spine offset, the grid
   column, and the node position together so they always line up. Each role shows the
   end date on top (`now` in `--accent` for the current role, else month + year) and
   the start date below, dialed down to `--muted`/`--faint` so it does not compete. On
   mobile (≤640px) the rail collapses to one left spine with the dates inline.
+- **Article rail (`BlogPost.astro`):** the third use of the spine. `BlogPost` takes
+  Astro's `headings` and turns every `##` into a node, labelled with an **ISO date**
+  parsed from the heading's prefix (`16 December: they move the flight` →
+  `2025-12-16`; `Late April` → `2026-04`). Headings carry no year, so the last dated
+  beat is anchored to the post's `pubDate` year and the list is walked backwards,
+  stepping back a year whenever the month jumps forward. Undated headings keep their
+  own words. Only shown when a post has more than two H2s, so it appears on sequenced
+  pieces and stays out of the way on short ones.
+- The rail is `position: sticky` with `top: 50%` and `translateY(-50%)`, so it floats
+  centred in the viewport rather than pinned under the nav. A `scaleY(var(--progress))`
+  cyan fill runs down the spine as you scroll. Every dot keeps the `--bg` fill and
+  sits **above** the spine (`.rail__link` is `z-index: 1`, the spine pseudo-elements
+  are `z-index: 0`), so the progress line is interrupted at each node instead of
+  drawing through it — beads on a string. State is carried by the ring alone:
+  **unread** `--faint`, **passed** `--muted`, **current** `--accent` + `--ring` glow +
+  `scale(1.2)`. Hidden below `64rem` — on mobile the dated headings already carry the
+  sequence. Only ever use this for posts whose headings *are* a sequence; it is a
+  timeline, not a table of contents.
+- Two ordering traps, both of which have bitten this component: pseudo-element spines
+  paint *after* their siblings unless given an explicit `z-index`, and a `both`-filled
+  entrance animation on `.rail` permanently overwrites the centring transform —
+  animate `.rail__list` instead.
+- The scroll-spy force-activates the final node once the page is scrolled to the
+  bottom. A short closing section can never cross the activation line otherwise, and
+  the last node would never light up.
 
 ### Metric Highlight (signature)
 - `.hl` — inline `<b>` in `--accent-soft`, weight 600, `tabular-nums`. Wraps the
   one number/outcome in a sentence. This is the visual thesis of the whole site.
 
 ### Blog Post (long-form reading)
-- Posts render on the shared `Base` shell via `BlogPost.astro`, max-width `42rem`:
-  a `// writing` back-kicker, a Bricolage display title (`clamp(2rem, 5.5vw, 3.1rem)`,
-  weight 800), and a mono meta line (date · N min read).
+- Posts render on the shared `Base` shell via `BlogPost.astro`. Below `64rem` it is a
+  single `42rem` column. At `64rem` and up it becomes a two-column grid on
+  `--w-page` — `11rem` article rail, `3.25rem` gap, then the article — so the rail
+  occupies the left margin and the whole block still starts its left edge on the nav
+  mark. Content carries a `// writing` back-kicker, a Bricolage display title
+  (`clamp(2rem, 5.5vw, 3.1rem)`, weight 800), and a mono meta line (date · N min read).
 - **`.prose`** styles the slotted Markdown: body ink `oklch(0.87 0.012 95)` (a notch
-  brighter than `--muted` for sustained reading), line-height `1.72`, measure ~65ch.
+  brighter than `--muted` for sustained reading), line-height `1.72`, measure `58ch`.
   Headings are Bricolage `--ink`; links are `--accent-soft` with a cyan bottom-border;
   list markers and the blockquote rule are cyan.
+- **A wide screen grows the type, never the measure.** `.prose` font-size is fluid —
+  `clamp(1.06rem, 0.95rem + 0.25vw, 1.19rem)`. `58ch` lands at roughly 75 rendered
+  characters, which is the top of the comfortable band, so the answer to a cramped
+  big monitor is bigger text and a filled margin, not a longer line.
+- **Tables** are hairline data rails, not boxes: no outer border, a single
+  `--line` rule under a mono uppercase `--faint` header row, and `--line-soft`
+  between rows. Column alignment in the Markdown drives the styling — a `---:`
+  column renders mono, `tabular-nums` and `nowrap` so figures align on the decimal.
+  Below `40rem` the table scrolls horizontally in its own overflow container.
 - **Code:** fenced blocks are rendered by Expressive Code (`github-dark`); inline code
   is a mono chip on a faint `--ink` 10% wash. Never hand-restyle Expressive Code blocks.
 
@@ -275,6 +313,10 @@ homepage terminal window's ambient lift, nothing else.
 - The `.term` tmux mock: title bar with traffic-light dots, panes (`whoami`,
   `~/projects`, `writing`), a live status bar with clock/date/weather. This is the
   scarce set-piece — do not reproduce it on other pages.
+- The `writing` pane reads the **blog collection** (newest three, then "All posts"), so
+  publishing a post updates the homepage on its own. Posts may set an optional
+  `shortTitle` in frontmatter for this pane, where a full headline does not fit; it
+  falls back to `title`. Never hard-code the post list here again.
 - The homepage centers its nav, terminal, and sections on `--w-poster` (the widest
   scale tier); the hero name sits at `--w-page` so it stays inset from the terminal.
 

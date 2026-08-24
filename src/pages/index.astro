@@ -1,4 +1,5 @@
 ---
+import { getCollection } from "astro:content";
 import "../styles/terminal.css";
 
 // Terminal-native homepage for colincheung.dev — dark, cyan accent.
@@ -90,18 +91,27 @@ const companies = [
   { name: "EDF Energy", year: "2023" },
 ];
 
-// Right-bottom pane — latest writing, as readable titles.
-const posts = [
-  {
-    title: "From 4.5GB to 221MB: a Parquet story",
-    date: "Sep 2025",
-    href: "/blog/jsonl-to-parquet-compression/",
-  },
-  {
-    title: "Slash your ts-jest test times",
-    date: "Apr 2025",
-    href: "/blog/saving-time-in-ts-jest/",
-  },
+// Right-bottom pane — latest writing, as readable titles. Read from the blog
+// collection so publishing a post updates the homepage automatically; posts set
+// `shortTitle` when the full headline is too long for the pane.
+const latest = (await getCollection("blog"))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const posts: {
+  title: string;
+  date: string;
+  href: string;
+  all?: boolean;
+}[] = [
+  ...latest.map((p) => ({
+    title: p.data.shortTitle ?? p.data.title,
+    date: p.data.pubDate.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
+    href: `/blog/${p.id}/`,
+  })),
   { title: "All posts", date: "", href: "/blog", all: true },
 ];
 

@@ -1,5 +1,6 @@
 ---
 title: "From 4.5GB to 221MB: A Story about Parquet"
+shortTitle: "From 4.5GB to 221MB: a Parquet story"
 description: "A 4.5GB JSONL export became a 221MB Parquet file. Same data, 95% smaller. Here is why."
 pubDate: "Sep 03 2025"
 ---
