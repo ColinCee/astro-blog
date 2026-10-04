@@ -4,20 +4,32 @@ import BlogPost from '../../layouts/BlogPost.astro';
 import { render } from 'astro:content';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
+	const posts = (await getCollection('blog')).sort(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+	);
+	const link = (p?: CollectionEntry<'blog'>) =>
+		p && { title: p.data.shortTitle ?? p.data.title, href: `/blog/${p.id}/` };
+	// Sorted newest first, so the newer post is the previous index.
+	return posts.map((post, i) => ({
 		params: { slug: post.id },
-		props: post,
+		props: { post, newer: link(posts[i - 1]), older: link(posts[i + 1]) },
 	}));
 }
-type Props = CollectionEntry<'blog'>;
+type Adjacent = { title: string; href: string } | undefined;
+type Props = { post: CollectionEntry<'blog'>; newer: Adjacent; older: Adjacent };
 
-const post = Astro.props;
+const { post, newer, older } = Astro.props;
 const { Content, headings } = await render(post);
 const words = post.body?.trim().split(/\s+/).length ?? 0;
 const minutesRead = Math.max(1, Math.round(words / 200));
 ---
 
-<BlogPost {...post.data} minutesRead={minutesRead} headings={headings}>
+<BlogPost
+	{...post.data}
+	minutesRead={minutesRead}
+	headings={headings}
+	newer={newer}
+	older={older}
+>
 	<Content />
 </BlogPost>

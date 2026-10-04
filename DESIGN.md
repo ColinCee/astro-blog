@@ -1,17 +1,17 @@
 ---
 name: colincheung.dev
-description: Terminal-native personal site — warm near-black, one cyan signal, Bricolage Grotesque + JetBrains Mono.
+description: Terminal-native personal site — Stone (warm grey) light theme and a warm near-black dark theme, one tomato signal, Bricolage Grotesque + JetBrains Mono.
 colors:
-  bg: "oklch(0.165 0.012 80)"
-  panel: "oklch(0.205 0.014 80)"
-  pane: "oklch(0.185 0.013 80)"
-  line: "oklch(0.31 0.018 80)"
-  ink: "oklch(0.95 0.01 95)"
-  muted: "oklch(0.72 0.02 95)"
-  faint: "oklch(0.63 0.02 95)"
-  accent: "oklch(0.82 0.15 205)"
-  accent-soft: "oklch(0.8 0.08 205)"
-  accent-ink: "oklch(0.18 0.05 220)"
+  bg: "oklch(0.905 0.008 85)"
+  panel: "oklch(0.92 0.008 85)"
+  pane: "oklch(0.935 0.008 85)"
+  line: "oklch(0.82 0.011 85)"
+  ink: "oklch(0.22 0.012 85)"
+  muted: "oklch(0.42 0.013 85)"
+  faint: "oklch(0.49 0.013 85)"
+  accent: "oklch(0.55 0.19 32)"
+  accent-soft: "oklch(0.49 0.17 32)"
+  accent-ink: "oklch(0.98 0.01 60)"
 typography:
   display:
     fontFamily: "Bricolage Grotesque, ui-sans-serif, system-ui, sans-serif"
@@ -56,7 +56,7 @@ spacing:
   gutter: "clamp(1rem, 4vw, 3rem)"
   page: "68rem"
   prose: "46rem"
-  poster: "1440px"
+  poster: "90rem"
 components:
   nav-link:
     textColor: "{colors.muted}"
@@ -82,51 +82,72 @@ components:
 
 ## 1. Overview
 
-**Creative North Star: "The Warm Terminal"**
+**Creative North Star: "The Warm Terminal, in Daylight"**
 
-The site should feel like Colin's own machine booted up in a dark room: a warm
-near-black surface, precise monospace chrome, and a single cyan signal that only
-ever lights up the thing that matters. It is engineer-native without cosplay —
-the homepage runs a *literal* terminal session (tmux panes, `whoami`, a live
-clock and weather), and every other page inherits that machine's language
-(mono `//` labels, the warm-neutral ramp, one cyan accent) without re-staging
-the whole terminal. Confident and a little playful; the work — real metrics, real
-systems — does the talking, not adjectives.
+> **Palette update (Oct 2026):** the site now has two themes from one token set
+> and follows the system setting (no toggle). **Stone** (light, default) is a warm
+> grey page at ~90% lightness with raised surfaces one step lighter, chosen so
+> large areas do not glare. **Dark** is the original warm near-black. The accent
+> moved from cyan to tomato (see
+> "Colour" below). Token values in `terminal.css` are authoritative; where
+> prose below still quotes the old dark ramp's figures, read it as the role.
 
-This system explicitly rejects the faceless blog-starter default and the
-cream/beige "editorial-restraint" background that floods personal sites. It is
-not a corporate résumé, not a Bootstrap theme, and not monospace-as-decoration.
-Warmth comes from the near-black hue (warm, not cold blue-black) and the display
-type, never from a tinted-paper body.
+### Colour
+One accent hue, tomato (`--accent`, `--accent-soft`), on a warm neutral ramp. The
+accent marks results and metrics, links, and active or hover states, and nothing
+else. A four-hue version (teal, ochre, indigo alongside tomato) was tried and
+dropped in Oct 2026: it read as busy and less cohesive. Hierarchy comes from type
+size and weight, the three neutral text steps (`--ink`, `--muted`, `--faint`), and
+the two surface steps, not from more colours. No gradients on surfaces.
+
+### Typography standards (enforced by `tests/typography.spec.ts`)
+| Rule | Value | Why |
+|---|---|---|
+| Body text (long-form) | 16-19px at every screen size | Below 16 strains; above ~19 reads as heavy in Bricolage. |
+| Body line-height | 1.5-1.8 (currently 1.65) | WCAG 1.4.12 asks for at least 1.5. |
+| Line length | 45-90 characters (currently ~88) | 45-75 is the classic ideal; WCAG 1.4.8 suggests 80. 88 is a deliberate choice for a wider column; do not go past 90. |
+| Smallest text anywhere | 11px (`0.6875rem`) | Mono labels and metadata. Nothing smaller, including on phones. |
+| Contrast | 4.5:1 body, 3:1 large text | WCAG 1.4.3 (not yet automated). |
+| Units | rem for every size and width | So the large-screen scaling below applies to everything. |
+
+The test measures the rendered page at phone, laptop, 2560 and 3840 widths and
+fails if any rule is broken. Change a number here and in the test together.
+
+### Large screens
+The root font size scales gently with the viewport above ~1600px
+(`clamp(100%, 0.85rem + 0.15vw, 110%)` on `html`): 16px on a laptop, about 17.4px
+at 2560, capped at 17.6px. Every size and width is in rem, so type, columns and
+spacing grow together. A stronger scale (20px at 2560) was tried and read as too
+big.
 
 **Key Characteristics:**
 
-- Dark-only, warm near-black (`--bg` OKLCH L 0.165, hue 80) — never pure black, never light.
-- Exactly one chromatic color: cyan. Everything else is a warm-neutral ramp.
+- Light (Stone) and dark themes from one token set, switched by `prefers-color-scheme`. Never cream, never pure white, never pure black.
+- Exactly one chromatic color: tomato. Everything else is a warm-neutral ramp.
 - Big Bricolage Grotesque display against small JetBrains Mono technical chrome.
-- The metric is the accent: numbers/outcomes glow cyan, prose stays muted.
+- The metric is the accent: numbers/outcomes glow tomato, prose stays muted.
 - The literal terminal metaphor is scarce — reserved for the homepage.
 - Widths are one three-tier scale: `--w-prose` (`46rem`, reading), `--w-page`
-  (`68rem`, content pages) and `--w-poster` (`1440px`, the homepage). Content
+  (`68rem`, content pages) and `--w-poster` (`90rem`, the homepage). Content
   pages center nav, footer, and content on `--w-page` so their edges line up; the
   homepage centers its nav, terminal, and sections on `--w-poster` for the wide
   "booted-up machine" feel. Same system, wider tier, not an exception.
 
 ## 2. Colors
 
-A warm-neutral greyscale carrying a single cyan signal. Strategy: **Restrained** —
+A warm-neutral greyscale carrying a single tomato signal. Strategy: **Restrained** —
 one accent used on well under 10% of any screen, against a warm dark ramp.
 
 ### Primary
-- **Signal Cyan** (`--accent`, `oklch(0.82 0.15 205)`): The only chromatic color.
+- **Signal Tomato** (`--accent`, `oklch(0.82 0.15 205)`): The only chromatic color.
   Reserved for the single most important thing in a view — the metric in a line,
   the current timeline node, the active/hover link border, the terminal `@` and
-  prompt. If two things are cyan in one glance, one is wrong.
-- **Soft Cyan** (`--accent-soft`, `oklch(0.8 0.08 205)`): The desaturated cyan for
+  prompt. If two things are tomato in one glance, one is wrong.
+- **Soft Tomato** (`--accent-soft`, `oklch(0.8 0.08 205)`): The desaturated tomato for
   runs of accented *text* (metric highlights, `//` kickers, inline links) where
-  full-chroma cyan would vibrate. Reads as "important" without shouting.
+  full-chroma tomato would vibrate. Reads as "important" without shouting.
 - **Accent Ink** (`--accent-ink`, `oklch(0.18 0.05 220)`): Dark text/ink for the
-  rare filled-cyan surface.
+  rare filled-tomato surface.
 
 ### Neutral (the warm ramp, hue 80–95)
 - **Ink** (`--ink`, `oklch(0.95 0.01 95)`): Primary text — display headings, names,
@@ -145,12 +166,12 @@ one accent used on well under 10% of any screen, against a warm dark ramp.
 The CV re-declares the tokens inside `@media print` to flip the terminal palette to
 ink-on-white for a clean PDF: `--bg`/`--panel`/`--pane` become `#ffffff`, `--ink`
 `#111111`, `--muted` `#333333`, `--faint` `#5a5a5a`, `--line` `#d5d5d5`, and both
-cyans become `#0e7490` (a print-safe teal). Site chrome (nav and footer) is hidden
+tomatos become `#0e7490` (a print-safe teal). Site chrome (nav and footer) is hidden
 and entries use `break-inside: avoid`. This is the only place the palette
 legitimately leaves the dark ramp.
 
 ### Named Rules
-**The One Signal Rule.** Cyan is the only hue on the page and marks the single most
+**The One Signal Rule.** Tomato is the only hue on the page and marks the single most
 important element in view. Keep it under ~10% of any screen; its rarity is the
 whole point. Never introduce a second accent hue.
 
@@ -196,7 +217,7 @@ Letters must not touch.
 
 Flat by default. Depth comes from the warm-neutral ramp and 1px `--line`
 hairlines, not shadows. Surfaces (`--panel`, `--pane`) step up in lightness rather
-than casting shadows. Exactly two shadows are sanctioned: the **cyan focus/state
+than casting shadows. Exactly two shadows are sanctioned: the **tomato focus/state
 glow** (a response to state, never ambient) and the **terminal window's ambient
 lift** (the one floating set-piece on the homepage).
 
@@ -212,16 +233,16 @@ lift** (the one floating set-piece on the homepage).
 
 ### Named Rules
 **The Flat-By-Default Rule.** No drop shadows on cards, inputs, or other surfaces. Depth =
-tonal layering + hairlines. The two allowed shadows are the cyan state glow and the
+tonal layering + hairlines. The two allowed shadows are the tomato state glow and the
 homepage terminal window's ambient lift, nothing else.
 
 ## 5. Components
 
 ### Navigation
 - Shared `Nav.astro` (content pages) mirrors the homepage `.t-nav`. A mono mark
-  `colin@glasgow:~$` (the `@` is cyan, `:~$` faint) on the left; mono links
+  `colin@glasgow:~$` (the `@` is tomato, `:~$` faint) on the left; mono links
   (`0.72rem`, tracking 0.1em, `--muted`) on the right.
-- **Hover/active:** color shifts to `--ink` with a cyan `border-bottom`.
+- **Hover/active:** color shifts to `--ink` with a tomato `border-bottom`.
 - Links: **BLOG**, **CV**. (No About; contact lives on the homepage.)
 - Centered on `--w-page`, so the mark lines up with the content's left edge and
   the links line up with its right edge (and with the footer).
@@ -249,38 +270,55 @@ homepage terminal window's ambient lift, nothing else.
 - Blog index, CV, and long-form article navigation share a vertical spine
   (`1px var(--line)`) with a **node** per entry: an 8–9px dot, `--bg` fill,
   `2px solid var(--faint)` ring. The **current / active** node switches its ring to
-  `--accent` plus the cyan focus glow. A mono date rail sits to the left of the
+  `--accent` plus the tomato focus glow. A mono date rail sits to the left of the
   spine; body content to the right.
 - **CV date rail:** a `--rail` variable (5.75rem) drives the spine offset, the grid
   column, and the node position together so they always line up. Each role shows the
   end date on top (`now` in `--accent` for the current role, else month + year) and
   the start date below, dialed down to `--muted`/`--faint` so it does not compete. On
   mobile (≤640px) the rail collapses to one left spine with the dates inline.
-- **Article rail (`BlogPost.astro`):** the third use of the spine. `BlogPost` takes
-  Astro's `headings` and turns every `##` into a node, labelled with an **ISO date**
-  parsed from the heading's prefix (`16 December: they move the flight` →
-  `2025-12-16`; `Late April` → `2026-04`). Headings carry no year, so the last dated
-  beat is anchored to the post's `pubDate` year and the list is walked backwards,
-  stepping back a year whenever the month jumps forward. Undated headings keep their
-  own words. Only shown when a post has more than two H2s, so it appears on sequenced
-  pieces and stays out of the way on short ones.
-- The rail is `position: sticky` with `top: 50%` and `translateY(-50%)`, so it floats
-  centred in the viewport rather than pinned under the nav. A `scaleY(var(--progress))`
-  cyan fill runs down the spine as you scroll. Every dot keeps the `--bg` fill and
-  sits **above** the spine (`.rail__link` is `z-index: 1`, the spine pseudo-elements
-  are `z-index: 0`), so the progress line is interrupted at each node instead of
-  drawing through it — beads on a string. State is carried by the ring alone:
-  **unread** `--faint`, **passed** `--muted`, **current** `--accent` + `--ring` glow +
-  `scale(1.2)`. Hidden below `64rem` — on mobile the dated headings already carry the
-  sequence. Only ever use this for posts whose headings *are* a sequence; it is a
-  timeline, not a table of contents.
-- Two ordering traps, both of which have bitten this component: pseudo-element spines
-  paint *after* their siblings unless given an explicit `z-index`, and a `both`-filled
-  entrance animation on `.rail` permanently overwrites the centring transform —
-  animate `.rail__list` instead.
-- The scroll-spy force-activates the final node once the page is scrolled to the
-  bottom. A short closing section can never cross the activation line otherwise, and
-  the last node would never light up.
+- **Article timeline (`BlogPost.astro`):** the third use of the spine, and it is
+  in the flow of the article, not a sidebar. When a post opens with three or more
+  dated `##` headings (`16 December: they move the flight`), the layout splits the
+  rendered Markdown at those headings and renders each section as a timeline entry.
+  The date prefix is parsed off the heading (headings carry no year, so the last
+  dated one is anchored to `pubDate` and the list is walked backwards) and the rest
+  of the heading becomes the entry's title.
+- At `64rem`+ the date sits in the left margin as a sticky column (large day
+  numeral, mono month and year, then the wait since the previous entry: `next day`,
+  `+3 days`, `+8 weeks`, `+3 months`), with the spine and a node in the gap. Below
+  that the spine runs down the left edge and the date sits inline above the title.
+- A `// timeline` line above the list gives the first and last dates and the total
+  span in days. Node state is the ring alone: unread `--faint`, passed filled
+  `--accent`, current `--accent` plus the `--ring` glow.
+- Undated sections after the run (takeaways, reflections) render as ordinary prose
+  below the timeline. Only use dated headings when the post really is a sequence.
+- This replaced the earlier sticky scroll-linked rail (Oct 2026).
+
+### Shipped pane (homepage terminal)
+- The terminal's right-top, active pane (`1:shipped`). Each row is one improvement
+  with a `before` bar (`--bar`) and an `after` bar (`--accent`) drawn to scale
+  (after ÷ before), plus a mono `WHERE · WHEN` meta. Data lives in the `shipped`
+  array in `index.astro`. Bars grow in once after the panes rise.
+
+### Projects (homepage section)
+- `// projects` sits below the companies strip as four flat neutral tiles (`--pane`,
+  `--line` border, 10px radius). At rest the only colour is a small accent dot;
+  hover lifts the tile and turns the border and arrow accent. 1, 2 or 4 columns.
+
+### Writing (homepage section)
+- `// writing`: the newest post is a lead panel (same flat surface as the
+  tiles) with a filled `latest` tag, title, description and a stat
+  chip; the remaining posts are hairline rows (mono date, title, description, chip)
+  ending in an `All posts` row.
+- **Stat chip** (`.chip`): the post's `stat` frontmatter as a mono pill on a 10%
+  accent tint. Posts without a `stat` show no chip.
+
+### Homepage motion
+- Hero name: each word rises out of its own mask on load.
+- Sections below the terminal carry `data-reveal` and rise in on scroll (armed by
+  JS; visible without it).
+- A faint dot grid sits behind the hero and terminal and fades out down the page.
 
 ### Metric Highlight (signature)
 - `.hl` — inline `<b>` in `--accent-soft`, weight 600, `tabular-nums`. Wraps the
@@ -293,10 +331,32 @@ homepage terminal window's ambient lift, nothing else.
   occupies the left margin and the whole block still starts its left edge on the nav
   mark. Content carries a `// writing` back-kicker, a Bricolage display title
   (`clamp(2rem, 5.5vw, 3.1rem)`, weight 800), and a mono meta line (date · N min read).
+- **Figures ledger:** optional `figures` frontmatter (label + value pairs) renders
+  under the standfirst as a hairline-ruled row of large numbers; the last one is the
+  result and takes the accent. When present it replaces the stat chip in the meta row.
+- **Quotes** are excerpts on the raised surface (`--pane`, `--line`, 10px radius), so
+  quoted documents read differently from narration. **Ordered lists** are numbered
+  takeaways: hairline-separated rows with mono accent numerals.
+- **Body size:** `--prose-size`, 16-17px (`clamp(1rem, 0.96rem + 0.18vw, 1.0625rem)`),
+  line-height 1.65. Larger sizes read as heavy in Bricolage; do not raise it.
+- **Figures** (`<figure class="fig">` written as HTML in the Markdown): one raised
+  panel with mono labels and a caption. Building blocks: `.cmp` (before/after bars to
+  scale), `.stack` + `.legend` (one bar split into parts), `.split` (two panels),
+  `.rows` / `.cols` (row vs column illustration), `.boxes` / `.box` (simple flow).
+  Marks are neutral; only the result takes the accent. Aim for at least one figure
+  per post so no screen is text alone.
+- **Post header:** title, then the post's `description` as a standfirst
+  (`.post__lede`, Body 500, `--muted`), a hairline, and the meta row: the `stat`
+  chip (when set), date and read time. Header, prose, timeline and footer all share one measure, `--measure` (44rem),
+  so every block on a post (text, figures, code, tables) has the same left and
+  right edge. Wider "breakout" figures and code were tried and rejected (Oct 2026).
+- **Reading progress:** a 2px accent bar fixed to the top of the viewport.
+- **Post footer:** `older` / `newer` links by publish date, then `all writing`.
+- **Sections:** each `##` gets a hairline above it so long posts scan as sections.
 - **`.prose`** styles the slotted Markdown: body ink `oklch(0.87 0.012 95)` (a notch
   brighter than `--muted` for sustained reading), line-height `1.72`, measure `58ch`.
-  Headings are Bricolage `--ink`; links are `--accent-soft` with a cyan bottom-border;
-  list markers and the blockquote rule are cyan.
+  Headings are Bricolage `--ink`; links are `--accent-soft` with a tomato bottom-border;
+  list markers and the blockquote rule are tomato.
 - **A wide screen grows the type, never the measure.** `.prose` font-size is fluid —
   `clamp(1.06rem, 0.95rem + 0.25vw, 1.19rem)`. `58ch` lands at roughly 75 rendered
   characters, which is the top of the comfortable band, so the answer to a cramped
@@ -311,7 +371,7 @@ homepage terminal window's ambient lift, nothing else.
 
 ### Terminal Session (homepage only)
 - The `.term` tmux mock: title bar with traffic-light dots, panes (`whoami`,
-  `~/projects`, `writing`), a live status bar with clock/date/weather. This is the
+  `shipped`, `writing`), a live status bar with clock/date/weather. This is the
   scarce set-piece — do not reproduce it on other pages.
 - The `writing` pane reads the **blog collection** (newest three, then "All posts"), so
   publishing a post updates the homepage on its own. Posts may set an optional
@@ -323,7 +383,7 @@ homepage terminal window's ambient lift, nothing else.
 ## 6. Do's and Don'ts
 
 ### Do:
-- **Do** keep the palette to the warm-neutral ramp plus one cyan. Body text ≥ 4.5:1,
+- **Do** keep the palette to the warm-neutral ramp plus one tomato. Body text ≥ 4.5:1,
   large/bold ≥ 3:1 (the ramp is tuned so `--ink`/`--muted`/`--faint` all pass on `--bg`).
 - **Do** put the metric in `--accent-soft` and leave the sentence `--muted` — the
   number is the accent.
@@ -333,24 +393,24 @@ homepage terminal window's ambient lift, nothing else.
 - **Do** center nav, footer, and page content on `--w-page` so their edges line up;
   give long-form posts the narrower `--w-prose` reading measure.
 - **Do** provide a `prefers-reduced-motion` fallback for every animation; keep the
-  cyan glow reserved for state (hover/focus/current).
+  tomato glow reserved for state (hover/focus/current).
 - **Do** reach for the derived tokens instead of re-mixing or hardcoding: `--accent-line`
   (inline borders), `--ring` (focus/current glow), `--wash` (hero bloom), the motion
   scale (`--dur-fast`/`--dur-slow`, `--ease`/`--ease-out`) with the shared `rise`
   keyframe, and the width scale (`--w-prose`/`--w-page`/`--w-poster`).
 
 ### Don't:
-- **Don't** use the cream / beige / paper "editorial-restraint" body background, or
-  any light theme. This site is warm near-black, dark-only.
+- **Don't** use the cream / beige / paper "editorial-restraint" body background.
+  Stone is warm grey, not paper.
 - **Don't** treat monospace as costume. Mono is earned technical chrome; the *full*
   terminal metaphor is homepage-only — don't cosplay a terminal on other pages.
 - **Don't** add a second accent hue, gradient text, or `background-clip: text`.
 - **Don't** use cards as the default container, nested cards, or `border-left`/
   `border-right` colored side-stripes on cards, list items, callouts, or alerts.
-  Depth is tonal + hairlines. (The sole exception: the prose blockquote's 2px cyan
+  Depth is tonal + hairlines. (The sole exception: the prose blockquote's 2px tomato
   left rule, a standard long-form convention, never a card stripe.)
 - **Don't** add drop shadows on cards, inputs, or other surfaces. The only shadows are the
-  cyan state glow and the homepage terminal window's ambient lift.
+  tomato state glow and the homepage terminal window's ambient lift.
 - **Don't** over-round: the terminal window caps at `14px`, chips/nodes are
   full pills, everything else stays ≤ `7px`. Never 16-32px "insanely rounded".
 - **Don't** ship the generic SaaS/Bootstrap/AI-blog-starter default look — if it

@@ -1,7 +1,9 @@
 /*
   Terminal design system — the single source of truth for colincheung.dev.
 
-  Dark-only, cyan accent. Import this file globally or per page
+  Two themes from one token set: "Stone" (warm grey, light) by default and a
+  warm near-black for visitors whose system is in dark mode. One accent hue (tomato) on a warm
+  neutral ramp. Import this file globally or per page
   and build UI with the var(--token) values below. That is the whole system:
   colour, type, and a couple of global niceties. Nothing here is page-specific.
 
@@ -11,23 +13,35 @@
 @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap");
 
 :root {
-  color-scheme: dark;
+  color-scheme: light dark;
 
-  /* Surfaces — warm near-black; dark, not pure black */
-  --bg: oklch(0.165 0.012 80);
-  --panel: oklch(0.205 0.014 80);
-  --pane: oklch(0.185 0.013 80);
-  --line: oklch(0.31 0.018 80);
+  /* ---- Neutrals: page, two raised surfaces, one hairline ----
+     Light ("Stone"): a warm grey page around 90% lightness so large areas do
+     not glare; raised surfaces step one notch lighter. */
+  --bg: oklch(0.905 0.008 85);
+  --panel: oklch(0.92 0.008 85);
+  --pane: oklch(0.935 0.008 85);
+  --line: oklch(0.82 0.011 85);
 
   /* Text */
-  --ink: oklch(0.95 0.01 95);
-  --muted: oklch(0.72 0.02 95);
-  --faint: oklch(0.63 0.02 95);
+  --ink: oklch(0.22 0.012 85);
+  --muted: oklch(0.42 0.013 85);
+  --faint: oklch(0.49 0.013 85);
+  --prose-ink: oklch(0.27 0.012 85);
 
-  /* Accent — cyan */
-  --accent: oklch(0.82 0.15 205);
-  --accent-ink: oklch(0.18 0.05 220);
-  --accent-soft: oklch(0.8 0.08 205);
+  /* ---- Accent: one hue (tomato) ----
+     The only chromatic colour. It marks results, links, and active or hover
+     states; everything else is the neutral ramp above. */
+  --accent: oklch(0.55 0.19 32);
+  --accent-ink: oklch(0.98 0.01 60);
+  --accent-soft: oklch(0.49 0.17 32);
+
+  /* Track colour for the "before" bar in before/after comparisons */
+  --bar: oklch(0.78 0.011 85);
+
+  /* The terminal window's ambient lift */
+  --lift: 0 1px 2px rgba(40, 30, 20, 0.05),
+    0 30px 60px -36px rgba(40, 30, 20, 0.3);
 
   /* Type */
   --grotesk: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
@@ -41,7 +55,7 @@
      posts use the narrower --w-prose reading measure. */
   --w-page: 68rem;
   --w-prose: 46rem;
-  --w-poster: 1440px;
+  --w-poster: 90rem;
 
   /* Motion */
   --dur-fast: 0.16s;
@@ -55,9 +69,39 @@
   --wash:
     radial-gradient(
       48rem 36rem at 88% -8%,
-      color-mix(in oklch, var(--accent) 12%, transparent),
+      color-mix(in oklch, var(--accent) 8%, transparent),
       transparent 60%
     );
+}
+
+/* Dark: the original warm near-black, served to visitors whose system is in
+   dark mode. Same roles; the accent is lighter and slightly less saturated. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: oklch(0.165 0.012 80);
+    --panel: oklch(0.205 0.014 80);
+    --pane: oklch(0.185 0.013 80);
+    --line: oklch(0.31 0.018 80);
+
+    --ink: oklch(0.95 0.01 95);
+    --muted: oklch(0.72 0.02 95);
+    --faint: oklch(0.63 0.02 95);
+    --prose-ink: oklch(0.87 0.012 95);
+
+    --accent: oklch(0.75 0.17 38);
+    --accent-ink: oklch(0.2 0.04 40);
+    --accent-soft: oklch(0.79 0.11 38);
+
+    --bar: oklch(0.38 0.018 80);
+    --lift: 0 40px 80px -40px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Large monitors: nudge the whole rem-based system up a little, so a wide
+   window is not a 16px page with huge margins, without making text big.
+   16px up to ~1600px wide, ~17.4px at 2560, capped at 17.6px. */
+html {
+  font-size: clamp(100%, 0.85rem + 0.15vw, 110%);
 }
 
 /* Branded text selection */

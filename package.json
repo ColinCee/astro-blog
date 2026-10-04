@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250403.0",
+    "@playwright/test": "^1.63.0",
     "wrangler": "^4.7.0"
   },
   "scripts": {
@@ -19,7 +20,8 @@
     "deploy": "astro build && wrangler deploy",
     "dev": "astro dev",
     "preview": "astro build && wrangler dev",
-    "types": "wrangler types"
+    "types": "wrangler types",
+    "test": "playwright test"
   },
   "type": "module"
 }

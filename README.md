@@ -12,7 +12,7 @@
 
 ## What this is
 
-This is Colin Cheung's personal site: a dark, terminal-inspired homepage, a technical writing section, and a printable CV. It is built with Astro, styled with a small custom design system, and deployed to Cloudflare Workers.
+This is Colin Cheung's personal site: a light, terminal-inspired homepage with a dark terminal window, a technical writing section, and a printable CV. It is built with Astro, styled with a small custom design system, and deployed to Cloudflare Workers.
 
 ## Stack
 

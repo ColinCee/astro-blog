@@ -1,6 +1,6 @@
 ---
 // CV — terminal-native résumé for colincheung.dev.
-// Same dark shell, cyan accent, Bricolage + JetBrains Mono as the rest of the
+// Same light shell, tomato accent, Bricolage + JetBrains Mono as the rest of the
 // site (see src/styles/terminal.css and DESIGN.md). Content lives here as typed
 // data so the markup can highlight the metric in every line — the number is the
 // accent, the prose stays muted. Prints clean to ink-on-white via @media print.
@@ -518,7 +518,7 @@ const projects = [
   }
   .role__mon {
     font-family: var(--mono);
-    font-size: 0.62rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--faint);
@@ -536,7 +536,7 @@ const projects = [
     color: var(--accent);
   }
   .role__date--start .role__yr {
-    font-size: 0.62rem;
+    font-size: 0.6875rem;
     font-weight: 400;
     color: var(--muted);
   }
@@ -608,7 +608,7 @@ const projects = [
   .role__stack {
     margin: 0.95rem 0 0;
     font-family: var(--mono);
-    font-size: 0.68rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.02em;
     color: var(--faint);
   }
@@ -646,7 +646,7 @@ const projects = [
   .tag {
     padding: 0.18rem 0.62rem;
     font-family: var(--mono);
-    font-size: 0.68rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.01em;
     color: var(--muted);
     border: 1px solid var(--line);
@@ -725,7 +725,7 @@ const projects = [
   .proj__stack {
     margin: 0.45rem 0 0;
     font-family: var(--mono);
-    font-size: 0.66rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.02em;
     color: var(--faint);
   }
@@ -830,6 +830,7 @@ const projects = [
       --faint: #5a5a5a;
       --accent: #0e7490;
       --accent-soft: #0e7490;
+      color-scheme: light;
     }
     @page {
       margin: 1.5cm;

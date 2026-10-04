@@ -1,7 +1,11 @@
 ---
-// Blog post reading layout. Uses the shared terminal Base shell (dark, Nav +
-// SiteFooter) so posts match the rest of the site, then styles the rendered
-// Markdown as terminal-native prose. Fenced code is handled by Expressive Code.
+// Blog post reading layout. Uses the shared Base shell (Nav + SiteFooter), then
+// styles the rendered Markdown as long-form prose. Fenced code is handled by
+// Expressive Code.
+//
+// Posts whose H2s are dated ("16 December: they move the flight") render as a
+// timeline: each dated section becomes an entry with its date set in a left
+// column beside a spine. Everything else renders as plain prose.
 import type { CollectionEntry } from "astro:content";
 import type { MarkdownHeading } from "astro";
 import Base from "./Base.astro";
@@ -10,6 +14,8 @@ import FormattedDate from "../components/FormattedDate.astro";
 type Props = CollectionEntry<"blog">["data"] & {
   minutesRead?: number;
   headings?: MarkdownHeading[];
+  newer?: { title: string; href: string };
+  older?: { title: string; href: string };
 };
 const {
   title,
@@ -18,13 +24,15 @@ const {
   updatedDate,
   minutesRead,
   headings = [],
+  stat,
+  figures,
+  newer,
+  older,
 } = Astro.props;
 
-// Timeline rail: one node per H2. Headings read as prose ("16 December: they
-// move the flight") but the rail wants a date, so parse the prefix before the
-// colon into an ISO stamp. The headings carry no year, so anchor the final
-// dated beat to the post's publication year and walk backwards, stepping back
-// a year each time the month jumps forward as we move up the page.
+// Parse the date prefix of each H2. Headings carry no year, so anchor the last
+// dated one to the post's publication year and walk backwards, stepping back a
+// year each time the month jumps forward as we move up the page.
 const MONTHS = [
   "January",
   "February",
@@ -39,26 +47,25 @@ const MONTHS = [
   "November",
   "December",
 ];
-const pad = (n: number) => String(n).padStart(2, "0");
 
 const parsed = headings
   .filter((h) => h.depth === 2)
   .map((h) => {
-    const head = h.text.includes(":")
-      ? h.text.slice(0, h.text.indexOf(":"))
-      : h.text;
+    const colon = h.text.indexOf(":");
+    const head = colon > -1 ? h.text.slice(0, colon) : h.text;
     // "16 December", "Late April", "8 June" — day and qualifier both optional.
     const m = head.match(
       /^(?:(\d{1,2})\s+)?(?:(?:Late|Early|Mid)\s+)?([A-Z][a-z]+)$/,
     );
     const month = m ? MONTHS.indexOf(m[2]) + 1 : 0;
+    const rest = colon > -1 ? h.text.slice(colon + 1).trim() : h.text;
     return {
       slug: h.slug,
-      full: h.text,
-      head,
       month,
       day: m?.[1] ? Number(m[1]) : 0,
       year: 0,
+      // The heading without its date, sentence-cased.
+      what: rest.charAt(0).toUpperCase() + rest.slice(1),
     };
   });
 
@@ -72,14 +79,65 @@ for (let i = parsed.length - 1; i >= 0; i--) {
   laterMonth = p.month;
 }
 
-const nodes = parsed.map((p) => ({
-  slug: p.slug,
-  full: p.full,
-  // Undated headings (the closing reflections) keep their own words.
-  label: p.month
-    ? `${p.year}-${pad(p.month)}${p.day ? `-${pad(p.day)}` : ""}`
-    : p.head,
+// Split the rendered Markdown at its H2s: intro, then one chunk per section.
+const html = (await Astro.slots.render("default")) ?? "";
+const h2 = /<h2 id="([^"]+)">[\s\S]*?<\/h2>/g;
+const marks = [...html.matchAll(h2)].map((m) => ({
+  slug: m[1],
+  start: m.index ?? 0,
+  end: (m.index ?? 0) + m[0].length,
+  heading: m[0],
 }));
+const chunks = marks.map((mk, i) => ({
+  ...mk,
+  body: html.slice(mk.end, marks[i + 1]?.start ?? html.length),
+  meta: parsed.find((p) => p.slug === mk.slug),
+}));
+
+// Timeline = the leading run of dated sections, when there are at least three.
+const firstUndated = chunks.findIndex((c) => !c.meta?.month);
+const run = firstUndated === -1 ? chunks.length : firstUndated;
+const isTimeline = run >= 3;
+const intro = isTimeline ? html.slice(0, marks[0].start) : html;
+const dated = isTimeline ? chunks.slice(0, run) : [];
+const after = isTimeline ? html.slice(chunks[run]?.start ?? html.length) : "";
+
+const toDate = (p: { year: number; month: number; day: number }) =>
+  Date.UTC(p.year, p.month - 1, p.day || 1);
+const DAY = 86_400_000;
+// "+3 days", "+8 weeks", "+3 months": the wait since the previous entry.
+const gap = (days: number) =>
+  days === 1
+    ? "next day"
+    : days < 21
+      ? `+${days} days`
+      : days < 60
+        ? `+${Math.round(days / 7)} weeks`
+        : `+${Math.round(days / 30.4)} months`;
+
+const entries = dated.map((c, i) => {
+  const m = c.meta!;
+  const prev = dated[i - 1]?.meta;
+  const days = prev ? Math.round((toDate(m) - toDate(prev)) / DAY) : 0;
+  return {
+    slug: c.slug,
+    what: m.what,
+    body: c.body,
+    day: m.day || "",
+    mon: MONTHS[m.month - 1].slice(0, 3),
+    year: m.year,
+    iso: `${m.year}-${String(m.month).padStart(2, "0")}${m.day ? `-${String(m.day).padStart(2, "0")}` : ""}`,
+    since: prev && m.day && prev.day ? gap(days) : "",
+  };
+});
+const span =
+  entries.length > 1
+    ? Math.round(
+        (toDate(dated[dated.length - 1].meta!) - toDate(dated[0].meta!)) / DAY,
+      )
+    : 0;
+const first = entries[0];
+const last = entries[entries.length - 1];
 ---
 
 <Base
@@ -88,28 +146,26 @@ const nodes = parsed.map((p) => ({
   ogType="article"
 >
   <article class="post">
-    {
-      nodes.length > 2 && (
-        <nav class="rail" aria-label="Article timeline" data-rail>
-          <ol class="rail__list">
-            {nodes.map((n) => (
-              <li>
-                <a class="rail__link" href={`#${n.slug}`} data-node>
-                  <span class="rail__label">{n.label}</span>
-                  <span class="rail__sr">{n.full}</span>
-                </a>
-              </li>
-            ))}
-          </ol>
-        </nav>
-      )
-    }
+    <div class="read-bar" aria-hidden="true" data-readbar></div>
 
-    <div class="post__col">
-      <header class="post__head">
-        <a class="post__back" href="/blog">// writing</a>
+    <header class="post__head">
+      <a class="post__back" href="/blog">// writing</a>
       <h1 class="post__title">{title}</h1>
+      <p class="post__lede">{description}</p>
+      {
+        figures && (
+          <dl class="figs">
+            {figures.map((f) => (
+              <div class="figs__item">
+                <dt>{f.label}</dt>
+                <dd>{f.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )
+      }
       <p class="post__meta">
+        {stat && !figures && <span class="post__stat">{stat}</span>}
         <FormattedDate date={pubDate} />
         {
           minutesRead && (
@@ -136,157 +192,111 @@ const nodes = parsed.map((p) => ({
       </p>
     </header>
 
-    <div class="prose">
-      <slot />
-    </div>
+    <div class="prose" set:html={intro} />
+
+    {
+      isTimeline && (
+        <section class="tl" aria-label="Timeline">
+          <p class="tl__span">
+            <span class="tl__k">// timeline</span>
+            <span class="tl__range">
+              {first.day} {first.mon} {first.year} → {last.day} {last.mon}{" "}
+              {last.year}
+            </span>
+            <b>{span} days</b>
+          </p>
+          <ol class="tl__list">
+            {entries.map((e) => (
+              <li class="tl__item" data-entry>
+                <div class="tl__when">
+                  <time datetime={e.iso}>
+                    <span class="tl__day">{e.day}</span>
+                    <span class="tl__mon">{e.mon}</span>
+                    <span class="tl__yr">{e.year}</span>
+                  </time>
+                  {e.since && <span class="tl__since">{e.since}</span>}
+                </div>
+                <span class="tl__node" aria-hidden="true" />
+                <div class="tl__body prose">
+                  <h2 id={e.slug}>{e.what}</h2>
+                  <Fragment set:html={e.body} />
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
+
+    {after && <div class="prose prose--after" set:html={after} />}
 
     <footer class="post__foot">
-      <a class="post__more" href="/blog"
-        ><span aria-hidden="true">←</span> more writing</a
-      >
+      {
+        (older || newer) && (
+          <nav class="post__nav" aria-label="More posts">
+            {older && (
+              <a class="post__adj" href={older.href}>
+                <span class="post__adj-k">
+                  <span aria-hidden="true">←</span> older
+                </span>
+                <span class="post__adj-t">{older.title}</span>
+              </a>
+            )}
+            {newer && (
+              <a class="post__adj post__adj--newer" href={newer.href}>
+                <span class="post__adj-k">
+                  newer <span aria-hidden="true">→</span>
+                </span>
+                <span class="post__adj-t">{newer.title}</span>
+              </a>
+            )}
+          </nav>
+        )
+      }
+      <a class="post__more" href="/blog">all writing</a>
     </footer>
-    </div>
   </article>
 </Base>
 
 <style>
+  /* One reading column. At 64rem+ it is inset by --rail (the timeline's date
+     column plus gap), so plain posts and timeline posts share a left edge and
+     the dates sit in the margin. */
   .post {
+    /* Body size for long-form: 16-17px. Larger read as heavy at this weight. */
+    --prose-size: clamp(1rem, 0.96rem + 0.18vw, 1.0625rem);
+    /* One reading measure for the header, prose, timeline and footer, in rem
+       so it does not change with each block's font size. */
+    --measure: 44rem;
+    --rail: 9rem;
+    --rail-gap: 3.5rem;
     max-width: var(--w-prose);
     margin: 0 auto;
   }
-  .post__col {
-    min-width: 0;
-  }
-
-  /* Timeline rail — the site's signature spine (blog index, CV) reused as a
-     scroll-linked reading rail. Wide viewports only; there is no room for it
-     otherwise and the headings already carry the sequence. */
-  .rail {
-    display: none;
-  }
-  .rail__list {
-    position: relative;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .rail__list::before,
-  .rail__list::after {
-    content: "";
-    position: absolute;
-    left: 5px;
-    top: 1rem;
-    bottom: 1rem;
-    width: 1px;
-    /* Behind the nodes. These are pseudo-elements of the list, so without an
-       explicit order they paint after the nodes and the progress line draws
-       straight through every dot. */
-    z-index: 0;
-  }
-  .rail__list::before {
-    background: var(--line);
-  }
-  /* Reading progress. --progress is written by the script below. */
-  .rail__list::after {
-    background: var(--accent);
-    transform: scaleY(var(--progress, 0));
-    transform-origin: top;
-  }
-  .rail__link {
-    position: relative;
-    z-index: 1;
-    display: block;
-    padding: 0.46rem 0 0.46rem 1.75rem;
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.02em;
-    color: var(--faint);
-    transition:
-      color var(--dur-fast) var(--ease),
-      transform var(--dur-fast) var(--ease);
-  }
-  .rail__link::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0.72rem;
-    width: 11px;
-    height: 11px;
-    box-sizing: border-box;
-    border-radius: 50%;
-    background: var(--bg);
-    border: 2px solid var(--faint);
-    transition:
-      border-color var(--dur-fast) var(--ease),
-      transform var(--dur-fast) var(--ease),
-      box-shadow var(--dur-fast) var(--ease);
-  }
-  /* Read/unread. Every dot keeps the --bg fill so the progress line is cleanly
-     interrupted at each node rather than running through it; the ring colour
-     alone carries the state. The line is the progress, the dots are the beats. */
-  .rail__link[data-passed] {
-    color: var(--muted);
-  }
-  .rail__link[data-passed]::before {
-    border-color: var(--muted);
-  }
-  .rail__link:hover {
-    color: var(--ink);
-    transform: translateX(2px);
-  }
-  .rail__link:hover::before {
-    border-color: var(--muted);
-  }
-  .rail__link[data-active] {
-    color: var(--ink);
-  }
-  .rail__link[data-active]::before {
-    border-color: var(--accent);
-    transform: scale(1.2);
-    box-shadow: var(--ring);
-  }
-  .rail__sr {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
   @media (min-width: 64rem) {
     .post {
-      display: grid;
-      grid-template-columns: 11rem minmax(0, 1fr);
-      gap: 3.25rem;
       max-width: var(--w-page);
-    }
-    /* Floats centred in the viewport rather than pinned under the nav, so the
-       rail reads as an instrument beside the article instead of a sidebar. */
-    .rail {
-      display: block;
-      position: sticky;
-      top: 50%;
-      align-self: start;
-      transform: translateY(-50%);
-      max-height: calc(100vh - 4rem);
-      /* overflow-y forces overflow-x to compute to auto, which would crop the
-         active node's scaled dot and its 4px --ring glow where they overhang
-         the left edge. Pad for the glow and pull the box back by the same
-         amount so the rail still lines up with the nav mark. */
-      padding-left: 8px;
-      margin-left: -8px;
-      overflow-y: auto;
-      scrollbar-width: none;
-    }
-    .rail::-webkit-scrollbar {
-      display: none;
+      padding-left: calc(var(--rail) + var(--rail-gap));
     }
   }
 
+  .read-bar {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 10;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(var(--read, 0));
+    transform-origin: left;
+  }
+
+  /* Header and footer share the prose measure, so their hairlines end where
+     the text does. */
+  .post__head,
+  .post__foot {
+    max-width: var(--measure, 44rem);
+    font-size: var(--prose-size);
+  }
   .post__head {
     margin-bottom: clamp(2rem, 5vw, 3rem);
   }
@@ -306,30 +316,304 @@ const nodes = parsed.map((p) => ({
     margin: 0;
     font-family: var(--grotesk);
     font-weight: 800;
-    font-size: clamp(2rem, 5.5vw, 3.1rem);
+    font-size: clamp(1.9rem, 5vw, 2.7rem);
     line-height: 1.04;
     letter-spacing: -0.02em;
     color: var(--ink);
     text-wrap: balance;
   }
-  .post__meta {
+  /* Standfirst: the post's description, so the point lands before the body. */
+  .post__lede {
     margin: 1.1rem 0 0;
+    max-width: 40ch;
+    font-size: clamp(1.08rem, 1rem + 0.3vw, 1.22rem);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  /* Headline figures (frontmatter `figures`): the post's numbers as a ledger.
+     The last figure is the result, so it takes the accent. */
+  .figs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 0;
+    margin: 1.8rem 0 0;
+    border-block: 1px solid var(--line);
+  }
+  .figs__item {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1rem 1rem 1.1rem 0;
+  }
+  .figs__item + .figs__item {
+    padding-left: 1rem;
+    border-left: 1px solid var(--line);
+  }
+  .figs dt {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .figs dd {
+    margin: 0;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .figs__item:last-child dd {
+    color: var(--accent);
+  }
+  @media (max-width: 30rem) {
+    .figs {
+      grid-template-columns: 1fr;
+    }
+    .figs__item,
+    .figs__item + .figs__item {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 0.7rem 0;
+      border-left: 0;
+    }
+    .figs__item + .figs__item {
+      border-top: 1px solid var(--line);
+    }
+  }
+
+  .post__stat {
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-soft);
+    background: color-mix(in oklch, var(--accent) 10%, transparent);
+    border: 1px solid color-mix(in oklch, var(--accent) 22%, transparent);
+    border-radius: 999px;
+    padding: 0.12rem 0.65rem;
+    margin-right: 0.2rem;
+  }
+  .post__meta {
+    margin: 1.3rem 0 0;
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
+    align-items: center;
     gap: 0.4rem 0.7rem;
     font-family: var(--mono);
     font-size: 0.76rem;
     letter-spacing: 0.02em;
     color: var(--faint);
   }
+  .post__lede + .post__meta {
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
   .post__dot {
     color: var(--line);
   }
+
+  /* ---------------- timeline ---------------- */
+  .tl {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+  /* Shares the reading measure; children set the small mono size. */
+  .tl__span {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 1rem;
+    margin: 0 0 1.6rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--line);
+    max-width: var(--measure, 44rem);
+    font-size: var(--prose-size);
+  }
+  .tl__span > * {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+  .tl__k {
+    color: var(--accent-soft);
+  }
+  .tl__range {
+    color: var(--faint);
+  }
+  .tl__span b {
+    margin-left: auto;
+    font-weight: 700;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .tl__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  /* Narrow: spine down the left, date inline above each heading. */
+  .tl__item {
+    position: relative;
+    padding: 0 0 clamp(2rem, 5vw, 3rem) 1.6rem;
+  }
+  .tl__item::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 0.5rem;
+    bottom: -0.5rem;
+    width: 1px;
+    background: var(--line);
+  }
+  .tl__item:last-child::before {
+    display: none;
+  }
+  .tl__node {
+    position: absolute;
+    left: 0;
+    top: 0.3rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--faint);
+    transition:
+      border-color var(--dur-fast) var(--ease),
+      box-shadow var(--dur-fast) var(--ease),
+      background-color var(--dur-fast) var(--ease);
+  }
+  .tl__item.is-past .tl__node {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+  .tl__item.is-current .tl__node {
+    border-color: var(--accent);
+    box-shadow: var(--ring);
+  }
+  .tl__when {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.2rem 0.9rem;
+    margin-bottom: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .tl__when time {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5ch;
+  }
+  .tl__day,
+  .tl__mon {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .tl__since {
+    text-transform: none;
+    letter-spacing: 0.02em;
+  }
+  .tl__body :global(h2) {
+    margin: 0 0 0.85rem;
+    padding: 0;
+    border: 0;
+  }
+
+  /* Wide: dates move into the left margin as a sticky column, with the spine
+     running down the gap between the dates and the text. */
+  @media (min-width: 64rem) {
+    .tl__list {
+      margin-left: calc(-1 * (var(--rail) + var(--rail-gap)));
+    }
+    .tl__item {
+      display: grid;
+      grid-template-columns: var(--rail) minmax(0, 1fr);
+      column-gap: var(--rail-gap);
+      padding-left: 0;
+    }
+    .tl__item::before {
+      left: calc(var(--rail) + var(--rail-gap) / 2);
+      top: 1.2rem;
+      bottom: -1.2rem;
+    }
+    .tl__node {
+      left: calc(var(--rail) + var(--rail-gap) / 2 - 4px);
+      top: 0.55rem;
+    }
+    .tl__when {
+      position: sticky;
+      top: 1.5rem;
+      align-self: start;
+      display: grid;
+      justify-items: end;
+      gap: 0.35rem;
+      margin: 0;
+      text-align: right;
+    }
+    .tl__when time {
+      display: grid;
+      grid-template-columns: auto auto;
+      align-items: baseline;
+      justify-content: end;
+      column-gap: 0.4rem;
+    }
+    .tl__day {
+      font-family: var(--grotesk);
+      font-weight: 800;
+      font-size: 1.7rem;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+    .tl__yr {
+      grid-column: 1 / -1;
+      justify-self: end;
+      font-size: 0.6875rem;
+    }
+  }
+
   .post__foot {
     margin-top: clamp(2.5rem, 6vw, 4rem);
     padding-top: 1.5rem;
     border-top: 1px solid var(--line);
+  }
+  .post__nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: 1rem 2rem;
+    margin-bottom: 1.8rem;
+  }
+  .post__adj {
+    display: grid;
+    gap: 0.25rem;
+    align-content: start;
+  }
+  .post__adj--newer {
+    text-align: right;
+  }
+  .post__adj-k {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .post__adj-t {
+    font-weight: 600;
+    font-size: 1.1rem;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .post__adj:hover .post__adj-t {
+    color: var(--accent-soft);
   }
   .post__more {
     font-family: var(--mono);
@@ -344,83 +628,63 @@ const nodes = parsed.map((p) => ({
 
   @media (prefers-reduced-motion: no-preference) {
     .post__head,
-    .prose,
-    .post__foot {
+    .post > .prose,
+    .tl {
       animation: rise var(--dur-slow) var(--ease-out) both;
     }
-    .prose {
+    .post > .prose {
       animation-delay: 0.05s;
     }
-    .post__foot {
+    .tl {
       animation-delay: 0.1s;
-    }
-    /* Animate the list, not .rail — .rail owns the centring transform and a
-       `both`-filled animation would overwrite it for good. */
-    .rail__list {
-      animation: rise var(--dur-slow) var(--ease-out) 0.12s both;
     }
   }
 </style>
 
 <script>
-  // Scroll-linked timeline rail: marks the section currently being read and
-  // drives the cyan progress fill on the spine. Cheap enough to run on every
-  // frame-throttled scroll; no observers to keep in sync with the DOM.
-  const rail = document.querySelector<HTMLElement>("[data-rail]");
-  const prose = document.querySelector<HTMLElement>(".prose");
-
-  if (rail && prose) {
-    const links = Array.from(
-      rail.querySelectorAll<HTMLAnchorElement>("a[data-node]"),
-    );
-    const targets = links.map((a) =>
-      document.getElementById(decodeURIComponent(a.hash.slice(1))),
-    );
-
-    let queued = false;
-
+  // Reading progress bar: fraction of the page scrolled, as --read.
+  const readBar = document.querySelector<HTMLElement>("[data-readbar]");
+  if (readBar) {
     const update = () => {
-      queued = false;
-      const line = window.innerHeight * 0.3;
-
-      // Within a pixel or two of the bottom, nothing more can cross the line,
-      // so the final section is the one being read. Without this the last
-      // node never lights up on a short closing section.
-      const bottom =
-        window.scrollY + window.innerHeight >=
-        document.documentElement.scrollHeight - 2;
-
-      let active = 0;
-      targets.forEach((t, i) => {
-        if (t && t.getBoundingClientRect().top <= line) active = i;
-      });
-      if (bottom) active = links.length - 1;
-
-      links.forEach((a, i) => {
-        const on = i === active;
-        a.toggleAttribute("data-active", on);
-        a.toggleAttribute("data-passed", i < active);
-        if (on) a.setAttribute("aria-current", "true");
-        else a.removeAttribute("aria-current");
-      });
-
-      const box = prose.getBoundingClientRect();
-      const span = Math.max(box.height - line, 1);
-      const done = bottom
-        ? 1
-        : Math.min(Math.max((line - box.top) / span, 0), 1);
-      rail.style.setProperty("--progress", String(done));
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const read = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+      readBar.style.setProperty("--read", read.toFixed(4));
     };
-
-    const onScroll = () => {
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(update);
-    };
-
-    addEventListener("scroll", onScroll, { passive: true });
-    addEventListener("resize", onScroll);
     update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+  }
+
+  // Timeline scroll-spy: the entry crossing a line 40% down the viewport is
+  // current; entries above it are past. Their nodes fill in as you read.
+  const entries = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-entry]"),
+  );
+  if (entries.length) {
+    let ticking = false;
+    const mark = () => {
+      ticking = false;
+      const line = window.innerHeight * 0.4;
+      let current = -1;
+      entries.forEach((el, i) => {
+        if (el.getBoundingClientRect().top <= line) current = i;
+      });
+      entries.forEach((el, i) => {
+        el.classList.toggle("is-past", i < current);
+        el.classList.toggle("is-current", i === current);
+      });
+    };
+    mark();
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(mark);
+        }
+      },
+      { passive: true },
+    );
   }
 </script>
 
@@ -428,25 +692,27 @@ const nodes = parsed.map((p) => ({
   /* Prose: terminal-native long-form, scoped under .prose. Slotted Markdown is
      not reachable by scoped styles, so these are global but namespaced. */
   .prose {
-    --prose-ink: oklch(0.87 0.012 95);
-    max-width: 58ch;
-    font-size: clamp(1.06rem, 0.95rem + 0.25vw, 1.19rem);
-    line-height: 1.72;
+    max-width: var(--measure, 44rem);
+    font-size: var(--prose-size);
+    line-height: 1.65;
     color: var(--prose-ink);
   }
   .prose > :first-child {
     margin-top: 0;
   }
   .prose p {
-    margin: 1.15rem 0;
+    margin: 1em 0;
     text-wrap: pretty;
   }
+  /* A hairline above each H2 so a long post reads as distinct sections. */
   .prose h2 {
-    margin: 2.6rem 0 0.85rem;
+    margin: 2.8rem 0 0.85rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
     scroll-margin-top: 3.5rem;
     font-family: var(--grotesk);
     font-weight: 700;
-    font-size: clamp(1.35rem, 3vw, 1.6rem);
+    font-size: clamp(1.2rem, 2.4vw, 1.35rem);
     letter-spacing: -0.01em;
     color: var(--ink);
   }
@@ -486,11 +752,46 @@ const nodes = parsed.map((p) => ({
   .prose li::marker {
     color: var(--accent-soft);
   }
+  /* Quoted documents (emails, rulings): set apart as an excerpt on the raised
+     surface, so evidence reads differently from narration. */
   .prose blockquote {
-    margin: 1.5rem 0;
-    padding: 0.3rem 0 0.3rem 1.15rem;
-    border-left: 2px solid color-mix(in oklch, var(--accent) 45%, transparent);
-    color: var(--muted);
+    margin: 1.6rem 0;
+    padding: 1.1rem 1.3rem;
+    background: var(--pane);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--ink);
+    font-size: 0.97em;
+    line-height: 1.6;
+  }
+  .prose blockquote p {
+    margin: 0;
+  }
+  /* Numbered takeaways: mono accent numerals in the margin. */
+  .prose ol {
+    list-style: none;
+    padding-left: 0;
+    counter-reset: item;
+  }
+  .prose ol > li {
+    counter-increment: item;
+    position: relative;
+    margin: 0;
+    padding: 0.95rem 0 0.95rem 2.6rem;
+    border-top: 1px solid var(--line);
+  }
+  .prose ol > li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .prose ol > li::before {
+    content: counter(item);
+    position: absolute;
+    left: 0.2rem;
+    top: 1.05rem;
+    font-family: var(--mono);
+    font-size: 0.8em;
+    font-weight: 700;
+    color: var(--accent-soft);
   }
   .prose hr {
     margin: 2.5rem 0;
@@ -536,6 +837,10 @@ const nodes = parsed.map((p) => ({
   .prose tbody tr:last-child td {
     border-bottom: 0;
   }
+  /* A bold final row is a total: rule it off in ink. */
+  .prose tbody tr:last-child td:has(strong) {
+    border-top: 1px solid var(--ink);
+  }
   .prose th + th,
   .prose td + td {
     padding-left: 1.35rem;
@@ -569,6 +874,178 @@ const nodes = parsed.map((p) => ({
     border-radius: 4px;
     background: color-mix(in oklch, var(--ink) 10%, transparent);
     color: var(--ink);
+  }
+  /* ---- Figures: small diagrams written as HTML inside the Markdown ----
+     One raised panel, mono labels, neutral marks, accent for the result. */
+  .prose .fig {
+    margin: 1.8rem 0;
+    padding: 1.1rem 1.2rem;
+    display: grid;
+    gap: 0.75rem;
+    background: var(--pane);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .prose .fig figcaption {
+    font-size: 0.74rem;
+    color: var(--faint);
+  }
+  .prose .fig__k {
+    margin: 0 0 0.45rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  /* Before/after bars, drawn to scale: --w is the value as a fraction of the larger. */
+  .prose .cmp {
+    display: grid;
+    grid-template-columns: 10.5rem minmax(0, 1fr) 4.2rem;
+    align-items: center;
+    gap: 0.3rem 0.8rem;
+  }
+  .prose .cmp i {
+    display: block;
+    height: 0.7rem;
+    min-width: 3px;
+    width: calc(var(--w) * 100%);
+    background: var(--bar);
+    border-radius: 1px;
+  }
+  .prose .cmp b {
+    font-weight: 500;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .prose .cmp--after i {
+    background: var(--accent);
+  }
+  .prose .cmp--after b {
+    color: var(--accent-soft);
+    font-weight: 700;
+  }
+  /* One bar split into parts: --w is each part's share. */
+  .prose .stack {
+    display: flex;
+    height: 1.5rem;
+    border-radius: 3px;
+    overflow: hidden;
+    gap: 2px;
+  }
+  .prose .stack span {
+    flex: var(--w) 0 0;
+    background: var(--bar);
+  }
+  .prose .stack span:nth-child(2) {
+    background: color-mix(in oklch, var(--bar) 60%, var(--pane));
+  }
+  .prose .stack .is-data {
+    background: var(--accent);
+  }
+  .prose .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .prose .legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+  }
+  .prose .legend li::before {
+    content: "";
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 2px;
+    background: var(--bar);
+  }
+  .prose .legend li:nth-child(2)::before {
+    background: color-mix(in oklch, var(--bar) 60%, var(--pane));
+    border: 1px solid var(--line);
+  }
+  .prose .legend .is-data::before {
+    background: var(--accent);
+  }
+  .prose .legend b {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  /* Two panels side by side (rows vs columns, before vs after). */
+  .prose .split {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: 1rem 1.6rem;
+  }
+  .prose .rows {
+    margin: 0;
+    display: grid;
+    gap: 0.25rem;
+    font-size: 0.74rem;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .prose .rows u {
+    text-decoration: none;
+    color: var(--accent-soft);
+  }
+  .prose .cols {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    font-size: 0.74rem;
+  }
+  .prose .cols div {
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+  .prose .cols b {
+    color: var(--accent-soft);
+    font-weight: 500;
+  }
+  .prose .boxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .prose .box {
+    flex: 1 1 8rem;
+    display: grid;
+    gap: 0.1rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--ink);
+  }
+  .prose .box small {
+    font-size: 0.7rem;
+    color: var(--faint);
+  }
+  .prose .box--slow {
+    border-color: var(--bar);
+    background: color-mix(in oklch, var(--bar) 30%, transparent);
+  }
+  .prose .box--fast {
+    border-color: color-mix(in oklch, var(--accent) 45%, transparent);
+  }
+  @media (max-width: 34rem) {
+    .prose .cmp {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .prose .cmp span {
+      grid-column: 1 / -1;
+    }
   }
   .prose .expressive-code {
     margin: 1.6rem 0;

@@ -1,6 +1,6 @@
 ---
-// Base layout for content pages (blog, about, cv). The dark terminal shell:
-// clean head (dark-only, no theme toggle), shared nav + footer, base motion.
+// Base layout for content pages (blog, about, cv). The shared shell:
+// clean head (follows the system light/dark setting, no toggle), shared nav + footer, base motion.
 import "../styles/terminal.css";
 import Nav from "../components/Nav.astro";
 import SiteFooter from "../components/SiteFooter.astro";
@@ -20,7 +20,7 @@ const ogImage = new URL("/og.png", Astro.site);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
 

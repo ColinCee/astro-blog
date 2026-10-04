@@ -1,11 +1,11 @@
 ---
 title: "Slash Your ts-jest Test Times With This"
 shortTitle: "Slash your ts-jest test times"
-description: "One ts-jest config flag cut our CI test suite by over 10 minutes. Here is the line."
+description: "One ts-jest setting cut more than ten minutes off our CI test run. This is the setting, and the catch that comes with it."
+stat: "−10 min"
 pubDate: "Apr 03 2025"
 ---
-
-Our CI test suite took 10+ minutes. The `ts-jest` type-check was the bottleneck. One flag fixed it.
+Our CI test suite was taking over ten minutes. When I looked into it, the slow part was `ts-jest` type-checking the code. This one setting sorted it:
 
 ```js title="jest.config.js"
 module.exports = {
@@ -16,14 +16,22 @@ module.exports = {
 };
 ```
 
-`isolatedModules` makes `ts-jest` compile each file on its own and skip the slow project-wide type analysis. The bigger the codebase, the bigger the win. Newer `ts-jest` reads it straight from your `tsconfig.json`.
+With `isolatedModules` on, `ts-jest` compiles each file by itself and skips the slow type analysis across the whole project. The bigger your codebase, the more time you get back. If you're on a newer version of `ts-jest`, it reads the setting from your `tsconfig.json` instead.
 
-**The catch:** Jest stops type-checking your code. Files compiled in isolation cannot catch errors that span files.
+There is a catch though. Jest isn't type-checking your code any more, and because files are compiled one at a time it can't spot type errors that cross between files.
 
-So make type-checking its own CI step:
+So you'll want type-checking as its own step in CI:
+
+<figure class="fig">
+<div class="split">
+<div><p class="fig__k">Before: one job</p><div class="boxes"><div class="box box--slow">jest<small>type-check + run tests</small></div></div></div>
+<div><p class="fig__k">After: two jobs</p><div class="boxes"><div class="box box--fast">jest<small>run tests</small></div><div class="box box--fast">tsc --noEmit<small>type-check</small></div></div></div>
+</div>
+<figcaption>The type-check moves out of the test run into its own CI job.</figcaption>
+</figure>
 
 ```bash
 tsc --noEmit
 ```
 
-Fast tests, types still checked, and two jobs that stopped fighting each other.
+That way the tests are quick and the types still get checked. They're just two separate jobs now.

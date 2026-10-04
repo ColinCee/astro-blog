@@ -2,7 +2,8 @@
 import { getCollection } from "astro:content";
 import "../styles/terminal.css";
 
-// Terminal-native homepage for colincheung.dev — dark, cyan accent.
+// Terminal-native homepage for colincheung.dev. Colours come from the tokens
+// in terminal.css and follow the system light/dark setting.
 // Shared design tokens + fonts live in src/styles/terminal.css (the design system).
 
 // Left pane — who Colin is, rendered as a real terminal session (.who__session).
@@ -11,7 +12,7 @@ const nameCjk = "張志權";
 const whoLine = "Open to remote · UK-based";
 const nowLine = "Tech lead @ EDF Energy, leading AI adoption across the team.";
 
-// Right-top pane — selected work.
+// Side projects — shown as their own section below the terminal.
 const projects = [
   {
     name: "home-lab",
@@ -58,29 +59,6 @@ const quips = [
   { before: "testing in ", num: "production", after: "…" },
 ];
 
-// Hot takes — the closing section. Strong opinions, loosely held; the spicy bit is
-// the accent.
-const takes = [
-  { before: "You don't need DynamoDB. ", hi: "SQL is the GOAT", after: "." },
-  { before: "Working software ", hi: "is not enough", after: "." },
-  {
-    before: "Every new line of code is a fresh piece of ",
-    hi: "tech debt",
-    after: ".",
-  },
-  { before: "Distributed monolith ", hi: ">", after: " microservices." },
-  {
-    before: "Your five-person startup does ",
-    hi: "not need Kubernetes",
-    after: ".",
-  },
-  {
-    before: "The best code is no code; the next best is ",
-    hi: "deleted",
-    after: ".",
-  },
-];
-
 // "Worked at" marquee — chronological by join date (oldest → newest), with years.
 const companies = [
   { name: "PodFather", year: "2017" },
@@ -97,6 +75,20 @@ const companies = [
 const latest = (await getCollection("blog"))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
+
+// Writing section below the terminal — the newest post as a lead panel, the
+// others as rows. `stat` (frontmatter) is the post's headline number, shown
+// as a mono chip.
+const [lead, ...rest] = latest.map((p) => ({
+  title: p.data.title,
+  description: p.data.description,
+  stat: p.data.stat,
+  date: p.data.pubDate.toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  }),
+  href: `/blog/${p.id}/`,
+}));
 
 const posts: {
   title: string;
@@ -118,7 +110,48 @@ const posts: {
 const github = "https://github.com/ColinCee";
 const linkedin = "https://www.linkedin.com/in/colin-cheung/";
 
-// Brand accent: cyan (locked).
+// Brand accent: tomato.
+
+// Shipped — before/after improvements, newest first. Bars are drawn to scale
+// (after ÷ before); `rel` rows have no absolute figures, only a ratio.
+const shipped = [
+  {
+    what: "Data-lake export, as Parquet",
+    where: "Post",
+    when: "Sep 2025",
+    href: "/blog/jsonl-to-parquet-compression/",
+    before: "4.5GB",
+    after: "221MB",
+    ratio: 221 / 4500,
+  },
+  {
+    what: "Build + test cycle",
+    where: "EDF Energy",
+    when: "2023 – now",
+    href: "/cv",
+    before: "30 min",
+    after: "5 min",
+    ratio: 5 / 30,
+  },
+  {
+    what: "CI-log debugging time",
+    where: "BBC",
+    when: "2022 – 2023",
+    href: "/cv",
+    before: "baseline",
+    after: "up to −90%",
+    ratio: 0.1,
+  },
+  {
+    what: "HRMS → Active Directory sync",
+    where: "Skyscanner",
+    when: "2020 – 2021",
+    href: "/cv",
+    before: "8 hours",
+    after: "2 min",
+    ratio: 2 / 480,
+  },
+];
 
 // Left-pane hero: core skills as a live `top` process list. TIME+ = years of
 // experience (now − since) — a real, honest number, no invented scores.
@@ -150,7 +183,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Colin Cheung · Senior Software Engineer</title>
     <meta
@@ -185,7 +218,10 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       <!-- Hero — name + social icons -->
       <section class="kin" aria-label="Colin Cheung, Senior Software Engineer">
         <p class="kin__eyebrow">Senior Software Engineer</p>
-        <h1 class="kin__name">COLIN CHEUNG</h1>
+        <h1 class="kin__name">
+          <span class="kin__word"><span>COLIN</span></span>
+          <span class="kin__word"><span>CHEUNG</span></span>
+        </h1>
         <p class="kin__rot">
           <span data-quip data-quips={JSON.stringify(quips)}
             >{quips[0].before}<b>{quips[0].num}</b>{quips[0].after}</span
@@ -311,26 +347,39 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
             </div>
           </article>
 
-          <!-- Right-top — selected work -->
-          <article class="pane pane--proj">
-            <h2 class="pane__bar">
-              <span class="pane__idx">1</span>~/projects
-            </h2>
+          <!-- Right-top — improvements shipped; bars drawn to scale -->
+          <article class="pane pane--ship is-active">
+            <h2 class="pane__bar"><span class="pane__idx">1</span>shipped</h2>
             <div class="pane__body">
-              <ul class="proj">
+              <ul class="ships">
                 {
-                  projects.map((p) => (
-                    <li class="proj__row">
-                      {p.href ? (
-                        <a class="proj__name" href={p.href}>
-                          {p.name}
-                        </a>
-                      ) : (
-                        <span class="proj__name proj__name--plain">
-                          {p.name}
+                  shipped.map((s) => (
+                    <li>
+                      <a class="ship" href={s.href}>
+                        <span class="ship__head">
+                          <span class="ship__what">{s.what}</span>
+                          <span class="ship__meta">
+                            {s.where} · {s.when}
+                          </span>
                         </span>
-                      )}
-                      <span class="proj__desc">{p.desc}</span>
+                        <span class="ship__bar">
+                          <span class="ship__label">before</span>
+                          <span class="ship__track">
+                            <i class="ship__fill" style="--w: 1" />
+                            <b>{s.before}</b>
+                          </span>
+                        </span>
+                        <span class="ship__bar ship__bar--after">
+                          <span class="ship__label">after</span>
+                          <span class="ship__track">
+                            <i
+                              class="ship__fill"
+                              style={`--w: ${s.ratio.toFixed(4)}`}
+                            />
+                            <b>{s.after}</b>
+                          </span>
+                        </span>
+                      </a>
                     </li>
                   ))
                 }
@@ -339,7 +388,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
           </article>
 
           <!-- Right-bottom — latest writing -->
-          <article class="pane pane--writing is-active">
+          <article class="pane pane--writing">
             <h2 class="pane__bar"><span class="pane__idx">2</span>writing</h2>
             <div class="pane__body">
               <ul class="posts">
@@ -366,7 +415,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
 
         <div class="term__status" aria-hidden="true">
           <span class="term__tabs"
-            ><b>[colin]</b> 0:whoami 1:projects <em>2:writing*</em></span
+            ><b>[colin]</b> 0:whoami <em>1:shipped*</em> 2:writing</span
           >
           <span class="term__ticker">
             <span data-date>{today}</span>
@@ -401,30 +450,96 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         </ul>
       </section>
 
-      <!-- Hot takes — closing section (replaces the sign-off) -->
-      <section class="takes" aria-label="Strong opinions, loosely held">
-        <div class="takes__head">
-          <p class="takes__tag">// hot takes</p>
-        </div>
-        <ul class="takes__list">
+      <!-- Projects — side work, as quiet tiles; the accent appears on hover -->
+      <section class="work" aria-label="Side projects" data-reveal>
+        <p class="work__tag">// projects</p>
+        <ul class="work__list">
           {
-            takes.map((t) => (
-              <li class="take">
-                {t.before}
-                <b>{t.hi}</b>
-                {t.after}
-              </li>
-            ))
+            projects.map((p) => {
+              const [what, stack] = p.desc.split(" · ");
+              return (
+                <li>
+                  <a class="proj" href={p.href}>
+                    <span class="proj__path">
+                      <i aria-hidden="true" />~/projects
+                      <span class="proj__go" aria-hidden="true">
+                        ↗
+                      </span>
+                    </span>
+                    <span class="proj__name">{p.name}</span>
+                    <span class="proj__desc">{what}</span>
+                    {stack && <span class="proj__stack">{stack}</span>}
+                  </a>
+                </li>
+              );
+            })
           }
         </ul>
       </section>
 
+      <!-- Writing — newest post as a lead panel, the rest as rows -->
+      <section class="feat" aria-label="Latest writing" data-reveal>
+        <p class="feat__tag">// writing</p>
+        <div class="feat__grid">
+          {
+            lead && (
+              <a class="lead" href={lead.href}>
+                <span class="lead__meta">
+                  <span class="lead__new">latest</span>
+                  {lead.date}
+                </span>
+                <span class="lead__title">{lead.title}</span>
+                <span class="lead__desc">{lead.description}</span>
+                <span class="lead__foot">
+                  {lead.stat && <span class="chip">{lead.stat}</span>}
+                  <span class="feat__go">
+                    read <span aria-hidden="true">→</span>
+                  </span>
+                </span>
+              </a>
+            )
+          }
+          <ul class="rows">
+            {
+              rest.map((p) => (
+                <li>
+                  <a class="row" href={p.href}>
+                    <span class="row__date">{p.date}</span>
+                    <span class="row__body">
+                      <span class="row__title">{p.title}</span>
+                      <span class="row__desc">{p.description}</span>
+                    </span>
+                    {p.stat && <span class="chip">{p.stat}</span>}
+                  </a>
+                </li>
+              ))
+            }
+            <li>
+              <a class="row row--all" href="/blog">
+                <span class="row__date" />
+                <span class="row__body">
+                  <span class="row__title">All posts</span>
+                </span>
+                <span class="feat__go">
+                  <span aria-hidden="true">→</span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
       <!-- Contact — closing call to connect -->
-      <section class="reach" id="contact" aria-label="Get in touch">
+      <section class="reach" id="contact" aria-label="Get in touch" data-reveal>
         <p class="reach__tag">// reach out</p>
         <p class="reach__line">
           Best way to reach me is <a href={linkedin}
             >LinkedIn <span aria-hidden="true">↗</span></a
+          >
+        </p>
+        <p class="reach__alt">
+          or read the code on <a href={github}
+            >GitHub <span aria-hidden="true">↗</span></a
           >
         </p>
       </section>
@@ -437,6 +552,28 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
 
     <script>
       const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // Sections below the terminal rise in as they scroll into view. Armed by
+      // JS only, so without it (or with reduced motion) they are simply visible.
+      const reveals = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-reveal]"),
+      );
+      if (reveals.length && !reduce && "IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (!e.isIntersecting) return;
+              e.target.classList.add("is-in");
+              io.unobserve(e.target);
+            });
+          },
+          { threshold: 0.15 },
+        );
+        reveals.forEach((el) => {
+          el.classList.add("is-armed");
+          io.observe(el);
+        });
+      }
 
       // Live date + clock in the tmux status bar.
       const clocks = Array.from(
@@ -686,6 +823,28 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         -webkit-font-smoothing: antialiased;
       }
 
+      /* Faint dot grid behind the hero and terminal, fading out down the page. */
+      .t {
+        position: relative;
+        isolation: isolate;
+      }
+      .t::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto;
+        height: min(64rem, 100%);
+        z-index: -1;
+        pointer-events: none;
+        background-image: radial-gradient(
+          circle,
+          color-mix(in oklch, var(--ink) 16%, transparent) 1px,
+          transparent 1.5px
+        );
+        background-size: 24px 24px;
+        -webkit-mask-image: linear-gradient(#000 30%, transparent 92%);
+        mask-image: linear-gradient(#000 30%, transparent 92%);
+      }
+
       .t :focus-visible {
         outline: 2px solid var(--accent);
         outline-offset: 3px;
@@ -768,6 +927,26 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         margin: 0;
         text-wrap: balance;
       }
+      /* Each word rises out of its own mask on load. */
+      .kin__word {
+        display: inline-block;
+        overflow: hidden;
+        vertical-align: bottom;
+        padding: 0.07em 0.02em;
+        margin: -0.07em -0.02em;
+      }
+      .kin__word > span {
+        display: inline-block;
+        animation: word-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      }
+      .kin__word + .kin__word > span {
+        animation-delay: 0.09s;
+      }
+      @keyframes word-up {
+        from {
+          transform: translateY(108%);
+        }
+      }
       .kin__rot {
         display: flex;
         align-items: center;
@@ -830,12 +1009,12 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       /* ---------------- terminal window ---------------- */
       .term {
         max-width: var(--w-poster);
-        margin: clamp(3rem, 8vw, 6rem) auto 0;
+        margin: clamp(1rem, 3vw, 2rem) auto 0;
         background: var(--panel);
         border: 1px solid var(--line);
         border-radius: 14px;
         overflow: hidden;
-        box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.7);
+        box-shadow: var(--lift);
         animation: rise var(--dur-slow) var(--ease-out) 0.08s both;
       }
       .term__bar {
@@ -875,7 +1054,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       .pane--who {
         grid-area: who;
       }
-      .pane--proj {
+      .pane--ship {
         grid-area: hl;
       }
       .pane--writing {
@@ -891,7 +1070,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       .pane--who {
         animation-delay: 0.12s;
       }
-      .pane--proj {
+      .pane--ship {
         animation-delay: 0.2s;
       }
       .pane--writing {
@@ -926,7 +1105,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         border-radius: 5px;
         background: color-mix(in oklch, var(--accent) 18%, transparent);
         color: var(--accent);
-        font-size: 0.62rem;
+        font-size: 0.6875rem;
       }
       .pane__body {
         padding: 1.05rem 1.1rem 1.2rem;
@@ -1023,7 +1202,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         align-items: baseline;
       }
       .who__cols {
-        font-size: 0.64rem;
+        font-size: 0.6875rem;
         letter-spacing: 0.09em;
         color: var(--muted);
         margin-bottom: 0.15rem;
@@ -1094,32 +1273,81 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         }
       }
 
-      /* projects — selected work, terminal list */
-      .proj {
+      /* shipped — before/after bars, drawn to scale (after ÷ before) */
+      .ships {
         display: grid;
-        gap: 0.9rem;
+        gap: 0.7rem;
       }
-      .proj__row {
+      .ship {
         display: grid;
-        gap: 0.12rem;
+        gap: 0.18rem;
+        padding: 0.35rem 0.45rem;
+        margin: 0 -0.45rem;
+        border-radius: 7px;
+        transition: background-color var(--dur-fast) var(--ease);
       }
-      .proj__name {
-        color: var(--accent);
-        font-weight: 500;
-        width: fit-content;
-        transition: color var(--dur-fast) var(--ease);
+      .ship:hover {
+        background: color-mix(in oklch, var(--accent) 12%, transparent);
       }
-      a.proj__name:hover {
-        text-decoration: underline;
-        text-underline-offset: 3px;
+      .ship__head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0 1rem;
       }
-      .proj__name--plain {
+      .ship__what {
         color: var(--ink);
+        font-weight: 500;
       }
-      .proj__desc {
-        color: var(--muted);
+      .ship__meta,
+      .ship__label {
+        font-size: 0.6875rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--faint);
+        white-space: nowrap;
+      }
+      .ship__bar {
+        display: grid;
+        grid-template-columns: 3.4rem minmax(0, 1fr);
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .ship__track {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .ship__fill {
+        display: block;
+        height: 0.5rem;
+        min-width: 3px;
+        width: calc(var(--w) * (100% - 7.5rem));
+        background: var(--bar);
+        border-radius: 1px;
+        transform-origin: left;
+        animation: grow 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.7s both;
+      }
+      .ship__track b {
+        font-weight: 500;
         font-size: 0.78rem;
-        line-height: 1.5;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .ship__bar--after .ship__fill {
+        background: var(--accent);
+        animation-delay: 1.05s;
+      }
+      .ship__bar--after b {
+        color: var(--accent);
+        font-weight: 700;
+      }
+      @keyframes grow {
+        from {
+          transform: scaleX(0);
+        }
       }
 
       /* writing — readable titles, not raw ls */
@@ -1178,7 +1406,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         border-top: 1px solid var(--line);
         background: color-mix(in oklch, var(--accent) 12%, var(--panel));
         font-family: var(--mono);
-        font-size: 0.68rem;
+        font-size: 0.6875rem;
         color: var(--ink);
       }
       .term__tabs b {
@@ -1213,7 +1441,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       .strip__label {
         flex: none;
         font-family: var(--mono);
-        font-size: 0.66rem;
+        font-size: 0.6875rem;
         letter-spacing: 0.12em;
         color: var(--muted);
       }
@@ -1256,9 +1484,9 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       .strip__yr {
         font-family: var(--mono);
         font-weight: 500;
-        font-size: 0.62em;
+        font-size: 0.6875rem;
         letter-spacing: 0.02em;
-        color: var(--accent);
+        color: var(--muted);
         margin-right: 0.55rem;
       }
       .strip__item i {
@@ -1272,7 +1500,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       .reach {
         max-width: var(--w-poster);
         margin: 0 auto;
-        padding: clamp(3rem, 7vw, 5rem) 0 clamp(1rem, 3vw, 2rem);
+        padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(0.5rem, 2vw, 1rem);
         scroll-margin-top: clamp(1.5rem, 5vw, 3rem);
       }
       .reach__tag {
@@ -1285,12 +1513,12 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       .reach__line {
         font-family: var(--grotesk);
         font-weight: 600;
-        font-size: clamp(1.4rem, 3vw, 2.2rem);
-        line-height: 1.25;
-        letter-spacing: -0.02em;
+        font-size: clamp(1.8rem, 4.6vw, 3.4rem);
+        line-height: 1.08;
+        letter-spacing: -0.03em;
         color: var(--ink);
         margin: 0;
-        max-width: 24ch;
+        max-width: 18ch;
         text-wrap: balance;
       }
       .reach__line a {
@@ -1298,9 +1526,29 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         border-bottom: 1px solid var(--accent-line);
         transition: border-color var(--dur-fast) var(--ease);
       }
-      .reach__line a span {
-        font-size: 0.7em;
+      .reach__line a span,
+      .reach__alt a span {
+        display: inline-block;
+        font-size: 0.9em;
         margin-left: 0.1em;
+        transition: transform var(--dur-fast) var(--ease);
+      }
+      .reach__line a:hover span,
+      .reach__alt a:hover span {
+        transform: translate(3px, -3px);
+      }
+      .reach__alt {
+        margin: 1rem 0 0;
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      .reach__alt a {
+        color: var(--ink);
+        border-bottom: 1px solid var(--accent-line);
+      }
+      .reach__alt a:hover {
+        border-color: var(--accent);
       }
       .reach__line a:hover {
         border-color: var(--accent);
@@ -1321,58 +1569,260 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         letter-spacing: 0.06em;
         color: var(--muted);
       }
-      /* ---------------- hot takes ---------------- */
-      .takes {
+      /* ---------------- projects ---------------- */
+      .work,
+      .feat {
         max-width: var(--w-poster);
         margin: 0 auto;
-        padding: clamp(4rem, 10vw, 8rem) 0 clamp(1rem, 3vw, 2rem);
+        padding: clamp(2.5rem, 5vw, 4rem) 0 0;
       }
-      .takes__head {
-        margin: 0 0 clamp(1.6rem, 4vw, 3rem);
-      }
-      .takes__tag {
+      .work__tag,
+      .feat__tag {
         font-family: var(--mono);
         font-size: 0.74rem;
         letter-spacing: 0.14em;
         color: var(--muted);
-        margin: 0 0 0.8rem;
+        margin: 0 0 clamp(0.9rem, 2vw, 1.3rem);
       }
-      .takes__list {
+      .work__list {
         display: grid;
         grid-template-columns: 1fr;
-        row-gap: clamp(0.1rem, 0.6vw, 0.4rem);
+        gap: clamp(0.7rem, 1.4vw, 1rem);
       }
-      @media (min-width: 760px) {
-        .takes__list {
-          grid-template-columns: 1fr 1fr;
-          column-gap: clamp(2.4rem, 6vw, 5rem);
+      /* Four projects: 1, 2 or 4 columns, never 3 + 1. */
+      @media (min-width: 640px) {
+        .work__list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
-      .take {
-        position: relative;
-        font-family: var(--grotesk);
-        font-weight: 500;
-        font-size: clamp(1.15rem, 1.9vw, 1.45rem);
-        line-height: 1.32;
-        letter-spacing: -0.01em;
+      @media (min-width: 1100px) {
+        .work__list {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
+      .work__list li {
+        display: grid;
+      }
+      /* Flat neutral tile. At rest the only colour is the small accent dot;
+         on hover the border and arrow take the accent. */
+      .proj {
+        display: grid;
+        align-content: start;
+        gap: 0.3rem;
+        padding: 1rem 1.1rem 1.2rem;
+        background: var(--pane);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        transition:
+          transform var(--dur-fast) var(--ease),
+          border-color var(--dur-fast) var(--ease);
+      }
+      .proj:hover {
+        transform: translateY(-3px);
+        border-color: var(--accent);
+      }
+      .proj__path {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--mono);
+        font-size: 0.6875rem;
+        letter-spacing: 0.04em;
+        color: var(--faint);
+        margin-bottom: clamp(1.2rem, 3vw, 2.2rem);
+      }
+      .proj__path i {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      .proj__go {
+        margin-left: auto;
+        font-size: 0.95rem;
+        color: var(--faint);
+        transition:
+          transform var(--dur-fast) var(--ease),
+          color var(--dur-fast) var(--ease);
+      }
+      .proj:hover .proj__go {
+        color: var(--accent);
+        transform: translate(3px, -3px);
+      }
+      .proj__name {
+        font-weight: 700;
+        font-size: clamp(1.3rem, 2vw, 1.7rem);
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        color: var(--ink);
+        overflow-wrap: anywhere;
+        transition: color var(--dur-fast) var(--ease);
+      }
+      .proj__desc {
         color: var(--muted);
-        padding: clamp(0.55rem, 1.4vw, 0.85rem) 0 clamp(0.55rem, 1.4vw, 0.85rem)
-          1.75rem;
+      }
+      .proj__stack {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        color: var(--faint);
+      }
+
+      /* ---------------- writing (lead panel + rows) ---------------- */
+      .feat__grid {
+        display: grid;
+        gap: clamp(1rem, 2.5vw, 2rem) clamp(1.6rem, 4vw, 3.5rem);
+        align-items: start;
+      }
+      @media (min-width: 900px) {
+        .feat__grid {
+          grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+        }
+      }
+      /* The stat chip: the post's headline number as a mono readout. */
+      .chip {
+        flex: none;
+        font-family: var(--mono);
+        font-weight: 500;
+        font-size: 0.8rem;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+        color: var(--accent-soft);
+        background: color-mix(in oklch, var(--accent) 10%, transparent);
+        border: 1px solid color-mix(in oklch, var(--accent) 22%, transparent);
+        border-radius: 999px;
+        padding: 0.18rem 0.7rem;
+      }
+      .feat__go {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent-soft);
+      }
+      .feat__go span {
+        display: inline-block;
+        transition: transform var(--dur-fast) var(--ease);
+      }
+      a:hover > .feat__go span,
+      a:hover .lead__foot .feat__go span {
+        transform: translateX(4px);
+      }
+
+      .lead {
+        display: grid;
+        gap: 0.8rem;
+        padding: clamp(1.2rem, 2.6vw, 2rem);
+        background: var(--pane);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        transition:
+          transform var(--dur-fast) var(--ease),
+          border-color var(--dur-fast) var(--ease);
+      }
+      .lead:hover {
+        transform: translateY(-3px);
+        border-color: var(--accent);
+      }
+      .lead__meta,
+      .row__date {
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .lead__meta {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+      }
+      .lead__new {
+        color: var(--accent-ink);
+        background: var(--accent);
+        border-radius: 4px;
+        padding: 0.1rem 0.45rem;
+      }
+      .lead__title {
+        font-weight: 600;
+        font-size: clamp(1.6rem, 3.2vw, 2.5rem);
+        line-height: 1.08;
+        letter-spacing: -0.025em;
+        color: var(--ink);
+        text-wrap: balance;
+        margin-top: clamp(0.6rem, 2vw, 1.6rem);
+      }
+      .lead__desc {
+        color: var(--muted);
+        font-size: clamp(1rem, 1.3vw, 1.1rem);
+        max-width: 46ch;
         text-wrap: pretty;
       }
-      .take::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 1.2em;
-        width: 0.8rem;
-        height: 2px;
-        border-radius: 1px;
-        background: var(--faint);
+      .lead__foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 0.4rem;
       }
-      .take b {
-        font-weight: 500;
+
+      .rows {
+        display: grid;
+        border-top: 1px solid var(--line);
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 5.2rem minmax(0, 1fr) auto;
+        gap: 0.3rem 1rem;
+        align-items: baseline;
+        padding: 1.05rem 0.6rem;
+        border-bottom: 1px solid var(--line);
+        transition: background-color var(--dur-fast) var(--ease);
+      }
+      .row:hover {
+        background: color-mix(in oklch, var(--accent) 7%, transparent);
+      }
+      .row__body {
+        display: grid;
+        gap: 0.2rem;
+      }
+      .row__title {
+        font-weight: 600;
+        font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+        line-height: 1.25;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+      }
+      .row__desc {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      .row--all .row__title {
         color: var(--accent-soft);
+      }
+      @media (max-width: 560px) {
+        .row {
+          grid-template-columns: minmax(0, 1fr) auto;
+        }
+        .row__date {
+          grid-column: 1 / -1;
+        }
+        .row__date:empty {
+          display: none;
+        }
+      }
+
+      /* ---------------- scroll reveal ---------------- */
+      [data-reveal].is-armed {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      [data-reveal].is-in {
+        opacity: 1;
+        transform: none;
+        transition:
+          opacity 0.6s var(--ease-out),
+          transform 0.6s var(--ease-out);
       }
 
       /* ---------------- motion ---------------- */
