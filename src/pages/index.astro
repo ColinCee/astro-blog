@@ -36,27 +36,31 @@ const projects = [
   },
 ];
 
-// Rotating dry one-liners — the accent token (num) swaps; some true, some cheeky.
+// Rotating dry one-liners under the name. Each is a line of trusted HTML: plain
+// text with the punchline in <b>, and for some a small inline drawing (classes
+// prefixed q-, styled below). Behaviours are opt-in data attributes:
+//   data-flip="7,0"  the counter shows 7, then flips to 0 while on screen
+//   data-odo="N"     a counter that keeps ticking up from N
+// The markup here is the resting state (what no-JS and reduced motion show).
 const quips = [
-  { before: "", num: "1", after: " day since the last prod incident" },
-  {
-    before: "still waiting to reverse a ",
-    num: "linked list",
-    after: " at work",
-  },
-  { before: "converting coffee into ", num: "code", after: "" },
-  { before: "", num: "claude", after: " implement this, make no mistakes." },
-  { before: "homelab: ", num: "1", after: " powercut from downtime" },
-  { before: "another meeting that could've been an ", num: "email", after: "" },
-  { before: "still on ", num: "16GB", after: " of RAM in 2026" },
-  {
-    before: "never seen a ",
-    num: "linear",
-    after: " burndown chart in my life",
-  },
-  { before: "", num: "10 billion", after: " tokens burned today" },
-  { before: "git blame says it was ", num: "me", after: "" },
-  { before: "testing in ", num: "production", after: "…" },
+  `<span class="q-ctr" data-flip="7,0">0</span> days since the last prod incident`,
+  `still waiting to reverse a <b>linked list</b> at work <svg class="q-svg" width="54" height="14" viewBox="0 0 54 14" aria-hidden="true"><path class="q-line q-arrow" d="M12 7 H20 M17.5 4.5 L20 7 L17.5 9.5"/><path class="q-line q-arrow q-arrow--2" d="M32 7 H40 M37.5 4.5 L40 7 L37.5 9.5"/><rect class="q-node q-node--head" x="1" y="2" width="10" height="10" rx="2"/><rect class="q-node" x="21" y="2" width="10" height="10" rx="2"/><rect class="q-node q-node--tail" x="41" y="2" width="10" height="10" rx="2"/></svg>`,
+  `<b>LGTM</b> (didn’t read)`,
+  `still on <b>16GB</b> of RAM in 2026`,
+  `coffee <span class="q-meter q-meter--drain" aria-hidden="true"><i></i></span> into <b>code</b> <span class="q-meter q-meter--fill" aria-hidden="true"><i></i></span>`,
+  `never seen a <b>linear</b> burndown chart in my life <svg class="q-svg" width="64" height="18" viewBox="0 0 64 18" aria-hidden="true"><path class="q-line" stroke-dasharray="3 3" d="M1 2 L63 16"/><path class="q-line q-line--hot" d="M1 2 L12 3 L22 3 L30 6 L40 5 L50 9 L63 7"/></svg>`,
+  `<b>0</b> tests failing (0 tests)`,
+  `<b>claude</b> implement this, make no mistakes.`,
+  `homelab <span class="q-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i class="is-down"></i><i></i><i></i><i></i></span> <b>1</b> powercut from downtime`,
+  `TODO: fix this <b>later</b> (2019)`,
+  `today <span class="q-split" aria-hidden="true"><i style="--w:7"></i><i class="is-hot" style="--w:1"></i></span> meetings / <b>code</b>`,
+  `another meeting that could've been an <b>email</b>`,
+  `infinite RAM, if you count <b>swap</b>`,
+  `git blame <svg class="q-svg" width="52" height="18" viewBox="0 0 52 18" aria-hidden="true"><path class="q-line" d="M3 9 H49 M14 9 C20 9 20 3 26 3 H34 C40 3 40 9 46 9"/><circle class="q-fill" cx="3" cy="9" r="2.5"/><circle class="q-fill" cx="26" cy="3" r="2.5"/><circle class="q-fill q-fill--hot" cx="46" cy="9" r="3.2"/></svg> says it was <b>me</b>`,
+  `reads the docs as a <b>last resort</b>`,
+  `<b data-odo="2000000000">2,000,000,000</b> tokens burned today`,
+  `learning Mandarin one <b>Anki card</b> at a time`,
+  `testing in <b>production…</b>`,
 ];
 
 // "Worked at" marquee — chronological by join date (oldest → newest), with years.
@@ -223,9 +227,11 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
           <span class="kin__word"><span>CHEUNG</span></span>
         </h1>
         <p class="kin__rot">
-          <span data-quip data-quips={JSON.stringify(quips)}
-            >{quips[0].before}<b>{quips[0].num}</b>{quips[0].after}</span
-          >
+          <span
+            data-quip
+            data-quips={JSON.stringify(quips)}
+            set:html={quips[0]}
+          />
         </p>
         <div class="kin__social">
           <a class="kin__ico" href={github} aria-label="GitHub"
@@ -682,26 +688,51 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
           .catch(() => {});
       }
 
-      // Rotating dry one-liners — the accent token swaps (reduced-motion shows one).
-      // Runs for every [data-quip] (hero one-liner + masthead beat).
+      // Rotating dry one-liners (reduced motion shows the first, at rest).
       document
         .querySelectorAll<HTMLElement>("[data-quip]")
         .forEach((quipEl) => {
           if (reduce) return;
-          const quipList = JSON.parse(quipEl.dataset.quips || "[]") as {
-            before: string;
-            num: string;
-            after: string;
-          }[];
+          const quipList = JSON.parse(quipEl.dataset.quips || "[]") as string[];
           if (quipList.length < 2) return;
+          let timers: number[] = [];
+          // Start the opt-in behaviours of whichever quip is now showing.
+          const animate = () => {
+            timers.forEach((t) => window.clearTimeout(t));
+            timers = [];
+            const flip = quipEl.querySelector<HTMLElement>("[data-flip]");
+            if (flip) {
+              const [from, to] = (flip.dataset.flip || "").split(",");
+              flip.textContent = from;
+              timers.push(
+                window.setTimeout(() => {
+                  flip.classList.add("is-flipping");
+                  timers.push(
+                    window.setTimeout(() => (flip.textContent = to), 160),
+                  );
+                }, 1300),
+              );
+            }
+            const odo = quipEl.querySelector<HTMLElement>("[data-odo]");
+            if (odo) {
+              let n = Number(odo.dataset.odo);
+              const tick = () => {
+                n += 10_000 + Math.floor(Math.random() * 90_000);
+                odo.textContent = n.toLocaleString("en-GB");
+                timers.push(window.setTimeout(tick, 120));
+              };
+              tick();
+            }
+          };
+          animate();
           let qi = 0;
           setInterval(() => {
             qi = (qi + 1) % quipList.length;
             quipEl.style.opacity = "0";
             window.setTimeout(() => {
-              const q = quipList[qi];
-              quipEl.innerHTML = `${q.before}<b>${q.num}</b>${q.after}`;
+              quipEl.innerHTML = quipList[qi];
               quipEl.style.opacity = "1";
+              animate();
             }, 380);
           }, 3600);
         });
@@ -961,8 +992,152 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         min-height: 1.5em;
       }
       .kin__rot [data-quip] {
-        display: inline-block;
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 0.1rem 0.55ch;
         transition: opacity 0.38s ease;
+      }
+      /* Inline drawings for the one-liners. Neutral marks in --bar, the
+         punchline in --accent, all one line tall. */
+      .q-svg {
+        display: block;
+        overflow: visible;
+      }
+      .q-line {
+        fill: none;
+        stroke: var(--bar);
+        stroke-width: 1.5;
+      }
+      .q-line--hot {
+        stroke: var(--accent);
+        stroke-width: 2;
+      }
+      .q-fill {
+        fill: var(--bar);
+      }
+      .q-fill--hot {
+        fill: var(--accent);
+      }
+      /* Linked list: the arrows flip one after the other, then the highlight
+         moves from the old tail to the new head. Plays once per appearance. */
+      .q-arrow {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: q-reverse 0.45s ease-in-out 0.9s forwards;
+      }
+      .q-arrow--2 {
+        animation-delay: 1.4s;
+      }
+      .q-node {
+        fill: var(--bar);
+      }
+      .q-node--tail {
+        fill: var(--accent);
+        animation: q-cool 0.3s ease 2s forwards;
+      }
+      .q-node--head {
+        animation: q-hot 0.3s ease 2s forwards;
+      }
+      @keyframes q-reverse {
+        to {
+          transform: rotate(180deg);
+        }
+      }
+      @keyframes q-hot {
+        to {
+          fill: var(--accent);
+        }
+      }
+      @keyframes q-cool {
+        to {
+          fill: var(--bar);
+        }
+      }
+      .q-ctr {
+        display: inline-block;
+        min-width: 1.6ch;
+        padding: 0 0.4ch;
+        border-radius: 3px;
+        background: var(--accent);
+        color: var(--accent-ink);
+        font-weight: 700;
+        line-height: 1.4;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+      }
+      .q-ctr.is-flipping {
+        animation: q-flip 0.32s ease-in-out;
+      }
+      @keyframes q-flip {
+        50% {
+          transform: rotateX(90deg);
+        }
+      }
+      /* Coffee drains while code fills, once, each time the line appears. */
+      .q-meter {
+        display: inline-block;
+        width: 3rem;
+        height: 0.6rem;
+        background: var(--bar);
+        border-radius: 1px;
+        overflow: hidden;
+      }
+      .q-meter i {
+        display: block;
+        height: 100%;
+      }
+      .q-meter--drain i {
+        width: 12%;
+        background: var(--faint);
+        animation: q-drain 2.6s 0.3s ease-in-out backwards;
+      }
+      .q-meter--fill i {
+        width: 100%;
+        background: var(--accent);
+        animation: q-fill 2.6s 0.3s ease-in-out backwards;
+      }
+      @keyframes q-drain {
+        from {
+          width: 100%;
+        }
+      }
+      @keyframes q-fill {
+        from {
+          width: 8%;
+        }
+      }
+      .q-dots,
+      .q-split {
+        display: inline-flex;
+        align-items: center;
+      }
+      .q-dots {
+        gap: 3px;
+      }
+      .q-dots i {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: var(--bar);
+      }
+      .q-dots .is-down {
+        background: var(--accent);
+      }
+      .q-split {
+        width: 6.5rem;
+        height: 0.6rem;
+        gap: 2px;
+      }
+      .q-split i {
+        flex: var(--w) 0 0;
+        height: 100%;
+        background: var(--bar);
+        border-radius: 1px;
+      }
+      .q-split .is-hot {
+        background: var(--accent);
       }
       .kin__rot b {
         color: var(--accent);
@@ -1845,7 +2020,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         }
         /* reserve 2 lines so a wrapped subtitle doesn't shift the page */
         .kin__rot {
-          min-height: 3em;
+          min-height: 4.5em;
         }
       }
 
