@@ -4,15 +4,22 @@
 
 **A terminal-native personal site and engineering blog.**
 
-[colincheung.dev](https://colincheung.dev) · [Blog](https://colincheung.dev/blog) · [CV](https://colincheung.dev/cv)
+**▶ Live: [colincheung.dev](https://colincheung.dev)** · [Blog](https://colincheung.dev/blog) · [CV](https://colincheung.dev/cv)
 
-[![Deploy](https://github.com/ColinCee/astro-blog/actions/workflows/deploy.yml/badge.svg)](https://github.com/ColinCee/astro-blog/actions/workflows/deploy.yml)
+[![Deploy](https://github.com/ColinCee/astro-blog/actions/workflows/deploy.yml/badge.svg?branch=main&event=push)](https://github.com/ColinCee/astro-blog/actions/workflows/deploy.yml?query=branch%3Amain)
+[![Live](https://img.shields.io/website?url=https%3A%2F%2Fcolincheung.dev&label=live&up_message=online&down_message=offline)](https://colincheung.dev)
+
+![Screenshot](docs/screenshot.png)
 
 </div>
 
-## What this is
+## What it does
 
-This is Colin Cheung's personal site: a light, terminal-inspired homepage with a dark terminal window, a technical writing section, and a printable CV. It is built with Astro, styled with a small custom design system, and deployed to Cloudflare Workers.
+- Terminal-inspired homepage with a dark terminal window
+- Technical blog written as Markdown content collections, with Expressive Code blocks
+- Printable CV page that prints clean to ink-on-white
+- Light and dark themes that follow the system setting
+- Sitemap generated at build time
 
 ## Stack
 
@@ -24,6 +31,17 @@ This is Colin Cheung's personal site: a light, terminal-inspired homepage with a
 | Styling | Custom CSS tokens in `src/styles/terminal.css` |
 | Hosting | Cloudflare Workers |
 | Deploys | GitHub Actions + Wrangler |
+
+## Run locally
+
+```sh
+npm install
+npm run dev
+```
+
+## How it works
+
+Astro builds the pages in `src/pages/` and the posts in `src/content/blog/`, styled with a small custom design system, and deploys them to Cloudflare Workers through the Cloudflare adapter. [DESIGN.md](DESIGN.md) owns the visual system and [PRODUCT.md](PRODUCT.md) the audience and purpose.
 
 ## Project structure
 
@@ -46,6 +64,7 @@ public/             Static assets copied into the deployed build
 | `npm run check` | Build, type-check, and run a Wrangler dry-run deploy |
 | `npm run deploy` | Build and deploy to Cloudflare Workers |
 | `npm run types` | Regenerate Cloudflare Worker types |
+| `npm test` | Run Playwright layout and typography tests |
 
 ## Deployment
 
