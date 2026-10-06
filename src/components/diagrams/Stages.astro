@@ -1,0 +1,24 @@
+---
+// A left-to-right process: interview loop, pipeline, rollout. `current` marks where you are.
+interface Props {
+  stages: string[];
+  current?: number;
+}
+const { stages, current = -1 } = Astro.props;
+---
+
+<ol class="stages">
+  {stages.map((s, i) => <li class:list={["stage", { "is-now": i === current }]} aria-current={i === current ? "step" : undefined}>{s}</li>)}
+</ol>
+
+<style>
+  .stages { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.6rem; margin: 0; padding: 0; list-style: none; }
+  .stage { position: relative; padding: 0.4rem 0.7rem; font-size: 0.9rem; background: var(--panel); border: 1px solid var(--line); border-radius: 7px; }
+  .stage + .stage::before { content: "→"; position: absolute; left: -1.25rem; top: 50%; transform: translateY(-50%); color: var(--faint); font-family: var(--mono); font-weight: 400; }
+  .stage.is-now {
+    color: var(--accent-soft);
+    font-weight: 600;
+    background: color-mix(in oklch, var(--accent) 12%, transparent);
+    border-color: var(--accent);
+  }
+</style>

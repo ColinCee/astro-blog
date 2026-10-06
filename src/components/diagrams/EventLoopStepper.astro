@@ -1,0 +1,182 @@
+---
+// Steps through a snippet of JavaScript, showing the call stack, microtask
+// queue, macrotask queue and console after each step. Pass the steps as data;
+// several steppers can share one page.
+import type { LoopStep } from "./types";
+
+interface Props {
+  code: string[];
+  steps: LoopStep[];
+  caption?: string;
+}
+const { code, steps, caption } = Astro.props;
+---
+
+<event-loop-stepper class="elp" data-steps={JSON.stringify(steps)}>
+  <div class="elp__left">
+    <pre class="elp__src">{code.map((l) => <span>{l}</span>)}</pre>
+    <div class="elp__console"><span class="elp__dim">console</span><span class="elp__out" data-out></span></div>
+    <p class="elp__note" data-note aria-live="polite"></p>
+    <div class="elp__ctrls">
+      <button type="button" data-prev>← Back</button>
+      <button type="button" data-next class="elp__primary">Next step →</button>
+      <button type="button" data-reset>Reset</button>
+      <span class="elp__dim elp__num" data-num></span>
+    </div>
+  </div>
+  <div class="elp__lanes">
+    <div class="elp__lane elp__lane--stack"><h4>Call stack</h4><div data-lane="stack"></div></div>
+    <div class="elp__lane"><h4>Microtasks</h4><div data-lane="micro"></div></div>
+    <div class="elp__lane"><h4>Macrotasks</h4><div data-lane="macro"></div></div>
+  </div>
+  {caption && <p class="elp__caption">{caption}</p>}
+</event-loop-stepper>
+
+<script>
+  import type { LoopStep } from "./types";
+
+  class EventLoopStepper extends HTMLElement {
+    connectedCallback() {
+      const steps: LoopStep[] = JSON.parse(this.dataset.steps ?? "[]");
+      if (!steps.length) return;
+      const q = <T extends Element>(s: string) => this.querySelector<T>(s)!;
+      const lines = [...q<HTMLElement>(".elp__src").children];
+      let i = 0;
+      let prev: LoopStep | null = null;
+
+      const fill = (el: Element, items: string[], before?: string[]) =>
+        el.replaceChildren(
+          ...items.map((t) => {
+            const d = document.createElement("div");
+            d.className = "elp__item" + (before && !before.includes(t) ? " is-new" : "");
+            d.textContent = t;
+            return d;
+          }),
+        );
+
+      const render = () => {
+        const s = steps[i];
+        lines.forEach((l, n) => l.classList.toggle("is-on", n === s.line));
+        (["stack", "micro", "macro"] as const).forEach((k) =>
+          fill(q(`[data-lane="${k}"]`), s[k], prev?.[k]),
+        );
+        const grew = !prev || prev.out.length < s.out.length;
+        q("[data-out]").replaceChildren(
+          ...s.out.map((n, k) => {
+            const el = document.createElement(grew && k === s.out.length - 1 ? "b" : "span");
+            el.textContent = n;
+            return el;
+          }),
+        );
+        q("[data-note]").textContent = s.note;
+        q("[data-num]").textContent = `step ${i + 1} / ${steps.length}`;
+        q<HTMLButtonElement>("[data-prev]").disabled = i === 0;
+        q<HTMLButtonElement>("[data-next]").disabled = i === steps.length - 1;
+      };
+      const go = (n: number, keepPrev = true) => {
+        prev = keepPrev ? steps[i] : null;
+        i = Math.max(0, Math.min(steps.length - 1, n));
+        render();
+      };
+      q("[data-next]").addEventListener("click", () => go(i + 1));
+      q("[data-prev]").addEventListener("click", () => go(i - 1, false));
+      q("[data-reset]").addEventListener("click", () => go(0, false));
+      render();
+    }
+  }
+  customElements.define("event-loop-stepper", EventLoopStepper);
+</script>
+
+<style>
+  .elp {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr);
+    gap: 1rem;
+  }
+  @media (max-width: 52rem) {
+    .elp { grid-template-columns: 1fr; }
+  }
+  .elp__left { display: grid; gap: 0.75rem; align-content: start; min-width: 0; }
+  .elp__src {
+    margin: 0;
+    padding: 0.9rem 0;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font: 0.85rem/1.7 var(--mono);
+    overflow-x: auto;
+  }
+  .elp__src span { display: block; padding: 0 1rem; border-left: 3px solid transparent; }
+  .elp__src span.is-on {
+    background: color-mix(in oklch, var(--accent) 12%, transparent);
+    border-left-color: var(--accent);
+  }
+  .elp__console {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    padding: 0.6rem 0.8rem;
+    font: 0.85rem var(--mono);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .elp__out { display: inline-flex; gap: 0.6rem; }
+  .elp__out :global(b) { color: var(--accent-soft); }
+  .elp__dim { color: var(--muted); }
+  .elp__num { font: 0.75rem var(--mono); font-variant-numeric: tabular-nums; }
+  .elp__note { margin: 0; min-height: 3em; }
+  .elp__ctrls { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+  .elp__ctrls button {
+    font: 0.8rem var(--mono);
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .elp__ctrls button.elp__primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .elp__ctrls button:disabled { opacity: 0.45; cursor: default; }
+  .elp__lanes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
+  @media (max-width: 30rem) {
+    .elp__lanes { grid-template-columns: 1fr; }
+  }
+  .elp__lane {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 0.5rem;
+    min-height: 9rem;
+    padding: 0.6rem;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .elp__lane h4 {
+    margin: 0;
+    font: 500 0.7rem var(--mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .elp__lane > div { display: flex; flex-direction: column; gap: 0.35rem; }
+  /* A stack grows upwards. */
+  .elp__lane--stack > div { flex-direction: column-reverse; justify-content: flex-end; }
+  .elp__lane :global(.elp__item) {
+    padding: 0.3rem 0.5rem;
+    font: 0.78rem var(--mono);
+    background: var(--pane);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    overflow-wrap: anywhere;
+  }
+  .elp__lane :global(.elp__item.is-new) { border-color: var(--accent); color: var(--accent-soft); }
+  .elp__caption { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 0.9rem; }
+  @media (prefers-reduced-motion: no-preference) {
+    .elp__lane :global(.elp__item.is-new) { animation: elp-pop 0.35s ease-out; }
+  }
+  @keyframes elp-pop {
+    from { transform: translateY(-4px); opacity: 0.4; }
+    to { transform: none; opacity: 1; }
+  }
+</style>
