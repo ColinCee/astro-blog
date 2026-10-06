@@ -1,0 +1,31 @@
+---
+// Nested scope boxes: global → function → block. Recursive, so any depth works.
+import type { ScopeNode } from "./types";
+
+interface Props {
+  node: ScopeNode;
+}
+const { node } = Astro.props;
+const kind = node.kind ?? "global";
+---
+
+<div class:list={["scope", `scope--${kind}`]}>
+  <span class="scope__label">{node.label}</span>
+  {node.vars?.map((v) => <code class="scope__var">{v}</code>)}
+  {node.children?.map((c) => <Astro.self node={c} />)}
+</div>
+
+<style>
+  .scope {
+    display: grid;
+    gap: 0.45rem;
+    min-width: 0;
+    padding: 0.6rem 0.7rem 0.7rem;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+  }
+  .scope--function { border-style: solid; background: var(--panel); }
+  .scope--block { border-color: var(--accent); background: var(--pane); }
+  .scope__label { font: 0.7rem var(--mono); letter-spacing: 0.04em; color: var(--faint); }
+  .scope__var { font: 0.8rem var(--mono); overflow-wrap: anywhere; }
+</style>
