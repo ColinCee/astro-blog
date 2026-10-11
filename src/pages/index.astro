@@ -112,6 +112,7 @@ const posts: {
 ];
 
 const github = "https://github.com/ColinCee";
+const flightDemo = "https://flight-tracker-at-home.pages.dev";
 const linkedin = "https://www.linkedin.com/in/colin-cheung/";
 
 // Brand accent: tomato.
@@ -211,6 +212,10 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
   </head>
   <body>
     <main class="t">
+      <!-- Ambient background behind the hero: cycles through contour lines, a
+           log stream and an ADS-B style airspace, all synthetic. Drawn by JS;
+           without it (or with reduced motion) only the still dot grid shows. -->
+      <canvas class="t-bg" aria-hidden="true"></canvas>
       <nav class="t-nav">
         <a class="t-mark" href="/">colin<span>@</span>glasgow<b>:~$</b></a>
         <div class="t-nav__links">
@@ -249,6 +254,16 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
             ></a
           >
         </div>
+        <!-- Which project the background is drawn from right now; one per scene. -->
+        <a class="t-bg__tag" data-for="anki" href={projects[1].href}
+          >background: anki-chinese →</a
+        >
+        <a class="t-bg__tag" data-for="logs" href={projects[0].href}
+          >background: tail -f homelab →</a
+        >
+        <a class="t-bg__tag" data-for="adsb" href={flightDemo}
+          >background: flight-tracker, see the live feed →</a
+        >
       </section>
 
       <section
@@ -800,6 +815,345 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         };
         run();
       }
+
+      // Ambient background: synthetic scenes behind the hero, one per side
+      // project plus contour lines, each on for a while and crossfading to the
+      // next. Starts on a random scene per visit; ?bg=<scene> pins one. Off
+      // under reduced motion (still grid).
+      const bg = document.querySelector<HTMLCanvasElement>(".t-bg");
+      const page = document.querySelector<HTMLElement>(".t");
+      if (bg && page && !reduce) {
+        const ctx = bg.getContext("2d")!;
+        const SCENES = ["contours", "anki", "logs", "adsb"] as const;
+        type Scene = (typeof SCENES)[number];
+        const pinned = new URLSearchParams(location.search).get("bg") as Scene | null;
+        const HOLD = 45,
+          FADE = 2;
+        let W = 0,
+          H = 0,
+          ink = "#000",
+          accent = "#c33",
+          cjk = "sans-serif",
+          mul = 1,
+          visible = true,
+          raf = 0,
+          prev = 0;
+        let scene: Scene =
+          pinned && SCENES.includes(pinned)
+            ? pinned
+            : SCENES[Math.floor(Math.random() * SCENES.length)];
+        let sceneAt = 0;
+        const ga = (v: number) => (ctx.globalAlpha = Math.min(1, v) * mul);
+
+        const colors = () => {
+          const cs = getComputedStyle(page);
+          ink = cs.getPropertyValue("--ink").trim() || ink;
+          accent = cs.getPropertyValue("--accent").trim() || accent;
+          cjk = cs.getPropertyValue("--cjk").trim() || cjk;
+        };
+        const resize = () => {
+          const dpr = Math.min(devicePixelRatio || 1, 2);
+          W = bg.clientWidth;
+          H = bg.clientHeight;
+          bg.width = Math.round(W * dpr);
+          bg.height = Math.round(H * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          planes.length = 0;
+          logLines.length = 0;
+          cards.length = 0;
+        };
+
+        // --- value noise (for the contours) ---
+        const hash = (i: number, j: number, k: number) => {
+          let h = Math.imul(i, 374761393) ^ Math.imul(j, 668265263) ^ Math.imul(k, 1013904223);
+          h = Math.imul(h ^ (h >>> 13), 1274126177);
+          return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+        };
+        const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+        const noise = (x: number, y: number, z: number) => {
+          const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
+          let fx = x - xi, fy = y - yi, fz = z - zi;
+          fx = fx * fx * (3 - 2 * fx);
+          fy = fy * fy * (3 - 2 * fy);
+          fz = fz * fz * (3 - 2 * fz);
+          const c = (dz: number) =>
+            lerp(
+              lerp(hash(xi, yi, zi + dz), hash(xi + 1, yi, zi + dz), fx),
+              lerp(hash(xi, yi + 1, zi + dz), hash(xi + 1, yi + 1, zi + dz), fx),
+              fy,
+            );
+          return lerp(c(0), c(1), fz);
+        };
+        const fbm = (x: number, y: number, z: number) =>
+          0.65 * noise(x, y, z) + 0.35 * noise(x * 2.1 + 7, y * 2.1 + 3, z * 1.4);
+
+        // --- scene 1: contour lines from a drifting field (marching squares) ---
+        const drawContours = (t: number) => {
+          const S = 12, cols = Math.ceil(W / S) + 1, rows = Math.ceil(H / S) + 1;
+          const f = new Float32Array(cols * rows);
+          for (let j = 0; j < rows; j++)
+            for (let i = 0; i < cols; i++)
+              f[j * cols + i] = fbm(i * S * 0.0035, j * S * 0.0035, t * 0.05);
+          const levels = [0.36, 0.42, 0.48, 0.54, 0.6, 0.66];
+          ctx.lineWidth = 1;
+          levels.forEach((lv, L) => {
+            const hot = L === 3;
+            ctx.strokeStyle = hot ? accent : ink;
+            ga(hot ? 0.45 : 0.12);
+            ctx.beginPath();
+            for (let j = 0; j < rows - 1; j++)
+              for (let i = 0; i < cols - 1; i++) {
+                const a = f[j * cols + i], b = f[j * cols + i + 1];
+                const c = f[(j + 1) * cols + i + 1], d = f[(j + 1) * cols + i];
+                const idx = +(a > lv) | (+(b > lv) << 1) | (+(c > lv) << 2) | (+(d > lv) << 3);
+                if (idx === 0 || idx === 15) continue;
+                const x = i * S, y = j * S;
+                const top = [x + (S * (lv - a)) / (b - a), y];
+                const right = [x + S, y + (S * (lv - b)) / (c - b)];
+                const bot = [x + (S * (lv - d)) / (c - d), y + S];
+                const left = [x, y + (S * (lv - a)) / (d - a)];
+                const seg = (p: number[], q: number[]) => {
+                  ctx.moveTo(p[0], p[1]);
+                  ctx.lineTo(q[0], q[1]);
+                };
+                switch (idx) {
+                  case 1: case 14: seg(left, top); break;
+                  case 2: case 13: seg(top, right); break;
+                  case 3: case 12: seg(left, right); break;
+                  case 4: case 11: seg(right, bot); break;
+                  case 5: seg(left, top); seg(right, bot); break;
+                  case 6: case 9: seg(top, bot); break;
+                  case 7: case 8: seg(left, bot); break;
+                  case 10: seg(top, right); seg(left, bot); break;
+                }
+              }
+            ctx.stroke();
+          });
+        };
+
+        // --- scene 2 (anki-chinese): flashcards surfacing and fading ---
+        type Word = [string, string, string]; // hanzi, pinyin, jyutping
+        const WORDS: Word[] = [
+          ["咖啡", "kāfēi", "gaa3 fe1"], ["電腦", "diànnǎo", "din6 nou5"],
+          ["飛機", "fēijī", "fei1 gei1"], ["學習", "xuéxí", "hok6 zaap6"],
+          ["工作", "gōngzuò", "gung1 zok3"], ["時間", "shíjiān", "si4 gaan3"],
+          ["朋友", "péngyǒu", "pang4 jau5"], ["今天", "jīntiān", "gam1 tin1"],
+          ["問題", "wèntí", "man6 tai4"], ["開會", "kāihuì", "hoi1 wui2"],
+          ["測試", "cèshì", "cak1 si3"], ["部署", "bùshǔ", "bou6 cyu5"],
+          ["錯誤", "cuòwù", "co3 ng6"], ["早上", "zǎoshang", "zou2 soeng6"],
+          ["音樂", "yīnyuè", "jam1 ngok6"], ["唱歌", "chànggē", "coeng3 go1"],
+          ["火車", "huǒchē", "fo2 ce1"], ["下雨", "xiàyǔ", "haa6 jyu5"],
+          ["回家", "huíjiā", "wui4 gaa1"], ["明天", "míngtiān", "ming4 tin1"],
+        ];
+        type Card = { w: Word; x: number; y: number; t0: number; hold: number; hot: boolean };
+        const cards: Card[] = [];
+        const drawCards = (t: number) => {
+          const CW = 230, CH = 150;
+          const sc = Math.max(1, Math.floor(W / CW)), sr = Math.max(1, Math.floor(H / CH));
+          const want = Math.min(sc * sr, Math.max(4, Math.round(W / 260)));
+          for (let n = cards.length - 1; n >= 0; n--)
+            if (t - cards[n].t0 > cards[n].hold + 2.4) cards.splice(n, 1);
+          if (cards.length < want && Math.random() < 0.04) {
+            const taken = new Set(cards.map((c) => `${Math.floor(c.x / CW)},${Math.floor(c.y / CH)}`));
+            for (let tries = 0; tries < 8; tries++) {
+              const i = rnd(0, sc - 1), j = rnd(0, sr - 1);
+              if (taken.has(`${i},${j}`)) continue;
+              cards.push({
+                w: WORDS[rnd(0, WORDS.length - 1)],
+                x: i * CW + 30 + Math.random() * (CW - 120),
+                y: j * CH + 50 + Math.random() * (CH - 90),
+                t0: t, hold: 4 + Math.random() * 5, hot: Math.random() < 1 / 6,
+              });
+              break;
+            }
+          }
+          for (const c of cards) {
+            const age = t - c.t0;
+            const env = Math.min(1, age / 1.2, (c.hold + 2.4 - age) / 1.2);
+            if (env <= 0) continue;
+            ctx.fillStyle = c.hot ? accent : ink;
+            ctx.font = `500 30px ${cjk}`;
+            ga(env * (c.hot ? 0.5 : 0.16));
+            ctx.fillText(c.w[0], c.x, c.y);
+            ctx.font = '500 11px "JetBrains Mono", ui-monospace, monospace';
+            ga(env * (c.hot ? 0.5 : 0.24));
+            ctx.fillText(c.w[1], c.x, c.y + 18);
+            ga(env * (c.hot ? 0.35 : 0.14));
+            ctx.fillText(c.w[2], c.x, c.y + 32);
+          }
+        };
+
+        // --- scene 3 (homelab): a faint tail -f of the real stack ---
+        const rnd = (a: number, b: number) => a + Math.floor(Math.random() * (b - a + 1));
+        const ts = () =>
+          [rnd(0, 23), rnd(0, 59), rnd(0, 59)].map((n) => String(n).padStart(2, "0")).join(":");
+        type Seg = [string, boolean];
+        const quietT: (() => Seg[])[] = [
+          () => [[`${ts()} cloudflared  `, false], [`GET /aircraft 200 ${rnd(2, 9)}.${rnd(10, 99)}ms`, false]],
+          () => [[`${ts()} flight-api   `, false], [`${rnd(60, 140)} aircraft, ${rnd(0, 9)} on approach`, false]],
+          () => [[`${ts()} homeassist   `, false], [`light.living_room → off (automation: bedtime)`, false]],
+          () => [[`${ts()} mosquitto    `, false], [`zigbee2mqtt/sensor/hall temperature=${rnd(17, 22)}.${rnd(0, 9)}`, false]],
+          () => [[`${ts()} prometheus   `, false], [`scrape node-exporter ok (${rnd(4, 30)}ms)`, false]],
+          () => [[`${ts()} loki         `, false], [`ingested ${rnd(100, 999)} lines, ${rnd(10, 90)} KiB`, false]],
+          () => [[`${ts()} alloy        `, false], [`forwarding docker logs → loki`, false]],
+          () => [[`${ts()} restic       `, false], [`snapshot to R2: ${rnd(1, 9)}.${rnd(1, 9)} GiB added, ${rnd(2, 15)} min`, false]],
+          () => [[`${ts()} crowdsec     `, false], [`bouncer synced, ${rnd(100, 900)} decisions`, false]],
+          () => [[`${ts()} tailscale    `, false], [`peer colin-laptop connected (direct)`, false]],
+          () => [[`${ts()} renovate     `, false], [`PR: update grafana/grafana to ${rnd(11, 12)}.${rnd(0, 6)}.${rnd(0, 9)}`, false]],
+          () => [[`${ts()} gh-runner    `, false], [`job deploy completed (${rnd(40, 120)}s)`, false]],
+          () => [[`${ts()} docker       `, false], [`grafana healthy (uptime ${rnd(2, 48)}d)`, false]],
+        ];
+        const warnT: (() => Seg[])[] = [
+          () => [[`${ts()} crowdsec     `, false], [`ban 45.${rnd(10, 250)}.${rnd(1, 250)}.${rnd(1, 250)} (ssh-bf, 4h)`, true]],
+          () => [[`${ts()} alertmanager `, false], [`→ discord: disk /srv ${rnd(85, 92)}% full`, true]],
+          () => [[`${ts()} apcupsd      `, false], [`Power failure. Running on UPS batteries.`, true]],
+        ];
+        // about one line in twelve is a warning
+        const logLine = (): Seg[] => {
+          const pool = Math.random() < 1 / 12 ? warnT : quietT;
+          return pool[rnd(0, pool.length - 1)]();
+        };
+        type LogLine = { y: number; seg: Seg[] };
+        const logLines: LogLine[] = [];
+        const drawLogs = (_t: number, dt: number) => {
+          const LH = 20;
+          for (const l of logLines) l.y -= 16 * dt;
+          while (logLines.length && logLines[0].y < -LH) logLines.shift();
+          if (logLines.length === 0)
+            for (let y = LH; y < H + LH; y += LH) logLines.push({ y, seg: logLine() });
+          const last = logLines[logLines.length - 1];
+          if (last.y < H) logLines.push({ y: last.y + LH, seg: logLine() });
+          const x0 = parseFloat(getComputedStyle(page).paddingLeft) || 24;
+          ctx.font = '500 12px "JetBrains Mono", ui-monospace, monospace';
+          for (const l of logLines) {
+            let x = x0;
+            // fade the top few lines so the stream doesn't run through the nav
+            const top = Math.min(1, Math.max(0, (l.y - 30) / 70));
+            for (const [txt, hot] of l.seg) {
+              ctx.fillStyle = hot ? accent : ink;
+              ga((hot ? 0.32 : 0.07) * top);
+              ctx.fillText(txt, x, l.y);
+              x += ctx.measureText(txt).width;
+            }
+          }
+        };
+
+        // --- scene 4 (flight-tracker): an ADS-B style airspace, synthetic ---
+        type Plane = {
+          x: number; y: number; vx: number; vy: number;
+          trail: [number, number][]; tAt: number; hot: boolean; cs: string; fl: string;
+        };
+        const planes: Plane[] = [];
+        const CS = ["BAW", "EZY", "RYR", "VIR", "SHT", "EIN", "TOM", "EXS", "LOG"];
+        const spawnPlane = (): Plane => {
+          const side = rnd(0, 3), sp = 18 + Math.random() * 10, hot = Math.random() < 0.25;
+          const ang = (side * Math.PI) / 2 + (Math.random() - 0.5) * 1.1 + Math.PI;
+          const p: Plane = {
+            x: 0, y: 0, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, trail: [], tAt: 0, hot,
+            cs: CS[rnd(0, CS.length - 1)] + rnd(100, 999),
+            fl: hot ? `→ ${["LHR", "LGW", "LCY", "GLA"][rnd(0, 3)]}` : `FL${rnd(300, 410)}`,
+          };
+          if (side === 0) { p.x = W + 10; p.y = Math.random() * H; }
+          else if (side === 1) { p.x = Math.random() * W; p.y = H + 10; }
+          else if (side === 2) { p.x = -10; p.y = Math.random() * H; }
+          else { p.x = Math.random() * W; p.y = -10; }
+          return p;
+        };
+        const drawPlanes = (t: number, dt: number) => {
+          const want = Math.max(3, Math.round(W / 320));
+          while (planes.length < want) {
+            const p = spawnPlane();
+            // first fill: scatter across the page instead of all entering at once
+            if (t - sceneAt < 1) { p.x = Math.random() * W; p.y = Math.random() * H; }
+            planes.push(p);
+          }
+          ctx.font = '500 10px "JetBrains Mono", ui-monospace, monospace';
+          planes.forEach((p, n) => {
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            if (t - p.tAt > 0.35) {
+              p.tAt = t;
+              p.trail.push([p.x, p.y]);
+              if (p.trail.length > 28) p.trail.shift();
+            }
+            if (p.x < -60 || p.x > W + 60 || p.y < -60 || p.y > H + 60) {
+              planes[n] = spawnPlane();
+              return;
+            }
+            ctx.fillStyle = p.hot ? accent : ink;
+            p.trail.forEach(([x, y], k) => {
+              ga((k / p.trail.length) * (p.hot ? 0.5 : 0.3));
+              ctx.beginPath();
+              ctx.arc(x, y, 1, 0, 6.2832);
+              ctx.fill();
+            });
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(Math.atan2(p.vy, p.vx));
+            ga(p.hot ? 0.8 : 0.45);
+            ctx.beginPath();
+            ctx.moveTo(6, 0); ctx.lineTo(-5, 4); ctx.lineTo(-3, 0); ctx.lineTo(-5, -4);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+            ga(p.hot ? 0.6 : 0.3);
+            ctx.fillText(p.cs, p.x + 9, p.y - 3);
+            ctx.fillText(p.fl, p.x + 9, p.y + 9);
+          });
+        };
+
+        const render = (s: Scene, t: number, dt: number) => {
+          if (s === "contours") drawContours(t);
+          else if (s === "anki") drawCards(t);
+          else if (s === "logs") drawLogs(t, dt);
+          else drawPlanes(t, dt);
+        };
+        const loop = (ms: number) => {
+          const t = ms / 1000, dt = Math.min(0.05, prev ? t - prev : 0.016);
+          prev = t;
+          if (!sceneAt) sceneAt = t;
+          ctx.clearRect(0, 0, W, H);
+          const age = t - sceneAt;
+          if (pinned || age < HOLD) {
+            mul = 1;
+            render(scene, t, dt);
+          } else if (age < HOLD + FADE) {
+            // crossfade: outgoing scene fades as the next one comes in
+            const k = (age - HOLD) / FADE;
+            const next = SCENES[(SCENES.indexOf(scene) + 1) % SCENES.length];
+            page.dataset.bg = "";
+            mul = 1 - k;
+            render(scene, t, dt);
+            mul = k;
+            render(next, t, dt);
+          } else {
+            scene = SCENES[(SCENES.indexOf(scene) + 1) % SCENES.length];
+            sceneAt = t;
+            page.dataset.bg = scene;
+            planes.length = 0;
+            logLines.length = 0;
+            cards.length = 0;
+          }
+          ctx.globalAlpha = 1;
+          if (visible) raf = requestAnimationFrame(loop);
+        };
+
+        colors();
+        resize();
+        page.dataset.bg = scene;
+        new ResizeObserver(resize).observe(bg);
+        matchMedia("(prefers-color-scheme: dark)").addEventListener("change", colors);
+        // Only draw while the hero is on screen and the tab is visible.
+        const setVisible = (v: boolean) => {
+          const was = visible;
+          visible = v && !document.hidden;
+          cancelAnimationFrame(raf);
+          if (visible && !was) prev = 0;
+          if (visible) raf = requestAnimationFrame(loop);
+        };
+        new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0 }).observe(bg);
+        document.addEventListener("visibilitychange", () => setVisible(!document.hidden));
+      }
     </script>
 
     <style is:global>
@@ -875,6 +1229,53 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         -webkit-mask-image: linear-gradient(#000 30%, transparent 92%);
         mask-image: linear-gradient(#000 30%, transparent 92%);
       }
+      /* The ambient canvas shares the grid's box and fade. */
+      .t-bg {
+        position: absolute;
+        inset: 0 0 auto;
+        width: 100%;
+        height: min(64rem, 100%);
+        z-index: -1;
+        pointer-events: none;
+        -webkit-mask-image: linear-gradient(#000 30%, transparent 92%);
+        mask-image: linear-gradient(#000 30%, transparent 92%);
+      }
+      /* One caption per scene, centred at the foot of the hero; fades with its
+         scene and is absent during the crossfade. */
+      .t-bg__tag {
+        position: absolute;
+        left: 50%;
+        bottom: 0.6rem;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.02em;
+        color: var(--faint);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 2s var(--ease),
+          color var(--dur-fast) var(--ease);
+      }
+      .t-bg__tag:hover {
+        color: var(--accent);
+      }
+      .t[data-bg="anki"] .t-bg__tag[data-for="anki"],
+      .t[data-bg="logs"] .t-bg__tag[data-for="logs"],
+      .t[data-bg="adsb"] .t-bg__tag[data-for="adsb"] {
+        opacity: 0.75;
+        pointer-events: auto;
+      }
+      .t-bg__tag:hover,
+      .t-bg__tag:focus-visible {
+        opacity: 1;
+      }
+      @media (max-width: 40rem) {
+        .t-bg__tag {
+          display: none;
+        }
+      }
 
       .t :focus-visible {
         outline: 2px solid var(--accent);
@@ -932,6 +1333,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
 
       /* ---------------- hero — poster ---------------- */
       .kin {
+        position: relative;
         max-width: var(--w-page);
         margin: 0 auto;
         display: grid;
