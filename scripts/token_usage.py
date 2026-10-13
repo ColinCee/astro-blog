@@ -12,10 +12,13 @@ import sys
 from collections import defaultdict
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from zoneinfo import ZoneInfo
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 DAYS = 14
-TZ = ZoneInfo("Europe/London")
+try:
+    TZ = ZoneInfo("Europe/London")
+except ZoneInfoNotFoundError:
+    TZ = None  # Windows Python without tzdata: fall back to the PC's own zone
 REPO = Path(__file__).resolve().parent.parent
 OUT = REPO / "src" / "data" / "token-usage.json"
 
@@ -55,13 +58,14 @@ def tally(logs: Path) -> dict[date, dict[str, int]]:
 
 def build(logs: Path) -> dict:
     days = tally(logs)
-    today = datetime.now(TZ).date()
+    now = datetime.now(TZ).astimezone(TZ)
+    today = now.date()
     out = []
     for i in range(DAYS - 1, -1, -1):
         day = today - timedelta(days=i)
         d = days.get(day, {})
         out.append({"date": day.isoformat(), "total": sum(d.values()), "output": d.get("output", 0)})
-    return {"updated": datetime.now(TZ).isoformat(timespec="minutes"), "days": out}
+    return {"updated": now.isoformat(timespec="minutes"), "days": out}
 
 
 def git(*args: str) -> None:
