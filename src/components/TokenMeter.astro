@@ -1,0 +1,82 @@
+---
+// Nav token meter: Claude tokens per day for the last week, as a tiny bar
+// strip. Data is written by scripts/token_usage.py on Colin's PC each night.
+import usage from "../data/token-usage.json";
+
+const days = usage.days.slice(-7);
+const week = days.reduce((sum, d) => sum + d.total, 0);
+const peak = Math.max(1, ...days.map((d) => d.total));
+
+const compact = (n: number) =>
+  new Intl.NumberFormat("en-GB", { notation: "compact", maximumFractionDigits: 1 }).format(n);
+const weekday = (iso: string) =>
+  new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" });
+
+const W = 3;
+const GAP = 2;
+const H = 14;
+const summary = `${compact(week)} Claude tokens in the last 7 days`;
+const detail = days.map((d) => `${weekday(d.date)} ${compact(d.total)}`).join(" · ");
+---
+
+{
+  week > 0 && (
+    <span class="tok" title={`${summary}, mostly cache reads. ${detail}`}>
+      <svg
+        class="tok__bars"
+        width={days.length * (W + GAP) - GAP}
+        height={H}
+        viewBox={`0 0 ${days.length * (W + GAP) - GAP} ${H}`}
+        role="img"
+        aria-label={`${summary}: ${detail}`}
+      >
+        {days.map((d, i) => {
+          const h = Math.max(1, Math.round((d.total / peak) * H));
+          return (
+            <rect
+              x={i * (W + GAP)}
+              y={H - h}
+              width={W}
+              height={h}
+              rx="0.5"
+              class:list={{ today: i === days.length - 1 }}
+            />
+          );
+        })}
+      </svg>
+      <span class="tok__label">{compact(week)} tok/wk</span>
+    </span>
+  )
+}
+
+<style>
+  .tok {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 0.45rem;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    color: var(--faint);
+    cursor: default;
+  }
+  .tok__bars rect {
+    fill: var(--line);
+    transition: fill var(--dur-fast) var(--ease);
+  }
+  .tok__bars rect.today {
+    fill: var(--accent);
+  }
+  .tok:hover .tok__bars rect:not(.today) {
+    fill: var(--faint);
+  }
+  .tok:hover {
+    color: var(--muted);
+  }
+  @media (max-width: 480px) {
+    .tok__label {
+      display: none;
+    }
+  }
+</style>

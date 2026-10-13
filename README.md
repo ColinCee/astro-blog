@@ -43,6 +43,8 @@ npm run dev
 
 Astro builds the pages in `src/pages/` and the posts in `src/content/blog/`, styled with a small custom design system, and deploys them to Cloudflare Workers through the Cloudflare adapter. [DESIGN.md](DESIGN.md) owns the visual system and [PRODUCT.md](PRODUCT.md) the audience and purpose.
 
+The token meter in the nav reads `src/data/token-usage.json`. A nightly task on Colin's PC runs `python scripts/token_usage.py --push`, which tallies daily Claude Code tokens from `~/.claude/projects` and pushes the file to `main`, redeploying the site. Only daily totals leave the PC.
+
 ## Project structure
 
 ```text

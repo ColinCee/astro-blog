@@ -1,6 +1,8 @@
 ---
 // Site navigation — the terminal shell's top bar. Shared across content pages.
 // Mirrors the homepage mark so the whole site reads as one machine.
+import TokenMeter from "./TokenMeter.astro";
+
 const path = Astro.url.pathname;
 const links = [
   { href: "/blog", label: "BLOG" },
@@ -16,6 +18,7 @@ const active = (href: string) => {
 <nav class="nav" aria-label="Primary">
   <a class="nav__mark" href="/">colin<span>@</span>glasgow<b>:~$</b></a>
   <div class="nav__links">
+    <TokenMeter />
     {
       links.map((l) => (
         <a
@@ -58,6 +61,7 @@ const active = (href: string) => {
   .nav__links {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 1.4rem;
     font-family: var(--mono);
     font-size: 0.72rem;

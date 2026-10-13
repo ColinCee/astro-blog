@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import "../styles/terminal.css";
+import TokenMeter from "../components/TokenMeter.astro";
 
 // Terminal-native homepage for colincheung.dev. Colours come from the tokens
 // in terminal.css and follow the system light/dark setting.
@@ -219,6 +220,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       <nav class="t-nav">
         <a class="t-mark" href="/">colin<span>@</span>glasgow<b>:~$</b></a>
         <div class="t-nav__links">
+          <TokenMeter />
           <a href="/blog">BLOG</a>
           <a href="/cv">CV</a>
         </div>
@@ -1309,6 +1311,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
       }
       .t-nav__links {
         display: flex;
+        align-items: center;
         gap: 1.4rem;
         font-family: var(--mono);
         font-size: 0.72rem;
