@@ -16,21 +16,16 @@ CI for my private GitHub repos now runs on a mini PC at home, each job in its ow
 
 ## Results
 
-| Measure | Result |
-|---|---:|
-| Sandbox cost per job, against none | ~4 s |
-| VM boot | ~0.8 s |
-| Throughput, two VMs at once | 378 jobs/hour |
-| RAM for the VM kept waiting | ~450 MB |
+<figure class="fig">
+<p class="fig__k">One push, start to finish</p>
+<div class="stack"><span style="--w:3"></span><span style="--w:1"></span><span class="is-data" style="--w:33"></span></div>
+<ul class="legend"><li><b>~3 s</b> GitHub creates the run</li><li><b>~1 s</b> a waiting VM takes the job</li><li class="is-data"><b>33 s</b> the job runs, 13 s of it tests</li></ul>
+<figcaption>About 4 seconds from push to running job, and 37 to finished. Drawn to scale.</figcaption>
+</figure>
 
 Measured on one Intel N100 mini PC (4 cores, 16 GB) running CI for cortex, a private Python/TypeScript project with about 280 tests. Full numbers are in the [performance write-up](https://github.com/ColinCee/homelab/blob/main/docs/ci-runner-performance.md).
 
 ## How it works
-
-<figure class="fig">
-<div class="boxes"><div class="box">GitHub<small>a job is queued</small></div><div class="box">Supervisor on the PC<small>holds the GitHub token</small></div><div class="box box--fast">Throwaway microVM<small>gets a one-job registration</small></div><div class="box">The internet<small>and nothing else</small></div></div>
-<figcaption>Left to right: the token stays on the PC, and each VM only sees a registration for its own job.</figcaption>
-</figure>
 
 1. A Python [supervisor](https://github.com/ColinCee/homelab/blob/main/scripts/ci_supervisor.py) on the PC polls GitHub every 2 seconds for queued jobs. Unchanged answers don't count against the rate limit, so this is free.
 2. For each job it asks GitHub for a just-in-time runner registration that works for exactly one job.
@@ -72,9 +67,8 @@ The network is a separate problem. Most of the containers could reach the home n
 </figure>
 
 - **Tools in the image.** Node, uv and Python ship in the VM image, so nothing downloads per job. `setup-node` went from 7 s to 1 s and `uv sync` from 3 s to 1 s. Polling also went from every 10 seconds to every 2.
-- **One VM kept warm.** This saves about 8 seconds, almost all of it the GitHub runner starting up, not the VM booting.
+- **One VM kept warm.** This saves about 8 seconds, almost all of it the GitHub runner starting up, not the VM booting. It costs about 450 MB of RAM while it waits.
 
-13 of the job's 33 seconds are the tests themselves.
 
 ## Dead ends
 
@@ -89,6 +83,6 @@ The network is a separate problem. Most of the containers could reach the home n
 
 ## Why not GitHub's runners
 
-Private repos get 2,000 free minutes a month, and a few projects with small commits use that up. Two VMs at once on this PC get through roughly a month of those minutes every 5 hours.
+Private repos get 2,000 free minutes a month, and a few projects with small commits use that up. Running two VMs at once, this PC gets through 378 jobs an hour, roughly a month of those minutes every 5 hours.
 
 GitHub's own `ubuntu-latest` runner isn't slower: it picked the job up in about 3 seconds and got through the setup in about the same time. The win is no minutes, and jobs that run in a box I control instead of next to everything else on my home network.
