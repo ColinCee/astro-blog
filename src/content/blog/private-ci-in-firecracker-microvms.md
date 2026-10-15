@@ -12,7 +12,7 @@ pubDate: "Oct 15 2026"
 <div><p class="fig__k">Same job</p>
 <div class="cmp" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>GitHub</span><i style="--w:0.944"></i><b>34 s</b></div>
 <div class="cmp cmp--after" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>Mini PC</span><i style="--w:1"></i><b>36 s</b></div></div>
-<div><p class="fig__k">Minutes billed per job</p>
+<div><p class="fig__k">Minutes used per job</p>
 <div class="cmp" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>GitHub</span><i style="--w:1"></i><b>1 min</b></div>
 <div class="cmp cmp--after" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>Mini PC</span><i style="--w:0"></i><b>0</b></div></div>
 </div>
@@ -32,6 +32,7 @@ Measured on an Intel N100 mini PC (4 cores, 16 GB) running CI for cortex, a priv
 <p class="fig__k">One push</p>
 <div class="stack"><span style="--w:3"></span><span style="--w:1"></span><span class="is-data" style="--w:33"></span></div>
 <ul class="legend"><li><b>3 s</b> GitHub queues it</li><li><b>1 s</b> a VM picks it up</li><li class="is-data"><b>33 s</b> the job runs</li></ul>
+<figcaption>A real push before the benchmark: 37 s end to end.</figcaption>
 </figure>
 
 Pickup only takes a second because there's always one VM booted and waiting. The VMs can reach the internet, but not the PC, the rest of my home network or each other. The full design is in the [runbook](https://github.com/ColinCee/homelab/blob/main/docs/runbooks/ci-runner.md).
@@ -51,10 +52,10 @@ The main requirement was that a job shouldn't share the host's kernel: escaping 
 <div class="cmp"><span>Docker</span><i style="--w:0.031"></i><b>0.3 s</b></div>
 <div class="cmp cmp--after"><span>Firecracker</span><i style="--w:0.082"></i><b>0.8 s</b></div>
 <div class="cmp"><span>QEMU VM</span><i style="--w:1"></i><b>9.8 s</b></div>
-<figcaption>Same job, offline with warm caches. Docker shares the host's kernel and is here for scale. Each group drawn to its own scale.</figcaption>
+<figcaption>Same job, offline with warm caches. Docker shares the host's kernel and is here for comparison. Each group drawn to its own scale.</figcaption>
 </figure>
 
-Docker is about 3 seconds faster, so why not use it? Because a container shares the kernel with everything else on the PC, including Home Assistant and my other services. One kernel bug or a misconfigured container is then a way onto the host. CI jobs also tend to want root (the VMs give them passwordless `sudo`), which is harmless in a throwaway VM and a lot riskier in a container.
+Docker is about 3 seconds faster, so why not use it? Because a container shares the kernel with everything else on the PC, including Home Assistant and my other services. One kernel bug or a misconfigured container is then a way onto the host. CI jobs also tend to want root (the VMs give them passwordless `sudo`), which is fine in a throwaway VM and a lot riskier in a container.
 
 Of the two VMs left, QEMU was almost three times slower than running with no sandbox, mostly in boot and disk. Firecracker adds about 4 seconds, of which 0.8 is booting and the rest is running on virtual CPUs.
 
