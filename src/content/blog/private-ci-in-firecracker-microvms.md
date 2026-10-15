@@ -1,7 +1,7 @@
 ---
-title: "Every CI Job Gets Its Own VM. It Costs 4 Seconds."
+title: "A Throwaway VM for Every CI Job"
 shortTitle: "A VM per CI job, for 4 seconds"
-description: "CI for my private repos runs on a mini PC at home, each job in a Firecracker microVM with its own kernel that is thrown away afterwards. No GitHub minutes, and about 4 seconds of overhead."
+description: "Private CI on a mini PC at home, one Firecracker microVM per job, for about 4 seconds a job."
 stat: "+4 s"
 figures:
   - label: "Same job, no sandbox"
