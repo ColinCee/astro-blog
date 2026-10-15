@@ -65,11 +65,18 @@ const active = (href: string) => {
     color: var(--muted);
   }
   .nav__link {
+    position: relative;
     padding: 0.2rem 0;
     border-bottom: 1px solid transparent;
     transition:
       color var(--dur-fast) var(--ease),
       border-color var(--dur-fast) var(--ease);
+  }
+  /* A tap area of about 40 x 32px or more; the visible underline stays where it was. */
+  .nav__link::before {
+    content: "";
+    position: absolute;
+    inset: -0.55rem -0.5rem;
   }
   .nav__link:hover {
     color: var(--ink);

@@ -301,6 +301,7 @@ const last = entries[entries.length - 1];
     margin-bottom: clamp(2rem, 5vw, 3rem);
   }
   .post__back {
+    position: relative;
     display: inline-block;
     margin-bottom: 1.4rem;
     font-family: var(--mono);
@@ -325,13 +326,13 @@ const last = entries[entries.length - 1];
   /* Standfirst: the post's description, so the point lands before the body. */
   .post__lede {
     margin: 1.1rem 0 0;
-    max-width: 40ch;
+    max-width: 52ch;
     font-size: clamp(1.08rem, 1rem + 0.3vw, 1.22rem);
     font-weight: 500;
     line-height: 1.4;
     letter-spacing: -0.01em;
     color: var(--muted);
-    text-wrap: pretty;
+    text-wrap: balance;
   }
 
   /* Headline figures (frontmatter `figures`): the post's numbers as a ledger.
@@ -616,6 +617,7 @@ const last = entries[entries.length - 1];
     color: var(--accent-soft);
   }
   .post__more {
+    position: relative;
     font-family: var(--mono);
     font-size: 0.78rem;
     letter-spacing: 0.02em;
@@ -624,6 +626,13 @@ const last = entries[entries.length - 1];
   }
   .post__more:hover {
     color: var(--accent);
+  }
+  /* Small mono links get a tap area of at least 32px without moving anything. */
+  .post__back::before,
+  .post__more::before {
+    content: "";
+    position: absolute;
+    inset: -0.5rem -0.25rem;
   }
 
   @media (prefers-reduced-motion: no-preference) {
