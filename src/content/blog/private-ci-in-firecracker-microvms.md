@@ -1,13 +1,16 @@
 ---
-title: "Unlimited CI Minutes From a Mini PC at Home"
-shortTitle: "Unlimited CI minutes at home"
-description: "Each job runs in a throwaway Firecracker VM, for about 4 seconds of overhead and no GitHub minutes."
+title: "Free CI at Home, as Fast as GitHub's"
+shortTitle: "Free CI at home"
+description: "As fast as GitHub's runner, no minutes used, one throwaway VM per job."
 stat: "0 min"
 pubDate: "Oct 15 2026"
 ---
 ## Results
 
 <figure class="fig">
+<p class="fig__k">The whole CI job, median of 5 runs</p>
+<div class="cmp"><span>GitHub ubuntu-latest</span><i style="--w:0.944"></i><b>34 s</b></div>
+<div class="cmp cmp--after"><span>Mini PC, in a VM</span><i style="--w:1"></i><b>36 s</b></div>
 <p class="fig__k">One push, start to finish</p>
 <div class="stack"><span style="--w:3"></span><span style="--w:1"></span><span class="is-data" style="--w:33"></span></div>
 <ul class="legend"><li><b>~3 s</b> GitHub creates the run</li><li><b>~1 s</b> a waiting VM takes the job</li><li class="is-data"><b>33 s</b> the job runs, 13 s of it tests</li></ul>
@@ -15,7 +18,7 @@ pubDate: "Oct 15 2026"
 <div class="cmp"><span>No sandbox</span><i style="--w:0.271"></i><b>10.7 s</b></div>
 <div class="cmp cmp--after"><span>Firecracker VM</span><i style="--w:0.362"></i><b>14.3 s</b></div>
 <div class="cmp"><span>Full QEMU VM</span><i style="--w:1"></i><b>39.5 s</b></div>
-<figcaption>Top: about 4 seconds from push to running job, and 37 to finished. Bottom: the job alone, offline with warm caches, so the sandbox is the only difference. Each part drawn to scale.</figcaption>
+<figcaption>Top: the same job and Python on both, one at a time. Middle: about 4 seconds from push to running job. Bottom: the job alone, offline with warm caches, so the sandbox is the only difference. Each part drawn to its own scale.</figcaption>
 </figure>
 
 Measured on one Intel N100 mini PC (4 cores, 16 GB) running CI for cortex, a private Python/TypeScript project with about 280 tests. Full numbers are in the [performance write-up](https://github.com/ColinCee/homelab/blob/main/docs/ci-runner-performance.md).
@@ -65,9 +68,10 @@ The network is a separate problem. Most of the containers could reach the home n
 - **An out-of-memory job hung its VM for an hour.** systemd had stopped the task meant to end the VM. Now the VM reboots, which ends Firecracker, whenever its task ends.
 - **GitHub only saves a cache when the job passes.** The package caches did nothing until the suite was green on Linux.
 - **A second platform found a real bug.** The VM runs Python 3.15 and the PC 3.13. A test faked "today" by replacing `time.time`, which `date.today()` stopped reading in 3.15, so it would have broken at my next upgrade.
+- **GitHub's runner found another.** The suite hung there for 11 minutes. Tests that fake `time.sleep` also faked the sleep that `subprocess` waits with on Linux before Python 3.15, so one test lost its steps and the next spun for ever.
 
 ## Why not GitHub's runners
 
 Private repos get 2,000 free minutes a month, and a few projects with small commits use that up. Running two VMs at once, this PC gets through 378 jobs an hour, roughly a month of those minutes every 5 hours.
 
-GitHub's own `ubuntu-latest` runner isn't slower: it picked the job up in about 3 seconds and got through the setup in about the same time. The win is no minutes, and jobs that run in a box I control instead of next to everything else on my home network.
+GitHub's own `ubuntu-latest` runner is about level: 34 s against 36 s for the same job, Python 3.15 on both, over five runs each. Two vCPUs of a server CPU keep up with the N100's four cores, and Firecracker's 4 seconds is about the gap. The win is no minutes, and jobs that run in a box I control instead of next to everything else on my home network.
