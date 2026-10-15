@@ -81,11 +81,18 @@ The second was keeping one VM booted and waiting. That saved about 8 seconds, an
 
 ## What didn't help
 
+### More CPUs
+
 Giving a job 4 vCPUs instead of 2 made no difference. Half the tests finish in under 2 seconds, and the time is set by a few slow ones.
 
-Snapshots were the obvious next idea: snapshot a VM after a build of main and restore it for every job. Restoring takes 13 to 113 ms, but that only replaces boot, and boot already happens before the job arrives because one VM is always booted and waiting. A snapshot can't start the runner early either, since that needs the job's one-time registration.
+### Snapshots
 
-What's left is the warm state a snapshot carries, and nearly all of it is installed packages on disk. A plain disk with main's caches and installs gets the same benefit: about 2 seconds off today's installs and tests (19.3 s down to 17.2 s). The snapshot's memory adds only 0.3 s more, and costs 30 s to take, a 1.2 GB file per slot, and identical memory in every job, random-number state included, which Firecracker's own docs warn against.
+The idea was to snapshot a VM after a build of main and restore it for every job. Here it's marginal:
+
+- Restoring takes 13 to 113 ms, but it only replaces boot, and boot already happens before the job arrives because one VM is always booted and waiting.
+- It can't start the runner early either, since that needs the job's one-time registration.
+- The warm state that matters is installed packages on disk, and a plain disk with main's caches and installs gets almost all of it: today's installs and tests go from 19.3 s to 17.2 s. The snapshot's memory adds only 0.3 s.
+- It costs 30 s to take and a 1.2 GB file per slot, and every job starts with identical memory, random-number state included, which Firecracker's own docs warn against.
 
 <figure class="fig">
 <p class="fig__k">Whole job</p>
