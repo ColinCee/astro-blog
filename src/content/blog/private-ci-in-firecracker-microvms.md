@@ -101,10 +101,10 @@ The idea was to snapshot a VM after a build of main and restore it for every job
 <figure class="fig">
 <p class="fig__k">Whole job</p>
 <div class="cmp"><span>GitHub</span><i style="--w:1"></i><b>34 s</b></div>
-<div class="cmp"><span>Mini PC, before</span><i style="--w:1"></i><b>34 s</b></div>
-<div class="cmp cmp--after"><span>Mini PC, cache disk</span><i style="--w:0.882"></i><b>30 s</b></div>
-<div class="cmp"><span>+ snapshot (estimate)</span><i style="--w:0.874"></i><b>~29.7 s</b></div>
-<figcaption>Median of 5 runs each; pickup is the same 3 to 4 s for all of them. The snapshot row adds the in-VM test's 0.3 s and was not run as a whole job.</figcaption>
+<div class="cmp"><span>Mini PC + restore</span><i style="--w:1"></i><b>34 s</b></div>
+<div class="cmp cmp--after"><span>Mini PC + disk</span><i style="--w:0.882"></i><b>30 s</b></div>
+<div class="cmp"><span>Mini PC + snapshot</span><i style="--w:0.874"></i><b>~29.7 s</b></div>
+<figcaption>Median of 5 runs each; pickup is the same 3 to 4 s for all of them. "Restore" pulls packages from GitHub's cache each job, "disk" uses the cache disk. The snapshot row is still an estimate (the cache disk minus the in-VM test's 0.3 s).</figcaption>
 </figure>
 
 ## Things that surprised me
