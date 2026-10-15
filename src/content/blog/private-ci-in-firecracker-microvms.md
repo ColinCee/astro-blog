@@ -38,7 +38,7 @@ Pickup only takes a second because there's always one VM booted and waiting. The
 
 ## Why Firecracker
 
-The main requirement was that a job shouldn't share the host's kernel. If code escapes a container it's on the host, whereas escaping a VM still leaves a hypervisor in the way. That ruled out seven of the nine sandboxes I tried, including Docker, Podman, firejail and systemd hardening.
+The main requirement was that a job shouldn't share the host's kernel: escaping a VM still leaves a hypervisor in the way. That ruled out seven of the nine sandboxes I tried, including Docker, Podman, firejail and systemd hardening.
 
 <figure class="fig">
 <p class="fig__k">Job time</p>
