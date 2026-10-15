@@ -83,11 +83,15 @@ The second was keeping one VM booted and waiting. That saved about 8 seconds, an
 
 Giving a job 4 vCPUs instead of 2 made no difference. Half the tests finish in under 2 seconds, and the time is set by a few slow ones.
 
-I also skipped Firecracker snapshots. Boot is already under a second, and Firecracker's own docs warn against restoring the same snapshot for every job.
+Snapshots were the obvious next idea: snapshot a VM just after a build of main and restore it for every job. Restoring really is fast, 13 to 113 ms, but boot was never the slow part, because the waiting VM already hides it. Against a plain disk holding main's caches and installs, the snapshot saved about 0.3 s of work (16.9 s against 17.2 s). It also takes 30 s to make, needs a 1.2 GB memory file per slot, and every restored VM starts with identical memory, random-number state included, which Firecracker's own docs warn against.
+
+The part worth having is the warm disk on its own: main's caches and installs on a read-only disk take a job from about 21.5 s of work to about 17 s.
 
 ## Things that surprised me
 
 A job that ran out of memory hung its VM for an hour. systemd had stopped the task that was supposed to shut the VM down. Now the VM reboots whenever its task ends, which also stops Firecracker.
+
+My first snapshot benchmark looked 20 times faster, and was wrong. I'd copied a VM's disk while it was still mounted, so every run after it failed in under a second and the timings looked brilliant. Only checking each step's exit code caught it.
 
 GitHub only saves a cache when the job passes, so the package caches did nothing until the suite was green on Linux.
 
