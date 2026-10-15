@@ -460,6 +460,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
             }
           </div>
         </div>
+        <button class="strip__toggle" type="button" aria-pressed="false" data-strip-toggle hidden>pause</button>
         <ul class="sr-only">
           {
             companies.map((c) => (
@@ -573,6 +574,18 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
 
     <script>
       const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // The companies strip scrolls by itself; this stops and restarts it. Under reduced
+      // motion the strip stands still, so the button stays hidden.
+      const stripToggle = document.querySelector<HTMLButtonElement>("[data-strip-toggle]");
+      if (stripToggle && !reduce) {
+        stripToggle.hidden = false;
+        stripToggle.addEventListener("click", () => {
+          const paused = stripToggle.closest(".strip")!.classList.toggle("is-paused");
+          stripToggle.setAttribute("aria-pressed", String(paused));
+          stripToggle.textContent = paused ? "play" : "pause";
+        });
+      }
 
       // Sections below the terminal rise in as they scroll into view. Armed by
       // JS only, so without it (or with reduced motion) they are simply visible.
@@ -1316,11 +1329,18 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         color: var(--muted);
       }
       .t-nav__links a {
+        position: relative;
         padding: 0.2rem 0;
         border-bottom: 1px solid transparent;
         transition:
           color var(--dur-fast) var(--ease),
           border-color var(--dur-fast) var(--ease);
+      }
+      /* A tap area of about 40 x 32px or more; the visible underline stays put. */
+      .t-nav__links a::before {
+        content: "";
+        position: absolute;
+        inset: -0.55rem -0.5rem;
       }
       .t-nav__links a:hover {
         color: var(--ink);
@@ -2045,8 +2065,32 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         width: max-content;
         animation: slide 42s linear infinite;
       }
-      .strip:hover .strip__track {
+      .strip:hover .strip__track,
+      .strip:focus-within .strip__track,
+      .strip.is-paused .strip__track {
         animation-play-state: paused;
+      }
+      /* WCAG 2.2.2: the strip moves on its own, so it can be stopped by keyboard and touch too. */
+      .strip__toggle {
+        flex: none;
+        min-width: 3.4rem;
+        min-height: 1.75rem;
+        padding: 0 0.6rem;
+        font-family: var(--mono);
+        font-size: 0.6875rem;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        background: none;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        cursor: pointer;
+        transition:
+          color var(--dur-fast) var(--ease),
+          border-color var(--dur-fast) var(--ease);
+      }
+      .strip__toggle:hover {
+        color: var(--ink);
+        border-color: var(--accent);
       }
       .strip__item {
         display: inline-flex;
