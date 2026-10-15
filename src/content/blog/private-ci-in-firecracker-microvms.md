@@ -41,10 +41,17 @@ Pickup only takes a second because there's always one VM booted and waiting. The
 The main requirement was that a job shouldn't share the host's kernel. If code escapes a container it's on the host, whereas escaping a VM still leaves a hypervisor in the way. That ruled out seven of the nine sandboxes I tried, including Docker, Podman, firejail and systemd hardening.
 
 <figure class="fig">
-<p class="fig__k">Same job, offline</p>
+<p class="fig__k">Job time</p>
 <div class="cmp"><span>No sandbox</span><i style="--w:0.271"></i><b>10.7 s</b></div>
+<div class="cmp"><span>Docker</span><i style="--w:0.286"></i><b>11.3 s</b></div>
 <div class="cmp cmp--after"><span>Firecracker</span><i style="--w:0.362"></i><b>14.3 s</b></div>
 <div class="cmp"><span>QEMU VM</span><i style="--w:1"></i><b>39.5 s</b></div>
+<p class="fig__k">Start-up time</p>
+<div class="cmp"><span>No sandbox</span><i style="--w:0.010"></i><b>0.1 s</b></div>
+<div class="cmp"><span>Docker</span><i style="--w:0.031"></i><b>0.3 s</b></div>
+<div class="cmp cmp--after"><span>Firecracker</span><i style="--w:0.082"></i><b>0.8 s</b></div>
+<div class="cmp"><span>QEMU VM</span><i style="--w:1"></i><b>9.8 s</b></div>
+<figcaption>Same job, offline with warm caches. Docker shares the host's kernel and is here for scale. Each group drawn to its own scale.</figcaption>
 </figure>
 
 Of the two VMs left, QEMU was almost three times slower than running with no sandbox, mostly in boot and disk. Firecracker adds about 4 seconds, of which 0.8 is booting and the rest is running on virtual CPUs.
