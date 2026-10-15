@@ -23,10 +23,10 @@ Measured on an Intel N100 mini PC (4 cores, 16 GB) running CI for cortex, a priv
 
 ## How it works
 
-1. **Watch.** A small Python [supervisor](https://github.com/ColinCee/homelab/blob/main/scripts/ci_supervisor.py) asks GitHub every 2 seconds whether a job is waiting. That's free: GitHub doesn't count a repeat question with the same answer.
-2. **Get a one-job pass.** GitHub hands out a runner registration that works for that job and nothing else.
-3. **Boot a fresh VM.** The pass goes in through Firecracker's metadata service. My GitHub token never leaves the PC.
-4. **Run, then bin it.** The job runs, and the VM is deleted along with everything it wrote, however the job ends.
+1. A small Python [supervisor](https://github.com/ColinCee/homelab/blob/main/scripts/ci_supervisor.py) on the PC checks GitHub for queued jobs every 2 seconds. GitHub doesn't count a request whose answer hasn't changed, so polling this often is free.
+2. For each job, it asks GitHub for a just-in-time runner registration, which is only valid for that one job.
+3. It boots a fresh Firecracker VM and passes the registration in through the metadata service. The GitHub token itself stays on the PC.
+4. The runner in the VM picks up the job. When the job finishes, the VM is deleted along with everything it wrote.
 
 <figure class="fig">
 <p class="fig__k">One push</p>
@@ -34,11 +34,11 @@ Measured on an Intel N100 mini PC (4 cores, 16 GB) running CI for cortex, a priv
 <ul class="legend"><li><b>3 s</b> GitHub queues it</li><li><b>1 s</b> a VM picks it up</li><li class="is-data"><b>33 s</b> the job runs</li></ul>
 </figure>
 
-Pickup takes a second because one VM is always booted and waiting. The VMs can reach the internet, but not the PC, my home network or each other. The full design is in the [runbook](https://github.com/ColinCee/homelab/blob/main/docs/runbooks/ci-runner.md).
+Pickup only takes a second because there's always one VM booted and waiting. The VMs can reach the internet, but not the PC, the rest of my home network or each other. The full design is in the [runbook](https://github.com/ColinCee/homelab/blob/main/docs/runbooks/ci-runner.md).
 
 ## Why Firecracker
 
-I had one rule: a job doesn't share the host's kernel. Break out of a container and you're on the host; break out of a VM and there's still a hypervisor in the way. That ruled out seven of the nine sandboxes I tried, from Docker and Podman to firejail and systemd hardening.
+The main requirement was that a job shouldn't share the host's kernel. If code escapes a container it's on the host, whereas escaping a VM still leaves a hypervisor in the way. That ruled out seven of the nine sandboxes I tried, including Docker, Podman, firejail and systemd hardening.
 
 <figure class="fig">
 <p class="fig__k">Same job, offline</p>
@@ -47,9 +47,9 @@ I had one rule: a job doesn't share the host's kernel. Break out of a container 
 <div class="cmp"><span>QEMU VM</span><i style="--w:1"></i><b>39.5 s</b></div>
 </figure>
 
-Of the two VMs left, QEMU was almost three times slower than no sandbox, mostly booting and reading disk. Firecracker adds about 4 seconds: 0.8 to boot, the rest from running on virtual CPUs.
+Of the two VMs left, QEMU was almost three times slower than running with no sandbox, mostly in boot and disk. Firecracker adds about 4 seconds, of which 0.8 is booting and the rest is running on virtual CPUs.
 
-The sandbox doesn't sort out the network by itself, so the VMs get firewall rules of their own.
+A sandbox doesn't keep a job off the network by itself, so the VMs also have their own firewall rules.
 
 ## Speed-ups
 
@@ -65,21 +65,26 @@ The sandbox doesn't sort out the network by itself, so the VMs get firewall rule
 <figcaption>Each group drawn to its own scale.</figcaption>
 </figure>
 
-- **Tools in the image.** Node, uv and Python come baked into the VM, so nothing downloads per job: `setup-node` went from 7 s to 1 s and `uv sync` from 3 s to 1 s. I also cut polling from every 10 seconds to every 2.
-- **One VM kept warm.** Saves about 8 seconds, and it's mostly the GitHub runner starting up, not the VM booting. The waiting VM costs about 450 MB of RAM.
+Two changes made most of the difference. The first was baking Node, uv and Python into the VM image, so nothing is downloaded per job: `setup-node` went from 7 s to 1 s and `uv sync` from 3 s to 1 s. I cut polling from every 10 seconds to every 2 at the same time.
 
-## Dead ends
+The second was keeping one VM booted and waiting. That saved about 8 seconds, and most of it turned out to be the GitHub runner starting up rather than the VM booting. The waiting VM uses about 450 MB of RAM.
 
-- **More CPUs.** 4 vCPUs instead of 2 made no difference. Half the tests finish in under 2 seconds; a few slow ones decide the time.
-- **Snapshots.** Boot is already under a second, and Firecracker's docs warn against restoring the same snapshot for every job.
+## What didn't help
 
-## Surprises
+Giving a job 4 vCPUs instead of 2 made no difference. Half the tests finish in under 2 seconds, and the time is set by a few slow ones.
 
-- **An out-of-memory job hung its VM for an hour.** systemd had stopped the task that was meant to end the VM. Now the VM reboots whenever its task ends, which takes Firecracker down with it.
-- **GitHub only saves a cache when the job passes.** The package caches did nothing until the suite went green on Linux.
-- **The VM found a bug.** It runs Python 3.15 and my PC 3.13. A test faked "today" by replacing `time.time`, which `date.today()` stopped using in 3.15. It would have broken at my next upgrade.
-- **GitHub's runner found another.** The suite hung there for 11 minutes. Tests that fake `time.sleep` were also faking the sleep that `subprocess` waits with on Linux before Python 3.15.
+I also skipped Firecracker snapshots. Boot is already under a second, and Firecracker's own docs warn against restoring the same snapshot for every job.
+
+## Things that surprised me
+
+A job that ran out of memory hung its VM for an hour. systemd had stopped the task that was supposed to shut the VM down. Now the VM reboots whenever its task ends, which also stops Firecracker.
+
+GitHub only saves a cache when the job passes, so the package caches did nothing until the suite was green on Linux.
+
+Running CI on a second platform found a real bug. The VM runs Python 3.15 and my PC runs 3.13. One test faked today's date by replacing `time.time`, which `date.today()` no longer reads in 3.15, so it would have broken the next time I upgraded.
+
+GitHub's runner found another one. The suite hung there for 11 minutes, because tests that fake `time.sleep` were also faking the sleep `subprocess` uses to wait on Linux before Python 3.15.
 
 ## Why not just use GitHub's runners
 
-Speed isn't the reason: they're about level. It's the minutes and the box. A few projects with small commits use up 2,000 minutes a month, and this PC gets through roughly a month of them every 5 hours at 378 jobs an hour. And every job runs somewhere I control, kept away from everything else on my home network.
+It isn't about speed, since they're about level. It's the minutes and the isolation. A few projects with small commits use up 2,000 minutes a month, and this PC gets through roughly a month of them every 5 hours at 378 jobs an hour. Every job also runs somewhere I control, away from everything else on my home network.
