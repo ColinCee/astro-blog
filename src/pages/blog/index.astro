@@ -39,6 +39,13 @@ const cards: Record<
     to: "£826.61",
     label: "one hearing",
   },
+  "private-ci-in-firecracker-microvms": {
+    short: "A VM per CI job, for 4 seconds",
+    hook: "Each job gets its own kernel, boots in 0.8 s and uses no GitHub minutes.",
+    from: "39.5 s",
+    to: "14.3 s",
+    label: "vs a full VM",
+  },
 };
 
 const readMin = (body?: string) =>

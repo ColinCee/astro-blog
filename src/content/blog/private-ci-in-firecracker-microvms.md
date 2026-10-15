@@ -1,19 +1,17 @@
 ---
-title: "Push to Running CI Job in 4 Seconds, on a Mini PC at Home"
-shortTitle: "Private CI in Firecracker microVMs"
-description: "CI for my private repos now runs at home, each job in a Firecracker microVM that is thrown away afterwards. It uses no GitHub minutes and costs about 4 seconds a job."
-stat: "37 s"
+title: "Every CI Job Gets Its Own VM. It Costs 4 Seconds."
+shortTitle: "A VM per CI job, for 4 seconds"
+description: "CI for my private repos runs on a mini PC at home, each job in a Firecracker microVM with its own kernel that is thrown away afterwards. No GitHub minutes, and about 4 seconds of overhead."
+stat: "+4 s"
 figures:
-  - label: "Push to running job"
-    value: "~4 s"
-  - label: "Push to finished job"
-    value: "~37 s"
-  - label: "GitHub minutes used"
-    value: "0"
+  - label: "Same job, no sandbox"
+    value: "10.7 s"
+  - label: "In a full QEMU VM"
+    value: "39.5 s"
+  - label: "In a Firecracker VM"
+    value: "14.3 s"
 pubDate: "Oct 15 2026"
 ---
-CI for my private GitHub repos now runs on a mini PC at home, each job in its own Firecracker microVM that is thrown away when the job ends.
-
 ## Results
 
 <figure class="fig">
