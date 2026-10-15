@@ -40,11 +40,10 @@ const cards: Record<
     label: "one hearing",
   },
   "private-ci-in-firecracker-microvms": {
-    short: "A VM per CI job, for 4 seconds",
-    hook: "Each job gets its own kernel, boots in 0.8 s and uses no GitHub minutes.",
-    from: "39.5 s",
-    to: "14.3 s",
-    label: "vs a full VM",
+    short: "Unlimited CI minutes at home",
+    hook: "A throwaway Firecracker VM per job, for about 4 seconds of overhead.",
+    value: "0 min",
+    label: "GitHub minutes used",
   },
 };
 

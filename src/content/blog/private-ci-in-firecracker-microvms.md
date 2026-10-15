@@ -1,15 +1,8 @@
 ---
-title: "A Throwaway VM for Every CI Job"
-shortTitle: "A VM per CI job, for 4 seconds"
-description: "Private CI on a mini PC at home, one Firecracker microVM per job, for about 4 seconds a job."
-stat: "+4 s"
-figures:
-  - label: "Same job, no sandbox"
-    value: "10.7 s"
-  - label: "In a full QEMU VM"
-    value: "39.5 s"
-  - label: "In a Firecracker VM"
-    value: "14.3 s"
+title: "Unlimited CI Minutes From a Mini PC at Home"
+shortTitle: "Unlimited CI minutes at home"
+description: "Each job runs in a throwaway Firecracker VM, for about 4 seconds of overhead and no GitHub minutes."
+stat: "0 min"
 pubDate: "Oct 15 2026"
 ---
 ## Results
@@ -18,7 +11,11 @@ pubDate: "Oct 15 2026"
 <p class="fig__k">One push, start to finish</p>
 <div class="stack"><span style="--w:3"></span><span style="--w:1"></span><span class="is-data" style="--w:33"></span></div>
 <ul class="legend"><li><b>~3 s</b> GitHub creates the run</li><li><b>~1 s</b> a waiting VM takes the job</li><li class="is-data"><b>33 s</b> the job runs, 13 s of it tests</li></ul>
-<figcaption>About 4 seconds from push to running job, and 37 to finished. Drawn to scale.</figcaption>
+<p class="fig__k">The same job, three ways</p>
+<div class="cmp"><span>No sandbox</span><i style="--w:0.271"></i><b>10.7 s</b></div>
+<div class="cmp cmp--after"><span>Firecracker VM</span><i style="--w:0.362"></i><b>14.3 s</b></div>
+<div class="cmp"><span>Full QEMU VM</span><i style="--w:1"></i><b>39.5 s</b></div>
+<figcaption>Top: about 4 seconds from push to running job, and 37 to finished. Bottom: the job alone, offline with warm caches, so the sandbox is the only difference. Each part drawn to scale.</figcaption>
 </figure>
 
 Measured on one Intel N100 mini PC (4 cores, 16 GB) running CI for cortex, a private Python/TypeScript project with about 280 tests. Full numbers are in the [performance write-up](https://github.com/ColinCee/homelab/blob/main/docs/ci-runner-performance.md).
@@ -34,17 +31,7 @@ VMs reach the internet but not the PC, the home network or each other, and nothi
 
 ## Why Firecracker
 
-The rule was that a job must not share the host's kernel. A container escape lands on the host; a VM escape has to get through a hypervisor first. That ruled out seven of the nine sandboxes I measured before speed came into it.
-
-<figure class="fig">
-<p class="fig__k">Own kernel</p>
-<div class="cmp"><span>Incus VM (QEMU)</span><i style="--w:1"></i><b>39.5 s</b></div>
-<div class="cmp cmp--after"><span>Firecracker</span><i style="--w:0.362"></i><b>14.3 s</b></div>
-<div class="cmp"><span>No sandbox, for scale</span><i style="--w:0.271"></i><b>10.7 s</b></div>
-<p class="fig__k">Shares the host's kernel, so ruled out</p>
-<div class="rows" style="white-space:normal"><span>No sandbox, systemd, firejail: 10.3 to 10.7 s</span><span>nspawn, Docker, rootless Podman: 10.4 to 11.3 s</span><span>Incus container: 19.0 s</span></div>
-<figcaption>The same job, offline with warm caches, on the same machine. Bars drawn to scale.</figcaption>
-</figure>
+The rule was that a job must not share the host's kernel. A container escape lands on the host; a VM escape has to get through a hypervisor first. That ruled out seven of the nine sandboxes I measured before speed came into it: no sandbox, systemd hardening, firejail, nspawn, Docker and rootless Podman (10.3 to 11.3 s), and an Incus container (19.0 s).
 
 Of the two left, the QEMU VM was almost three times slower than no sandbox, mostly in boot and disk. Firecracker costs about 4 seconds: 0.8 to boot, the rest from running on virtual CPUs.
 
