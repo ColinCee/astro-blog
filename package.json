@@ -21,7 +21,8 @@
     "dev": "astro dev",
     "preview": "astro build && wrangler dev",
     "types": "wrangler types",
-    "test": "playwright test"
+    "test": "playwright test",
+    "og": "node scripts/og/render.mjs"
   },
   "type": "module"
 }
