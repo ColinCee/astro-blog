@@ -54,6 +54,8 @@ The main requirement was that a job shouldn't share the host's kernel. If code e
 <figcaption>Same job, offline with warm caches. Docker shares the host's kernel and is here for scale. Each group drawn to its own scale.</figcaption>
 </figure>
 
+Docker is about 3 seconds faster, so why not use it? Because a container shares the kernel with everything else on the PC, including Home Assistant and my other services. One kernel bug or a misconfigured container is then a way onto the host. CI jobs also tend to want root (the VMs give them passwordless `sudo`), which is harmless in a throwaway VM and a lot riskier in a container.
+
 Of the two VMs left, QEMU was almost three times slower than running with no sandbox, mostly in boot and disk. Firecracker adds about 4 seconds, of which 0.8 is booting and the rest is running on virtual CPUs.
 
 A sandbox doesn't keep a job off the network by itself, so the VMs also have their own firewall rules.
