@@ -83,9 +83,18 @@ The second was keeping one VM booted and waiting. That saved about 8 seconds, an
 
 Giving a job 4 vCPUs instead of 2 made no difference. Half the tests finish in under 2 seconds, and the time is set by a few slow ones.
 
-Snapshots were the obvious next idea: snapshot a VM just after a build of main and restore it for every job. Restoring really is fast, 13 to 113 ms, but boot was never the slow part, because the waiting VM already hides it. Against a plain disk holding main's caches and installs, the snapshot saved about 0.3 s of work (16.9 s against 17.2 s). It also takes 30 s to make, needs a 1.2 GB memory file per slot, and every restored VM starts with identical memory, random-number state included, which Firecracker's own docs warn against.
+Snapshots were the obvious next idea: snapshot a VM after a build of main and restore it for every job. Restoring takes 13 to 113 ms, but that only replaces boot, and boot already happens before the job arrives because one VM is always booted and waiting. A snapshot can't start the runner early either, since that needs the job's one-time registration.
 
-The part worth having is the warm disk on its own: main's caches and installs on a read-only disk take a job from about 21.5 s of work to about 17 s.
+What's left is the warm state a snapshot carries, and nearly all of it is installed packages on disk. A plain disk with main's caches and installs gets the same benefit: about 2 seconds off today's installs and tests (19.3 s down to 17.2 s). The snapshot's memory adds only 0.3 s more, and costs 30 s to take, a 1.2 GB file per slot, and identical memory in every job, random-number state included, which Firecracker's own docs warn against.
+
+<figure class="fig">
+<p class="fig__k">Whole job</p>
+<div class="cmp"><span>GitHub</span><i style="--w:0.944"></i><b>34 s</b></div>
+<div class="cmp"><span>Mini PC today</span><i style="--w:1"></i><b>36 s</b></div>
+<div class="cmp cmp--after"><span>+ warm cache disk</span><i style="--w:0.944"></i><b>~34 s</b></div>
+<div class="cmp"><span>+ full snapshot</span><i style="--w:0.931"></i><b>~33.5 s</b></div>
+<figcaption>Pickup is the same 3 to 4 s for all four. The bottom two are estimates: today's job with the savings from the snapshot benchmark applied.</figcaption>
+</figure>
 
 ## Things that surprised me
 
