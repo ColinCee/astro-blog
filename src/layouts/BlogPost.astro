@@ -953,7 +953,9 @@ const last = entries[entries.length - 1];
   .prose .stack span:nth-child(2) {
     background: color-mix(in oklch, var(--bar) 60%, var(--pane));
   }
-  .prose .stack .is-data {
+  /* span.is-data ties with :nth-child(2) and wins by coming later, so the result
+     keeps the accent whatever position it is in. */
+  .prose .stack span.is-data {
     background: var(--accent);
   }
   .prose .legend {
@@ -981,8 +983,9 @@ const last = entries[entries.length - 1];
     background: color-mix(in oklch, var(--bar) 60%, var(--pane));
     border: 1px solid var(--line);
   }
-  .prose .legend .is-data::before {
+  .prose .legend li.is-data::before {
     background: var(--accent);
+    border: 0;
   }
   .prose .legend b {
     color: var(--ink);

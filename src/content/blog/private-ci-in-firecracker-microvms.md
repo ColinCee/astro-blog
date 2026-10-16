@@ -71,7 +71,7 @@ A sandbox doesn't keep a job off the network by itself, so the VMs also have the
 <div class="cmp"><span>One VM kept warm</span><i style="--w:0.712"></i><b>37 s</b></div>
 <div class="cmp"><span>Cache disk</span><i style="--w:0.635"></i><b>33 s</b></div>
 <div class="cmp cmp--after"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
-<figcaption>All in one day, measured on real pushes.</figcaption>
+<figcaption>Within a day, measured on real pushes.</figcaption>
 </figure>
 
 The big steps, in order:
@@ -86,7 +86,7 @@ Then I moved everything else I could to before the job starts:
 - `setup-uv` and `setup-node` are gone, because the tools are already on the job's path.
 - `node_modules` is copied from the cache disk when the lockfile matches main's, instead of `npm ci` reinstalling it.
 - `uv sync --no-install-project` stops cortex being rebuilt into the environment on every job.
-- The slow checks (`tsc`, `ty`, `ruff`) start first, so they overlap the other tests instead of finishing last: 9.0 s to 7.9.
+- The slow checks (`tsc`, `ty`, `ruff`) start first, so they overlap the other tests instead of finishing last, which saved about a second.
 
 What's left of the 18 s job is about 1 s of setup, 1 s of checkout, 2 s of installs and 9 to 10 s of tests, mostly the TypeScript compiler and pytest starting up. Going lower means faster tests or a faster CPU.
 
