@@ -1,6 +1,5 @@
 ---
 title: "CI Faster Than GitHub's, for Free"
-shortTitle: "Faster than GitHub, for free"
 description: "Faster than GitHub's runner, no minutes used, one throwaway VM per job."
 stat: "1.5× faster"
 pubDate: "Oct 15 2026"
