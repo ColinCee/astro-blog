@@ -32,7 +32,7 @@ Measured on an Intel N100 mini PC (4 cores, 16 GB) running CI for cortex, a priv
 <figure class="fig">
 <p class="fig__k">One push</p>
 <div class="stack"><span style="--w:4"></span><span class="is-data" style="--w:16"></span></div>
-<ul class="legend"><li><b>3 s</b> GitHub queues it and a VM picks it up</li><li class="is-data"><b>16 s</b> the job runs</li></ul>
+<ul class="legend"><li><b>3 to 4 s</b> GitHub queues it and a VM picks it up</li><li class="is-data"><b>16 s</b> the job runs</li></ul>
 <figcaption>Run created to done, median of 5 runs: 20 s.</figcaption>
 </figure>
 
@@ -120,10 +120,6 @@ I built it properly: a snapshot of a VM taken right after a real build of main, 
 
 With two pushes at once, the second job no longer waits to boot: the last one finished at 29 s instead of 33. But the two jobs then share four cores, so the average per job didn't change, and it holds another 440 MB of RAM.
 
-### Linking `node_modules` instead of copying it
-
-Faster to set up, but the TypeScript check went from 3.6 s to 8.4. Its incremental build info is stored relative to where it lives, and a link moves it.
-
 ### Smaller tweaks
 
 - Mounting `node_modules` from the cache disk instead of copying it: the install got a second faster, but the tests got a second slower, because copying had also loaded the files into memory.
@@ -132,17 +128,11 @@ Faster to set up, but the TypeScript check went from 3.6 s to 8.4. Its increment
 
 ## Things that surprised me
 
-A job that ran out of memory hung its VM for an hour. systemd had stopped the task that was supposed to shut the VM down. Now the VM reboots whenever its task ends, which also stops Firecracker.
+The first cache disk was attached and never used. It needed OverlayFS, which the VM's kernel doesn't have, so every "warm" job quietly started from an empty cache. The timings looked fine; only the job log, with `uv` downloading packages it should already have had, gave it away.
 
-`sudo` hid Node from the jobs. The VM starts the runner with `sudo -u runner`, which resets `PATH`, so the TypeScript test failed with "node is not on PATH". The runner is now started with that `PATH` explicitly.
+My first snapshot benchmark looked 20 times faster. Every run after the first was failing in under a second, and only checking each step's exit code caught it.
 
-The first cache disk was attached and never used. Its throwaway write layer needed OverlayFS, which Ubuntu's kernel builds as a module, and the VM has no modules, so every "warm" job started from an empty cache while the timings looked normal. Only the job's own log, with `uv` downloading packages it should already have had, gave it away. Each VM now gets a private copy of the disk instead.
-
-My first snapshot benchmark looked 20 times faster, and was wrong. I'd copied a VM's disk while it was still mounted, so every run after it failed in under a second and the timings looked brilliant. Only checking each step's exit code caught it.
-
-Running CI on a second platform found a real bug. The VM runs Python 3.15 and my PC runs 3.13. One test faked today's date by replacing `time.time`, which `date.today()` no longer reads in 3.15, so it would have broken the next time I upgraded.
-
-GitHub's runner found another one. The suite hung there for 11 minutes, because tests that fake `time.sleep` were also faking the sleep `subprocess` uses to wait on Linux before Python 3.15.
+Running CI on Linux found two real bugs in cortex: a test that faked today's date in a way Python 3.15 no longer reads, and tests that hung for 11 minutes on GitHub's runner because faking `time.sleep` also faked the sleep `subprocess` waits with.
 
 ## Why not just use GitHub's runners
 
