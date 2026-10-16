@@ -21,22 +21,11 @@ pubDate: "Oct 15 2026"
 
 Measured on an Intel N100 mini PC (4 cores, 16 GB) running CI for cortex, a private Python/TypeScript project with about 280 tests. Every number is in the [performance write-up](https://github.com/ColinCee/homelab/blob/main/docs/ci-runner-performance.md).
 
-## How it works
+## Why not GitHub's runners
 
-1. A small Python [supervisor](https://github.com/ColinCee/homelab/blob/main/scripts/ci_supervisor.py) on the PC checks GitHub for queued jobs every 2 seconds. GitHub doesn't count a request whose answer hasn't changed, so polling this often is free.
-2. For each job, it asks GitHub for a just-in-time runner registration, which is only valid for that one job.
-3. It boots a fresh Firecracker VM and passes the registration in through the metadata service. The GitHub token itself stays on the PC.
-4. The VM gets its own copy of a cache disk holding main's packages, and its image already has the tools and the actions the workflow uses, so nothing is downloaded or restored per job.
-5. The runner in the VM picks up the job. When the job finishes, the VM is deleted along with everything it wrote.
+Private repos get 2,000 free minutes a month on GitHub's runners, and a few projects with small commits use them up. A self-hosted runner fixes that, but a CI job is just code from the repo, and on a home server it runs next to everything else: Home Assistant, my other services and the home network.
 
-<figure class="fig">
-<p class="fig__k">One push</p>
-<div class="stack"><span style="--w:3"></span><span class="is-data" style="--w:18"></span></div>
-<ul class="legend"><li><b>3 s</b> GitHub queues it and a VM picks it up</li><li class="is-data"><b>18 s</b> the job runs</li></ul>
-<figcaption>Run created to done, median of 5 runs: 21 s.</figcaption>
-</figure>
-
-Pickup is quick because there's always one VM booted and waiting. When a push to main passes, it uploads a fresh cache, about 20 seconds more for that push, and the runner rebuilds the disk from it. The VMs can reach the internet, but not the PC, the rest of my home network or each other. The full design is in the [runbook](https://github.com/ColinCee/homelab/blob/main/docs/runbooks/ci-runner.md).
+So I wanted each job in its own throwaway box that can reach the internet and nothing else. Being faster than GitHub came later, as a bonus.
 
 ## Why Firecracker
 
@@ -61,6 +50,23 @@ Docker is about 3 seconds faster, so why not use it? Because a container shares 
 Of the two VMs left, QEMU was almost three times slower than running with no sandbox, mostly in boot and disk. Firecracker adds about 4 seconds, of which 0.8 is booting and the rest is running on virtual CPUs.
 
 A sandbox doesn't keep a job off the network by itself, so the VMs also have their own firewall rules.
+
+## How it works
+
+1. A small Python [supervisor](https://github.com/ColinCee/homelab/blob/main/scripts/ci_supervisor.py) on the PC checks GitHub for queued jobs every 2 seconds. GitHub doesn't count a request whose answer hasn't changed, so polling this often is free.
+2. For each job, it asks GitHub for a just-in-time runner registration, which is only valid for that one job.
+3. It boots a fresh Firecracker VM and passes the registration in through the metadata service. The GitHub token itself stays on the PC.
+4. The VM gets its own copy of a cache disk holding main's packages, and its image already has the tools and the actions the workflow uses, so nothing is downloaded or restored per job.
+5. The runner in the VM picks up the job. When the job finishes, the VM is deleted along with everything it wrote.
+
+<figure class="fig">
+<p class="fig__k">Where the 21 seconds go</p>
+<div class="stack"><span style="--w:3"></span><span style="--w:1"></span><span style="--w:1"></span><span class="is-soft" style="--w:2"></span><span class="is-data" style="--w:9.5"></span><span class="is-soft" style="--w:4.5"></span></div>
+<ul class="legend"><li><b>3 s</b> GitHub creates the run, the waiting VM takes it</li><li><b>1 s</b> set up job</li><li><b>1 s</b> checkout</li><li class="is-soft"><b>2 s</b> install from the cache disk</li><li class="is-data"><b>9 to 10 s</b> tests</li><li class="is-soft"><b>4 to 5 s</b> GitHub's bookkeeping between steps</li></ul>
+<figcaption>One push, median of 5 runs, same session as the GitHub comparison. Drawn to scale.</figcaption>
+</figure>
+
+Pickup is quick because there's always one VM booted and waiting. When a push to main passes, it uploads a fresh cache, about 20 seconds more for that push, and the runner rebuilds the disk from it. The VMs can reach the internet, but not the PC, the rest of my home network or each other. The full design is in the [runbook](https://github.com/ColinCee/homelab/blob/main/docs/runbooks/ci-runner.md).
 
 ## From 52 seconds to 21
 
@@ -88,7 +94,7 @@ Then I moved everything else I could to before the job starts:
 - `uv sync --no-install-project` stops cortex being rebuilt into the environment on every job.
 - The slow checks (`tsc`, `ty`, `ruff`) start first, so they overlap the other tests instead of finishing last, which saved about a second.
 
-What's left of the 18 s job is about 1 s of setup, 1 s of checkout, 2 s of installs and 9 to 10 s of tests. Going lower means faster tests or a faster CPU.
+What's left is mostly the tests, so going lower means faster tests or a faster CPU.
 
 ## What didn't help
 
@@ -130,7 +136,3 @@ The first cache disk was attached and never used. It needed OverlayFS, which the
 My first snapshot benchmark looked 20 times faster. Every run after the first was failing in under a second, and only checking each step's exit code caught it.
 
 Running CI on Linux found two real bugs in cortex: a test that faked today's date in a way Python 3.15 no longer reads, and tests that hung for 11 minutes on GitHub's runner because faking `time.sleep` also faked the sleep `subprocess` waits with.
-
-## Why not just use GitHub's runners
-
-Speed is now a bonus rather than the reason: 21 s from push to done against GitHub's 35. It's really the minutes and the isolation. A few projects with small commits use up 2,000 minutes a month, and every job here runs somewhere I control, away from everything else on my home network.

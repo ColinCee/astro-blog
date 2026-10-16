@@ -953,6 +953,11 @@ const last = entries[entries.length - 1];
   .prose .stack span:nth-child(2) {
     background: color-mix(in oklch, var(--bar) 60%, var(--pane));
   }
+  /* More than three parts: mark every other neutral part .is-soft so the parts
+     stay distinguishable. */
+  .prose .stack span.is-soft {
+    background: color-mix(in oklch, var(--bar) 60%, var(--pane));
+  }
   /* span.is-data ties with :nth-child(2) and wins by coming later, so the result
      keeps the accent whatever position it is in. */
   .prose .stack span.is-data {
@@ -980,6 +985,10 @@ const last = entries[entries.length - 1];
     background: var(--bar);
   }
   .prose .legend li:nth-child(2)::before {
+    background: color-mix(in oklch, var(--bar) 60%, var(--pane));
+    border: 1px solid var(--line);
+  }
+  .prose .legend li.is-soft::before {
     background: color-mix(in oklch, var(--bar) 60%, var(--pane));
     border: 1px solid var(--line);
   }
