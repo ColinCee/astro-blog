@@ -960,6 +960,21 @@ const last = entries[entries.length - 1];
     color: var(--accent-soft);
     font-weight: 700;
   }
+  /* A reference line across .cmp bars: wrap each bar in <em class="track"> and set
+     --ref on the figure (the reference value as a fraction of the largest). */
+  .prose .cmp .track {
+    position: relative;
+    display: block;
+    font-style: normal;
+  }
+  .prose .cmp .track::after {
+    content: "";
+    position: absolute;
+    top: -0.35rem;
+    bottom: -0.35rem;
+    left: calc(var(--ref) * 100%);
+    border-left: 1.5px dashed var(--faint);
+  }
   /* One bar split into parts: --w is each part's share. */
   .prose .stack {
     display: flex;

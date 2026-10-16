@@ -70,15 +70,14 @@ Almost all of it is tool setup and installs: 7 s on GitHub, 2 s from the cache d
 
 ## From 51 seconds to 20
 
-<figure class="fig">
+<figure class="fig" style="--ref:0.510">
 <p class="fig__k">Run start to done, each stage on today's commit</p>
-<div class="cmp"><span>GitHub</span><i style="--w:0.510"></i><b>26 s</b></div>
-<div class="cmp"><span>First version</span><i style="--w:1.000"></i><b>51 s</b></div>
-<div class="cmp"><span>+ tools in the image</span><i style="--w:0.941"></i><b>48 s</b></div>
-<div class="cmp"><span>+ one VM waiting</span><i style="--w:0.725"></i><b>37 s</b></div>
-<div class="cmp"><span>+ cache disk</span><i style="--w:0.549"></i><b>28 s</b></div>
-<div class="cmp cmp--after"><span>+ front-load the rest</span><i style="--w:0.392"></i><b>20 s</b></div>
-<figcaption>Every stage rebuilt and run in one session alongside GitHub, 5 runs each. The isolation is identical in every stage; only the speed changes differ.</figcaption>
+<div class="cmp"><span>First version</span><em class="track"><i style="--w:1.000"></i></em><b>51 s</b></div>
+<div class="cmp"><span>+ tools in the image</span><em class="track"><i style="--w:0.941"></i></em><b>48 s</b></div>
+<div class="cmp"><span>+ one VM waiting</span><em class="track"><i style="--w:0.725"></i></em><b>37 s</b></div>
+<div class="cmp"><span>+ cache disk</span><em class="track"><i style="--w:0.549"></i></em><b>28 s</b></div>
+<div class="cmp cmp--after"><span>+ front-load the rest</span><em class="track"><i style="--w:0.392"></i></em><b>20 s</b></div>
+<figcaption>The dashed line is GitHub's 26 s. Every stage was rebuilt and run in one session alongside GitHub, 5 runs each, with identical isolation; only the speed changes differ.</figcaption>
 </figure>
 
 - Node, uv and Python baked into the VM image, so the tools stop downloading per job: 3 s.

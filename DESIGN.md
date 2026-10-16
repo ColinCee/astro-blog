@@ -341,7 +341,8 @@ homepage terminal window's ambient lift, nothing else.
   line-height 1.65. Larger sizes read as heavy in Bricolage; do not raise it.
 - **Figures** (`<figure class="fig">` written as HTML in the Markdown): one raised
   panel with mono labels and a caption. Building blocks: `.cmp` (before/after bars to
-  scale), `.dot` (dot plot: one row per item on a shared axis), `.stack` + `.legend`
+  scale; wrap bars in `<em class="track">` and set `--ref` on the figure for a dashed
+  reference line), `.dot` (dot plot: one row per item on a shared axis), `.stack` + `.legend`
   (one bar split into parts), `.split` (two panels),
   `.rows` / `.cols` (row vs column illustration), `.boxes` / `.box` (simple flow).
   Marks are neutral; only the result takes the accent. Aim for at least one figure
