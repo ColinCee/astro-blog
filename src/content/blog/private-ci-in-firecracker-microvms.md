@@ -68,7 +68,7 @@ The full design is in the [runbook](https://github.com/ColinCee/homelab/blob/mai
 
 The 11 seconds is almost all install: 9 s on GitHub, 2 s from the cache disk. Pickup is 2 s quicker too, because a VM is always booted and waiting.
 
-## From 52 seconds to 21
+## From 52 seconds to 20
 
 <figure class="fig">
 <p class="fig__k">Run created to job done</p>
@@ -76,8 +76,9 @@ The 11 seconds is almost all install: 9 s on GitHub, 2 s from the cache disk. Pi
 <div class="cmp"><span>Tools in the image</span><i style="--w:0.846"></i><b>44 s</b></div>
 <div class="cmp"><span>One VM kept warm</span><i style="--w:0.712"></i><b>37 s</b></div>
 <div class="cmp"><span>Cache disk</span><i style="--w:0.635"></i><b>33 s</b></div>
-<div class="cmp cmp--after"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
-<figcaption>Real pushes, all within a day: about 2.5× faster than the first version. The last bar includes about a second from cortex's slow checks starting first.</figcaption>
+<div class="cmp"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
+<div class="cmp cmp--after"><span>Faster type check</span><i style="--w:0.385"></i><b>20 s</b></div>
+<figcaption>Real pushes, all within a day: 2.6× faster than the first version. The last two bars include changes to cortex itself, which GitHub got too.</figcaption>
 </figure>
 
 - Node, uv and Python baked into the VM image, so nothing downloads per job.
@@ -85,7 +86,7 @@ The 11 seconds is almost all install: 9 s on GitHub, 2 s from the cache disk. Pi
 - A cache disk with main's packages, so restoring GitHub's caches went from 6 s to 1.
 - Then everything else moved to before the job starts: the actions unpacked in the image, `setup-uv` and `setup-node` dropped, `node_modules` copied from the disk when the lockfile matches, and `uv sync --no-install-project`.
 
-I also made two changes to cortex itself: its slowest checks start first, and TypeScript 7's compiler cut the type check from 3.6 s to 1.3 s. Those speed up GitHub just as much, which is why the comparison at the top runs the same commit on both. What's left is mostly the tests.
+I also made two changes to cortex itself: its slowest checks start first, and TypeScript 7's compiler cut the type check from 3.6 s to 1.3 s. They speed GitHub up just as much (35 s to 31 s), which is why the comparison at the top runs the same commit on both. What's left is mostly the tests.
 
 ## What didn't help
 
@@ -96,14 +97,6 @@ I also made two changes to cortex itself: its slowest checks start first, and Ty
 ### Snapshots
 
 I built it properly: a snapshot taken right after a real build of main, restored as the waiting VM in 11 to 15 ms. It saved about a second, all of it `uv sync`, which `--no-install-project` now gets anyway. Boot was never the slow part, each snapshot needs a 4.1 GB memory file, and every restored VM starts with the same random-number state, which [Firecracker's docs](https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/random-for-clones.md) warn about.
-
-<figure class="fig">
-<p class="fig__k">Whole job, same commit</p>
-<div class="cmp"><span>GitHub</span><i style="--w:1"></i><b>30 s</b></div>
-<div class="cmp"><span>Mini PC + disk</span><i style="--w:0.933"></i><b>28 s</b></div>
-<div class="cmp cmp--after"><span>Mini PC + snapshot</span><i style="--w:0.933"></i><b>28 s</b></div>
-<figcaption>An earlier commit, before the last tweaks. The snapshot matched the cache disk.</figcaption>
-</figure>
 
 ### A second waiting VM
 
