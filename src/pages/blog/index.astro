@@ -11,7 +11,7 @@ const posts = (await getCollection("blog")).sort(
 const cards: Record<
   string,
   {
-    short: string;
+    short?: string;
     hook: string;
     from?: string;
     to?: string;
@@ -40,10 +40,10 @@ const cards: Record<
     label: "one hearing",
   },
   "private-ci-in-firecracker-microvms": {
-    short: "Free CI at home",
-    hook: "As fast as GitHub's runner, with every job in a throwaway VM.",
-    value: "0 min",
-    label: "GitHub minutes used",
+    hook: "Faster than GitHub's runner, with every job in a throwaway VM.",
+    from: "26 s",
+    to: "20 s",
+    label: "vs GitHub",
   },
 };
 

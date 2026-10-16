@@ -802,6 +802,28 @@ const last = entries[entries.length - 1];
     font-weight: 700;
     color: var(--accent-soft);
   }
+  /* Footnotes (Markdown [^1]): a quiet source list, not numbered takeaways. */
+  .prose .footnotes {
+    font-size: 0.85em;
+    color: var(--muted);
+  }
+  .prose .footnotes h2 {
+    font-size: 1rem;
+  }
+  .prose .footnotes ol > li {
+    padding: 0.3rem 0 0.3rem 2rem;
+    border: 0;
+  }
+  .prose .footnotes ol > li::before {
+    top: 0.4rem;
+  }
+  .prose .footnotes p {
+    margin: 0;
+  }
+  .prose sup a {
+    border-bottom: 0;
+    padding: 0 0.1em;
+  }
   .prose hr {
     margin: 2.5rem 0;
     border: 0;
@@ -938,6 +960,28 @@ const last = entries[entries.length - 1];
     color: var(--accent-soft);
     font-weight: 700;
   }
+  /* A reference line across .cmp bars: wrap the rows in <div class="cmp-ref"> with
+     --ref (the reference value as a fraction of the largest). On wide screens it is one
+     line through the bar column; on phones, where labels sit above the bars, each row
+     carries its own short segment (the bars are wrapped in <em class="track">). */
+  .prose .cmp-ref {
+    position: relative;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .prose .cmp-ref::after {
+    content: "";
+    position: absolute;
+    top: -0.2rem;
+    bottom: -0.2rem;
+    left: calc(10.5rem + 0.8rem + (100% - 10.5rem - 4.2rem - 1.6rem) * var(--ref));
+    border-left: 1.5px dashed var(--faint);
+    pointer-events: none;
+  }
+  .prose .cmp .track {
+    display: block;
+    font-style: normal;
+  }
   /* One bar split into parts: --w is each part's share. */
   .prose .stack {
     display: flex;
@@ -953,7 +997,9 @@ const last = entries[entries.length - 1];
   .prose .stack span:nth-child(2) {
     background: color-mix(in oklch, var(--bar) 60%, var(--pane));
   }
-  .prose .stack .is-data {
+  /* span.is-data ties with :nth-child(2) and wins by coming later, so the result
+     keeps the accent whatever position it is in. */
+  .prose .stack span.is-data {
     background: var(--accent);
   }
   .prose .legend {
@@ -981,8 +1027,9 @@ const last = entries[entries.length - 1];
     background: color-mix(in oklch, var(--bar) 60%, var(--pane));
     border: 1px solid var(--line);
   }
-  .prose .legend .is-data::before {
+  .prose .legend li.is-data::before {
     background: var(--accent);
+    border: 0;
   }
   .prose .legend b {
     color: var(--ink);
@@ -1048,11 +1095,71 @@ const last = entries[entries.length - 1];
   .prose .box--fast {
     border-color: color-mix(in oklch, var(--accent) 45%, transparent);
   }
+  /* Dot plot: one row per item, a dot on a shared axis. --x is the value as a
+     fraction of the axis. */
+  .prose .dot {
+    display: grid;
+    grid-template-columns: 10.5rem minmax(0, 1fr) 4.2rem;
+    align-items: center;
+    gap: 0.3rem 0.8rem;
+  }
+  .prose .dot i {
+    position: relative;
+    display: block;
+    height: 0.9rem;
+  }
+  .prose .dot i::before {
+    content: "";
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 1px;
+    background: var(--line);
+  }
+  .prose .dot i::after {
+    content: "";
+    position: absolute;
+    left: calc(var(--x) * 100%);
+    top: 50%;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--muted);
+    transform: translate(-50%, -50%);
+  }
+  .prose .dot b {
+    font-weight: 500;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .prose .dot--after i::after {
+    background: var(--accent);
+  }
+  .prose .dot--after b {
+    color: var(--accent-soft);
+    font-weight: 700;
+  }
   @media (max-width: 34rem) {
-    .prose .cmp {
+    .prose .cmp-ref::after {
+      display: none;
+    }
+    .prose .cmp .track {
+      position: relative;
+    }
+    .prose .cmp .track::after {
+      content: "";
+      position: absolute;
+      top: -0.3rem;
+      bottom: -0.3rem;
+      left: calc(var(--ref) * 100%);
+      border-left: 1.5px dashed var(--faint);
+    }
+    .prose .cmp,
+    .prose .dot {
       grid-template-columns: minmax(0, 1fr) auto;
     }
-    .prose .cmp span {
+    .prose .cmp span,
+    .prose .dot span {
       grid-column: 1 / -1;
     }
   }
