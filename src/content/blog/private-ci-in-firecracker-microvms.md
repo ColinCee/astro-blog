@@ -31,9 +31,9 @@ Measured on an Intel N100 mini PC (4 cores, 16 GB) running CI for cortex, a priv
 
 <figure class="fig">
 <p class="fig__k">One push</p>
-<div class="stack"><span style="--w:3"></span><span class="is-data" style="--w:18"></span></div>
-<ul class="legend"><li><b>3 s</b> GitHub queues it and a VM picks it up</li><li class="is-data"><b>18 s</b> the job runs</li></ul>
-<figcaption>Run created to done, median of 5 runs: 21 s.</figcaption>
+<div class="stack"><span style="--w:4"></span><span class="is-data" style="--w:16"></span></div>
+<ul class="legend"><li><b>3 s</b> GitHub queues it and a VM picks it up</li><li class="is-data"><b>16 s</b> the job runs</li></ul>
+<figcaption>Run created to done, median of 5 runs: 20 s.</figcaption>
 </figure>
 
 Pickup is quick because there's always one VM booted and waiting. When a push to main passes, it uploads a fresh cache, about 20 seconds more for that push, and the runner rebuilds the disk from it. The VMs can reach the internet, but not the PC, the rest of my home network or each other. The full design is in the [runbook](https://github.com/ColinCee/homelab/blob/main/docs/runbooks/ci-runner.md).
@@ -62,7 +62,7 @@ Of the two VMs left, QEMU was almost three times slower than running with no san
 
 A sandbox doesn't keep a job off the network by itself, so the VMs also have their own firewall rules.
 
-## From 52 seconds to 21
+## From 52 seconds to 20
 
 <figure class="fig">
 <p class="fig__k">Run created to job done</p>
@@ -70,7 +70,8 @@ A sandbox doesn't keep a job off the network by itself, so the VMs also have the
 <div class="cmp"><span>Tools in the image</span><i style="--w:0.846"></i><b>44 s</b></div>
 <div class="cmp"><span>One VM kept warm</span><i style="--w:0.712"></i><b>37 s</b></div>
 <div class="cmp"><span>Cache disk</span><i style="--w:0.635"></i><b>33 s</b></div>
-<div class="cmp cmp--after"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
+<div class="cmp"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
+<div class="cmp cmp--after"><span>Faster type check</span><i style="--w:0.385"></i><b>20 s</b></div>
 <figcaption>Within a day, measured on real pushes.</figcaption>
 </figure>
 
@@ -88,7 +89,9 @@ Then I moved everything else I could to before the job starts:
 - `uv sync --no-install-project` stops cortex being rebuilt into the environment on every job.
 - The slow checks (`tsc`, `ty`, `ruff`) start first, so they overlap the other tests instead of finishing last, which saved about a second.
 
-What's left of the 18 s job is about 1 s of setup, 1 s of checkout, 2 s of installs and 9 to 10 s of tests, mostly the TypeScript compiler and pytest starting up. Going lower means faster tests or a faster CPU.
+The last change was in cortex itself: TypeScript 7's native compiler for the type check, with the same strict settings. The check went from 3.6 s to 1.3 s.
+
+What's left of the 16 s job is about 1 s of setup, 1 s of checkout, 2 s of installs and about 8 s of tests. Going lower means faster tests or a faster CPU.
 
 ## What didn't help
 
@@ -109,8 +112,8 @@ I built it properly: a snapshot of a VM taken right after a real build of main, 
 <div class="cmp"><span>GitHub</span><i style="--w:1"></i><b>30 s</b></div>
 <div class="cmp"><span>Mini PC + disk</span><i style="--w:0.933"></i><b>28 s</b></div>
 <div class="cmp"><span>Mini PC + snapshot</span><i style="--w:0.933"></i><b>28 s</b></div>
-<div class="cmp cmp--after"><span>Mini PC, final</span><i style="--w:0.6"></i><b>18 s</b></div>
-<figcaption>Median of 5 runs each, same session. The snapshot row is from an earlier round, against a cache disk control of 29 s.</figcaption>
+<div class="cmp cmp--after"><span>Mini PC, final</span><i style="--w:0.533"></i><b>16 s</b></div>
+<figcaption>Median of 5 runs each. The snapshot row is from an earlier round, against a cache disk control of 29 s; the final row includes the later TypeScript change.</figcaption>
 </figure>
 
 ### A second waiting VM
@@ -120,6 +123,12 @@ With two pushes at once, the second job no longer waits to boot: the last one fi
 ### Linking `node_modules` instead of copying it
 
 Faster to set up, but the TypeScript check went from 3.6 s to 8.4. Its incremental build info is stored relative to where it lives, and a link moves it.
+
+### Smaller tweaks
+
+- Mounting `node_modules` from the cache disk instead of copying it: the install got a second faster, but the tests got a second slower, because copying had also loaded the files into memory.
+- Reading the packages into memory while the VM waits: the tests got 2 to 3 seconds slower, because the reading competed with the job.
+- Turning off CPU security mitigations in the VM, and different pytest worker settings: no change beyond noise.
 
 ## Things that surprised me
 
