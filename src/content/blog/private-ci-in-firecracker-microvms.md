@@ -68,7 +68,7 @@ The full design is in the [runbook](https://github.com/ColinCee/homelab/blob/mai
 
 The 11 seconds is almost all install: 9 s on GitHub, 2 s from the cache disk. Pickup is 2 s quicker too, because a VM is always booted and waiting.
 
-## From 52 seconds to 20
+## From 52 seconds to 21
 
 <figure class="fig">
 <p class="fig__k">Run created to job done</p>
@@ -76,18 +76,16 @@ The 11 seconds is almost all install: 9 s on GitHub, 2 s from the cache disk. Pi
 <div class="cmp"><span>Tools in the image</span><i style="--w:0.846"></i><b>44 s</b></div>
 <div class="cmp"><span>One VM kept warm</span><i style="--w:0.712"></i><b>37 s</b></div>
 <div class="cmp"><span>Cache disk</span><i style="--w:0.635"></i><b>33 s</b></div>
-<div class="cmp"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
-<div class="cmp cmp--after"><span>Faster type check</span><i style="--w:0.385"></i><b>20 s</b></div>
-<figcaption>Real pushes, all within a day: 2.6× faster than the first version.</figcaption>
+<div class="cmp cmp--after"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
+<figcaption>Real pushes, all within a day: about 2.5× faster than the first version. The last bar includes about a second from cortex's slow checks starting first.</figcaption>
 </figure>
 
 - Node, uv and Python baked into the VM image, so nothing downloads per job.
 - One VM kept booted and waiting. That saved about 8 seconds, mostly the GitHub runner starting up, for 450 MB of RAM.
 - A cache disk with main's packages, so restoring GitHub's caches went from 6 s to 1.
-- Then everything else moved to before the job starts: the actions unpacked in the image, `setup-uv` and `setup-node` dropped, `node_modules` copied from the disk when the lockfile matches, `uv sync --no-install-project`, and the slow checks started first.
-- Last, TypeScript 7's native compiler took the type check from 3.6 s to 1.3 s.
+- Then everything else moved to before the job starts: the actions unpacked in the image, `setup-uv` and `setup-node` dropped, `node_modules` copied from the disk when the lockfile matches, and `uv sync --no-install-project`.
 
-Code changes like those last two speed up GitHub too, which is why the comparison at the top runs the same commit on both: GitHub went from 35 s to 31 s with them. What's left is mostly the tests.
+I also made two changes to cortex itself: its slowest checks start first, and TypeScript 7's compiler cut the type check from 3.6 s to 1.3 s. Those speed up GitHub just as much, which is why the comparison at the top runs the same commit on both. What's left is mostly the tests.
 
 ## What didn't help
 
