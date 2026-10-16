@@ -10,13 +10,13 @@ pubDate: "Oct 15 2026"
 <figure class="fig">
 <div class="split">
 <div><p class="fig__k">Push to done</p>
-<div class="cmp" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>GitHub</span><i style="--w:1"></i><b>35 s</b></div>
-<div class="cmp cmp--after" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>Mini PC</span><i style="--w:0.6"></i><b>21 s</b></div></div>
+<div class="cmp" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>GitHub</span><i style="--w:1"></i><b>31 s</b></div>
+<div class="cmp cmp--after" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>Mini PC</span><i style="--w:0.645"></i><b>20 s</b></div></div>
 <div><p class="fig__k">Minutes used per job</p>
 <div class="cmp" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>GitHub</span><i style="--w:1"></i><b>1 min</b></div>
 <div class="cmp cmp--after" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>Mini PC</span><i style="--w:0"></i><b>0</b></div></div>
 </div>
-<figcaption>The same job, 5 runs each in the same session, Python 3.15 on both. GitHub rounds each job up to a minute; private repos get 2,000 free a month.</figcaption>
+<figcaption>The same job on the same commit, 5 runs each interleaved, Python 3.15 on both. GitHub rounds each job up to a minute; private repos get 2,000 free a month.</figcaption>
 </figure>
 
 Measured on an Intel N100 mini PC (4 cores, 16 GB) running CI for cortex, a private Python/TypeScript project with about 280 tests. Every number is in the [performance write-up](https://github.com/ColinCee/homelab/blob/main/docs/ci-runner-performance.md).
@@ -60,15 +60,19 @@ A sandbox doesn't keep a job off the network by itself, so the VMs also have the
 5. The runner in the VM picks up the job. When the job finishes, the VM is deleted along with everything it wrote.
 
 <figure class="fig">
-<p class="fig__k">Where the 21 seconds go</p>
-<div class="stack"><span style="--w:3"></span><span style="--w:1"></span><span style="--w:1"></span><span class="is-soft" style="--w:2"></span><span class="is-data" style="--w:9.5"></span><span class="is-soft" style="--w:4.5"></span></div>
-<ul class="legend"><li><b>3 s</b> GitHub creates the run, the waiting VM takes it</li><li><b>1 s</b> set up job</li><li><b>1 s</b> checkout</li><li class="is-soft"><b>2 s</b> install from the cache disk</li><li class="is-data"><b>9 to 10 s</b> tests</li><li class="is-soft"><b>4 to 5 s</b> GitHub's bookkeeping between steps</li></ul>
-<figcaption>One push, median of 5 runs, same session as the GitHub comparison. Drawn to scale.</figcaption>
+<p class="fig__k">Where the 20 seconds go</p>
+<div class="cmp"><span>Queued, picked up</span><i style="--w:0.150;margin-left:0.0%"></i><b>3 s</b></div>
+<div class="cmp"><span>Set up job</span><i style="--w:0.050;margin-left:15.0%"></i><b>1 s</b></div>
+<div class="cmp"><span>Checkout</span><i style="--w:0.050;margin-left:20.0%"></i><b>1 s</b></div>
+<div class="cmp"><span>Install (cache disk)</span><i style="--w:0.100;margin-left:25.0%"></i><b>2 s</b></div>
+<div class="cmp cmp--after"><span>Tests</span><i style="--w:0.400;margin-left:35.0%"></i><b>8 s</b></div>
+<div class="cmp"><span>GitHub's bookkeeping</span><i style="--w:0.250;margin-left:75.0%"></i><b>5 s</b></div>
+<figcaption>One push, median of 5 runs, in order and drawn to scale: each bar starts where the last one ended. GitHub's bookkeeping is the rest of the 17 s job, between and after the steps.</figcaption>
 </figure>
 
 Pickup is quick because there's always one VM booted and waiting. When a push to main passes, it uploads a fresh cache, about 20 seconds more for that push, and the runner rebuilds the disk from it. The VMs can reach the internet, but not the PC, the rest of my home network or each other. The full design is in the [runbook](https://github.com/ColinCee/homelab/blob/main/docs/runbooks/ci-runner.md).
 
-## From 52 seconds to 21
+## From 52 seconds to 20
 
 <figure class="fig">
 <p class="fig__k">Run created to job done</p>
@@ -76,7 +80,8 @@ Pickup is quick because there's always one VM booted and waiting. When a push to
 <div class="cmp"><span>Tools in the image</span><i style="--w:0.846"></i><b>44 s</b></div>
 <div class="cmp"><span>One VM kept warm</span><i style="--w:0.712"></i><b>37 s</b></div>
 <div class="cmp"><span>Cache disk</span><i style="--w:0.635"></i><b>33 s</b></div>
-<div class="cmp cmp--after"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
+<div class="cmp"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
+<div class="cmp cmp--after"><span>Faster type check</span><i style="--w:0.385"></i><b>20 s</b></div>
 <figcaption>Within a day, measured on real pushes.</figcaption>
 </figure>
 
@@ -93,6 +98,8 @@ Then I moved everything else I could to before the job starts:
 - `node_modules` is copied from the cache disk when the lockfile matches main's, instead of `npm ci` reinstalling it.
 - `uv sync --no-install-project` stops cortex being rebuilt into the environment on every job.
 - The slow checks (`tsc`, `ty`, `ruff`) start first, so they overlap the other tests instead of finishing last, which saved about a second.
+
+The last change was in cortex itself: TypeScript 7's native compiler for the type check, with the same strict settings, which took the check from 3.6 s to 1.3 s. Code changes like this and the slow checks first help GitHub's runner too, so the comparison at the top runs the same commit on both. GitHub went from 35 s to 31 s with them.
 
 What's left is mostly the tests, so going lower means faster tests or a faster CPU.
 
@@ -111,12 +118,14 @@ I built it properly: a snapshot of a VM taken right after a real build of main, 
 - It needs a 4.1 GB memory file per snapshot.
 
 <figure class="fig">
-<p class="fig__k">Whole job</p>
+<p class="fig__k">Whole job, earlier commit</p>
 <div class="cmp"><span>GitHub</span><i style="--w:1"></i><b>30 s</b></div>
 <div class="cmp"><span>Mini PC + disk</span><i style="--w:0.933"></i><b>28 s</b></div>
 <div class="cmp"><span>Mini PC + snapshot</span><i style="--w:0.933"></i><b>28 s</b></div>
-<div class="cmp cmp--after"><span>Mini PC, final</span><i style="--w:0.6"></i><b>18 s</b></div>
-<figcaption>Median of 5 runs each, same session. The snapshot row is from an earlier round, against a cache disk control of 29 s.</figcaption>
+<p class="fig__k">Whole job, final commit</p>
+<div class="cmp"><span>GitHub</span><i style="--w:0.867"></i><b>26 s</b></div>
+<div class="cmp cmp--after"><span>Mini PC, final</span><i style="--w:0.567"></i><b>17 s</b></div>
+<figcaption>Median of 5 runs each; each group compares the same cortex commit on both sides. The snapshot row is from an earlier round, against a cache disk control of 29 s.</figcaption>
 </figure>
 
 ### A second waiting VM
