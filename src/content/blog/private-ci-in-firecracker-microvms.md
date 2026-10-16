@@ -2,31 +2,31 @@
 title: "CI Faster Than GitHub's, for Free"
 description: "Faster than GitHub's runner, no minutes used, one throwaway VM per job."
 stat: "1.4× faster"
-pubDate: "Oct 15 2026"
+pubDate: "Oct 16 2026"
 ---
 ## Results
 
 <figure class="fig">
 <div class="split">
-<div><p class="fig__k">Push to done</p>
+<div><p class="fig__k">Run start to done</p>
 <div class="cmp" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>GitHub</span><i style="--w:1"></i><b>29 s</b></div>
 <div class="cmp cmp--after" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>Mini PC</span><i style="--w:0.690"></i><b>20 s</b></div></div>
 <div><p class="fig__k">Minutes used per job</p>
 <div class="cmp" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>GitHub</span><i style="--w:1"></i><b>1 min</b></div>
 <div class="cmp cmp--after" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>Mini PC</span><i style="--w:0"></i><b>0</b></div></div>
 </div>
-<figcaption>From push to done: about 1.4× faster, and no minutes. The same commit on both, 5 runs each.</figcaption>
+<figcaption>From GitHub starting the run to done: about 1.4× faster, and no minutes. The same commit on both, 5 runs each.</figcaption>
 </figure>
 
 That's an Intel N100 mini PC running CI for cortex, a private Python/TypeScript project.[^perf] GitHub bills every job as at least a minute.[^rounding]
 
 ## Why not GitHub's runners
 
-Private repos get 2,000 free GitHub minutes a month,[^minutes] and a few projects with small commits burn through them. A self-hosted runner fixes that, but a CI job is just code from the repo, and on a home server it runs next to everything else in the house. So each job gets its own throwaway box: the internet, and nothing else. Being faster than GitHub came later, as a bonus.
+On GitHub's Free plan, private repos get 2,000 free minutes a month,[^minutes] and a few projects with small commits burn through them. A self-hosted runner fixes that, but a CI job is just code from the repo, and on a home server it runs next to everything else in the house. So each job gets its own throwaway box: the internet, and nothing else. Being faster than GitHub came later, as a bonus.
 
 ## Why Firecracker
 
-The rule was that a job doesn't share the host's kernel, which is what Firecracker is built for.[^firecracker] Escape a container and you're on the box with Home Assistant; escape a VM and there's still a hypervisor in the way. That ruled out seven of the nine sandboxes I tried, Docker included.
+The rule was that a job doesn't share the host's kernel, which is what Firecracker is built for.[^firecracker] Escape a container and you're on the box with Home Assistant; escape a VM and you still have to get past the hypervisor and Firecracker's jailer. That ruled out six of the eight sandboxes I tried, Docker included.
 
 <figure class="fig">
 <p class="fig__k">Own kernel</p>
@@ -40,7 +40,7 @@ The rule was that a job doesn't share the host's kernel, which is what Firecrack
 <div class="dot"><span>Rootless Podman</span><i style="--x:0.268"></i><b>10.7 s</b></div>
 <div class="dot"><span>Docker</span><i style="--x:0.282"></i><b>11.3 s</b></div>
 <div class="dot"><span>Incus container</span><i style="--x:0.475"></i><b>19 s</b></div>
-<figcaption>A separate test: just the test suite, offline, under each sandbox, on one axis from 0 to 40 s.</figcaption>
+<figcaption>A separate test: the same cortex check, offline with warm caches, under each sandbox, on one axis from 0 to 40 s.</figcaption>
 </figure>
 
 Of the two left, QEMU was nearly three times slower, mostly boot and disk. Firecracker costs about 4 seconds against no sandbox, 0.8 of it booting. It also means jobs can have `sudo`, which is fine in a VM you throw away.
@@ -50,7 +50,7 @@ Of the two left, QEMU was nearly three times slower, mostly boot and disk. Firec
 1. A small Python supervisor[^supervisor] polls GitHub for queued jobs every 2 seconds (unchanged answers are free).
 2. It asks GitHub for a just-in-time runner:[^jit] a one-off registration that takes exactly one job, after which GitHub removes the runner.
 3. It boots a fresh Firecracker VM and hands it only that registration. The GitHub token itself never leaves the PC, so a job that breaks out can't touch the repo's settings or register more runners.
-4. The VM gets a copy of a cache disk with main's packages, and its image already has the tools and actions, so nothing downloads.
+4. The VM gets a copy of a cache disk with main's packages, and its image already has the tools and actions, so nothing but the code downloads.
 5. The job runs, and the VM is deleted with everything it wrote.
 
 The full design is in the runbook.[^runbook]
@@ -60,22 +60,22 @@ The full design is in the runbook.[^runbook]
 <div class="cmp"><span>GitHub</span><i style="--w:1"></i><b>29 s</b></div>
 <div class="cmp"><span>Pickup</span><i style="--w:0.034;margin-left:96.6%;background:var(--muted)"></i><b>&minus;1 s</b></div>
 <div class="cmp"><span>Set up, checkout</span><i style="--w:0.034;margin-left:93.1%;background:var(--muted)"></i><b>&minus;1 s</b></div>
-<div class="cmp"><span>Install</span><i style="--w:0.207;margin-left:72.4%;background:var(--muted)"></i><b>&minus;6 s</b></div>
+<div class="cmp"><span>Tools, installs</span><i style="--w:0.207;margin-left:72.4%;background:var(--muted)"></i><b>&minus;6 s</b></div>
 <div class="cmp"><span>Tests</span><i style="--w:0.034;margin-left:69.0%;background:var(--muted)"></i><b>&minus;1 s</b></div>
 <div class="cmp cmp--after"><span>Mini PC</span><i style="--w:0.690"></i><b>20 s</b></div>
-<figcaption>The same push as above, drawn to scale. The rest, GitHub's own bookkeeping between steps, takes the same on both.</figcaption>
+<figcaption>The same runs as above, medians, drawn to scale. The rest, GitHub's own bookkeeping between steps, takes the same on both.</figcaption>
 </figure>
 
-Most of it is the install: 8 s on GitHub, 2 s from the cache disk. Pickup is a second quicker because a VM is always booted and waiting.
+Most of it is tool setup and installs: 8 s on GitHub, 2 s from the cache disk. Pickup is a second quicker too; a VM is already booted and waiting.
 
 ## What made it fast
 
 - Node, uv and Python baked into the VM image, so nothing downloads per job.
 - One VM kept booted and waiting, for 450 MB of RAM.
 - A cache disk with main's packages, instead of restoring GitHub's caches.
-- Everything else done before the job starts: the actions unpacked in the image, `setup-uv` and `setup-node` dropped, `node_modules` copied from the disk when the lockfile matches, and `uv sync --no-install-project`.
+- The actions unpacked in the image and `setup-uv` and `setup-node` dropped, leaving one install step that copies `node_modules` from the disk when the lockfile matches and runs `uv sync --no-install-project`.
 
-I also sped up cortex's own tests (TypeScript 7's compiler, slow checks first), but GitHub runs the same commit, so that's on both sides. What's left is mostly the tests.
+I also sped up cortex's own tests (TypeScript 7's compiler, slow checks first), but GitHub runs the same commit, so that's on both sides. The biggest part left is the tests.
 
 ## What didn't help
 
@@ -89,7 +89,7 @@ I built it properly: a snapshot taken right after a real build of main, restored
 
 ### A second waiting VM
 
-The second of two simultaneous jobs finished 4 seconds sooner, but both then shared four cores, so the average didn't move. Not worth another 440 MB of RAM.
+The second of two simultaneous jobs finished 4 seconds sooner, but the average per job didn't move. Not worth another 440 MB of RAM.
 
 ### Smaller tweaks
 
@@ -97,10 +97,10 @@ Mounting `node_modules` instead of copying it, reading packages into memory ahea
 
 ## Limitations
 
-This is fast because it's tuned for one repo, not because self-hosting is fast. My first version took over twice as long.
+This is fast because it's tuned for one repo, not because self-hosting is fast.
 
 - Prewarming is per repo. A new language, action or lockfile means rebuilding the image or the cache disk.
-- A changed lockfile installs from scratch, and every green push to main has to upload a fresh cache.
+- A changed lockfile falls back to a normal install from the cached packages, and every green push to main has to upload a fresh cache.
 - Only one repo gets the waiting VM. Others boot first, about 8 s slower.
 - It's one small machine: two jobs at a time, Linux only, no failover.
 - Kernel and runner upgrades are mine to do.
@@ -111,6 +111,6 @@ This is fast because it's tuned for one repo, not because self-hosting is fast. 
 [^minutes]: GitHub, [billing for GitHub Actions](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
 [^firecracker]: [Firecracker](https://firecracker-microvm.github.io/).
 [^supervisor]: The supervisor: [`scripts/ci_supervisor.py`](https://github.com/ColinCee/homelab/blob/main/scripts/ci_supervisor.py).
-[^jit]: GitHub, [create configuration for a just-in-time runner](https://docs.github.com/en/rest/actions/self-hosted-runners#create-configuration-for-a-just-in-time-runner-for-a-repository).
+[^jit]: GitHub, [ephemeral runners for autoscaling](https://docs.github.com/en/actions/reference/runners/self-hosted-runners): just-in-time runners are de-registered after one job.
 [^runbook]: [CI runner runbook](https://github.com/ColinCee/homelab/blob/main/docs/runbooks/ci-runner.md).
 [^snapshots]: Firecracker, [random for clones](https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/random-for-clones.md).
