@@ -43,7 +43,7 @@ The rule was that a job doesn't share the host's kernel, which is what Firecrack
 <figcaption>The same job under each sandbox, on one axis from 0 to 40 s.</figcaption>
 </figure>
 
-Of the two left, QEMU was nearly three times slower, mostly boot and disk. Firecracker costs about 4 seconds, 0.8 of it booting. It also means jobs can have `sudo`, which is fine in a VM you throw away.
+Of the two left, QEMU was nearly three times slower, mostly boot and disk. Firecracker costs about 4 seconds against no sandbox, 0.8 of it booting. It also means jobs can have `sudo`, which is fine in a VM you throw away.
 
 ## How it works
 
@@ -68,7 +68,7 @@ The full design is in the runbook.[^runbook]
 
 The job's 7 seconds is almost all install: 8 s on GitHub, 2 s from the cache disk. Pickup is a second quicker too, because a VM is always booted and waiting.
 
-## From 52 seconds to 20
+## From 52 seconds to 21
 
 <figure class="fig">
 <p class="fig__k">Run created to job done</p>
@@ -76,9 +76,8 @@ The job's 7 seconds is almost all install: 8 s on GitHub, 2 s from the cache dis
 <div class="cmp"><span>Tools in the image</span><i style="--w:0.846"></i><b>44 s</b></div>
 <div class="cmp"><span>One VM kept warm</span><i style="--w:0.712"></i><b>37 s</b></div>
 <div class="cmp"><span>Cache disk</span><i style="--w:0.635"></i><b>33 s</b></div>
-<div class="cmp"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
-<div class="cmp cmp--after"><span>Faster type check</span><i style="--w:0.385"></i><b>20 s</b></div>
-<figcaption>Real pushes, all within a day: 2.6× faster than the first version. The last two bars include changes to cortex itself, which GitHub got too.</figcaption>
+<div class="cmp cmp--after"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
+<figcaption>Real pushes, all within a day: 2.5× faster than the first version. The last bar includes about a second from a cortex change GitHub got too.</figcaption>
 </figure>
 
 - Node, uv and Python baked into the VM image, so nothing downloads per job.
@@ -86,7 +85,7 @@ The job's 7 seconds is almost all install: 8 s on GitHub, 2 s from the cache dis
 - A cache disk with main's packages, so restoring GitHub's caches went from 6 s to 1.
 - Then everything else moved to before the job starts: the actions unpacked in the image, `setup-uv` and `setup-node` dropped, `node_modules` copied from the disk when the lockfile matches, and `uv sync --no-install-project`.
 
-I also made two changes to cortex itself: its slowest checks start first, and TypeScript 7's compiler cut the type check from 3.6 s to 1.3 s. They speed GitHub up just as much, which is why the comparison at the top runs the same commit on both. What's left is mostly the tests.
+I also made two changes to cortex itself: its slowest checks start first, and TypeScript 7's compiler cut the type check from 3.6 s to 1.3 s. They speed GitHub up just as much, so the comparison at the top runs the same commit on both; that's where today's 20 s comes from. What's left is mostly the tests.
 
 ## What didn't help
 
