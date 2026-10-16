@@ -60,21 +60,14 @@ A sandbox doesn't keep a job off the network by itself, so the VMs also have the
 5. The runner in the VM picks up the job. When the job finishes, the VM is deleted along with everything it wrote.
 
 <figure class="fig">
-<p class="fig__k">GitHub ubuntu-latest: 31 s</p>
-<div class="cmp"><span>Queued, picked up</span><i style="--w:0.161;margin-left:0.0%"></i><b>5 s</b></div>
-<div class="cmp"><span>Set up job</span><i style="--w:0.032;margin-left:16.1%"></i><b>1 s</b></div>
-<div class="cmp"><span>Checkout</span><i style="--w:0.032;margin-left:19.4%"></i><b>1 s</b></div>
-<div class="cmp"><span>Install</span><i style="--w:0.290;margin-left:22.6%"></i><b>9 s</b></div>
-<div class="cmp"><span>Tests</span><i style="--w:0.290;margin-left:51.6%"></i><b>9 s</b></div>
-<div class="cmp"><span>Bookkeeping</span><i style="--w:0.194;margin-left:80.6%"></i><b>6 s</b></div>
-<p class="fig__k">Mini PC: 20 s</p>
-<div class="cmp"><span>Queued, picked up</span><i style="--w:0.097;margin-left:0.0%"></i><b>3 s</b></div>
-<div class="cmp"><span>Set up job</span><i style="--w:0.032;margin-left:9.7%"></i><b>1 s</b></div>
-<div class="cmp"><span>Checkout</span><i style="--w:0.032;margin-left:12.9%"></i><b>1 s</b></div>
-<div class="cmp cmp--after"><span>Install</span><i style="--w:0.065;margin-left:16.1%"></i><b>2 s</b></div>
-<div class="cmp"><span>Tests</span><i style="--w:0.258;margin-left:22.6%"></i><b>8 s</b></div>
-<div class="cmp"><span>Bookkeeping</span><i style="--w:0.161;margin-left:48.4%"></i><b>5 s</b></div>
-<figcaption>One push each, same commit, medians of 5 runs, drawn to the same scale: each bar starts where the last one ended. GitHub's install is setup-uv, setup-node, uv sync and npm ci; the mini PC's comes from the cache disk. Bookkeeping is the rest of each job, between and after the steps.</figcaption>
+<p class="fig__k">From GitHub to the mini PC</p>
+<div class="cmp"><span>GitHub</span><i style="--w:1"></i><b>31 s</b></div>
+<div class="cmp"><span>Queued, picked up</span><i style="--w:0.065;margin-left:93.5%;background:var(--muted)"></i><b>&minus;2 s</b></div>
+<div class="cmp"><span>Install</span><i style="--w:0.226;margin-left:71.0%;background:var(--muted)"></i><b>&minus;7 s</b></div>
+<div class="cmp"><span>Tests</span><i style="--w:0.032;margin-left:67.7%;background:var(--muted)"></i><b>&minus;1 s</b></div>
+<div class="cmp"><span>Bookkeeping</span><i style="--w:0.032;margin-left:64.5%;background:var(--muted)"></i><b>&minus;1 s</b></div>
+<div class="cmp cmp--after"><span>Mini PC</span><i style="--w:0.645"></i><b>20 s</b></div>
+<figcaption>One push each, same commit, medians of 5 runs, drawn to scale. Start at GitHub's 31 s and take off what each step saves; set up and checkout take 1 s on both. GitHub's install is setup-uv, setup-node, uv sync and npm ci; the mini PC's comes from the cache disk. Bookkeeping is the rest of each job, between and after the steps.</figcaption>
 </figure>
 
 Almost all of the 11 seconds is the install: 9 s on GitHub, 2 s here, because the packages are already on the cache disk. Pickup is 2 s quicker too, because there's always one VM booted and waiting. When a push to main passes, it uploads a fresh cache, about 20 seconds more for that push, and the runner rebuilds the disk from it. The VMs can reach the internet, but not the PC, the rest of my home network or each other. The full design is in the [runbook](https://github.com/ColinCee/homelab/blob/main/docs/runbooks/ci-runner.md).
