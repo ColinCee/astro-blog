@@ -15,18 +15,18 @@ pubDate: "Oct 15 2026"
 <div class="cmp" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>GitHub</span><i style="--w:1"></i><b>1 min</b></div>
 <div class="cmp cmp--after" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>Mini PC</span><i style="--w:0"></i><b>0</b></div></div>
 </div>
-<figcaption>About 1.4× faster, 31% less time, and no minutes. The same commit on both, 5 runs each, Python 3.15; GitHub <a href="https://docs.github.com/en/billing/reference/actions-minute-multipliers">rounds every job up to a minute</a>.</figcaption>
+<figcaption>About 1.4× faster, and no minutes. The same commit on both, 5 runs each, Python 3.15.</figcaption>
 </figure>
 
-That's an Intel N100 mini PC running CI for cortex, a private Python/TypeScript project. Every number is in the [performance write-up](https://github.com/ColinCee/homelab/blob/main/docs/ci-runner-performance.md).
+That's an Intel N100 mini PC running CI for cortex, a private Python/TypeScript project.[^perf] GitHub bills every job as at least a minute.[^rounding]
 
 ## Why not GitHub's runners
 
-Private repos get [2,000 free GitHub minutes](https://docs.github.com/en/billing/concepts/product-billing/github-actions) a month, and a few projects with small commits burn through them. A self-hosted runner fixes that, but a CI job is just code from the repo, and on a home server it runs next to everything else in the house. So each job gets its own throwaway box: the internet, and nothing else. Being faster than GitHub came later, as a bonus.
+Private repos get 2,000 free GitHub minutes a month,[^minutes] and a few projects with small commits burn through them. A self-hosted runner fixes that, but a CI job is just code from the repo, and on a home server it runs next to everything else in the house. So each job gets its own throwaway box: the internet, and nothing else. Being faster than GitHub came later, as a bonus.
 
 ## Why Firecracker
 
-The rule was that a job doesn't share the host's kernel, which is what [Firecracker](https://firecracker-microvm.github.io/) is built for. Escape a container and you're on the box with Home Assistant; escape a VM and there's still a hypervisor in the way. That ruled out seven of the nine sandboxes I tried, Docker included.
+The rule was that a job doesn't share the host's kernel, which is what Firecracker is built for.[^firecracker] Escape a container and you're on the box with Home Assistant; escape a VM and there's still a hypervisor in the way. That ruled out seven of the nine sandboxes I tried, Docker included.
 
 <figure class="fig">
 <p class="fig__k">Own kernel</p>
@@ -47,13 +47,13 @@ Of the two left, QEMU was nearly three times slower, mostly boot and disk. Firec
 
 ## How it works
 
-1. A small Python [supervisor](https://github.com/ColinCee/homelab/blob/main/scripts/ci_supervisor.py) polls GitHub for queued jobs every 2 seconds (unchanged answers are free).
-2. It asks GitHub for a [just-in-time runner](https://docs.github.com/en/rest/actions/self-hosted-runners#create-configuration-for-a-just-in-time-runner-for-a-repository): a one-off registration that takes exactly one job, after which GitHub removes the runner.
+1. A small Python supervisor[^supervisor] polls GitHub for queued jobs every 2 seconds (unchanged answers are free).
+2. It asks GitHub for a just-in-time runner:[^jit] a one-off registration that takes exactly one job, after which GitHub removes the runner.
 3. It boots a fresh Firecracker VM and hands it only that registration. The GitHub token itself never leaves the PC, so a job that breaks out can't touch the repo's settings or register more runners.
 4. The VM gets a copy of a cache disk with main's packages, and its image already has the tools and actions, so nothing downloads.
 5. The job runs, and the VM is deleted with everything it wrote.
 
-The full design is in the [runbook](https://github.com/ColinCee/homelab/blob/main/docs/runbooks/ci-runner.md).
+The full design is in the runbook.[^runbook]
 
 <figure class="fig">
 <p class="fig__k">From GitHub's job to the mini PC's</p>
@@ -96,7 +96,7 @@ I also made two changes to cortex itself: its slowest checks start first, and Ty
 
 ### Snapshots
 
-I built it properly: a snapshot taken right after a real build of main, restored as the waiting VM in 11 to 15 ms. It saved about a second, all of it `uv sync`, which `--no-install-project` now gets anyway. Boot was never the slow part, each snapshot needs a 4.1 GB memory file, and every restored VM starts with the same random-number state, which [Firecracker's docs](https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/random-for-clones.md) warn about.
+I built it properly: a snapshot taken right after a real build of main, restored as the waiting VM in 11 to 15 ms. It saved about a second, all of it `uv sync`, which `--no-install-project` now gets anyway. Boot was never the slow part, each snapshot needs a 4.1 GB memory file, and every restored VM starts with the same random-number state, which Firecracker's docs warn about.[^snapshots]
 
 ### A second waiting VM
 
@@ -116,3 +116,12 @@ This is fast because it's tuned for one repo, not because self-hosting is fast. 
 - It's one small machine: two jobs at a time, Linux only, no failover.
 - Kernel and runner upgrades are mine to do.
 - One repo, 5 runs per setup, whole-second timestamps. GitHub alone varied from 26 s to 36 s.
+
+[^perf]: Every number in this post: [CI runner performance](https://github.com/ColinCee/homelab/blob/main/docs/ci-runner-performance.md), in my homelab repo.
+[^rounding]: GitHub, [Actions minute multipliers](https://docs.github.com/en/billing/reference/actions-minute-multipliers): partial minutes are rounded up per job.
+[^minutes]: GitHub, [billing for GitHub Actions](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
+[^firecracker]: [Firecracker](https://firecracker-microvm.github.io/).
+[^supervisor]: The supervisor: [`scripts/ci_supervisor.py`](https://github.com/ColinCee/homelab/blob/main/scripts/ci_supervisor.py).
+[^jit]: GitHub, [create configuration for a just-in-time runner](https://docs.github.com/en/rest/actions/self-hosted-runners#create-configuration-for-a-just-in-time-runner-for-a-repository).
+[^runbook]: [CI runner runbook](https://github.com/ColinCee/homelab/blob/main/docs/runbooks/ci-runner.md).
+[^snapshots]: Firecracker, [random for clones](https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/random-for-clones.md).
