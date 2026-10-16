@@ -32,17 +32,18 @@ So I wanted each job in its own throwaway box that can reach the internet and no
 The main requirement was that a job shouldn't share the host's kernel: escaping a VM still leaves a hypervisor in the way. That ruled out seven of the nine sandboxes I tried, including Docker, Podman, firejail and systemd hardening.
 
 <figure class="fig">
-<p class="fig__k">Job time</p>
-<div class="cmp"><span>No sandbox</span><i style="--w:0.271"></i><b>10.7 s</b></div>
-<div class="cmp"><span>Docker</span><i style="--w:0.286"></i><b>11.3 s</b></div>
-<div class="cmp cmp--after"><span>Firecracker</span><i style="--w:0.362"></i><b>14.3 s</b></div>
-<div class="cmp"><span>QEMU VM</span><i style="--w:1"></i><b>39.5 s</b></div>
-<p class="fig__k">Start-up time</p>
-<div class="cmp"><span>No sandbox</span><i style="--w:0.010"></i><b>0.1 s</b></div>
-<div class="cmp"><span>Docker</span><i style="--w:0.031"></i><b>0.3 s</b></div>
-<div class="cmp cmp--after"><span>Firecracker</span><i style="--w:0.082"></i><b>0.8 s</b></div>
-<div class="cmp"><span>QEMU VM</span><i style="--w:1"></i><b>9.8 s</b></div>
-<figcaption>Same job, offline with warm caches. Docker shares the host's kernel and is here for comparison. Each group drawn to its own scale.</figcaption>
+<p class="fig__k">Own kernel</p>
+<div class="dot"><span>QEMU VM</span><i style="--x:0.988"></i><b>39.5 s</b></div>
+<div class="dot dot--after"><span>Firecracker</span><i style="--x:0.358"></i><b>14.3 s</b></div>
+<p class="fig__k">Shares the host's kernel, so ruled out</p>
+<div class="dot"><span>firejail</span><i style="--x:0.258"></i><b>10.3 s</b></div>
+<div class="dot"><span>systemd-nspawn</span><i style="--x:0.260"></i><b>10.4 s</b></div>
+<div class="dot"><span>systemd hardening</span><i style="--x:0.265"></i><b>10.6 s</b></div>
+<div class="dot"><span>No sandbox</span><i style="--x:0.267"></i><b>10.7 s</b></div>
+<div class="dot"><span>Rootless Podman</span><i style="--x:0.267"></i><b>10.7 s</b></div>
+<div class="dot"><span>Docker</span><i style="--x:0.283"></i><b>11.3 s</b></div>
+<div class="dot"><span>Incus container</span><i style="--x:0.475"></i><b>19 s</b></div>
+<figcaption>Job time for the same job, offline with warm caches, on one axis from 0 to 40 s. Only two options give a job its own kernel, and Firecracker is the one that sits with the containers.</figcaption>
 </figure>
 
 Docker is about 3 seconds faster, so why not use it? Because a container shares the kernel with everything else on the PC, including Home Assistant and my other services. One kernel bug or a misconfigured container is then a way onto the host. CI jobs also tend to want root (the VMs give them passwordless `sudo`), which is fine in a throwaway VM and a lot riskier in a container.
