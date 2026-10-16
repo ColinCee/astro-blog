@@ -1,0 +1,101 @@
+---
+// Demo of the diagram kit in src/components/diagrams. Not linked from the nav
+// and kept out of search and the sitemap.
+import Base from "../../layouts/Base.astro";
+import EventLoopStepper from "../../components/diagrams/EventLoopStepper.astro";
+import ScopeTree from "../../components/diagrams/ScopeTree.astro";
+import Flashcards from "../../components/diagrams/Flashcards.astro";
+import Stages from "../../components/diagrams/Stages.astro";
+import FitTable from "../../components/diagrams/FitTable.astro";
+import type { LoopStep } from "../../components/diagrams/types";
+
+const code = [
+  "console.log(1)",
+  "setTimeout(() => console.log(2), 0)",
+  "Promise.resolve().then(() => console.log(3))",
+  "console.log(4)",
+];
+const t = "timer → log(2)";
+const m = "then → log(3)";
+const steps: LoopStep[] = [
+  { line: -1, stack: ["main()"], micro: [], macro: [], out: [], note: "Guess first. The script runs as one task on the stack." },
+  { line: 0, stack: ["main()", "log(1)"], micro: [], macro: [], out: ["1"], note: "Synchronous. Prints 1." },
+  { line: 1, stack: ["main()", "setTimeout"], micro: [], macro: [t], out: ["1"], note: "Even at 0 ms, the callback waits in the macrotask queue." },
+  { line: 2, stack: ["main()", ".then"], micro: [m], macro: [t], out: ["1"], note: "The promise is resolved, so its callback goes to the microtask queue." },
+  { line: 3, stack: ["main()", "log(4)"], micro: [m], macro: [t], out: ["1", "4"], note: "Synchronous. Prints 4." },
+  { line: -1, stack: [], micro: [m], macro: [t], out: ["1", "4"], note: "Stack empty: drain ALL microtasks before any macrotask." },
+  { line: 2, stack: ["log(3)"], micro: [], macro: [t], out: ["1", "4", "3"], note: "The microtask prints 3." },
+  { line: 1, stack: ["log(2)"], micro: [], macro: [], out: ["1", "4", "3", "2"], note: "Then ONE macrotask: prints 2. Answer: 1 4 3 2." },
+];
+---
+
+<Base title="Diagram kit · Colin Cheung" description="Reusable diagram components for posts and notes." noindex>
+  <div class="lab">
+    <header>
+      <p class="kicker">Lab</p>
+      <h1>Diagram kit</h1>
+      <p class="lede">Components in <code>src/components/diagrams</code>. Each takes plain data as props and follows the site theme.</p>
+    </header>
+
+    <section>
+      <h2>EventLoopStepper</h2>
+      <EventLoopStepper code={code} steps={steps} />
+    </section>
+
+    <section>
+      <h2>ScopeTree</h2>
+      <ScopeTree
+        node={{
+          label: "global scope",
+          vars: ['const prefix = "acct"'],
+          children: [
+            {
+              label: "function makeCounter()",
+              kind: "function",
+              vars: ["let count = 0"],
+              children: [{ label: "returned arrow fn · closure keeps count alive", kind: "block", vars: ["return () => `${prefix}-${++count}`"] }],
+            },
+          ],
+        }}
+      />
+    </section>
+
+    <section>
+      <h2>Stages</h2>
+      <Stages stages={["Talent call", "2 × 1 h live coding", "System design", "Final"]} current={0} />
+    </section>
+
+    <section>
+      <h2>FitTable</h2>
+      <FitTable
+        rows={[
+          { need: "Node.js + TypeScript", evidence: "Main stack for 6+ years", level: "strong" },
+          { need: "GCP", evidence: "Kubernetes and Pub/Sub at Hopper, mostly AWS since", level: "partial" },
+          { need: "Go", evidence: "None yet", level: "gap" },
+        ]}
+      />
+    </section>
+
+    <section>
+      <h2>Flashcards</h2>
+      <Flashcards
+        cards={[
+          { q: "Promise.all vs allSettled", a: "<code>all</code> rejects on the first failure. <code>allSettled</code> waits for every result." },
+          { q: "== vs ===", a: "<code>==</code> coerces types, <code>===</code> doesn't." },
+          { q: "unknown vs any", a: "<code>any</code> turns checking off. <code>unknown</code> makes you narrow first." },
+        ]}
+      />
+    </section>
+  </div>
+</Base>
+
+<style>
+  .lab { max-width: var(--w-page); margin: 0 auto; padding-block: 2rem 4rem; display: grid; gap: 2.5rem; }
+  .lab header { display: grid; gap: 0.6rem; }
+  .lab h1 { margin: 0; font-size: clamp(2rem, 6vw, 3.4rem); font-weight: 800; letter-spacing: -0.03em; line-height: 0.95; }
+  .lab h2 { margin: 0; font-size: 1.15rem; font-family: var(--mono); font-weight: 500; color: var(--muted); }
+  .lab section { display: grid; gap: 1rem; min-width: 0; }
+  .kicker { margin: 0; font: 0.75rem var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-soft); }
+  .lede { margin: 0; color: var(--muted); max-width: 60ch; }
+  code { font-family: var(--mono); font-size: 0.88em; }
+</style>

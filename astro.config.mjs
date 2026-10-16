@@ -26,7 +26,8 @@ export default defineConfig({
         },
       },
     }),
-    sitemap(),
+    // Lab pages are component demos, not content.
+    sitemap({ filter: (page) => !page.includes("/lab/") }),
   ],
   adapter: cloudflare({
     platformProxy: {

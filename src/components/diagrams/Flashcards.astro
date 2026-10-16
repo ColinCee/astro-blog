@@ -1,0 +1,31 @@
+---
+// Tap-to-reveal question cards. Native <details>, so it works without JS.
+import type { Card } from "./types";
+
+interface Props {
+  cards: Card[];
+}
+const { cards } = Astro.props;
+---
+
+<div class="cards">
+  {
+    cards.map((c) => (
+      <details class="card">
+        <summary>{c.q}</summary>
+        <p class="card__a" set:html={c.a} />
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); align-items: start; gap: 0.75rem; }
+  .card { padding: 0.8rem 0.95rem; background: var(--pane); border: 1px solid var(--line); border-radius: 10px; }
+  .card summary { display: flex; justify-content: space-between; gap: 0.75rem; font-weight: 600; cursor: pointer; list-style: none; }
+  .card summary::-webkit-details-marker { display: none; }
+  .card summary::after { content: "+"; font-family: var(--mono); color: var(--accent-soft); }
+  .card[open] summary::after { content: "−"; }
+  .card__a { margin: 0.6rem 0 0; color: var(--muted); font-size: 0.95rem; }
+  .card__a :global(code) { font-family: var(--mono); font-size: 0.88em; }
+</style>

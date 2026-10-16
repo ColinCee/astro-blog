@@ -238,6 +238,13 @@ homepage terminal window's ambient lift, nothing else.
 
 ## 5. Components
 
+### Diagram kit
+- `src/components/diagrams/`: `EventLoopStepper`, `ScopeTree`, `Stages`,
+  `FitTable`, `Flashcards`. Each takes plain data as props (types in
+  `types.ts`) and uses only the tokens above, so both themes work.
+- Live demo at `/lab/diagrams` (noindex, left out of the sitemap). Add a
+  section there when you add a component.
+
 ### Navigation
 - Shared `Nav.astro` (content pages) mirrors the homepage `.t-nav`. A mono mark
   `colin@glasgow:~$` (the `@` is tomato, `:~$` faint) on the left; mono links
