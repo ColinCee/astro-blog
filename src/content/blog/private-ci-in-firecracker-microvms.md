@@ -15,7 +15,7 @@ pubDate: "Oct 15 2026"
 <div class="cmp" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>GitHub</span><i style="--w:1"></i><b>1 min</b></div>
 <div class="cmp cmp--after" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>Mini PC</span><i style="--w:0"></i><b>0</b></div></div>
 </div>
-<figcaption>About 1.4× faster, and no minutes. The same commit on both, 5 runs each, Python 3.15.</figcaption>
+<figcaption>From push to done: about 1.4× faster, and no minutes. The same commit on both, 5 runs each.</figcaption>
 </figure>
 
 That's an Intel N100 mini PC running CI for cortex, a private Python/TypeScript project.[^perf] GitHub bills every job as at least a minute.[^rounding]
@@ -40,7 +40,7 @@ The rule was that a job doesn't share the host's kernel, which is what Firecrack
 <div class="dot"><span>Rootless Podman</span><i style="--x:0.268"></i><b>10.7 s</b></div>
 <div class="dot"><span>Docker</span><i style="--x:0.282"></i><b>11.3 s</b></div>
 <div class="dot"><span>Incus container</span><i style="--x:0.475"></i><b>19 s</b></div>
-<figcaption>The same job under each sandbox, on one axis from 0 to 40 s.</figcaption>
+<figcaption>A separate test: just the test suite, offline, under each sandbox, on one axis from 0 to 40 s.</figcaption>
 </figure>
 
 Of the two left, QEMU was nearly three times slower, mostly boot and disk. Firecracker costs about 4 seconds against no sandbox, 0.8 of it booting. It also means jobs can have `sudo`, which is fine in a VM you throw away.
@@ -56,36 +56,26 @@ Of the two left, QEMU was nearly three times slower, mostly boot and disk. Firec
 The full design is in the runbook.[^runbook]
 
 <figure class="fig">
-<p class="fig__k">From GitHub's job to the mini PC's</p>
-<div class="cmp"><span>GitHub job</span><i style="--w:1"></i><b>24 s</b></div>
-<div class="cmp"><span>Set up, checkout</span><i style="--w:0.042;margin-left:95.8%;background:var(--muted)"></i><b>&minus;1 s</b></div>
-<div class="cmp"><span>Install</span><i style="--w:0.250;margin-left:70.8%;background:var(--muted)"></i><b>&minus;6 s</b></div>
-<div class="cmp"><span>Tests</span><i style="--w:0.042;margin-left:66.7%;background:var(--muted)"></i><b>&minus;1 s</b></div>
-<div class="cmp"><span>Bookkeeping</span><i style="--w:0.042;margin-left:66.7%;background:var(--muted)"></i><b>+1 s</b></div>
-<div class="cmp cmp--after"><span>Mini PC job</span><i style="--w:0.708"></i><b>17 s</b></div>
-<figcaption>Same commit, medians of 5 runs, drawn to scale. Bookkeeping is the rest of each job, between and after the steps.</figcaption>
+<p class="fig__k">Where the 9 seconds go</p>
+<div class="cmp"><span>GitHub</span><i style="--w:1"></i><b>29 s</b></div>
+<div class="cmp"><span>Pickup</span><i style="--w:0.034;margin-left:96.6%;background:var(--muted)"></i><b>&minus;1 s</b></div>
+<div class="cmp"><span>Set up, checkout</span><i style="--w:0.034;margin-left:93.1%;background:var(--muted)"></i><b>&minus;1 s</b></div>
+<div class="cmp"><span>Install</span><i style="--w:0.207;margin-left:72.4%;background:var(--muted)"></i><b>&minus;6 s</b></div>
+<div class="cmp"><span>Tests</span><i style="--w:0.034;margin-left:69.0%;background:var(--muted)"></i><b>&minus;1 s</b></div>
+<div class="cmp cmp--after"><span>Mini PC</span><i style="--w:0.690"></i><b>20 s</b></div>
+<figcaption>The same push as above, drawn to scale. The rest, GitHub's own bookkeeping between steps, takes the same on both.</figcaption>
 </figure>
 
-The job's 7 seconds is almost all install: 8 s on GitHub, 2 s from the cache disk. Pickup is a second quicker too, because a VM is always booted and waiting.
+Most of it is the install: 8 s on GitHub, 2 s from the cache disk. Pickup is a second quicker because a VM is always booted and waiting.
 
-## From 52 seconds to 21
-
-<figure class="fig">
-<p class="fig__k">Run created to job done</p>
-<div class="cmp"><span>First version</span><i style="--w:1"></i><b>52 s</b></div>
-<div class="cmp"><span>Tools in the image</span><i style="--w:0.846"></i><b>44 s</b></div>
-<div class="cmp"><span>One VM kept warm</span><i style="--w:0.712"></i><b>37 s</b></div>
-<div class="cmp"><span>Cache disk</span><i style="--w:0.635"></i><b>33 s</b></div>
-<div class="cmp cmp--after"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
-<figcaption>Real pushes, all within a day: 2.5× faster than the first version. The last bar includes about a second from a cortex change GitHub got too.</figcaption>
-</figure>
+## What made it fast
 
 - Node, uv and Python baked into the VM image, so nothing downloads per job.
-- One VM kept booted and waiting. That saved about 8 seconds, mostly the GitHub runner starting up, for 450 MB of RAM.
-- A cache disk with main's packages, so restoring GitHub's caches went from 6 s to 1.
-- Then everything else moved to before the job starts: the actions unpacked in the image, `setup-uv` and `setup-node` dropped, `node_modules` copied from the disk when the lockfile matches, and `uv sync --no-install-project`.
+- One VM kept booted and waiting, for 450 MB of RAM.
+- A cache disk with main's packages, instead of restoring GitHub's caches.
+- Everything else done before the job starts: the actions unpacked in the image, `setup-uv` and `setup-node` dropped, `node_modules` copied from the disk when the lockfile matches, and `uv sync --no-install-project`.
 
-I also made two changes to cortex itself: its slowest checks start first, and TypeScript 7's compiler cut the type check from 3.6 s to 1.3 s. They speed GitHub up just as much, so the comparison at the top runs the same commit on both; that's where today's 20 s comes from. What's left is mostly the tests.
+I also sped up cortex's own tests (TypeScript 7's compiler, slow checks first), but GitHub runs the same commit, so that's on both sides. What's left is mostly the tests.
 
 ## What didn't help
 
@@ -107,10 +97,10 @@ Mounting `node_modules` instead of copying it, reading packages into memory ahea
 
 ## Limitations
 
-This is fast because it's tuned for one repo, not because self-hosting is fast. A new project starts near the 52-second version.
+This is fast because it's tuned for one repo, not because self-hosting is fast. My first version took over twice as long.
 
 - Prewarming is per repo. A new language, action or lockfile means rebuilding the image or the cache disk.
-- A changed lockfile installs from scratch, and a green push to main spends about 20 seconds uploading a fresh cache.
+- A changed lockfile installs from scratch, and every green push to main has to upload a fresh cache.
 - Only one repo gets the waiting VM. Others boot first, about 8 s slower.
 - It's one small machine: two jobs at a time, Linux only, no failover.
 - Kernel and runner upgrades are mine to do.
