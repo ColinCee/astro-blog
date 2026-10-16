@@ -2,7 +2,7 @@
 title: "Free CI at Home, Faster Than GitHub's"
 shortTitle: "Free CI at home"
 description: "Faster than GitHub's runner, no minutes used, one throwaway VM per job."
-stat: "0 min"
+stat: "1.5× faster"
 pubDate: "Oct 15 2026"
 ---
 ## Results
@@ -16,7 +16,7 @@ pubDate: "Oct 15 2026"
 <div class="cmp" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>GitHub</span><i style="--w:1"></i><b>1 min</b></div>
 <div class="cmp cmp--after" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>Mini PC</span><i style="--w:0"></i><b>0</b></div></div>
 </div>
-<figcaption>The same commit on both, 5 runs each, Python 3.15. GitHub rounds every job up to a minute.</figcaption>
+<figcaption>About 1.5× faster, 35% less time, and no minutes. The same commit on both, 5 runs each, Python 3.15; GitHub rounds every job up to a minute.</figcaption>
 </figure>
 
 That's an Intel N100 mini PC running CI for cortex, a private Python/TypeScript project. Every number is in the [performance write-up](https://github.com/ColinCee/homelab/blob/main/docs/ci-runner-performance.md).
@@ -77,7 +77,7 @@ The 11 seconds is almost all install: 9 s on GitHub, 2 s from the cache disk. Pi
 <div class="cmp"><span>Cache disk</span><i style="--w:0.635"></i><b>33 s</b></div>
 <div class="cmp"><span>Front-load the rest</span><i style="--w:0.404"></i><b>21 s</b></div>
 <div class="cmp cmp--after"><span>Faster type check</span><i style="--w:0.385"></i><b>20 s</b></div>
-<figcaption>Real pushes, all within a day.</figcaption>
+<figcaption>Real pushes, all within a day: 2.6× faster than the first version.</figcaption>
 </figure>
 
 - Node, uv and Python baked into the VM image, so nothing downloads per job.
