@@ -960,20 +960,27 @@ const last = entries[entries.length - 1];
     color: var(--accent-soft);
     font-weight: 700;
   }
-  /* A reference line across .cmp bars: wrap each bar in <em class="track"> and set
-     --ref on the figure (the reference value as a fraction of the largest). */
-  .prose .cmp .track {
+  /* A reference line across .cmp bars: wrap the rows in <div class="cmp-ref"> with
+     --ref (the reference value as a fraction of the largest). On wide screens it is one
+     line through the bar column; on phones, where labels sit above the bars, each row
+     carries its own short segment (the bars are wrapped in <em class="track">). */
+  .prose .cmp-ref {
     position: relative;
-    display: block;
-    font-style: normal;
+    display: grid;
+    gap: 0.75rem;
   }
-  .prose .cmp .track::after {
+  .prose .cmp-ref::after {
     content: "";
     position: absolute;
-    top: -0.35rem;
-    bottom: -0.35rem;
-    left: calc(var(--ref) * 100%);
+    top: -0.2rem;
+    bottom: -0.2rem;
+    left: calc(10.5rem + 0.8rem + (100% - 10.5rem - 4.2rem - 1.6rem) * var(--ref));
     border-left: 1.5px dashed var(--faint);
+    pointer-events: none;
+  }
+  .prose .cmp .track {
+    display: block;
+    font-style: normal;
   }
   /* One bar split into parts: --w is each part's share. */
   .prose .stack {
@@ -1133,6 +1140,20 @@ const last = entries[entries.length - 1];
     font-weight: 700;
   }
   @media (max-width: 34rem) {
+    .prose .cmp-ref::after {
+      display: none;
+    }
+    .prose .cmp .track {
+      position: relative;
+    }
+    .prose .cmp .track::after {
+      content: "";
+      position: absolute;
+      top: -0.3rem;
+      bottom: -0.3rem;
+      left: calc(var(--ref) * 100%);
+      border-left: 1.5px dashed var(--faint);
+    }
     .prose .cmp,
     .prose .dot {
       grid-template-columns: minmax(0, 1fr) auto;

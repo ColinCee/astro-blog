@@ -36,7 +36,7 @@ The rule was that a job doesn't share the host's kernel, which is what Firecrack
 <div class="dot"><span>firejail</span><i style="--x:0.258"></i><b>10.3 s</b></div>
 <div class="dot"><span>systemd-nspawn</span><i style="--x:0.260"></i><b>10.4 s</b></div>
 <div class="dot"><span>systemd hardening</span><i style="--x:0.265"></i><b>10.6 s</b></div>
-<div class="dot"><span>No sandbox</span><i style="--x:0.268"></i><b>10.7 s</b></div>
+<div class="dot"><span>None (baseline)</span><i style="--x:0.268"></i><b>10.7 s</b></div>
 <div class="dot"><span>Rootless Podman</span><i style="--x:0.268"></i><b>10.7 s</b></div>
 <div class="dot"><span>Docker</span><i style="--x:0.282"></i><b>11.3 s</b></div>
 <div class="dot"><span>Incus container</span><i style="--x:0.475"></i><b>19 s</b></div>
@@ -70,13 +70,15 @@ Almost all of it is tool setup and installs: 7 s on GitHub, 2 s from the cache d
 
 ## From 51 seconds to 20
 
-<figure class="fig" style="--ref:0.510">
+<figure class="fig">
 <p class="fig__k">Run start to done, each stage on today's commit</p>
+<div class="cmp-ref" style="--ref:0.510">
 <div class="cmp"><span>First version</span><em class="track"><i style="--w:1.000"></i></em><b>51 s</b></div>
 <div class="cmp"><span>+ tools in the image</span><em class="track"><i style="--w:0.941"></i></em><b>48 s</b></div>
 <div class="cmp"><span>+ one VM waiting</span><em class="track"><i style="--w:0.725"></i></em><b>37 s</b></div>
 <div class="cmp"><span>+ cache disk</span><em class="track"><i style="--w:0.549"></i></em><b>28 s</b></div>
 <div class="cmp cmp--after"><span>+ front-load the rest</span><em class="track"><i style="--w:0.392"></i></em><b>20 s</b></div>
+</div>
 <figcaption>The dashed line is GitHub's 26 s. Every stage was rebuilt and run in one session alongside GitHub, 5 runs each, with identical isolation; only the speed changes differ.</figcaption>
 </figure>
 
