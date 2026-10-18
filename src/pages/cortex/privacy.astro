@@ -1,0 +1,52 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+
+<Base title="Cortex privacy policy · Colin Cheung" description="What Cortex does with Google account data.">
+  <article class="doc">
+    <h1>Cortex privacy policy</h1>
+    <p>Last updated 18 October 2026.</p>
+    <p>
+      Cortex is a personal tool that runs on my own PC, for my use only. The only Google account it signs in to is
+      mine.
+    </p>
+    <h2>What it reads</h2>
+    <p>
+      With read-only access, it reads my Gmail and Google Calendar so it can tell whether a plan is already in my
+      calendar.
+    </p>
+    <h2>What it writes</h2>
+    <p>
+      With calendar access, it adds, changes or removes an event in my Google Calendar only when I click to approve
+      it, and it only changes or removes events it created itself. It never sends email.
+    </p>
+    <h2>Where the data goes</h2>
+    <p>
+      Data read from Google is processed and stored on my PC. It is not sold, shared with anyone or used for
+      advertising.
+    </p>
+    <p>
+      Cortex's use of information received from Google APIs adheres to the
+      <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>,
+      including the Limited Use requirements.
+    </p>
+    <h2>Removing access</h2>
+    <p>
+      Access can be withdrawn at any time at
+      <a href="https://myaccount.google.com/connections">myaccount.google.com/connections</a>.
+    </p>
+    <h2>Contact</h2>
+    <p><a href="mailto:colincheung25@gmail.com">colincheung25@gmail.com</a></p>
+  </article>
+</Base>
+
+<style>
+  .doc {
+    max-width: 40rem;
+    margin: 2rem auto;
+    line-height: 1.6;
+  }
+  .doc a {
+    text-decoration: underline;
+  }
+</style>
