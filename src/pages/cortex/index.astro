@@ -1,0 +1,29 @@
+---
+// Home page for Cortex, a personal tool. Google's OAuth consent screen links here and to ./privacy.
+import Base from "../../layouts/Base.astro";
+---
+
+<Base title="Cortex · Colin Cheung" description="Cortex: a personal assistant that runs on Colin Cheung's own PC.">
+  <article class="doc">
+    <h1>Cortex</h1>
+    <p>
+      Cortex is a personal tool that runs on my own PC. It notices plans I make in chats and emails and suggests
+      calendar entries for them. Nothing is added to my calendar until I click to approve it.
+    </p>
+    <p>
+      It is for my own use only. It is not offered to anyone else, and nobody else can sign in to it.
+    </p>
+    <p><a href="/cortex/privacy">Privacy policy</a></p>
+  </article>
+</Base>
+
+<style>
+  .doc {
+    max-width: 40rem;
+    margin: 2rem auto;
+    line-height: 1.6;
+  }
+  .doc a {
+    text-decoration: underline;
+  }
+</style>
