@@ -34,7 +34,7 @@ This is part 3 of 3. [Part 1](/blog/dissertation-revival-speed/): the 2018 code 
 
 <figure class="fig">
 <div class="chart">
-<svg viewBox="0 0 640 150" role="img" aria-label="The 28 and a half hours: Claude worked through, Colin steered nine times, numbered below">
+<svg viewBox="0 0 640 150" role="img" aria-label="The 28 and a half hours: Claude worked through, I stepped in eight times, numbered below">
 <rect class="band" x="270" y="8" width="228" height="112"/><text x="384" y="22" text-anchor="middle">asleep, runs going</text>
 <text x="16" y="40">Me</text>
 <line class="ax" x1="16" x2="624" y1="58" y2="58"/>
@@ -52,9 +52,9 @@ This is part 3 of 3. [Part 1](/blog/dissertation-revival-speed/): the 2018 code 
 <rect class="mk" x="267" y="92" width="222" height="12" rx="1"><title>overnight: 13 queues of runs</title></rect>
 <rect class="mk" x="491" y="92" width="51" height="12" rx="1"><title>button check, reward</title></rect>
 <rect class="mk" x="544" y="92" width="79" height="12" rx="1"><title>all games, docs</title></rect>
-<text x="16" y="138" text-anchor="start">Sat 10:39</text>
+<text x="16" y="138" text-anchor="start">Sun 10:39</text>
 <text x="301" y="138" text-anchor="middle">midnight</text>
-<text x="624" y="138" text-anchor="end">Sun 15:08</text>
+<text x="624" y="138" text-anchor="end">Mon 15:08</text>
 </svg>
 </div>
 <figcaption>Grey: what Claude was working on. Tomato: each time I stepped in, numbered below. Times are approximate (UTC), from the session log.</figcaption>
