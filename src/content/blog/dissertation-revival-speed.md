@@ -3,6 +3,8 @@ title: "My 2018 Dissertation, 65× Faster"
 shortTitle: "My Dissertation, 65× Faster"
 description: "Why the game-playing AI I wrote as a student took 12 hours to train in 2018, and how it now trains in 11 minutes with the same results."
 stat: "12 h → 11 min"
+statLabel: "per training run"
+hook: "The game-playing AI from my dissertation, rebuilt with Claude."
 figures:
   - label: "2018"
     value: "12 h"
