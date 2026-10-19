@@ -1343,6 +1343,7 @@ const last = entries[entries.length - 1];
     outline: none;
   }
   .prose .deck {
+    width: var(--dw);
     position: relative;
     transform-style: preserve-3d;
     transform: rotateY(-28deg) rotateX(6deg);
@@ -1357,6 +1358,20 @@ const last = entries[entries.length - 1];
     border: 1px solid var(--line);
     border-radius: 2px;
     transform: translate3d(calc(var(--i) * 0.45rem), calc(var(--i) * -0.45rem), calc(var(--i) * -0.8rem));
+  }
+  @media (max-width: 40rem) {
+    .prose .deck {
+      width: calc(var(--dw) * 0.55);
+      margin: 0.4rem 0.45rem 0.3rem 0.1rem;
+    }
+    .prose .slab--out span {
+      padding: 0.35rem 0.4rem;
+    }
+    .prose .net {
+      gap: 0.6rem 0.3rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
   }
   .prose .slab:hover .deck,
   .prose .slab:focus-visible .deck {
@@ -1489,6 +1504,136 @@ const last = entries[entries.length - 1];
     .prose .fig[data-grow].is-in .gain i {
       transform: none;
     }
+  }
+  /* Scroll race: a tall section with its figure pinned; the reader's scroll
+     runs the clock. Armed by JS (not under reduced motion); otherwise it is an
+     ordinary figure showing the final times. */
+  .prose .scrolly.is-armed {
+    height: 200vh;
+  }
+  .prose .scrolly.is-armed > .fig {
+    position: sticky;
+    top: 20vh;
+  }
+  .prose .scrolly .clock {
+    font-family: var(--grotesk);
+    font-size: clamp(1.8rem, 6vw, 2.6rem);
+    font-weight: 800;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  /* The learning loop: hand-written parts outlined in the accent; a dot runs
+     each loop (fast: playing, slow: learning). */
+  .prose .loop svg {
+    display: block;
+    width: 100%;
+    max-width: 30rem;
+    margin: 0 auto;
+  }
+  .prose .loop rect {
+    fill: var(--pane);
+    stroke: var(--line);
+    stroke-width: 1.2;
+  }
+  .prose .loop .mine rect {
+    stroke: var(--accent);
+    stroke-width: 1.6;
+  }
+  .prose .loop text {
+    font-family: var(--mono);
+    font-size: 12px;
+    fill: var(--ink);
+  }
+  .prose .loop text.sub {
+    font-size: 11px;
+    fill: var(--faint);
+  }
+  .prose .loop .arr {
+    fill: none;
+    stroke: var(--faint);
+    stroke-width: 1.2;
+    marker-end: url(#loop-head);
+  }
+  .prose .loop .pulse {
+    fill: var(--accent);
+    offset-rotate: 0deg;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .prose .loop .pulse {
+      animation: loop-run 2.4s linear infinite;
+    }
+    .prose .loop .pulse--slow {
+      animation-duration: 5s;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .prose .loop .pulse {
+      display: none;
+    }
+  }
+  @keyframes loop-run {
+    from {
+      offset-distance: 0%;
+    }
+    to {
+      offset-distance: 100%;
+    }
+  }
+  /* Ladder (widget): step chart with a focusable column per step. */
+  .prose .ladder svg {
+    display: block;
+    width: 100%;
+    max-width: 34rem;
+    margin: 0 auto;
+    overflow: visible;
+  }
+  .prose .ladder text {
+    font-family: var(--mono);
+    font-size: 11px;
+    fill: var(--faint);
+  }
+  .prose .ladder .ax {
+    stroke: var(--line);
+  }
+  .prose .ladder .ln {
+    fill: none;
+    stroke: var(--muted);
+    stroke-width: 2;
+  }
+  .prose .ladder .riser {
+    stroke: transparent;
+    stroke-width: 4;
+  }
+  .prose .ladder .riser.is-on {
+    stroke: var(--accent);
+  }
+  .prose .ladder .hit {
+    fill: transparent;
+    cursor: pointer;
+    outline: none;
+  }
+  .prose .ladder .hit.is-on {
+    fill: color-mix(in oklch, var(--accent) 10%, transparent);
+  }
+  .prose .ladder .hit:focus-visible {
+    stroke: var(--accent);
+  }
+  .prose .ladder [data-out] {
+    display: grid;
+    gap: 0.2rem;
+    min-height: 4.6rem;
+    margin: 0;
+  }
+  .prose .ladder [data-out] b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .prose .ladder [data-out] strong {
+    color: var(--accent-soft);
+  }
+  .prose .ladder [data-out] small {
+    color: var(--faint);
   }
   /* Q-value bars under a recording (widget "qview"). */
   .prose .qbars {
