@@ -44,16 +44,32 @@ Points scored along the way are rewards too; Round 2 is about when they mislead.
 
 ### Double DQN, my 2018 agent's main trick
 
-Each box learns from the next box's best score. But every score is a guess, and the best-looking guess is usually one that came out too high. Zoom in on one arrow:
+Each box learns from the box after it. But a box's score is really one guess per move, and DQN takes the highest. Every guess is a little off, up or down, so the highest is usually one that came out too high:
 
 <figure class="fig">
-<p class="fig__k">Zoom in on one arrow: box 7 learning from box 8 (illustration)</p>
-<div class="pq">
-<div class="pq__res" style="grid-area:a"><small>box 7 learns</small><b>DQN</b><span>0.99 × 1.05 = <strong>1.04</strong></span><small>too high</small></div>
-<div class="pq__to" style="grid-area:b"><i aria-hidden="true"></i>its own highest guess, as it is</div>
-<div class="pq__next" style="grid-area:n"><small>box 8: one guess per move</small><span>left <b>0.92</b></span><span class="is-max">shoot <b>1.05</b><small>really worth 1.00</small></span><span>right <b>0.90</b></span></div>
-<div class="pq__res pq__res--hi" style="grid-area:c"><small>box 7 learns</small><b>Double DQN</b><span>0.99 × 1.01 = <strong>1.00</strong></span><small>true value 0.99</small></div>
-<div class="pq__to pq__to--hi" style="grid-area:d"><i aria-hidden="true"></i>picks shoot, then an older copy of the network, with different errors, scores it: 1.01</div>
+<p class="fig__k">How box 7 learns from box 8 (illustration)</p>
+<div class="chart chart--narrow">
+<svg viewBox="0 0 320 250" role="img" aria-label="Box 8 has one guess per move: left 0.92, shoot 1.05, right 0.90. Shoot is really worth 1.00. DQN uses the highest guess as it is, so box 7 learns 0.99 times 1.05, which is 1.04: too high. Double DQN picks shoot, then an older copy of the network scores it at 1.01, so box 7 learns 1.00, close to the true 0.99.">
+<defs><marker id="dd-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--faint)"/></marker><marker id="dd-head-hi" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--accent)"/></marker></defs>
+<text x="160" y="14" text-anchor="middle" class="ink">box 8: one guess per move</text>
+<rect x="8" y="24" width="92" height="40" rx="4" style="fill:var(--pane);stroke:var(--line)"/><text x="54" y="40" text-anchor="middle">left</text><text x="54" y="56" text-anchor="middle" class="ink">0.92</text>
+<rect x="114" y="24" width="92" height="40" rx="4" style="fill:var(--pane);stroke:var(--ink)"/><text x="160" y="40" text-anchor="middle">shoot</text><text x="160" y="56" text-anchor="middle" class="ink">1.05</text>
+<rect x="220" y="24" width="92" height="40" rx="4" style="fill:var(--pane);stroke:var(--line)"/><text x="266" y="40" text-anchor="middle">right</text><text x="266" y="56" text-anchor="middle" class="ink">0.90</text>
+<text x="160" y="80" text-anchor="middle">really worth 1.00</text>
+<path d="M160,86 V96 H80 V116" class="ax" style="stroke:var(--faint)" marker-end="url(#dd-head)"/>
+<path d="M160,96 H240 V116" class="ax" style="stroke:var(--accent)" marker-end="url(#dd-head-hi)"/>
+<rect x="4" y="120" width="152" height="104" rx="5" style="fill:var(--pane);stroke:var(--line)"/>
+<text x="14" y="140" class="ink" style="font-weight:700">DQN</text>
+<text x="14" y="156">uses 1.05 as it is</text>
+<text x="14" y="198" class="ink">box 7: 1.04</text><text x="14" y="214">too high</text>
+<rect x="164" y="120" width="152" height="104" rx="5" style="fill:var(--pane);stroke:var(--accent)"/>
+<text x="174" y="140" class="hi">Double DQN</text>
+<text x="174" y="156">picks shoot, then</text>
+<text x="174" y="168">an older copy</text>
+<text x="174" y="180">scores it: 1.01</text>
+<text x="174" y="198" class="ink">box 7: 1.00</text><text x="174" y="214">close</text>
+<text x="160" y="244" text-anchor="middle">box 7 is truly worth 0.99</text>
+</svg>
 </div>
 </figure>
 
