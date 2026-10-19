@@ -30,15 +30,29 @@ First, what "learns" means here.
 
 ## A score for every move
 
-The network looks at the screen and scores each move: how many points it expects if it plays it. Then it plays the top score. It starts out playing at random, on purpose, and trusts its own scores a little more each game. After every move it checks its guess against what happened, and nudges it:
+The network looks at the screen and scores each move: all the reward it expects from here on, the points along the way and the win or loss at the end. Then it plays the top score. It starts out playing at random, on purpose, and trusts its own scores a little more each game. It learns each score from the next one, so the end result reaches back through the game a step at a time:
 
 <figure class="fig">
-<p class="fig__k">One nudge, step by step (illustration, round numbers)</p>
-<div class="nudge">
-<div class="nudge__step"><small>1. Guess</small><b>shoot: 2.0</b><span>its score before the move</span></div>
-<div class="nudge__step"><small>2. What happened</small><b>+1 &nbsp;then&nbsp; 1.5</b><span>it hit an alien, and its best score for the next moment is 1.5</span></div>
-<div class="nudge__step"><small>3. Target</small><b>1 + 1.5 = 2.5</b><span>what shoot was really worth, by its own next guess</span></div>
-<div class="nudge__step nudge__step--hi"><small>4. Nudge</small><b>2.0 → 2.1</b><span>a small step towards the target, not all the way</span></div>
+<p class="fig__k">How a score learns, along one game (illustration, round numbers)</p>
+<div class="chart chart--narrow nd-wrap">
+<svg viewBox="0 0 340 156" role="img" aria-label="A game as a chain of moments ending in a win worth +1. Each moment's score learns from the next one: after shooting with a score of 2.0, it got +1 and rated the next moment 1.5, so the target is 2.5 and its score is nudged to 2.1. The win at the end reaches earlier moments the same way, one step at a time.">
+<defs><marker id="nd-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--faint)"/></marker><marker id="nd-head-hi" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--accent)"/></marker></defs>
+<g class="nd">
+<rect x="8" y="30" width="72" height="44" rx="5" class="nd__hi"/><text x="44" y="48" text-anchor="middle" class="ink">shoot</text><text x="44" y="64" text-anchor="middle" class="hi">2.0 → 2.1</text>
+<rect x="116" y="30" width="72" height="44" rx="5"/><text x="152" y="48" text-anchor="middle" class="ink">next</text><text x="152" y="64" text-anchor="middle">best 1.5</text>
+<rect x="210" y="30" width="44" height="44" rx="5"/><text x="232" y="57" text-anchor="middle">…</text>
+<rect x="276" y="30" width="56" height="44" rx="5" class="nd__end"/><text x="304" y="48" text-anchor="middle" class="ink">win</text><text x="304" y="64" text-anchor="middle" class="ink">+1</text>
+</g>
+<path class="nd__fwd" d="M80,52 H114"/><text x="97" y="24" text-anchor="middle" class="ink">+1</text><text x="97" y="11" text-anchor="middle">alien hit</text>
+<path class="nd__fwd" d="M188,52 H208"/><path class="nd__fwd" d="M254,52 H274"/>
+<path class="nd__back nd__back--hi" d="M152,76 C152,112 44,112 44,78"/>
+<text x="96" y="126" text-anchor="middle" class="hi">target: 1 + 1.5 = 2.5</text>
+<text x="96" y="141" text-anchor="middle">so 2.0 is nudged up</text>
+<path class="nd__back" d="M304,76 C304,104 232,104 232,78"/>
+<path class="nd__back" d="M232,76 C232,96 160,96 156,78"/>
+<text x="270" y="126" text-anchor="middle">the win reaches</text>
+<text x="270" y="141" text-anchor="middle">back step by step</text>
+</svg>
 </div>
 </figure>
 

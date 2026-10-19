@@ -357,7 +357,7 @@ homepage terminal window's ambient lift, nothing else.
   stacks of real activation maps that face the reader on hover or focus), `.map`
   (an SVG route drawn over a game screen), `.gains` / `.gain` (before → after with
   a log-scale bar of the multiplier; `.gain--hi` is the headline row), `.arch` / `.cube` (a network as 3D blocks sized
-  by each layer's shape; a face can carry a real frame as an inline background, and `--slices` rules the depth faces into that many layers), `.nudge` (a worked example as a strip of steps), `.tlist` / `.trow` (a timing ladder:
+  by each layer's shape; a face can carry a real frame as an inline background, and `--slices` rules the depth faces into that many layers), `.nd` (a chain of moments with arrows forward for what happened and back for what each score learns from), `.tlist` / `.trow` (a timing ladder:
   one row per part, explanation beside the bar, time at the end), `.runs` (blocks on a
   shared time axis: how long each run takes and how many fit), `.loop` (a process diagram with a dot running
   each loop; accent outlines mark the parts the post is about), and `data-grow` (`.cmp` bars grow in once

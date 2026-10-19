@@ -1989,51 +1989,37 @@ const last = entries[entries.length - 1];
       grid-column: 1 / -1;
     }
   }
-  /* Nudge: a worked example as a strip of steps, read left to right (top to
-     bottom on phones); the last step, the result, takes the accent. */
-  .prose .nudge {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.5rem;
+  /* Score chain: moments of a game as boxes, forward arrows for what happened,
+     curved arrows back for what each score learns from. */
+  .prose .nd-wrap svg {
+    max-width: 30rem;
   }
-  .prose .nudge__step {
-    display: grid;
-    align-content: start;
-    gap: 0.25rem;
-    padding: 0.6rem 0.7rem;
-    border: 1px solid var(--line);
-    border-radius: 6px;
+  .prose .nd rect {
+    fill: var(--pane);
+    stroke: var(--line);
+    stroke-width: 1.2;
   }
-  .prose .nudge__step small {
-    font-size: 0.6875rem;
-    color: var(--faint);
+  .prose .nd .nd__hi {
+    stroke: var(--accent);
+    stroke-width: 1.6;
   }
-  .prose .nudge__step b {
-    color: var(--ink);
-    font-size: 0.95rem;
-    white-space: nowrap;
+  .prose .nd .nd__end {
+    stroke: var(--ink);
   }
-  .prose .nudge__step span {
-    font-size: 0.75rem;
-    color: var(--muted);
+  .prose .nd__fwd,
+  .prose .nd__back {
+    fill: none;
+    stroke: var(--faint);
+    stroke-width: 1.2;
+    marker-end: url(#nd-head);
   }
-  .prose .nudge__step--hi {
-    border-color: var(--accent);
+  .prose .nd__back {
+    stroke-dasharray: 3 3;
   }
-  .prose .nudge__step--hi b {
-    color: var(--accent-soft);
-  }
-  @media (max-width: 40rem) {
-    .prose .nudge {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .prose .nudge__step {
-      grid-template-columns: 7.5rem minmax(0, 1fr);
-      align-items: baseline;
-    }
-    .prose .nudge__step span {
-      grid-column: 2;
-    }
+  .prose .nd__back--hi {
+    stroke: var(--accent);
+    stroke-dasharray: none;
+    marker-end: url(#nd-head-hi);
   }
   /* Dice (widget): two rows of guesses for three moves, a dashed true-value
      line at half height, the pick outlined; below, the two targets. */
