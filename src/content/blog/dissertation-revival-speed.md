@@ -24,11 +24,11 @@ pubDate: "Oct 20 2026"
 </div>
 </figure>
 
-In 2018, for my final-year project at Strathclyde, I wrote an AI that teaches itself to play video games from the screen. This October I handed the code to Claude. Same agent, same bugs: it now trains in about 11 minutes instead of 12 hours, and learns exactly the same way.[^speed]
+In 2018, for my final year project at Strathclyde University, I wrote an AI that teaches itself to play video games from the screen. I handed the report and code to Claude and told it to find ways to improve it. Now it trains in about 11 minutes instead of 12 hours, and learns exactly the same way.[^speed]
 
 The bars are its scores: how much reward it expects from each move, from now to the end of the game. It plays the top one. It's DQN, DeepMind's 2015 method, plus two newer tricks.[^methods] Getting those scores right takes about a million frames of practice.
 
-## 2018: one idea a night
+## 2018: the cost of slow feedback loops
 
 <figure class="fig" data-grow>
 <p class="fig__k">One training run, to scale: 65 of today's fit in one of 2018's</p>
@@ -37,9 +37,11 @@ The bars are its scores: how much reward it expects from each move, from now to 
 <div class="runs runs--axis"><span></span><div><em>0</em><em>3 h</em><em>6 h</em><em>9 h</em><em>12 h</em></div><b></b></div>
 </figure>
 
-There was nothing plug-and-play for this, so I wrote it all from the papers: about 700 lines of Python, on a GTX 980 with 4 GB of memory. Full colour would have needed 39.6 GB just to store the moments it practises on, so I never tried: the agent sees grey at half size, 3.3 GB.
+In 2018 there were no plug-and-play versions of these algorithms, so I wrote it all from the papers and other people's blog posts: about 700 lines of Python.
 
-[My report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf) said training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was. I was a student trying things I'd never done before, most ideas were wrong, and each one cost a night.
+[My report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf) said training "took approximately 12 hours. This is problematic when attempting to test different parameters".
+
+It was. Every new idea waited on a full training run, so I'd leave the PC running overnight, or whenever I went out.
 
 ## It still learns the same way
 
@@ -74,7 +76,7 @@ It also found two real bugs in my code. Fixing them barely changed the result.[^
 Mostly waiting, not learning.
 
 <figure class="fig">
-<p class="fig__k">One frame of the game in 2018: 29 ms</p>
+<p class="fig__k">One frame of the game in 2018: 29 ms, split by what each fix saved</p>
 <div class="tlist">
 <div class="trow trow--wait"><span><b>Pause</b> so people could watch <small>change 1</small></span><i style="--w:1.000"></i><em>16 ms</em></div>
 <div class="trow "><span><b>Image files</b> saved, then read back <small>changes 2, 3, 6, 7</small></span><i style="--w:0.708"></i><em>11 ms</em></div>
@@ -83,7 +85,14 @@ Mostly waiting, not learning.
 </div>
 </figure>
 
-Claude cut those out one change at a time, almost every one checked by a test that replays recorded games and fails if a single pixel changes.[^improvements] Here are the nine, in order:
+Claude found and cut them in a loop, one change at a time:[^improvements]
+
+1. **Profile** the game to see where the time goes.
+2. **Change one thing.**
+3. **Time it** on the same benchmark game.
+4. **Replay recorded games**, failing if a single pixel differs, so it still plays exactly the same.
+
+Here are the nine, in order:
 
 <figure class="fig ladder" data-widget="ladder" data-base="The 2018 engine|34 frames/s, with a 25 ms pause and image files on every frame">
 <p class="fig__k">One game, sped up change by change. Tap a step.</p>
