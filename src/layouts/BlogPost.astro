@@ -2145,11 +2145,19 @@ const last = entries[entries.length - 1];
   .prose .player [data-play][aria-pressed="true"] .i-pause {
     display: inline;
   }
-  .prose .player input[type="range"] {
+  /* The scrubber sits in its own segment, padded on both sides so its thumb
+     never meets a divider. */
+  .prose .player__track {
+    display: flex;
+    align-items: center;
     flex: 1 1 auto;
     min-width: 0;
+    padding: 0 1rem;
+  }
+  .prose .player input[type="range"] {
+    width: 100%;
+    min-width: 0;
     margin: 0;
-    padding: 0 0.85rem;
     accent-color: var(--accent);
     background: none;
   }
