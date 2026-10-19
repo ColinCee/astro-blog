@@ -1,7 +1,7 @@
 ---
 title: "My 2018 Dissertation, 65× Faster"
 shortTitle: "My Dissertation, 65× Faster"
-description: "Why the game-playing AI I wrote as a student took 12 hours to train in 2018, and how it now trains in 11 minutes, learning exactly the same way."
+description: "Why the game-playing AI I wrote as a student took 12 hours to train in 2018, and how it now trains in 11 minutes with the same results."
 stat: "12 h → 11 min"
 figures:
   - label: "2018"
@@ -24,7 +24,7 @@ pubDate: "Oct 20 2026"
 </div>
 </figure>
 
-In 2018, for my final year project at Strathclyde University, I wrote an AI that teaches itself to play video games from the screen. I handed the report and code to Claude and told it to find ways to improve it. Now it trains in about 11 minutes instead of 12 hours, and learns exactly the same way.[^speed]
+In 2018, for my final year project at Strathclyde University, I wrote an AI that teaches itself to play video games from the screen. I handed the report and code to Claude and told it to find ways to improve it. Now it trains in about 11 minutes instead of 12 hours, with the same results.[^speed]
 
 The bars are its scores: how much reward it expects from each move, from now to the end of the game. It plays the top one. It's DQN, DeepMind's 2015 method, plus two newer tricks.[^methods] Getting those scores right takes about a million frames of practice.
 
@@ -43,12 +43,12 @@ In 2018 there were no plug-and-play versions of these algorithms, so I wrote it 
 
 It was. Every new idea waited on a full training run, so I'd leave the PC running overnight, or whenever I went out.
 
-## It still learns the same way
+## The results still hold
 
 Claude rebuilt it on today's software with every setting kept, and trained it three times.[^runs]
 
 <figure class="fig" data-widget="lines">
-<p class="fig__k">Aliens, wins so far: my 2018 run against three 2026 runs</p>
+<p class="fig__k">Aliens, wins so far: my two 2018 runs against three 2026 runs</p>
 <div class="chart chart--fluid">
 <svg viewBox="-18 0 338 222" role="img" aria-label="Wins so far over 2,000 training games. My 2018 run ends at 876 wins; the three 2026 runs end between 792 and 869.">
 <text x="-8" y="95" text-anchor="middle" transform="rotate(-90 -8 95)">wins so far</text>
@@ -66,10 +66,10 @@ Claude rebuilt it on today's software with every setting kept, and trained it th
 <text x="173" y="218" text-anchor="middle">training games →</text>
 </svg>
 </div>
-<script type="application/json">{"x":{"max":2000,"ticks":[0,500,1000,1500,2000],"title":"training games \u2192"},"y":{"max":900,"ticks":[0,300,600,900],"title":"wins so far"},"band":[[1,0.0,0.0],[41,0.0,2.1],[81,2.1,6.9],[121,3.2,11.1],[161,4.2,13.8],[201,6.9,14.8],[241,11.1,18.0],[281,13.8,21.2],[321,14.8,25.9],[361,16.9,31.8],[401,20.1,33.9],[441,23.8,38.1],[481,28.1,46.1],[521,38.1,50.8],[561,45.0,57.2],[601,54.0,63.0],[641,59.8,73.1],[681,72.0,86.8],[721,81.0,97.9],[761,92.1,114.9],[801,102.2,130.8],[841,112.8,142.9],[881,127.1,156.2],[921,139.8,172.1],[961,157.2,184.8],[1001,171.0,204.9],[1041,187.9,225.0],[1081,205.9,241.9],[1121,226.1,265.8],[1161,249.9,293.8],[1201,273.2,308.1],[1241,293.8,331.9],[1281,319.2,354.2],[1321,345.2,376.9],[1361,366.9,400.8],[1401,391.2,427.2],[1441,412.9,455.8],[1481,441.0,481.2],[1521,463.8,506.1],[1561,487.1,534.2],[1601,516.2,563.8],[1641,550.1,589.8],[1681,578.1,616.8],[1721,598.8,645.9],[1761,625.2,672.9],[1801,654.9,706.8],[1841,681.9,739.1],[1881,706.8,771.9],[1921,739.1,805.2],[1961,765.0,838.1],[2000,792.0,868.8]],"line":[[1,0.0],[41,3.2],[81,3.2],[121,5.8],[161,9.0],[201,10.1],[241,12.2],[281,13.8],[321,14.8],[361,22.2],[401,30.2],[441,37.1],[481,41.8],[521,47.1],[561,50.8],[601,58.8],[641,68.8],[681,78.9],[721,85.8],[761,97.9],[801,113.8],[841,130.8],[881,154.1],[921,169.9],[961,193.8],[1001,212.8],[1041,236.1],[1081,258.9],[1121,285.9],[1161,310.2],[1201,330.9],[1241,363.2],[1281,385.9],[1321,406.1],[1361,432.0],[1401,453.2],[1441,478.1],[1481,500.8],[1521,529.9],[1561,561.2],[1601,589.8],[1641,615.2],[1681,641.1],[1721,670.8],[1761,696.2],[1801,724.8],[1841,758.1],[1881,786.2],[1921,814.8],[1961,848.1],[2000,876.2]],"labels":[{"x":1350,"y":640,"text":"2018: 876","cls":"hi","anchor":"end","dx":-10},{"x":2000,"y":330,"text":"2026 \u00d73","cls":"ink","anchor":"end"},{"x":2000,"y":330,"text":"792\u2013869","anchor":"end","dy":15}]}</script>
+<script type="application/json">{"x":{"max":2000,"ticks":[0,500,1000,1500,2000],"title":"training games →"},"y":{"max":900,"ticks":[0,300,600,900],"title":"wins so far"},"band":[[1,0.0,0.0],[41,0.0,2.1],[81,2.1,6.9],[121,3.2,11.1],[161,4.2,13.8],[201,6.9,14.8],[241,11.1,18.0],[281,13.8,21.2],[321,14.8,25.9],[361,16.9,31.8],[401,20.1,33.9],[441,23.8,38.1],[481,28.1,46.1],[521,38.1,50.8],[561,45.0,57.2],[601,54.0,63.0],[641,59.8,73.1],[681,72.0,86.8],[721,81.0,97.9],[761,92.1,114.9],[801,102.2,130.8],[841,112.8,142.9],[881,127.1,156.2],[921,139.8,172.1],[961,157.2,184.8],[1001,171.0,204.9],[1041,187.9,225.0],[1081,205.9,241.9],[1121,226.1,265.8],[1161,249.9,293.8],[1201,273.2,308.1],[1241,293.8,331.9],[1281,319.2,354.2],[1321,345.2,376.9],[1361,366.9,400.8],[1401,391.2,427.2],[1441,412.9,455.8],[1481,441.0,481.2],[1521,463.8,506.1],[1561,487.1,534.2],[1601,516.2,563.8],[1641,550.1,589.8],[1681,578.1,616.8],[1721,598.8,645.9],[1761,625.2,672.9],[1801,654.9,706.8],[1841,681.9,739.1],[1881,706.8,771.9],[1921,739.1,805.2],[1961,765.0,838.1],[2000,792.0,868.8]],"line":[[1,0.0],[41,3.2],[81,3.2],[121,5.8],[161,9.0],[201,10.1],[241,12.2],[281,13.8],[321,14.8],[361,22.2],[401,30.2],[441,37.1],[481,41.8],[521,47.1],[561,50.8],[601,58.8],[641,68.8],[681,78.9],[721,85.8],[761,97.9],[801,113.8],[841,130.8],[881,154.1],[921,169.9],[961,193.8],[1001,212.8],[1041,236.1],[1081,258.9],[1121,285.9],[1161,310.2],[1201,330.9],[1241,363.2],[1281,385.9],[1321,406.1],[1361,432.0],[1401,453.2],[1441,478.1],[1481,500.8],[1521,529.9],[1561,561.2],[1601,589.8],[1641,615.2],[1681,641.1],[1721,670.8],[1761,696.2],[1801,724.8],[1841,758.1],[1881,786.2],[1921,814.8],[1961,848.1],[2000,876.2]],"dots":[[0,0],[500,20.0],[1000,130.0],[1500,420.0],[2000,760.0]],"legend":[{"kind":"line","text":"2018, run 1: 876"},{"kind":"dots","text":"2018, run 2: 760"},{"kind":"band","text":"2026 ×3: 792–869"}]}</script>
 </figure>
 
-All three ended close to my 2018 run, and I'm proud of that. I built it as an undergrad, before my career had even started, from papers and other people's blog posts, and eight years on it holds up against a careful rebuild.
+All three land between my two 2018 runs, which differ from each other by more than the 2026 runs do. Not bad for something I wrote as an undergrad from papers and blog posts.
 
 Claude did find two real bugs in my code. Fixing them barely changed the result.[^bugs]
 
@@ -113,6 +113,6 @@ Claude found each speed-up in the same loop:[^improvements]
 
 [^speed]: At 1,550 frames a second on an RTX 4090 with the PC to itself; with other work running, 23 to 34 minutes. All the numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^methods]: DQN, Double DQN and prioritised replay, on four GVGAI games; dueling networks didn't help on Aliens. All in [my dissertation](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf), with [the 2018 code](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2018-dissertation).
-[^runs]: The line is the run in [my dissertation](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf)'s training log; the run behind its results table ended lower, at about 760. [The 2018 logs](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2026-revival/results/2018).
+[^runs]: Run 1 is the training log in [my dissertation](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf); run 2 is the run behind its results table, known only as wins per 500 games (4, 22, 58 and 68%). [The 2018 logs](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2026-revival/results/2018).
 [^bugs]: Rewards credited one move late, and prioritised replay missing its correction weights. Fixed: 48.2 points vs 50.1. More in [LEARNINGS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/LEARNINGS.md).
 [^improvements]: The benchmark was tightened partway, so the steps don't always line up exactly. All 30 changes, with before, after and a commit each: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/IMPROVEMENTS.md).

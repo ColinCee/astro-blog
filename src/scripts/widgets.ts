@@ -312,11 +312,14 @@ function svgEl(svg: SVGSVGElement) {
 // Lines: a line chart from data, drawn in screen pixels at the figure's width
 // (the SVG in the page is the no-script fallback). Data: x and y axes with a
 // max, ticks and a title; an optional band of [x, low, high]; a line of
-// [x, y]; labels placed at data points with pixel offsets.
+// [x, y]; optional dots of [x, y] (a run known only at a few points, joined
+// dashed); labels placed at data points with pixel offsets; and a legend
+// drawn in the plot's empty top-left corner.
 type Axis = { max: number; ticks: number[]; title: string };
 type Label = { x: number; y: number; text: string; cls?: string; anchor?: string; dx?: number; dy?: number };
+type Key = { kind: "line" | "dots" | "band"; text: string };
 function lines(root: HTMLElement) {
-  const d: { x: Axis; y: Axis; band?: number[][]; line: number[][]; labels: Label[] } = JSON.parse(
+  const d: { x: Axis; y: Axis; band?: number[][]; line: number[][]; dots?: number[][]; labels?: Label[]; legend?: Key[] } = JSON.parse(
     root.querySelector("script")!.textContent!,
   );
   const svg = root.querySelector("svg")!;
@@ -349,7 +352,18 @@ function lines(root: HTMLElement) {
       el("polygon", { class: "band band--runs", points: [...up, ...down].join(" ") });
     }
     el("polyline", { class: "ln hi", points: d.line.map(([x, v]) => `${X(x)},${Y(v)}`).join(" ") });
-    for (const l of d.labels) {
+    if (d.dots) {
+      el("polyline", { class: "ln hi ln--dash", points: d.dots.map(([x, v]) => `${X(x)},${Y(v)}`).join(" ") });
+      for (const [x, v] of d.dots) el("circle", { class: "hi", cx: X(x), cy: Y(v), r: 4 });
+    }
+    (d.legend ?? []).forEach((k, i) => {
+      const ky = T + 10 + i * 18, kx = L + 10;
+      if (k.kind === "band") el("rect", { class: "band band--runs", x: kx, y: ky - 5, width: 22, height: 10 });
+      else el("line", { class: k.kind === "dots" ? "ln hi ln--dash" : "ln hi", x1: kx, x2: kx + 22, y1: ky, y2: ky });
+      if (k.kind === "dots") el("circle", { class: "hi", cx: kx + 11, cy: ky, r: 3.5 });
+      el("text", { x: kx + 30, y: ky + 4, class: "ink" }).textContent = k.text;
+    });
+    for (const l of d.labels ?? []) {
       const t = el("text", { x: X(l.x) + (l.dx ?? 0), y: Y(l.y) + (l.dy ?? 0), "text-anchor": l.anchor ?? "start" });
       if (l.cls) t.setAttribute("class", l.cls);
       t.textContent = l.text;
