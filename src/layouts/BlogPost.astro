@@ -1418,6 +1418,71 @@ const last = entries[entries.length - 1];
   .prose .map .ring.hi {
     stroke: var(--accent);
   }
+  /* Multiplier rows: before → after, and a log-scale bar for how many times
+     bigger after is. Neutral marks; .gain--hi (the post's headline) is the accent. */
+  .prose .gains {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .prose .gain {
+    display: grid;
+    grid-template-columns: 10rem 8.5rem minmax(0, 1fr) 3.2rem;
+    align-items: center;
+    gap: 0.25rem 0.8rem;
+  }
+  .prose .gain em {
+    font-style: normal;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+  .prose .gain em b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .prose .gain i {
+    display: block;
+    height: 0.7rem;
+    width: calc(var(--w) * 100%);
+    background: var(--muted);
+    border-radius: 1px;
+    transform-origin: left;
+  }
+  .prose .gain strong {
+    color: var(--ink);
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .prose .gain--hi span,
+  .prose .gain--hi em b {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .prose .gain--hi i {
+    background: var(--accent);
+    height: 0.9rem;
+  }
+  .prose .gain--hi strong {
+    color: var(--accent-soft);
+    font-size: 1.25rem;
+  }
+  @media (max-width: 34rem) {
+    .prose .gain {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .prose .gain em {
+      text-align: right;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .prose .fig[data-grow] .gain i {
+      transform: scaleX(0);
+      transition: transform 0.9s var(--ease-out);
+    }
+    .prose .fig[data-grow].is-in .gain i {
+      transform: none;
+    }
+  }
   /* Q-value bars under a recording (widget "qview"). */
   .prose .qbars {
     display: grid;

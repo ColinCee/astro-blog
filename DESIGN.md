@@ -354,7 +354,8 @@ homepage terminal window's ambient lift, nothing else.
   `.ln`, `.bar` and `.hi` marks; it keeps that width and scrolls sideways on phones
   so labels stay at 11px), `.net` / `.slab` / `.deck` (a network's layers as tilted
   stacks of real activation maps that face the reader on hover or focus), `.map`
-  (an SVG route drawn over a game screen), and `data-grow` (`.cmp` bars grow in once
+  (an SVG route drawn over a game screen), `.gains` / `.gain` (before → after with
+  a log-scale bar of the multiplier; `.gain--hi` is the headline row), and `data-grow` (`.cmp` bars grow in once
   when seen).
 - **Interactive figures** carry `data-widget` and load `src/scripts/widgets.ts`
   only on posts that use one: `race` (a clock slider against training time),

@@ -38,14 +38,16 @@ The project took the deep Q-network (DQN), the method DeepMind used to learn Ata
 
 I didn't use a reinforcement learning library; I wrote the agent myself: the replay memory, the sum tree that prioritised replay samples from, the training loop and the reward. Keras ran the network, on a GTX 980 with 4 GB of memory. Then each idea cost a night.
 
-<figure class="fig">
-<div class="split">
-<div><p class="fig__k">2018</p>
-<div class="boxes"><div class="box box--slow">Python 3.6, Keras 2, TensorFlow 1<small>replay, sum tree, loop: hand-written</small></div><div class="box box--slow">GTX 980, 4 GB<small>12 h per run, one run per night</small></div></div></div>
-<div><p class="fig__k">2026</p>
-<div class="boxes"><div class="box box--fast">Python 3.14, PyTorch 2.14<small>torch.compile, CUDA graphs</small></div><div class="box box--fast">RTX 4090, 24 GB<small>3 runs at once, minutes each</small></div></div></div>
+<figure class="fig" data-grow>
+<p class="fig__k">2018 → 2026, the same project</p>
+<div class="gains">
+<div class="gain"><span>GPU memory</span><em>4 GB → <b>24 GB</b></em><i style="--w:0.389"></i><strong>×6</strong></div>
+<div class="gain"><span>Runs at once</span><em>1 → <b>3</b></em><i style="--w:0.239"></i><strong>×3</strong></div>
+<div class="gain"><span>One game, ticks/s</span><em>34 → <b>2,590</b></em><i style="--w:0.940"></i><strong>×76</strong></div>
+<div class="gain"><span>Training, ticks/s</span><em>23 → <b>~1,550</b></em><i style="--w:0.913"></i><strong>×67</strong></div>
+<div class="gain gain--hi"><span>One training run</span><em>12 h → <b>25 min</b></em><i style="--w:0.730"></i><strong>×29</strong></div>
 </div>
-<figcaption>The 2018 code no longer installs: its Python, Keras and TensorFlow versions are gone. It's kept for reading; the agent was ported to PyTorch.</figcaption>
+<figcaption>Bars are on a log scale: how many times bigger (or faster) 2026 is. Training speed is the 2018 agent itself. 2018: a GTX 980, Python 3.6, Keras 2 and TensorFlow 1 (no longer installs), with the replay memory, sum tree and training loop written by hand. 2026: an RTX 4090, Python 3.14 and PyTorch 2.14. Training speed is on a quiet machine; 25 min is the typical run with other work on the PC.</figcaption>
 </figure>
 
 ## Does the 2018 code hold up?
