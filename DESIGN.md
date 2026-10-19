@@ -348,6 +348,10 @@ homepage terminal window's ambient lift, nothing else.
   Marks are neutral; only the result takes the accent. Aim for at least one figure
   per post so no screen is text alone. Explanations sit next to what they explain
   (a short title above, labels on the marks), not in a paragraph under the figure.
+  Every chart axis says what it measures and in what units. Figure text comes in two
+  sizes only, at any screen width: 11px for titles, ticks and notes, 12.8px for labels
+  on the marks and values. SVG charts get there through `--k` (set by the layout
+  script), so their text never scales with the drawing.
 - **More figure blocks** (added with the dissertation series, Oct 2026):
   `.vids` / `.vid` (game recordings side by side, pixelated, stacking on phones;
   videos play only while on screen and never on their own under reduced motion),

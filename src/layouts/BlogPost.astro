@@ -664,6 +664,21 @@ const last = entries[entries.length - 1];
     window.addEventListener("resize", update);
   }
 
+  // Charts: SVG text scales with the drawing, so each chart sets --k (viewBox
+  // units per screen pixel) and its text is sized in screen pixels through it.
+  // Every chart's text then matches the figure text around it at any width.
+  const charts = document.querySelectorAll<SVGSVGElement>(".prose .chart svg, .prose .ladder svg");
+  if (charts.length) {
+    const fit = new ResizeObserver((entries) => {
+      for (const e of entries) {
+        const svg = e.target as SVGSVGElement;
+        const w = svg.viewBox.baseVal.width;
+        if (w && e.contentRect.width) svg.style.setProperty("--k", (w / e.contentRect.width).toFixed(4));
+      }
+    });
+    charts.forEach((svg) => fit.observe(svg));
+  }
+
   // Figures: recordings play only while on screen (and never on their own
   // under reduced motion); [data-grow] figures animate once when seen.
   const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1236,10 +1251,18 @@ const last = entries[entries.length - 1];
     height: auto;
     overflow: visible;
   }
-  .prose .chart text {
+  /* Chart text in screen pixels, whatever the drawing's scale (--k is set
+     by the layout script): ticks and notes at the figure's small size, labels
+     on the marks at its body size, the same as the HTML figures. */
+  .prose .chart text,
+  .prose .ladder text {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: calc(0.6875rem * var(--k, 1));
     fill: var(--faint);
+  }
+  .prose .chart text.ink,
+  .prose .chart text.hi {
+    font-size: calc(0.8rem * var(--k, 1));
   }
   /* Narrow charts fit a phone without scrolling: their 12px text still
      renders at 11px or more down to a ~300px column. */
@@ -1247,9 +1270,6 @@ const last = entries[entries.length - 1];
     min-width: 0;
     max-width: 24rem;
     margin: 0 auto;
-  }
-  .prose .chart--narrow text {
-    font-size: 12px;
   }
   .prose .chart .ax {
     stroke: var(--line);
@@ -1547,7 +1567,8 @@ const last = entries[entries.length - 1];
   }
   .prose .runs b {
     color: var(--ink);
-    font-size: 1.3rem;
+    font-size: 0.8rem;
+    font-weight: 700;
     text-align: right;
     white-space: nowrap;
   }
@@ -1556,7 +1577,6 @@ const last = entries[entries.length - 1];
   }
   .prose .runs--hi b {
     color: var(--accent-soft);
-    font-size: 1.3rem;
   }
   .prose .runs--axis > div {
     height: auto;
@@ -1851,11 +1871,7 @@ const last = entries[entries.length - 1];
     margin: 0 auto;
     overflow: visible;
   }
-  .prose .ladder text {
-    font-family: var(--mono);
-    font-size: 11.5px; /* 320-wide viewBox renders a touch under 320px on phones; keeps labels at 11px */
-    fill: var(--faint);
-  }
+
   .prose .ladder .ax {
     stroke: var(--line);
   }
@@ -2122,7 +2138,7 @@ const last = entries[entries.length - 1];
   }
   .prose .ctl output[data-at] {
     flex: 1 1 12rem;
-    font-size: 0.74rem;
+    font-size: 0.6875rem;
     color: var(--faint);
   }
   /* A hidden layer a button reveals (widget "reveal"); visible without JS. */
