@@ -231,48 +231,13 @@ function ladder(root: HTMLElement) {
   const steps: Step[] = JSON.parse(root.querySelector("script")!.textContent!);
   const svg = root.querySelector("svg")!;
   const out = root.querySelector<HTMLElement>("[data-out]")!;
-  const W = 320, H = 190, L = 58, R = 8, T = 12, B = 42;
-  const lo = Math.log10(20), hi = Math.log10(4000);
-  const y = (v: number) => T + (H - T - B) * (1 - (Math.log10(v) - lo) / (hi - lo));
-  const dx = (W - L - R) / (steps.length + 1); // column 0 is the 2018 engine, before any change
-  const X = (i: number) => L + (i + 1) * dx; // left edge of change i's column
-  const ns = "http://www.w3.org/2000/svg";
-  const el = (tag: string, attrs: Record<string, string | number>) => {
-    const e = document.createElementNS(ns, tag);
-    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, String(v));
-    svg.appendChild(e);
-    return e;
-  };
-  for (const v of [30, 100, 300, 1000, 3000]) {
-    el("line", { class: "ax", x1: L, x2: W - R, y1: y(v), y2: y(v) });
-    el("text", { x: L - 5, y: y(v) + 4, "text-anchor": "end" }).textContent = fmt.format(v);
-  }
-  let pts = `${L},${y(steps[0].before)} ${X(0)},${y(steps[0].before)}`;
-  steps.forEach((s, i) => (pts += ` ${X(i)},${y(s.after)} ${X(i) + dx},${y(s.after)}`));
-  el("polyline", { class: "ln", points: pts.trim() });
-  const risers = steps.map((s, i) =>
-    el("line", { class: "riser", x1: X(i), x2: X(i), y1: y(s.before), y2: y(s.after) }),
-  );
-  const hits = steps.map((s, i) => {
-    const r = el("rect", { class: "hit", x: X(i), y: T, width: dx, height: H - T - B, tabindex: 0, role: "button" });
-    r.setAttribute("aria-label", `${s.name}: ${s.before} to ${s.after} frames per second`);
-    return r;
-  });
-  // The x axis is the order of the changes, not time.
-  for (let i = 0; i <= steps.length; i++)
-    el("text", { x: L + (i + 0.5) * dx, y: H - B + 16, "text-anchor": "middle" }).textContent = String(i);
-  // Axis titles: what each axis measures, in its units.
-  el("text", { x: L + (W - L - R) / 2, y: H - 4, "text-anchor": "middle" }).textContent = "change, in order (0 = 2018) →";
-  const yt = (T + H - B) / 2;
-  el("text", { x: 9, y: yt, "text-anchor": "middle", transform: `rotate(-90 9 ${yt})` }).textContent = "frames/s, log";
-  // Column 0, the starting point, is tappable too when the figure gives it
-  // a data-base of "name|detail".
   const [baseName, baseNote] = (root.dataset.base ?? "").split("|");
-  const baseHit = baseName
-    ? el("rect", { class: "hit", x: L, y: T, width: dx, height: H - T - B, tabindex: 0, role: "button" })
-    : null;
-  baseHit?.setAttribute("aria-label", `${baseName}: ${baseNote}`);
+  const lo = Math.log10(20), hi = Math.log10(4000);
+  let risers: SVGElement[] = [], hits: SVGElement[] = [], baseHit: SVGElement | null = null;
+  let picked = 0;
+  steps.forEach((s, i) => s.after / s.before > steps[picked].after / steps[picked].before && (picked = i));
   const pick = (i: number) => {
+    picked = i;
     risers.forEach((r, j) => r.classList.toggle("is-on", j === i));
     hits.forEach((r, j) => r.classList.toggle("is-on", j === i));
     baseHit?.classList.toggle("is-on", i < 0);
@@ -284,15 +249,114 @@ function ladder(root: HTMLElement) {
     const x = s.after / s.before;
     out.innerHTML = `<b>${i + 1}. ${s.name}</b> <span>${fmt.format(s.before)} → ${fmt.format(s.after)} frames/s, <strong>×${x.toFixed(1)}</strong></span>${s.note ? `<small>${s.note}</small>` : ""}`;
   };
-  [...hits, ...(baseHit ? [baseHit] : [])].forEach((r, i) => {
-    const k = i < hits.length ? i : -1;
-    r.addEventListener("mouseenter", () => pick(k));
-    r.addEventListener("focus", () => pick(k));
-    r.addEventListener("click", () => pick(k));
-  });
-  let best = 0;
-  steps.forEach((s, i) => s.after / s.before > steps[best].after / steps[best].before && (best = i));
-  pick(best);
+  // Drawn in screen pixels at the figure's width, and redrawn when it changes.
+  const draw = () => {
+    const W = Math.round(svg.parentElement!.clientWidth);
+    if (!W) return;
+    const H = Math.round(Math.min(300, Math.max(220, W * 0.42)));
+    const L = 58, R = 8, T = 12, B = 44;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.dataset.px = "";
+    svg.style.setProperty("--k", "1");
+    svg.replaceChildren();
+    const el = svgEl(svg);
+    const y = (v: number) => T + (H - T - B) * (1 - (Math.log10(v) - lo) / (hi - lo));
+    const dx = (W - L - R) / (steps.length + 1); // column 0 is the 2018 engine, before any change
+    const X = (i: number) => L + (i + 1) * dx; // left edge of change i's column
+    for (const v of [30, 100, 300, 1000, 3000]) {
+      el("line", { class: "ax", x1: L, x2: W - R, y1: y(v), y2: y(v) });
+      el("text", { x: L - 6, y: y(v) + 4, "text-anchor": "end" }).textContent = fmt.format(v);
+    }
+    let pts = `${L},${y(steps[0].before)} ${X(0)},${y(steps[0].before)}`;
+    steps.forEach((s, i) => (pts += ` ${X(i)},${y(s.after)} ${X(i) + dx},${y(s.after)}`));
+    el("polyline", { class: "ln", points: pts.trim() });
+    risers = steps.map((s, i) => el("line", { class: "riser", x1: X(i), x2: X(i), y1: y(s.before), y2: y(s.after) }));
+    hits = steps.map((s, i) => {
+      const r = el("rect", { class: "hit", x: X(i), y: T, width: dx, height: H - T - B, tabindex: 0, role: "button" });
+      r.setAttribute("aria-label", `${s.name}: ${s.before} to ${s.after} frames per second`);
+      return r;
+    });
+    // The x axis is the order of the changes, not time.
+    for (let i = 0; i <= steps.length; i++)
+      el("text", { x: L + (i + 0.5) * dx, y: H - B + 17, "text-anchor": "middle" }).textContent = String(i);
+    // Axis titles: what each axis measures, in its units.
+    el("text", { x: L + (W - L - R) / 2, y: H - 6, "text-anchor": "middle" }).textContent = "change, in order (0 = the 2018 engine) →";
+    const yt = (T + H - B) / 2;
+    el("text", { x: 11, y: yt, "text-anchor": "middle", transform: `rotate(-90 11 ${yt})` }).textContent = "frames per second (log)";
+    // Column 0, the starting point, is tappable too when the figure gives it
+    // a data-base of "name|detail".
+    baseHit = baseName ? el("rect", { class: "hit", x: L, y: T, width: dx, height: H - T - B, tabindex: 0, role: "button" }) : null;
+    baseHit?.setAttribute("aria-label", `${baseName}: ${baseNote}`);
+    [...hits, ...(baseHit ? [baseHit] : [])].forEach((r, i) => {
+      const k = i < hits.length ? i : -1;
+      r.addEventListener("mouseenter", () => pick(k));
+      r.addEventListener("focus", () => pick(k));
+      r.addEventListener("click", () => pick(k));
+    });
+    pick(picked);
+  };
+  new ResizeObserver(draw).observe(svg.parentElement!);
+  draw();
+}
+
+// SVG element factory for charts drawn in code.
+function svgEl(svg: SVGSVGElement) {
+  return (tag: string, attrs: Record<string, string | number>) => {
+    const e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, String(v));
+    svg.appendChild(e);
+    return e;
+  };
+}
+
+// Lines: a line chart from data, drawn in screen pixels at the figure's width
+// (the SVG in the page is the no-script fallback). Data: x and y axes with a
+// max, ticks and a title; an optional band of [x, low, high]; a line of
+// [x, y]; labels placed at data points with pixel offsets.
+type Axis = { max: number; ticks: number[]; title: string };
+type Label = { x: number; y: number; text: string; cls?: string; anchor?: string; dx?: number; dy?: number };
+function lines(root: HTMLElement) {
+  const d: { x: Axis; y: Axis; band?: number[][]; line: number[][]; labels: Label[] } = JSON.parse(
+    root.querySelector("script")!.textContent!,
+  );
+  const svg = root.querySelector("svg")!;
+  const draw = () => {
+    const W = Math.round(svg.parentElement!.clientWidth);
+    if (!W) return;
+    const H = Math.round(Math.min(300, Math.max(220, W * 0.42)));
+    const L = 52, R = 12, T = 12, B = 44;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.dataset.px = "";
+    svg.style.setProperty("--k", "1");
+    svg.replaceChildren();
+    const el = svgEl(svg);
+    const X = (v: number) => L + (v / d.x.max) * (W - L - R);
+    const Y = (v: number) => H - B - (v / d.y.max) * (H - T - B);
+    for (const t of d.y.ticks) {
+      el("line", { class: "ax", x1: L, x2: W - R, y1: Y(t), y2: Y(t) });
+      el("text", { x: L - 6, y: Y(t) + 4, "text-anchor": "end" }).textContent = fmt.format(t);
+    }
+    d.x.ticks.forEach((t, i) => {
+      const anchor = i === 0 ? "start" : i === d.x.ticks.length - 1 ? "end" : "middle";
+      el("text", { x: X(t), y: H - B + 17, "text-anchor": anchor }).textContent = fmt.format(t);
+    });
+    el("text", { x: L + (W - L - R) / 2, y: H - 6, "text-anchor": "middle" }).textContent = d.x.title;
+    const yt = (T + H - B) / 2;
+    el("text", { x: 11, y: yt, "text-anchor": "middle", transform: `rotate(-90 11 ${yt})` }).textContent = d.y.title;
+    if (d.band) {
+      const up = d.band.map(([x, , h]) => `${X(x)},${Y(h)}`);
+      const down = d.band.map(([x, l]) => `${X(x)},${Y(l)}`).reverse();
+      el("polygon", { class: "band band--runs", points: [...up, ...down].join(" ") });
+    }
+    el("polyline", { class: "ln hi", points: d.line.map(([x, v]) => `${X(x)},${Y(v)}`).join(" ") });
+    for (const l of d.labels) {
+      const t = el("text", { x: X(l.x) + (l.dx ?? 0), y: Y(l.y) + (l.dy ?? 0), "text-anchor": l.anchor ?? "start" });
+      if (l.cls) t.setAttribute("class", l.cls);
+      t.textContent = l.text;
+    }
+  };
+  new ResizeObserver(draw).observe(svg.parentElement!);
+  draw();
 }
 
 // Pick: tappable parts of a figure ([data-pick]); choosing one shows its
@@ -345,7 +409,7 @@ function flow(root: HTMLElement) {
   draw();
 }
 
-const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, pick, ladder, flow };
+const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, pick, ladder, flow, lines };
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });

@@ -672,6 +672,7 @@ const last = entries[entries.length - 1];
     const fit = new ResizeObserver((entries) => {
       for (const e of entries) {
         const svg = e.target as SVGSVGElement;
+        if (svg.dataset.px !== undefined) continue; // drawn in pixels already
         const w = svg.viewBox.baseVal.width;
         if (w && e.contentRect.width) svg.style.setProperty("--k", (w / e.contentRect.width).toFixed(4));
       }
@@ -1282,6 +1283,13 @@ const last = entries[entries.length - 1];
     stroke-dasharray: 4 4;
     fill: none;
   }
+  /* Charts drawn in code at the figure's own width: full width, 1:1 pixels. */
+  .prose .chart--fluid svg {
+    min-width: 0;
+  }
+  .prose .chart .band--runs {
+    fill: color-mix(in oklch, var(--muted) 45%, transparent);
+  }
   .prose .chart .band {
     fill: color-mix(in oklch, var(--bar) 45%, transparent);
   }
@@ -1867,7 +1875,6 @@ const last = entries[entries.length - 1];
   .prose .ladder svg {
     display: block;
     width: 100%;
-    max-width: 34rem;
     margin: 0 auto;
     overflow: visible;
   }
