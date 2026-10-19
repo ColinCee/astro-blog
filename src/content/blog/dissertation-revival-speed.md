@@ -30,17 +30,16 @@ First, what "learns" means here.
 
 ## A score for every move
 
-The network looks at the screen and scores each move: how many points it expects if it plays it. Then it plays the top score. To get those scores right:
+The network looks at the screen and scores each move: how many points it expects if it plays it. Then it plays the top score. It starts out playing at random, on purpose, and trusts its own scores a little more each game. After every move it checks its guess against what happened, and nudges it:
 
-1. **It starts out playing at random**, on purpose, and trusts its own scores a little more each game.
-2. **After each move it checks** what happened: the reward, plus its own score for the next moment.
-3. **It nudges its guess** towards that.
-
-<figure class="fig cor" data-widget="corridor">
-<p class="fig__k">Try it: a corridor with a pit and a goal. Each square shows the agent's score for going ← and →; the bold one is what it would play.</p>
-<div class="cor__row" data-row></div>
-<div class="ctl"><button type="button" data-one>Play a game</button><button type="button" data-many>Play 25 more</button><button type="button" data-reset>Start over</button></div>
-<output></output>
+<figure class="fig">
+<p class="fig__k">One nudge, step by step (illustration, round numbers)</p>
+<div class="nudge">
+<div class="nudge__step"><small>1. Guess</small><b>shoot: 2.0</b><span>its score before the move</span></div>
+<div class="nudge__step"><small>2. What happened</small><b>+1 &nbsp;then&nbsp; 1.5</b><span>it hit an alien, and its best score for the next moment is 1.5</span></div>
+<div class="nudge__step"><small>3. Target</small><b>1 + 1.5 = 2.5</b><span>what shoot was really worth, by its own next guess</span></div>
+<div class="nudge__step nudge__step--hi"><small>4. Nudge</small><b>2.0 → 2.1</b><span>a small step towards the target, not all the way</span></div>
+</div>
 </figure>
 
 A million frames of nudging later, the scores are worth playing by. That's DQN, DeepMind's 2015 method.[^methods]
