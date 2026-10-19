@@ -3,6 +3,8 @@ title: "Slash Your ts-jest Test Times With This"
 shortTitle: "Slash your ts-jest test times"
 description: "One ts-jest setting cut more than ten minutes off our CI test run. This is the setting, and the catch that comes with it."
 stat: "−10 min"
+statLabel: "off CI"
+hook: "One config flag skips the type-check tax."
 pubDate: "Apr 03 2025"
 ---
 Our CI test suite was taking over ten minutes. When I looked into it, the slow part was `ts-jest` type-checking the code. This one setting sorted it:

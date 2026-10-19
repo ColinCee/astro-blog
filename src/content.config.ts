@@ -12,6 +12,10 @@ const blog = defineCollection({
     // Optional headline number ("221MB", "£826.61"). Shown large in the
     // homepage writing section; posts without one show no figure.
     stat: z.string().optional(),
+    // Optional few words under the stat on the blog index ("95% smaller").
+    statLabel: z.string().optional(),
+    // Optional one-line hook on the blog index; falls back to `description`.
+    hook: z.string().optional(),
     // Optional headline figures shown as a ledger under the post title. The
     // last one is treated as the result and takes the accent.
     figures: z
