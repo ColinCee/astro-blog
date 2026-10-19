@@ -129,7 +129,7 @@ function reveal(root: HTMLElement) {
 
 // Q-view: a recording with the network's value for each move drawn under it,
 // from the recorder's JSON (one entry per decision, with the tick it was made).
-type Decision = { tick: number; action: number; q?: number[] };
+type Decision = { tick: number; action: string; q?: number[] };
 async function qview(root: HTMLElement) {
   const video = root.querySelector("video")!;
   const box = root.querySelector<HTMLElement>(".qbars")!;
@@ -137,8 +137,9 @@ async function qview(root: HTMLElement) {
   const names: string[] = data.action_names.map((n: string) =>
     n.replace(/^ACTION_/, "").toLowerCase().replace("use", "shoot"),
   );
-  const fps: number = data.fps ?? 30;
-  const ticksPerFrame: number = data.ticks_per_frame ?? 1;
+  // Frame i of the video shows the screen after tick i.
+  const fps: number = data.video.fps;
+  const ticksPerFrame: number = data.video.ticks_per_frame;
   const decisions: Decision[] = data.decisions.filter((d: Decision) => d.q);
   const rows = names.map((n) => {
     const row = document.createElement("div");
@@ -149,7 +150,7 @@ async function qview(root: HTMLElement) {
   });
   let last = -1;
   const draw = () => {
-    const tick = video.currentTime * fps * ticksPerFrame + (data.first_tick ?? 0);
+    const tick = video.currentTime * fps * ticksPerFrame;
     let lo = 0;
     let hi = decisions.length - 1;
     while (lo < hi) {
@@ -166,7 +167,7 @@ async function qview(root: HTMLElement) {
     rows.forEach((row, i) => {
       row.querySelector<HTMLElement>("i")!.style.setProperty("--w", String(0.04 + (0.96 * (q[i] - min)) / span));
       row.querySelector("b")!.textContent = q[i].toFixed(2);
-      row.classList.toggle("cmp--after", i === d.action);
+      row.classList.toggle("cmp--after", data.action_names[i] === d.action);
     });
   };
   const loop = () => {
