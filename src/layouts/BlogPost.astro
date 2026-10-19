@@ -664,6 +664,35 @@ const last = entries[entries.length - 1];
     window.addEventListener("resize", update);
   }
 
+  // Figures: recordings play only while on screen (and never on their own
+  // under reduced motion); [data-grow] figures animate once when seen.
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const seen = new IntersectionObserver(
+    (items) => {
+      for (const it of items) {
+        const el = it.target as HTMLElement;
+        if (el instanceof HTMLVideoElement) {
+          if (it.isIntersecting && !still) el.play().catch(() => {});
+          else el.pause();
+        } else if (it.isIntersecting) {
+          el.classList.add("is-in");
+          seen.unobserve(el);
+        }
+      }
+    },
+    { threshold: 0.35 },
+  );
+  document.querySelectorAll<HTMLVideoElement>(".prose video").forEach((v) => {
+    if (still) v.controls = true;
+    seen.observe(v);
+  });
+  document
+    .querySelectorAll<HTMLElement>(".prose [data-grow]")
+    .forEach((f) => seen.observe(f));
+
+  // Interactive figures load their code only on posts that use them.
+  if (document.querySelector("[data-widget]")) import("../scripts/widgets");
+
   // Timeline scroll-spy: the entry crossing a line 40% down the viewport is
   // current; entries above it are past. Their nodes fill in as you read.
   const entries = Array.from(
@@ -1161,6 +1190,153 @@ const last = entries[entries.length - 1];
     .prose .cmp span,
     .prose .dot span {
       grid-column: 1 / -1;
+    }
+  }
+  /* Game recordings: one or more tiles side by side, pixel art kept crisp.
+     Tiles stack on phones. */
+  .prose .vids {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: 0.9rem;
+  }
+  .prose .vid {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0;
+  }
+  .prose .vid video,
+  .prose .vid img {
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    border-radius: 4px;
+    background: var(--panel);
+  }
+  .prose .vid b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .prose .vid--hi b {
+    color: var(--accent-soft);
+  }
+  /* Charts drawn as inline SVG. Marks are neutral; .hi takes the accent. Text
+     in SVG is sized in the viewBox, so charts keep a minimum width and scroll
+     sideways on very small phones rather than shrinking labels below 11px. */
+  .prose .chart {
+    overflow-x: auto;
+  }
+  .prose .chart svg {
+    display: block;
+    width: 100%;
+    min-width: 20rem;
+    height: auto;
+    overflow: visible;
+  }
+  .prose .chart text {
+    font-family: var(--mono);
+    font-size: 11px;
+    fill: var(--faint);
+  }
+  .prose .chart .ax {
+    stroke: var(--line);
+    stroke-width: 1;
+    fill: none;
+  }
+  .prose .chart .ref {
+    stroke: var(--faint);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 4;
+    fill: none;
+  }
+  .prose .chart .band {
+    fill: color-mix(in oklch, var(--bar) 45%, transparent);
+  }
+  .prose .chart .mk {
+    fill: var(--muted);
+    stroke: none;
+  }
+  .prose .chart .ln {
+    stroke: var(--muted);
+    stroke-width: 2;
+    fill: none;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .prose .chart .bar {
+    fill: var(--bar);
+  }
+  .prose .chart .hi {
+    fill: var(--accent);
+  }
+  .prose .chart .ln.hi {
+    fill: none;
+    stroke: var(--accent);
+  }
+  .prose .chart text.hi {
+    fill: var(--accent-soft);
+    font-weight: 700;
+  }
+  .prose .chart text.ink {
+    fill: var(--ink);
+  }
+  /* Controls inside interactive figures. */
+  .prose .ctl {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.9rem;
+  }
+  .prose .ctl input[type="range"] {
+    flex: 1 1 10rem;
+    accent-color: var(--accent);
+    min-height: 2.75rem;
+  }
+  .prose .ctl button {
+    font: inherit;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.5rem 0.95rem;
+    min-height: 2.75rem;
+    cursor: pointer;
+  }
+  .prose .ctl button[aria-pressed="true"] {
+    border-color: var(--accent);
+    color: var(--accent-soft);
+  }
+  .prose .ctl button:hover {
+    border-color: var(--accent-line);
+  }
+  .prose .ctl button:focus-visible,
+  .prose .ctl input:focus-visible {
+    outline: none;
+    box-shadow: var(--ring);
+  }
+  .prose .ctl output {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  /* A hidden layer a button reveals (widget "reveal"); visible without JS. */
+  .prose [data-widget="reveal"].is-armed:not(.is-revealed) .reveal {
+    opacity: 0;
+  }
+  .prose [data-widget="reveal"].is-revealed .hide-on-reveal {
+    opacity: 0;
+  }
+  .prose [data-widget="reveal"] .reveal,
+  .prose [data-widget="reveal"] .hide-on-reveal {
+    transition: opacity var(--dur-slow) var(--ease-out);
+  }
+  /* Bars grow in once when their figure scrolls into view (JS adds .is-in). */
+  @media (prefers-reduced-motion: no-preference) {
+    .prose .fig[data-grow] .cmp i {
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.9s var(--ease-out);
+    }
+    .prose .fig[data-grow].is-in .cmp i {
+      transform: none;
     }
   }
   .prose .expressive-code {
