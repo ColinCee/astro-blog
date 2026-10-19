@@ -21,13 +21,12 @@ pubDate: "Oct 20 2026"
 
 For my final-year project at Strathclyde in 2018, I wrote an AI that learns to play video games from the screen. One training run took 12 hours. This October I gave the code to Claude to see how far it could get with today's tools. The same agent now trains in **11 minutes**, and learns the way it did in 2018.[^speed]
 
-That matters most when you're learning. I was a student trying things I'd never done before, and most ideas were wrong. The only way to find out was a full training run.
-
 <figure class="fig" data-grow>
-<p class="fig__k">12 hours of training, one idea per run</p>
-<div class="runs"><span>2018<small>12 h a run</small></span><div><i style="flex-basis:100%"></i></div><b>1 idea</b></div>
-<div class="runs runs--hi"><span>2026<small>11 min a run</small></span><div><i style="--n:0;flex-basis:1.528%"></i><i style="--n:1;flex-basis:1.528%"></i><i style="--n:2;flex-basis:1.528%"></i><i style="--n:3;flex-basis:1.528%"></i><i style="--n:4;flex-basis:1.528%"></i><i style="--n:5;flex-basis:1.528%"></i><i style="--n:6;flex-basis:1.528%"></i><i style="--n:7;flex-basis:1.528%"></i><i style="--n:8;flex-basis:1.528%"></i><i style="--n:9;flex-basis:1.528%"></i><i style="--n:10;flex-basis:1.528%"></i><i style="--n:11;flex-basis:1.528%"></i><i style="--n:12;flex-basis:1.528%"></i><i style="--n:13;flex-basis:1.528%"></i><i style="--n:14;flex-basis:1.528%"></i><i style="--n:15;flex-basis:1.528%"></i><i style="--n:16;flex-basis:1.528%"></i><i style="--n:17;flex-basis:1.528%"></i><i style="--n:18;flex-basis:1.528%"></i><i style="--n:19;flex-basis:1.528%"></i><i style="--n:20;flex-basis:1.528%"></i><i style="--n:21;flex-basis:1.528%"></i><i style="--n:22;flex-basis:1.528%"></i><i style="--n:23;flex-basis:1.528%"></i><i style="--n:24;flex-basis:1.528%"></i><i style="--n:25;flex-basis:1.528%"></i><i style="--n:26;flex-basis:1.528%"></i><i style="--n:27;flex-basis:1.528%"></i><i style="--n:28;flex-basis:1.528%"></i><i style="--n:29;flex-basis:1.528%"></i><i style="--n:30;flex-basis:1.528%"></i><i style="--n:31;flex-basis:1.528%"></i><i style="--n:32;flex-basis:1.528%"></i><i style="--n:33;flex-basis:1.528%"></i><i style="--n:34;flex-basis:1.528%"></i><i style="--n:35;flex-basis:1.528%"></i><i style="--n:36;flex-basis:1.528%"></i><i style="--n:37;flex-basis:1.528%"></i><i style="--n:38;flex-basis:1.528%"></i><i style="--n:39;flex-basis:1.528%"></i><i style="--n:40;flex-basis:1.528%"></i><i style="--n:41;flex-basis:1.528%"></i><i style="--n:42;flex-basis:1.528%"></i><i style="--n:43;flex-basis:1.528%"></i><i style="--n:44;flex-basis:1.528%"></i><i style="--n:45;flex-basis:1.528%"></i><i style="--n:46;flex-basis:1.528%"></i><i style="--n:47;flex-basis:1.528%"></i><i style="--n:48;flex-basis:1.528%"></i><i style="--n:49;flex-basis:1.528%"></i><i style="--n:50;flex-basis:1.528%"></i><i style="--n:51;flex-basis:1.528%"></i><i style="--n:52;flex-basis:1.528%"></i><i style="--n:53;flex-basis:1.528%"></i><i style="--n:54;flex-basis:1.528%"></i><i style="--n:55;flex-basis:1.528%"></i><i style="--n:56;flex-basis:1.528%"></i><i style="--n:57;flex-basis:1.528%"></i><i style="--n:58;flex-basis:1.528%"></i><i style="--n:59;flex-basis:1.528%"></i><i style="--n:60;flex-basis:1.528%"></i><i style="--n:61;flex-basis:1.528%"></i><i style="--n:62;flex-basis:1.528%"></i><i style="--n:63;flex-basis:1.528%"></i><i style="--n:64;flex-basis:1.528%"></i></div><b>65 ideas</b></div>
+<p class="fig__k">One training run, to scale</p>
+<div class="runs"><span>2018</span><div><i style="flex-basis:100%"></i></div><b>12 h</b></div>
+<div class="runs runs--hi"><span>2026</span><div><i style="flex-basis:1.53%"></i></div><b>11 min</b></div>
 <div class="runs runs--axis"><span></span><div><em>0</em><em>3 h</em><em>6 h</em><em>9 h</em><em>12 h</em></div><b></b></div>
+<figcaption>One 2018 run lasts as long as 65 of today's.</figcaption>
 </figure>
 
 Part 1 of 3. [Part 2](/blog/dissertation-revival-beating-2018/): beating it. [Part 3](/blog/dissertation-revival-research-speed/): what research at this speed is like.
@@ -63,7 +62,7 @@ My GTX 980 had 4 GB. Full-colour screens would have needed 39.6 GB of memory and
 <figcaption>The real network, retrained in 2026, at one moment of Aliens. Each layer shows 4 of its maps; bright = active. Tap or hover a layer to face it.</figcaption>
 </figure>
 
-In my report I wrote that training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was: every idea got one run, overnight.
+In my report I wrote that training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was. I was a student trying things I'd never done before, most ideas were wrong, and each one took a night to find out.
 
 ## It still learns the same way
 
