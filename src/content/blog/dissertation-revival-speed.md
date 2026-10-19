@@ -85,14 +85,7 @@ Mostly waiting, not learning.
 </div>
 </figure>
 
-Claude found and cut them in a loop, one change at a time:[^improvements]
-
-1. **Profile** the game to see where the time goes.
-2. **Change one thing.**
-3. **Time it** on the same benchmark game.
-4. **Replay recorded games**, failing if a single pixel differs, so it still plays exactly the same.
-
-Here are the nine, in order:
+Claude cut them out one change at a time. Here are the nine, in order:
 
 <figure class="fig ladder" data-widget="ladder" data-base="The 2018 engine|34 frames/s, with a 25 ms pause and image files on every frame">
 <p class="fig__k">One game, sped up change by change. Tap a step.</p>
@@ -106,6 +99,15 @@ Once the game stopped being the bottleneck, today's GPU did the rest: 11 minutes
 ## What that buys
 
 This project trained 241 times, in 15 hours of training. At 2018 speed, that's about 280 days.
+
+## How
+
+Claude found each speed-up in the same loop:[^improvements]
+
+1. **Profile** the game to see where the time goes.
+2. **Change one thing.**
+3. **Time it** on the same benchmark game.
+4. **Replay recorded games**, failing if a single pixel differs, so it still plays exactly the same.
 
 [^speed]: At 1,550 frames a second on an RTX 4090 with the PC to itself; with other work running, 23 to 34 minutes. All the numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^methods]: DQN, Double DQN and prioritised replay, on four GVGAI games; dueling networks didn't help on Aliens. All in [my dissertation](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf), with [the 2018 code](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2018-dissertation).
