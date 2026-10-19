@@ -29,7 +29,7 @@ function race(root: HTMLElement) {
       const done = Math.min(1, t / secs);
       lane.querySelector<HTMLElement>("i")!.style.setProperty("--w", String(done));
       lane.querySelector("b")!.textContent =
-        done >= 1 ? `done in ${duration(secs)}` : `${fmt.format(Math.round(done * ticks))} ticks`;
+        done >= 1 ? `done in ${duration(secs)}` : `${fmt.format(Math.round(done * ticks))} ${root.dataset.unit ?? "ticks"}`;
       lane.classList.toggle("cmp--after", done >= 1);
     }
   };
