@@ -173,6 +173,9 @@ async function qview(root: HTMLElement) {
   };
   video.addEventListener("play", () => requestAnimationFrame(loop));
   video.addEventListener("seeked", draw);
+  // The video may already be playing: autoplay can start before the data above
+  // has loaded, and then its "play" event has already gone by.
+  if (!video.paused) requestAnimationFrame(loop);
   draw();
 
   // Controls. data-hold on the video tells BlogPost's autoplay-when-visible
