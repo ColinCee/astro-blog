@@ -361,7 +361,7 @@ homepage terminal window's ambient lift, nothing else.
   each loop; accent outlines mark the parts the post is about), and `data-grow` (`.cmp` bars grow in once
   when seen).
 - **Interactive figures** carry `data-widget` and load `src/scripts/widgets.ts`
-  only on posts that use one: `ladder` (a step chart of speed changes; tap a step for its detail),
+  only on posts that use one:
   `chain` (a toy of a reward travelling back through a game), `reveal` (a button
   that adds a baseline to a chart) and `qview` (a recording with the network's
   value for each move under it; optionally `.ctl` buttons to pause and step one decision at a time and a `.peek` block showing the four frames that decision saw, cut from a sprite sheet, and the four ticks its move is held), `pick` (tap a part of a figure to open its detail). Controls use `.ctl`: pill buttons and range

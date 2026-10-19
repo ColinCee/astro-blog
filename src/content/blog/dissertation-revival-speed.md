@@ -37,9 +37,18 @@ The network looks at the screen and gives each move a score: the points it expec
 
 Two improvements sit on top, each from a paper two or three years old when I used it.
 
-### Double DQN: a second opinion
+### Double DQN: don't trust the luckiest guess
 
-The nudge aims at "the reward, plus the score of the best move next". But every score is a guess with some error, and picking the best-looking move picks the one whose error happened to be most positive. Score it with the same guesses and the target comes out too high on average, and those targets train the next guesses. It's the winner's curse: on a talent show, the act a judge scored highest is probably one that judge overrated, so you ask a second judge. DQN already kept an older copy of the network to aim at, so its targets wouldn't shift every step. Double DQN's change: the current network picks the move, and the older copy, whose errors are different, scores it.[^ddqn]
+The agent learns by nudging each score towards "the reward, plus the best score it sees next". But scores are guesses, and the best-looking one is usually one it overrated. So plain DQN keeps aiming a little too high, and because each target is built from other scores, the error feeds on itself. Double DQN asks an older copy of the network for a second opinion on that best move. In my 2018 runs it was the biggest single gain.[^ddqn]
+
+<figure class="fig" data-grow>
+<p class="fig__k">Aliens, wins in the last 500 of 2,000 training games (2018)</p>
+<div class="cmp"><span>DQN</span><i style="--w:0.35"></i><b>35%</b></div>
+<div class="cmp cmp--after"><span>Double DQN</span><i style="--w:0.57"></i><b>57%</b></div>
+</figure>
+
+<details class="more">
+<summary>Why a second opinion fixes it</summary>
 
 <figure class="fig dice" data-widget="dice">
 <p class="fig__k">Three moves, all truly worth 1. Each network guesses with random error.</p>
@@ -51,6 +60,8 @@ The nudge aims at "the reward, plus the score of the best move next". But every 
 <div class="ctl"><button type="button" data-roll="1">New guesses</button><button type="button" data-roll="200">200 more</button><output data-avg></output></div>
 <figcaption>Dashed line: the true value. The pick (outlined) is whichever move looks best to the network. Its own score of that move is usually too high; the older copy's is closer, because its errors aren't the ones that made the move look best. (Real copies share some errors, so in practice it reduces the bias rather than removing it.)</figcaption>
 </figure>
+
+</details>
 
 ### Prioritised replay: practise the surprises
 
@@ -131,12 +142,19 @@ Mostly waiting, not learning.[^frame]
 
 Claude cut it one change at a time, almost all checked by a test that replays recorded games and fails if a single pixel changes.[^improvements]
 
-<figure class="fig ladder" data-widget="ladder">
-<p class="fig__k">One game, frames per second (log scale)</p>
-<svg viewBox="0 0 320 170" role="img" aria-label="Step chart: one game went from 34 to 2,590 frames per second in nine changes; the biggest was sending raw pixels instead of PNG files, 274 to 1,017."></svg>
-<p data-out><b>Raw pixels instead of PNG files</b> <span>274 → 1,017 frames/s, <strong>×3.7</strong></span></p>
-<script type="application/json">[{"name": "Removed a 25 ms pause per frame", "before": 34, "after": 75, "note": "It paced the game for people watching. My 2018 runs had it too."}, {"name": "Frames decoded in memory", "before": 75, "after": 136, "note": "Instead of written to disk and read back."}, {"name": "Engine sends the image it already made", "before": 136, "after": 200, "note": "Instead of saving it, reading it back and encoding it again."}, {"name": "Sprites scaled once", "before": 214, "after": 233, "note": "Instead of on every draw."}, {"name": "One write per message", "before": 233, "after": 274, "note": "Buffered output, sent in one go."}, {"name": "Raw pixels instead of PNG files", "before": 274, "after": 1017, "note": "No image encoded, written or read per frame. The biggest jump."}, {"name": "Raw bytes instead of text", "before": 1017, "after": 1738, "note": "The frame was sent as text inside JSON: 44% of the engine's time."}, {"name": "No sprite copies the agent never reads", "before": 2100, "after": 2400, "note": "Only tree-search agents need them."}, {"name": "Drawn straight into one reused image", "before": 2400, "after": 2590, "note": "Then the work moved to the training side."}]</script>
-<figcaption>Hover or tap a step. Each was measured on its own; the benchmark was tightened partway, so a step can start a little off where the last one ended.</figcaption>
+<figure class="fig" data-grow>
+<p class="fig__k">The nine engine changes, in the order they were made: how much faster each made one game</p>
+<div class="cmp" title="Removed a 25 ms pause per frame: 34 → 75 frames a second"><span>1. No 25 ms pause</span><i style="--w:0.571"></i><b>×2.2</b></div>
+<div class="cmp" title="Frames decoded in memory: 75 → 136 frames a second"><span>2. No frame file on disk</span><i style="--w:0.429"></i><b>×1.8</b></div>
+<div class="cmp" title="Engine sends the image it already made: 136 → 200 frames a second"><span>3. No re-encoded image</span><i style="--w:0.278"></i><b>×1.5</b></div>
+<div class="cmp" title="Sprites scaled once: 214 → 233 frames a second"><span>4. Sprites scaled once</span><i style="--w:0.061"></i><b>×1.1</b></div>
+<div class="cmp" title="One write per message: 233 → 274 frames a second"><span>5. One write per message</span><i style="--w:0.117"></i><b>×1.2</b></div>
+<div class="cmp cmp--after" title="Raw pixels instead of PNG files: 274 → 1,017 frames a second"><span>6. Raw pixels, no PNG</span><i style="--w:0.946"></i><b>×3.7</b></div>
+<div class="cmp" title="Raw bytes instead of text: 1,017 → 1,738 frames a second"><span>7. Bytes, not text</span><i style="--w:0.387"></i><b>×1.7</b></div>
+<div class="cmp" title="No sprite copies the agent never reads: 2,100 → 2,400 frames a second"><span>8. No unused copies</span><i style="--w:0.096"></i><b>×1.1</b></div>
+<div class="cmp" title="Drawn straight into one reused image: 2,400 → 2,590 frames a second"><span>9. One reused image</span><i style="--w:0.055"></i><b>×1.1</b></div>
+<p class="fig__k">All nine: 34 → 2,590 frames a second, ×76</p>
+<figcaption>Bars on a log scale. Each change was measured on its own, before and after, so together they come to ×59; the benchmark was made stricter partway, which accounts for the rest.</figcaption>
 </figure>
 
 With the game no longer the bottleneck, my 2018 agent only needed its network on today's GPU: 11 minutes. Today's agents go further, with the replay memory on the GPU and each learning step recorded once and replayed as a single GPU command: 3 to 11 minutes a run.

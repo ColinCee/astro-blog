@@ -144,9 +144,15 @@ async function qview(root: HTMLElement) {
       if (decisions[mid].tick <= tick) lo = mid;
       else hi = mid - 1;
     }
+    show(lo);
+  };
+  // Fill everything from the data for decision i, so stepping works even
+  // before the video has loaded a frame.
+  function show(i: number) {
+    if (i === last) return;
+    last = i;
+    const lo = i;
     const d = decisions[lo];
-    if (lo === last) return;
-    last = lo;
     const q = d.q!;
     const min = Math.min(...q);
     const span = Math.max(...q) - min || 1;
@@ -160,7 +166,7 @@ async function qview(root: HTMLElement) {
     if (seenTicks) seenTicks.textContent = `ticks ${d.tick - 3} to ${d.tick}`;
     if (heldName) heldName.textContent = names[data.action_names.indexOf(d.action)];
     if (at) at.textContent = `decision ${lo + 1} of ${decisions.length} · tick ${d.tick} · ${d.score ?? 0} points`;
-  };
+  }
   const loop = () => {
     draw();
     if (!video.paused) requestAnimationFrame(loop);
@@ -194,64 +200,20 @@ async function qview(root: HTMLElement) {
       video.dataset.hold = "1";
       video.pause();
       const i = Math.min(decisions.length - 1, Math.max(0, last + Number(b.dataset.step)));
-      // Land in the middle of the frame that shows the decision's tick.
-      video.currentTime = (decisions[i].tick + 0.5) / (fps * ticksPerFrame);
+      show(i);
+      // Land in the middle of the frame that shows the decision's tick; a
+      // video that hasn't loaded yet (preload="none") is loaded first.
+      const seek = () => (video.currentTime = (decisions[i].tick + 0.5) / (fps * ticksPerFrame));
+      if (video.readyState >= 1) seek();
+      else {
+        video.addEventListener("loadedmetadata", seek, { once: true });
+        video.preload = "auto";
+        video.load();
+      }
     }),
   );
 }
 
-
-// Ladder: a step chart of speed changes. Each step is a focusable column;
-// choosing one fills the panel below with what changed and by how much.
-type Step = { name: string; before: number; after: number; note?: string };
-function ladder(root: HTMLElement) {
-  const steps: Step[] = JSON.parse(root.querySelector("script")!.textContent!);
-  const svg = root.querySelector("svg")!;
-  const out = root.querySelector<HTMLElement>("[data-out]")!;
-  const W = 320, H = 170, L = 34, R = 8, T = 12, B = 22;
-  const lo = Math.log10(20), hi = Math.log10(4000);
-  const y = (v: number) => T + (H - T - B) * (1 - (Math.log10(v) - lo) / (hi - lo));
-  const dx = (W - L - R) / steps.length;
-  const ns = "http://www.w3.org/2000/svg";
-  const el = (tag: string, attrs: Record<string, string | number>) => {
-    const e = document.createElementNS(ns, tag);
-    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, String(v));
-    svg.appendChild(e);
-    return e;
-  };
-  for (const v of [30, 100, 300, 1000, 3000]) {
-    el("line", { class: "ax", x1: L, x2: W - R, y1: y(v), y2: y(v) });
-    el("text", { x: L - 5, y: y(v) + 4, "text-anchor": "end" }).textContent = fmt.format(v);
-  }
-  let pts = "";
-  steps.forEach((s, i) => (pts += ` ${L + i * dx},${y(s.after)} ${L + (i + 1) * dx},${y(s.after)}`));
-  el("polyline", { class: "ln", points: pts.trim() });
-  const risers = steps.map((s, i) =>
-    el("line", { class: "riser", x1: L + i * dx, x2: L + i * dx, y1: y(s.before), y2: y(s.after) }),
-  );
-  const hits = steps.map((s, i) => {
-    const r = el("rect", { class: "hit", x: L + i * dx, y: T, width: dx, height: H - T - B, tabindex: 0, role: "button" });
-    r.setAttribute("aria-label", `${s.name}: ${s.before} to ${s.after} frames per second`);
-    return r;
-  });
-  el("text", { x: L, y: H - 6 }).textContent = "2018";
-  el("text", { x: W - R, y: H - 6, "text-anchor": "end" }).textContent = "2026";
-  const pick = (i: number) => {
-    const s = steps[i];
-    risers.forEach((r, j) => r.classList.toggle("is-on", j === i));
-    hits.forEach((r, j) => r.classList.toggle("is-on", j === i));
-    const x = s.after / s.before;
-    out.innerHTML = `<b>${i + 1}. ${s.name}</b> <span>${fmt.format(s.before)} → ${fmt.format(s.after)} frames/s, <strong>×${x.toFixed(1)}</strong></span>${s.note ? `<small>${s.note}</small>` : ""}`;
-  };
-  hits.forEach((r, i) => {
-    r.addEventListener("mouseenter", () => pick(i));
-    r.addEventListener("focus", () => pick(i));
-    r.addEventListener("click", () => pick(i));
-  });
-  let best = 0;
-  steps.forEach((s, i) => s.after / s.before > steps[best].after / steps[best].before && (best = i));
-  pick(best);
-}
 
 // Pick: tappable parts of a figure ([data-pick]); choosing one shows its
 // <template data-for> in the figure's [data-panel]. Choosing it again closes it.
@@ -355,7 +317,7 @@ function dice(root: HTMLElement) {
   show();
 }
 
-const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, ladder, pick, dice };
+const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, pick, dice };
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });
