@@ -2091,6 +2091,79 @@ const last = entries[entries.length - 1];
       font-size: 0.6875rem;
     }
   }
+  /* Player: one bar of controls for a recording, segments split by dividers:
+     play/pause, step back, step forward, a scrubber, and where it is. */
+  .prose .player {
+    display: flex;
+    align-items: stretch;
+    height: 2.5rem;
+    margin-top: 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .prose .player > * + * {
+    border-left: 1px solid var(--line);
+  }
+  .prose .player button {
+    display: grid;
+    place-items: center;
+    flex: 0 0 2.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .prose .player button + button {
+    border-left: 1px solid var(--line);
+  }
+  .prose .player button:hover,
+  .prose .player button:focus-visible {
+    color: var(--ink);
+    background: var(--pane);
+    outline: none;
+  }
+  .prose .player svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    fill: currentColor;
+  }
+  /* Step buttons: a single chevron each, drawn as a stroke. */
+  .prose .player [data-step] svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .prose .player [data-play] .i-pause,
+  .prose .player [data-play][aria-pressed="true"] .i-play {
+    display: none;
+  }
+  .prose .player [data-play][aria-pressed="true"] .i-pause {
+    display: inline;
+  }
+  .prose .player input[type="range"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0 0.85rem;
+    accent-color: var(--accent);
+    background: none;
+  }
+  .prose .player output {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    padding: 0 0.85rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
   /* Peek (qview): what one decision saw. .peek__seen shows four frames cut
      from a sprite sheet (--sheet on the figure; one row per decision, --n rows,
      --k the current row); tapping one shows it large in .peek__zoom. */

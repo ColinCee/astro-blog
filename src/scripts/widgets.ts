@@ -73,8 +73,9 @@ function reveal(root: HTMLElement) {
 
 // Q-view: a recording with the network's value for each move drawn under it,
 // from the recorder's JSON (one entry per decision, with the tick it was made).
-// Optional parts, used when the figure has them: [data-step] / [data-play]
-// buttons to pause and move one decision at a time; [data-seen] with four cells
+// Optional parts, used when the figure has them: [data-play] to pause,
+// [data-step] buttons to move one decision at a time and a [data-scrub] range
+// over the decisions (a .player bar); [data-seen] with four cells
 // showing the frames that decision saw (rows of the sprite sheet in data-stack,
 // one per decision, from tools/stacks.py), each tappable to enlarge in
 // [data-zoom]; [data-held-name] for the move it then holds; [data-at] for where
@@ -103,6 +104,8 @@ async function qview(root: HTMLElement) {
   const seenTicks = root.querySelector<HTMLElement>("[data-seen-ticks]");
   const at = root.querySelector<HTMLElement>("[data-at]");
   const zoom = root.querySelector<HTMLElement>("[data-zoom]");
+  const scrub = root.querySelector<HTMLInputElement>("[data-scrub]");
+  if (scrub) scrub.max = String(decisions.length - 1);
   // On the figure, so the enlarged frame shares the sheet and the current row.
   if (seen && root.dataset.stack) {
     root.style.setProperty("--sheet", `url(${root.dataset.stack})`);
@@ -165,7 +168,8 @@ async function qview(root: HTMLElement) {
     showZoom();
     if (seenTicks) seenTicks.textContent = `ticks ${d.tick - 3} to ${d.tick}`;
     if (heldName) heldName.textContent = names[data.action_names.indexOf(d.action)];
-    if (at) at.textContent = `decision ${lo + 1} of ${decisions.length} · tick ${d.tick} · ${d.score ?? 0} points`;
+    if (at) at.textContent = `${lo + 1} / ${decisions.length}`;
+    if (scrub) scrub.value = String(lo);
   }
   const loop = () => {
     draw();
@@ -190,7 +194,7 @@ async function qview(root: HTMLElement) {
   const setPlayBtn = () => {
     if (!playBtn) return;
     playBtn.setAttribute("aria-pressed", String(!video.paused));
-    playBtn.textContent = video.paused ? "play" : "pause";
+    playBtn.setAttribute("aria-label", video.paused ? "Play" : "Pause");
   };
   video.addEventListener("play", setPlayBtn);
   video.addEventListener("pause", setPlayBtn);
@@ -204,23 +208,26 @@ async function qview(root: HTMLElement) {
       video.pause();
     }
   });
+  // Pause on decision i and show its frame.
+  const goTo = (i: number) => {
+    video.dataset.hold = "1";
+    video.pause();
+    i = Math.min(decisions.length - 1, Math.max(0, i));
+    show(i);
+    // Land in the middle of the frame that shows the decision's tick; a
+    // video that hasn't loaded yet (preload="none") is loaded first.
+    const seek = () => (video.currentTime = (decisions[i].tick + 0.5) / (fps * ticksPerFrame));
+    if (video.readyState >= 1) seek();
+    else {
+      video.addEventListener("loadedmetadata", seek, { once: true });
+      video.preload = "auto";
+      video.load();
+    }
+  };
   root.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((b) =>
-    b.addEventListener("click", () => {
-      video.dataset.hold = "1";
-      video.pause();
-      const i = Math.min(decisions.length - 1, Math.max(0, last + Number(b.dataset.step)));
-      show(i);
-      // Land in the middle of the frame that shows the decision's tick; a
-      // video that hasn't loaded yet (preload="none") is loaded first.
-      const seek = () => (video.currentTime = (decisions[i].tick + 0.5) / (fps * ticksPerFrame));
-      if (video.readyState >= 1) seek();
-      else {
-        video.addEventListener("loadedmetadata", seek, { once: true });
-        video.preload = "auto";
-        video.load();
-      }
-    }),
+    b.addEventListener("click", () => goTo(last + Number(b.dataset.step))),
   );
+  scrub?.addEventListener("input", () => goTo(Number(scrub.value)));
 }
 
 

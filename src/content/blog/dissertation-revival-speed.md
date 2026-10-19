@@ -16,7 +16,7 @@ pubDate: "Oct 20 2026"
 <figure class="vid"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
 </div>
 <div class="qbars" aria-live="off"></div>
-<div class="ctl"><button type="button" data-step="-1">← back</button><button type="button" data-play aria-pressed="true">pause</button><button type="button" data-step="1">next →</button><output data-at></output></div>
+<div class="player"><button type="button" data-play aria-pressed="true" aria-label="Pause"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9-5.5z"/><path class="i-pause" d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/></svg></button><button type="button" data-step="-1" aria-label="Previous decision"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button><button type="button" data-step="1" aria-label="Next decision"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button><input type="range" data-scrub min="0" max="0" value="0" step="1" aria-label="Decision"><output data-at></output></div>
 <div class="peek">
 <p class="fig__k">It sees these 4 frames, <span data-seen-ticks></span>, then plays <b data-held-name>shoot</b> for the next 4. Tap a frame to enlarge it.</p>
 <div class="peek__seen" data-seen><i></i><i></i><i></i><i></i></div>
@@ -26,7 +26,7 @@ pubDate: "Oct 20 2026"
 
 In 2018, for my final year project at Strathclyde University, I wrote an AI that teaches itself to play video games from the screen. I handed the report and code to Claude and told it to find ways to improve it. Now it trains in about 11 minutes instead of 12 hours, with the same results.[^speed]
 
-The bars are its scores: how much reward it expects from each move, from now to the end of the game. It plays the top one. It's DQN, DeepMind's 2015 method, plus two newer tricks.[^methods] Getting those scores right takes about a million frames of practice.
+The bars are its scores: how much reward it expects from each move, from now to the end of the game.[^replay] It plays the top one. It's DQN, DeepMind's 2015 method, plus two newer tricks.[^methods] Getting those scores right takes about a million frames of practice.
 
 ## 2018: the cost of slow feedback loops
 
@@ -45,7 +45,7 @@ It was. Every new idea waited on a full training run, so I'd leave the PC runnin
 
 ## The results still hold
 
-Claude rebuilt it on today's software with every setting kept, and trained it three times.
+Claude rebuilt it on today's software with every setting kept, and [trained it three times](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2026-revival/results/curves).
 
 <figure class="fig" data-widget="lines">
 <p class="fig__k">Aliens, wins so far: my two 2018 runs against three 2026 runs</p>
@@ -69,7 +69,7 @@ Claude rebuilt it on today's software with every setting kept, and trained it th
 <script type="application/json">{"x":{"max":2000,"ticks":[0,500,1000,1500,2000],"title":"training games →"},"y":{"max":900,"ticks":[0,300,600,900],"title":"wins so far"},"band":[[1,0,0],[40,0,2],[80,2,7],[120,3,11],[160,4,14],[200,7,15],[240,10,18],[280,14,21],[320,15,26],[360,17,32],[400,20,34],[440,24,37],[480,27,45],[520,38,51],[560,45,57],[600,53,62],[640,60,73],[680,72,87],[720,81,98],[760,92,114],[800,102,130],[840,113,143],[880,126,156],[920,140,171],[960,157,184],[1000,171,205],[1040,187,224],[1080,205,241],[1120,225,265],[1160,249,293],[1200,272,308],[1240,294,331],[1280,319,353],[1320,345,377],[1360,367,400],[1400,390,426],[1440,412,456],[1480,440,480],[1520,463,506],[1560,486,534],[1600,515,564],[1640,550,590],[1680,577,617],[1720,598,645],[1760,625,673],[1800,654,707],[1840,681,738],[1880,706,771],[1920,739,804],[1960,765,838],[2000,792,869]],"line":[[1,0],[40,3],[80,3],[120,6],[160,9],[200,9],[240,12],[280,14],[320,15],[360,21],[400,29],[440,37],[480,42],[520,47],[560,51],[600,59],[640,69],[680,78],[720,86],[760,98],[800,114],[840,130],[880,153],[920,169],[960,193],[1000,213],[1040,236],[1080,258],[1120,285],[1160,310],[1200,331],[1240,362],[1280,385],[1320,406],[1360,432],[1400,452],[1440,477],[1480,500],[1520,529],[1560,560],[1600,589],[1640,614],[1680,640],[1720,671],[1760,695],[1800,725],[1840,757],[1880,785],[1920,815],[1960,847],[2000,876]],"dots":[[0,0],[500,20],[1000,131],[1500,421],[2000,762]],"legend":[{"kind":"line","text":"2018, run 1: 876"},{"kind":"dots","text":"2018, run 2: 762"},{"kind":"band","text":"2026 ×3: 792–869"}]}</script>
 </figure>
 
-All three land between my two 2018 runs, which differ from each other by more than the 2026 runs do. Not bad for something I wrote as an undergrad from papers and blog posts.
+All three land between my two 2018 runs,[^runs] which differ from each other by more than the 2026 runs do. Not bad for something I wrote as an undergrad from papers and blog posts.
 
 Claude did find two real bugs in my code. Fixing them barely changed the result.[^bugs]
 
@@ -111,16 +111,10 @@ Claude found each speed-up in the same loop:[^improvements]
 3. **Time it** on the same benchmark game.
 4. **Replay recorded games**, failing if a single pixel differs, so it still plays exactly the same.
 
-## Sources
-
-Every figure, and the files behind it:
-
-- **The replay at the top:** the 2026 rebuild of my 2018 agent (training run 1 of 3) playing Aliens level 0, engine seed 2, recorded with [tools/record.py](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/tools/record.py). Its scores are the network's own values at each decision.
-- **One training run, to scale:** 12 hours from [my report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf) ("training the DQN agent for 2000 episodes took approximately 12 hours"); 11 minutes is the quiet-machine benchmark in [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
-- **Wins so far:** 2018 run 1 is the first 2,000 games of [the training log](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/results/2018/aliens-ddqn-per-reward.csv) from my report's spreadsheet. 2018 run 2 is the results table in [my report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf) for the final agent: win rates per 500 games of 4.0, 22.2, 58.0 and 68.2%. The 2026 runs are [these three logs](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2026-revival/results/curves) (`aliens-ddqn2018-s0` to `s2`).
-- **One frame in 2018, and the nine changes:** frames per second before and after each change, from [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/IMPROVEMENTS.md), measured with `bench/game_speed.py`. Each slice of the 29 ms is the time per frame before a change minus the time after.
 
 [^speed]: At 1,550 frames a second on an RTX 4090 with the PC to itself; with other work running, 23 to 34 minutes. All the numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^methods]: DQN, Double DQN and prioritised replay, on four GVGAI games; dueling networks didn't help on Aliens. All in [my dissertation](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf), with [the 2018 code](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2018-dissertation).
 [^bugs]: Rewards credited one move late, and prioritised replay missing its correction weights. Fixed: 48.2 points vs 50.1. More in [LEARNINGS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/LEARNINGS.md).
-[^improvements]: The benchmark was tightened partway, so the steps don't always line up exactly. All 30 changes, with before, after and a commit each: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/IMPROVEMENTS.md).
+[^improvements]: Frames per second before and after each change, timed with `bench/game_speed.py`; each slice of the 29 ms is the time per frame before a change minus after. The benchmark was tightened partway, so the steps don't always line up exactly. All 30 changes, with a commit each: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/IMPROVEMENTS.md).
+[^replay]: The 2026 rebuild's first training run, playing Aliens level 0, recorded with [tools/record.py](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/tools/record.py). The bars are the network's own values at each decision.
+[^runs]: Run 1 is the first 2,000 games of [my training log](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/results/2018/aliens-ddqn-per-reward.csv). Run 2 is the results table in [my report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf): 4.0, 22.2, 58.0 and 68.2% wins per 500 games.
