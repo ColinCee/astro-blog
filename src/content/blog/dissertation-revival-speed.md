@@ -55,14 +55,14 @@ My version added two newer tricks.
 
 Every score is a guess, and the move that looks best is usually one the network overrated. Each box learns from the best-looking score in the box after it, and that score comes from the same network that's learning, so the overrating snowballs back through the game. Double DQN changes just that step: the network still picks the next move, but an older copy of it, refreshed every 5,000 moves, scores it:
 
-<figure class="fig dice" data-widget="dice">
-<p class="fig__k">Three moves, all truly worth 1 (dashed line). Each network guesses with random error; the outlined bar is the pick.</p>
-<div class="dice__grid" data-grid></div>
-<div class="dice__out">
-<div><span>Same network picks and scores</span><b data-same>…</b></div>
-<div class="is-hi"><span>Older copy scores the pick</span><b data-other>…</b></div>
+<figure class="fig">
+<p class="fig__k">The same won game after plenty of practice (illustration). The true score of each box is 0.99 × the next; hatched means too high.</p>
+<div class="flow">
+<p class="flow__lab flow__lab--ink">Plain DQN: a little optimism at every step piles up going back</p>
+<div class="flow__row"><div class="flow__b flow__b--over" style="--v:0.978"><small>1</small><b>1.27</b></div><div class="flow__b flow__b--over" style="--v:0.949"><small>2</small><b>1.23</b></div><div class="flow__b flow__b--over" style="--v:0.920"><small>3</small><b>1.20</b></div><div class="flow__b flow__b--over" style="--v:0.890"><small>4</small><b>1.16</b></div><div class="flow__b flow__b--over" style="--v:0.861"><small>5</small><b>1.12</b></div><div class="flow__b flow__b--over" style="--v:0.830"><small>6</small><b>1.08</b></div><div class="flow__b flow__b--over" style="--v:0.800"><small>7</small><b>1.04</b></div><div class="flow__b" style="--v:0.769"><small>8</small><b>1.00</b></div><div class="flow__win"><b>+1</b><small>win</small></div></div>
+<p class="flow__lab flow__lab--ink">Double DQN: stays close to the truth</p>
+<div class="flow__row"><div class="flow__b" style="--v:0.717"><small>1</small><b>0.93</b></div><div class="flow__b" style="--v:0.724"><small>2</small><b>0.94</b></div><div class="flow__b" style="--v:0.732"><small>3</small><b>0.95</b></div><div class="flow__b" style="--v:0.739"><small>4</small><b>0.96</b></div><div class="flow__b" style="--v:0.746"><small>5</small><b>0.97</b></div><div class="flow__b" style="--v:0.754"><small>6</small><b>0.98</b></div><div class="flow__b" style="--v:0.762"><small>7</small><b>0.99</b></div><div class="flow__b" style="--v:0.769"><small>8</small><b>1.00</b></div><div class="flow__win"><b>+1</b><small>win</small></div></div>
 </div>
-<div class="ctl"><button type="button" data-roll="1">New guesses</button><button type="button" data-roll="200">200 more</button><output data-avg></output></div>
 </figure>
 
 In my 2018 runs, plain DQN started out wildly optimistic and spent its training talking itself down; Double DQN's expectations rose as it actually got better, and it won 57% of games to DQN's 35%.[^ddqn]

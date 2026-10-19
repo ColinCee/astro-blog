@@ -318,81 +318,6 @@ function pick(root: HTMLElement) {
   });
 }
 
-// Dice: why Double DQN helps. Three moves all truly worth 1; two networks
-// guess each with independent random error. Taking the best-looking guess and
-// trusting its own score is biased high; scoring that pick with the other
-// network's guess is not. The running averages show it.
-function dice(root: HTMLElement) {
-  const grid = root.querySelector<HTMLElement>("[data-grid]")!;
-  const same = root.querySelector<HTMLElement>("[data-same]")!;
-  const other = root.querySelector<HTMLElement>("[data-other]")!;
-  const avg = root.querySelector<HTMLOutputElement>("[data-avg]")!;
-  const moves = ["shoot", "left", "right"];
-  let seed = 17053; // its first roll shows the bias plainly: picks left at 1.49, the copy says 1.00
-  const rand = () => {
-    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-    return (seed + 0.5) / 4294967296;
-  };
-  const noise = () => 0.3 * Math.sqrt(-2 * Math.log(rand())) * Math.cos(2 * Math.PI * rand());
-  const cells: HTMLElement[][] = [[], []];
-  ["network", "older copy"].forEach((who, r) => {
-    const label = document.createElement("span");
-    label.className = "dice__who";
-    label.textContent = who;
-    grid.appendChild(label);
-    moves.forEach(() => {
-      const c = document.createElement("div");
-      c.className = "dice__cell";
-      c.innerHTML = "<i></i><b></b>";
-      grid.appendChild(c);
-      cells[r].push(c);
-    });
-  });
-  const foot = document.createElement("span");
-  grid.appendChild(foot);
-  for (const m of moves) {
-    const t = document.createElement("small");
-    t.textContent = m;
-    grid.appendChild(t);
-  }
-  let n = 0;
-  let sumSame = 0;
-  let sumOther = 0;
-  let last: { a: number[]; b: number[]; pick: number } | null = null;
-  const roll = () => {
-    const a = moves.map(() => 1 + noise());
-    const b = moves.map(() => 1 + noise());
-    const pick = a.indexOf(Math.max(...a));
-    n++;
-    sumSame += a[pick];
-    sumOther += b[pick];
-    last = { a, b, pick };
-  };
-  const show = () => {
-    const { a, b, pick } = last!;
-    [a, b].forEach((vals, r) =>
-      vals.forEach((v, k) => {
-        const c = cells[r][k];
-        c.style.setProperty("--v", String(Math.max(0, Math.min(2, v)) / 2));
-        c.querySelector("b")!.textContent = v.toFixed(2);
-        c.classList.toggle("is-pick", k === pick);
-      }),
-    );
-    same.textContent = a[pick].toFixed(2);
-    other.textContent = b[pick].toFixed(2);
-    const off = (x: number) => (Math.abs(x) < 0.005 ? "0.00" : `${x > 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`);
-    avg.value = `average over ${n} round${n === 1 ? "" : "s"} of guesses: same network ${off(sumSame / n - 1)}, older copy ${off(sumOther / n - 1)}`;
-  };
-  root.querySelectorAll<HTMLButtonElement>("[data-roll]").forEach((btn) =>
-    btn.addEventListener("click", () => {
-      for (let k = 0; k < Number(btn.dataset.roll); k++) roll();
-      show();
-    }),
-  );
-  roll();
-  show();
-}
-
 // Flow: one won game as a row of decision boxes. After p passes of practice
 // the win has reached p boxes back, each worth 0.99 of the box after it; the
 // slider sets p. Each box is shaded by its score.
@@ -416,7 +341,7 @@ function flow(root: HTMLElement) {
   draw();
 }
 
-const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, pick, dice, ladder, flow };
+const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, pick, ladder, flow };
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });

@@ -2009,6 +2009,14 @@ const last = entries[entries.length - 1];
   .prose .flow__lab--back {
     color: var(--accent-soft);
   }
+  .prose .flow__lab--ink {
+    color: var(--ink);
+    margin-top: 0.4rem;
+  }
+  /* A score above the true value: a hatched band over the shading. */
+  .prose .flow__b.flow__b--over {
+    background-image: repeating-linear-gradient(135deg, color-mix(in oklch, var(--ink) 30%, transparent) 0 3px, transparent 3px 7px);
+  }
   .prose .flow__row {
     display: grid;
     grid-template-columns: repeat(9, minmax(0, 1fr));
@@ -2053,82 +2061,6 @@ const last = entries[entries.length - 1];
   @media (max-width: 34rem) {
     .prose .flow__b b {
       font-size: 0.6875rem;
-    }
-  }
-  /* Dice (widget): two rows of guesses for three moves, a dashed true-value
-     line at half height, the pick outlined; below, the two targets. */
-  .prose .dice__grid {
-    display: grid;
-    grid-template-columns: 6.5rem repeat(3, minmax(0, 1fr));
-    gap: 0.4rem 0.6rem;
-    align-items: end;
-  }
-  .prose .dice__who {
-    align-self: center;
-    color: var(--ink);
-  }
-  .prose .dice__grid small {
-    text-align: center;
-    color: var(--faint);
-    font-size: 0.6875rem;
-  }
-  .prose .dice__cell {
-    position: relative;
-    height: 4.2rem;
-    border-bottom: 1px solid var(--line);
-  }
-  .prose .dice__cell::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 50%;
-    border-top: 1.5px dashed var(--faint);
-  }
-  .prose .dice__cell i {
-    position: absolute;
-    left: 25%;
-    right: 25%;
-    bottom: 0;
-    height: calc(var(--v, 0.5) * 100%);
-    background: var(--bar);
-    border-radius: 2px 2px 0 0;
-    transition: height 0.25s var(--ease-out);
-  }
-  .prose .dice__cell b {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: calc(var(--v, 0.5) * 100% + 0.15rem);
-    text-align: center;
-    font-weight: 500;
-    font-size: 0.6875rem;
-    color: var(--muted);
-  }
-  .prose .dice__cell.is-pick i {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-  .prose .dice__out {
-    display: grid;
-    gap: 0.3rem;
-  }
-  .prose .dice__out div {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  .prose .dice__out b {
-    color: var(--ink);
-    font-size: 1.05rem;
-    font-variant-numeric: tabular-nums;
-  }
-  .prose .dice__out .is-hi b {
-    color: var(--accent-soft);
-  }
-  @media (max-width: 34rem) {
-    .prose .dice__grid {
-      grid-template-columns: 4.6rem repeat(3, minmax(0, 1fr));
     }
   }
   /* Peek (qview): what one decision saw. .peek__seen shows four frames cut
