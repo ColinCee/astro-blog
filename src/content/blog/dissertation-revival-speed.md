@@ -89,6 +89,8 @@ Mostly waiting, not learning.
 
 A newer graphics card wouldn't have touched any of that: all 29 ms happened before the network saw the frame, and all but 0.4 ms of it was overhead. Over a million frames, that's about 8 of the 12 hours.
 
+Not everything is fair: 2018 ran on a GTX 980, today on an RTX 4090. But the game side was timed on today's PC from the start. My 2018 engine still crawled at 34 frames a second on it, and the nine changes below took it to 2,590 on the same hardware.
+
 Claude cut them out one change at a time. Here are the nine, in order:
 
 <figure class="fig ladder" data-widget="ladder" data-base="The 2018 engine|34 frames/s, with a 25 ms pause and image files on every frame">
