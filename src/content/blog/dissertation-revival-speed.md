@@ -26,7 +26,7 @@ pubDate: "Oct 20 2026"
 
 In 2018, for my final-year project at Strathclyde, I wrote an AI that teaches itself to play video games from the screen. This October I handed the code to Claude. Same agent, same bugs: it now trains in about 11 minutes instead of 12 hours, and learns exactly the same way.[^speed]
 
-The bars are its scores: how much reward it expects from each move, from now to the end of the game. It plays the top one. It's DQN, DeepMind's 2015 method, plus two newer tricks.[^methods] Getting those scores right takes about a million frames of practice. [Part 2](/blog/dissertation-revival-beating-2018/) shows how it learns.
+The bars are its scores: how much reward it expects from each move, from now to the end of the game. It plays the top one. It's DQN, DeepMind's 2015 method, plus two newer tricks.[^methods] Getting those scores right takes about a million frames of practice.
 
 ## 2018: one idea a night
 
@@ -95,9 +95,6 @@ Once the game stopped being the bottleneck, today's GPU did the rest: 11 minutes
 ## What that buys
 
 This project trained 241 times, in 15 hours of training. At 2018 speed, that's about 280 days.
-
-- [Part 2](/blog/dissertation-revival-beating-2018/): what I did with them.
-- [Part 3](/blog/dissertation-revival-research-speed/): what research is like at this speed.
 
 [^speed]: At 1,550 frames a second on an RTX 4090 with the PC to itself; with other work running, 23 to 34 minutes. All the numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^methods]: [DQN](https://www.nature.com/articles/nature14236), [Double DQN](https://arxiv.org/abs/1509.06461) and [prioritised replay](https://arxiv.org/abs/1511.05952), on four [GVGAI](http://www.gvgai.net/) games. I also tried [dueling networks](https://arxiv.org/abs/1511.06581); they didn't help on Aliens.
