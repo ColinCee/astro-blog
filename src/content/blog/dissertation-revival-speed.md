@@ -109,7 +109,7 @@ Mostly waiting, not learning. Claude cut it one change at a time, each checked b
 <figcaption>Hover or tap a step. Each was measured on its own; the benchmark was tightened partway, so a step can start a little off where the last one ended.</figcaption>
 </figure>
 
-Then the training side: the memory moved onto the GPU, and each learning step became a single GPU command.
+The rest came from a GPU eight years newer.
 
 ## What that buys
 

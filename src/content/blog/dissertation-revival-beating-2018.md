@@ -24,7 +24,7 @@ pubDate: "Oct 21 2026"
 
 With five times the training my 2018 agent got, and rewarded only for winning, today's DQN wins **every** game of Aliens on every run, on levels it never trained on too. But the number that mattered most turned out to be **82%**: what you win by holding the shoot button and doing nothing else.
 
-This is part 2 of 3. [Part 1](/blog/dissertation-revival-speed/) is how the 2018 code came back and got 29× faster; [part 3](/blog/dissertation-revival-research-speed/) is what it's like doing research at this speed.
+This is part 2 of 3. [Part 1](/blog/dissertation-revival-speed/) is how the 2018 code came back and got 65× faster; [part 3](/blog/dissertation-revival-research-speed/) is what it's like doing research at this speed.
 
 ## Round 1: same budget as 2018
 

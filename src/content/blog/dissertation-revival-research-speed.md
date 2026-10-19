@@ -28,7 +28,7 @@ pubDate: "Oct 22 2026"
 
 In 2018 the code for my dissertation took eleven weeks, and every idea got one run because each run took a night. This October Claude did it again in two days. It rebuilt the code, reproduced my results, tried the main methods that came after, and found a flaw in how I'd measured it all. I didn't write a line of code.[^results]
 
-This is part 3 of 3. [Part 1](/blog/dissertation-revival-speed/): the 2018 code came back, 29× faster. [Part 2](/blog/dissertation-revival-beating-2018/): beating it, and the button that wins 82%.
+This is part 3 of 3. [Part 1](/blog/dissertation-revival-speed/): the 2018 code came back, 65× faster. [Part 2](/blog/dissertation-revival-beating-2018/): beating it, and the button that wins 82%.
 
 ## The two days
 
