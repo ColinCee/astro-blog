@@ -39,7 +39,7 @@ Two improvements sit on top, each from a paper two or three years old when I use
 
 ### Double DQN: a second opinion
 
-The nudge aims at "the reward, plus the score of the best move next". But every score is a guess with some error, and picking the best-looking move picks the one whose error happened to be most positive. Score it with the same guesses and the target comes out too high, every time, and those targets train the next guesses. Double DQN lets the network pick the move and asks an older copy of itself, which has different errors, to score it.[^ddqn]
+The nudge aims at "the reward, plus the score of the best move next". But every score is a guess with some error, and picking the best-looking move picks the one whose error happened to be most positive. Score it with the same guesses and the target comes out too high, every time, and those targets train the next guesses. It's the winner's curse: on a talent show, the act a judge scored highest is probably one that judge overrated, so you ask a second judge. Double DQN lets the network pick the move and asks an older copy of itself, which has different errors, to score it.[^ddqn]
 
 <figure class="fig dice" data-widget="dice">
 <p class="fig__k">Three moves, all truly worth 1. Each network guesses with random error.</p>
@@ -48,7 +48,7 @@ The nudge aims at "the reward, plus the score of the best move next". But every 
 <div><span>Same network picks and scores</span><b data-same>…</b></div>
 <div class="is-hi"><span>Older copy scores the pick</span><b data-other>…</b></div>
 </div>
-<div class="ctl"><button type="button" data-roll="1">Roll again</button><button type="button" data-roll="200">Roll 200 times</button><output data-avg></output></div>
+<div class="ctl"><button type="button" data-roll="1">New guesses</button><button type="button" data-roll="200">200 more</button><output data-avg></output></div>
 <figcaption>Dashed line: the true value. The pick (outlined) is whichever move looks best to the network. Its own score of that move is usually too high; the older copy's isn't, because its errors aren't the ones that made the move look best.</figcaption>
 </figure>
 
@@ -122,8 +122,10 @@ Mostly waiting, not learning.[^frame]
 
 <figure class="fig">
 <p class="fig__k">One frame of the game in 2018: 29 ms</p>
-<div class="stack"><span style="--w:16.1"></span><span style="--w:11.4"></span><span style="--w:1.5"></span><span class="is-data" style="--w:0.4"></span></div>
-<ul class="legend"><li><b>16&nbsp;ms</b> a built-in pause, so people could watch</li><li><b>11&nbsp;ms</b> image files written, read and encoded</li><li><b>1.5&nbsp;ms</b> other work that wasn't needed</li><li class="is-data"><b>0.4&nbsp;ms</b> the game itself</li></ul>
+<div class="tbar">
+<span class="tbar__wait" style="--w:16.1"><b>16 ms</b> pause<em>, so people could watch</em></span><span style="--w:11.4"><b>11 ms</b> image files</span><span class="tbar__thin" style="--w:1.5" title="1.5 ms: other work that wasn't needed"></span><span class="tbar__hi" style="--w:0.4" title="0.4 ms: the game itself"></span>
+</div>
+<p class="tbar__note"><span>1.5 ms other work that wasn't needed</span><b>0.4 ms the game itself</b></p>
 <figcaption>What each of the nine changes below saved, per frame.</figcaption>
 </figure>
 

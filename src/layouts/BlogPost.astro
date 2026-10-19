@@ -1874,6 +1874,73 @@ const last = entries[entries.length - 1];
   .prose .qbars i {
     transition: width 0.12s linear;
   }
+  /* Time bar: one total split into labelled parts, to scale. Waiting is
+     hatched, ordinary parts are neutral, the part that matters is the accent
+     (with its label below, since it is too thin to hold one). */
+  .prose .tbar {
+    display: flex;
+    gap: 2px;
+    height: 3rem;
+  }
+  .prose .tbar span {
+    flex: var(--w) 0 0;
+    min-width: 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.1rem;
+    padding: 0 0.6rem;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 0.6875rem;
+    color: var(--ink);
+    background: var(--bar);
+    border-radius: 3px;
+  }
+  .prose .tbar b {
+    font-size: 0.85rem;
+  }
+  .prose .tbar em {
+    font-style: normal;
+  }
+  .prose .tbar .tbar__wait {
+    background: repeating-linear-gradient(135deg, var(--bar) 0 7px, transparent 7px 12px);
+    border: 1px solid var(--bar);
+  }
+  .prose .tbar .tbar__thin,
+  .prose .tbar .tbar__hi {
+    padding: 0;
+  }
+  .prose .tbar .tbar__thin {
+    background: color-mix(in oklch, var(--bar) 55%, var(--pane));
+  }
+  .prose .tbar .tbar__hi {
+    background: var(--accent);
+  }
+  .prose .tbar__note {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.2rem;
+    margin: 0;
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .prose .tbar__note b {
+    color: var(--accent-soft);
+  }
+  @media (max-width: 34rem) {
+    .prose .tbar span {
+      padding: 0 0.35rem;
+    }
+    .prose .tbar em {
+      display: none;
+    }
+    .prose .tbar__note {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.1rem;
+    }
+  }
   /* Dice (widget): two rows of guesses for three moves, a dashed true-value
      line at half height, the pick outlined; below, the two targets. */
   .prose .dice__grid {

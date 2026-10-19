@@ -343,7 +343,7 @@ function dice(root: HTMLElement) {
     same.textContent = a[pick].toFixed(2);
     other.textContent = b[pick].toFixed(2);
     const off = (x: number) => (Math.abs(x) < 0.005 ? "0.00" : `${x > 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`);
-    avg.value = `average of ${n} roll${n === 1 ? "" : "s"}: same network ${off(sumSame / n - 1)}, older copy ${off(sumOther / n - 1)}`;
+    avg.value = `average over ${n} round${n === 1 ? "" : "s"} of guesses: same network ${off(sumSame / n - 1)}, older copy ${off(sumOther / n - 1)}`;
   };
   root.querySelectorAll<HTMLButtonElement>("[data-roll]").forEach((btn) =>
     btn.addEventListener("click", () => {
