@@ -76,8 +76,9 @@ function reveal(root: HTMLElement) {
 // Optional parts, used when the figure has them: [data-step] / [data-play]
 // buttons to pause and move one decision at a time; [data-seen] with four cells
 // showing the frames that decision saw (rows of the sprite sheet in data-stack,
-// one per decision, from tools/stacks.py); [data-held] with four cells that
-// fill as the chosen move is held; [data-at] for where the game is.
+// one per decision, from tools/stacks.py), each tappable to enlarge in
+// [data-zoom]; [data-held-name] for the move it then holds; [data-at] for where
+// the game is.
 type Decision = { tick: number; action: string; score?: number; q?: number[] };
 async function qview(root: HTMLElement) {
   const video = root.querySelector("video")!;
@@ -98,14 +99,41 @@ async function qview(root: HTMLElement) {
     return row;
   });
   const seen = root.querySelector<HTMLElement>("[data-seen]");
-  const heldCells = [...root.querySelectorAll<HTMLElement>("[data-held] i")];
   const heldName = root.querySelector<HTMLElement>("[data-held-name]");
   const seenTicks = root.querySelector<HTMLElement>("[data-seen-ticks]");
   const at = root.querySelector<HTMLElement>("[data-at]");
+  const zoom = root.querySelector<HTMLElement>("[data-zoom]");
+  // On the figure, so the enlarged frame shares the sheet and the current row.
   if (seen && root.dataset.stack) {
-    seen.style.setProperty("--sheet", `url(${root.dataset.stack})`);
-    seen.style.setProperty("--n", String(decisions.length));
+    root.style.setProperty("--sheet", `url(${root.dataset.stack})`);
+    root.style.setProperty("--n", String(decisions.length));
   }
+  let zoomed = -1;
+  const showZoom = () => {
+    if (!zoom) return;
+    zoom.hidden = zoomed < 0;
+    if (zoomed < 0) return;
+    zoom.style.setProperty("--i", String(zoomed));
+    const d = decisions[Math.max(0, last)];
+    zoom.querySelector("small")!.textContent = `tick ${d.tick - 3 + zoomed}`;
+  };
+  seen?.querySelectorAll<HTMLElement>("i").forEach((cell, i) => {
+    cell.tabIndex = 0;
+    cell.setAttribute("role", "button");
+    cell.setAttribute("aria-label", `Enlarge frame ${i + 1} of 4`);
+    const toggle = () => {
+      zoomed = zoomed === i ? -1 : i;
+      seen.querySelectorAll("i").forEach((c, j) => c.classList.toggle("is-on", j === zoomed));
+      showZoom();
+    };
+    cell.addEventListener("click", toggle);
+    cell.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggle();
+      }
+    });
+  });
   let last = -1;
   const draw = () => {
     const tick = video.currentTime * fps * ticksPerFrame;
@@ -117,8 +145,6 @@ async function qview(root: HTMLElement) {
       else hi = mid - 1;
     }
     const d = decisions[lo];
-    // The move chosen on tick t plays on ticks t+1 to t+4.
-    heldCells.forEach((c, j) => c.classList.toggle("is-on", tick >= d.tick + 1 + j));
     if (lo === last) return;
     last = lo;
     const q = d.q!;
@@ -129,7 +155,8 @@ async function qview(root: HTMLElement) {
       row.querySelector("b")!.textContent = q[i].toFixed(2);
       row.classList.toggle("cmp--after", data.action_names[i] === d.action);
     });
-    seen?.style.setProperty("--k", String(lo));
+    root.style.setProperty("--k", String(lo));
+    showZoom();
     if (seenTicks) seenTicks.textContent = `ticks ${d.tick - 3} to ${d.tick}`;
     if (heldName) heldName.textContent = names[data.action_names.indexOf(d.action)];
     if (at) at.textContent = `decision ${lo + 1} of ${decisions.length} · tick ${d.tick} · ${d.score ?? 0} points`;
@@ -253,7 +280,82 @@ function pick(root: HTMLElement) {
   });
 }
 
-const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, ladder, pick };
+// Dice: why Double DQN helps. Three moves all truly worth 1; two networks
+// guess each with independent random error. Taking the best-looking guess and
+// trusting its own score is biased high; scoring that pick with the other
+// network's guess is not. The running averages show it.
+function dice(root: HTMLElement) {
+  const grid = root.querySelector<HTMLElement>("[data-grid]")!;
+  const same = root.querySelector<HTMLElement>("[data-same]")!;
+  const other = root.querySelector<HTMLElement>("[data-other]")!;
+  const avg = root.querySelector<HTMLOutputElement>("[data-avg]")!;
+  const moves = ["shoot", "left", "right"];
+  let seed = 17053; // its first roll shows the bias plainly: picks left at 1.49, the copy says 1.00
+  const rand = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return (seed + 0.5) / 4294967296;
+  };
+  const noise = () => 0.3 * Math.sqrt(-2 * Math.log(rand())) * Math.cos(2 * Math.PI * rand());
+  const cells: HTMLElement[][] = [[], []];
+  ["network", "older copy"].forEach((who, r) => {
+    const label = document.createElement("span");
+    label.className = "dice__who";
+    label.textContent = who;
+    grid.appendChild(label);
+    moves.forEach(() => {
+      const c = document.createElement("div");
+      c.className = "dice__cell";
+      c.innerHTML = "<i></i><b></b>";
+      grid.appendChild(c);
+      cells[r].push(c);
+    });
+  });
+  const foot = document.createElement("span");
+  grid.appendChild(foot);
+  for (const m of moves) {
+    const t = document.createElement("small");
+    t.textContent = m;
+    grid.appendChild(t);
+  }
+  let n = 0;
+  let sumSame = 0;
+  let sumOther = 0;
+  let last: { a: number[]; b: number[]; pick: number } | null = null;
+  const roll = () => {
+    const a = moves.map(() => 1 + noise());
+    const b = moves.map(() => 1 + noise());
+    const pick = a.indexOf(Math.max(...a));
+    n++;
+    sumSame += a[pick];
+    sumOther += b[pick];
+    last = { a, b, pick };
+  };
+  const show = () => {
+    const { a, b, pick } = last!;
+    [a, b].forEach((vals, r) =>
+      vals.forEach((v, k) => {
+        const c = cells[r][k];
+        c.style.setProperty("--v", String(Math.max(0, Math.min(2, v)) / 2));
+        c.querySelector("b")!.textContent = v.toFixed(2);
+        c.classList.toggle("is-pick", k === pick);
+      }),
+    );
+    same.textContent = a[pick].toFixed(2);
+    other.textContent = b[pick].toFixed(2);
+    const off = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`;
+    avg.value = `average of ${n} roll${n === 1 ? "" : "s"}: same network ${off(sumSame / n - 1)}, older copy ${off(sumOther / n - 1)}`;
+  };
+  root.querySelectorAll<HTMLButtonElement>("[data-roll]").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      for (let k = 0; k < Number(btn.dataset.roll); k++) roll();
+      show();
+    }),
+  );
+  roll();
+  show();
+}
+
+const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, ladder, pick, dice };
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });

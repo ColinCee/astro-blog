@@ -1874,18 +1874,91 @@ const last = entries[entries.length - 1];
   .prose .qbars i {
     transition: width 0.12s linear;
   }
-  /* Peek (qview): what one decision saw and does. .peek__seen shows four
-     frames cut from a sprite sheet (--sheet; one row per decision, --n rows,
-     --k the current row); .peek__held has four cells that fill as the move is
-     held, one per tick. */
+  /* Dice (widget): two rows of guesses for three moves, a dashed true-value
+     line at half height, the pick outlined; below, the two targets. */
+  .prose .dice__grid {
+    display: grid;
+    grid-template-columns: 6.5rem repeat(3, minmax(0, 1fr));
+    gap: 0.4rem 0.6rem;
+    align-items: end;
+  }
+  .prose .dice__who {
+    align-self: center;
+    color: var(--ink);
+  }
+  .prose .dice__grid small {
+    text-align: center;
+    color: var(--faint);
+    font-size: 0.6875rem;
+  }
+  .prose .dice__cell {
+    position: relative;
+    height: 4.2rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .prose .dice__cell::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 50%;
+    border-top: 1.5px dashed var(--faint);
+  }
+  .prose .dice__cell i {
+    position: absolute;
+    left: 25%;
+    right: 25%;
+    bottom: 0;
+    height: calc(var(--v, 0.5) * 100%);
+    background: var(--bar);
+    border-radius: 2px 2px 0 0;
+    transition: height 0.25s var(--ease-out);
+  }
+  .prose .dice__cell b {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--v, 0.5) * 100% + 0.15rem);
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.6875rem;
+    color: var(--muted);
+  }
+  .prose .dice__cell.is-pick i {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .prose .dice__out {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .prose .dice__out div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .prose .dice__out b {
+    color: var(--ink);
+    font-size: 1.05rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .prose .dice__out .is-hi b {
+    color: var(--accent-soft);
+  }
+  @media (max-width: 34rem) {
+    .prose .dice__grid {
+      grid-template-columns: 4.6rem repeat(3, minmax(0, 1fr));
+    }
+  }
+  /* Peek (qview): what one decision saw. .peek__seen shows four frames cut
+     from a sprite sheet (--sheet on the figure; one row per decision, --n rows,
+     --k the current row); tapping one shows it large in .peek__zoom. */
   .prose .peek {
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); /* the frames get the room; one column on phones */
-    gap: 0.75rem 1.4rem;
-    align-items: start;
+    gap: 0.4rem;
   }
   .prose .peek .fig__k {
-    margin-bottom: 0.35rem;
+    margin: 0;
   }
   .prose .peek .fig__k b {
     color: var(--accent-soft);
@@ -1896,7 +1969,8 @@ const last = entries[entries.length - 1];
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 3px;
   }
-  .prose .peek__seen i {
+  .prose .peek__seen i,
+  .prose .peek__zoom i {
     display: block;
     aspect-ratio: 150 / 55;
     border: 1px solid var(--line);
@@ -1908,29 +1982,28 @@ const last = entries[entries.length - 1];
     background-position: calc(var(--i) * 100% / 3) calc(var(--k, 0) * 100% / max(1, var(--n, 1) - 1));
     image-rendering: pixelated;
   }
+  .prose .peek__seen i {
+    cursor: zoom-in;
+    outline: none;
+  }
+  .prose .peek__seen i.is-on,
+  .prose .peek__seen i:focus-visible {
+    border-color: var(--accent);
+  }
   .prose .peek__seen i:nth-child(1) { --i: 0; }
   .prose .peek__seen i:nth-child(2) { --i: 1; }
   .prose .peek__seen i:nth-child(3) { --i: 2; }
   .prose .peek__seen i:nth-child(4) { --i: 3; }
-  .prose .peek__held {
+  .prose .peek__zoom {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 3px;
+    gap: 0.25rem;
   }
-  .prose .peek__held i {
-    display: block;
-    height: 0.9rem;
-    border: 1px solid var(--line);
-    border-radius: 2px;
+  .prose .peek__zoom[hidden] {
+    display: none;
   }
-  .prose .peek__held i.is-on {
-    background: var(--accent);
-    border-color: var(--accent);
-  }
-  @media (max-width: 34rem) {
-    .prose .peek {
-      grid-template-columns: minmax(0, 1fr);
-    }
+  .prose .peek__zoom small {
+    color: var(--faint);
+    font-size: 0.6875rem;
   }
   .prose .ctl output[data-at] {
     flex: 1 1 12rem;

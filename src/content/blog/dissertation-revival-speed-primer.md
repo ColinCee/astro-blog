@@ -17,8 +17,9 @@ pubDate: "Jan 1 2027"
 <div class="qbars" aria-live="off"></div>
 <div class="ctl"><button type="button" data-step="-1">← back</button><button type="button" data-play aria-pressed="true">pause</button><button type="button" data-step="1">next →</button><output data-at></output></div>
 <div class="peek">
-<div><p class="fig__k">It sees these 4 frames, <span data-seen-ticks></span></p><div class="peek__seen" data-seen><i></i><i></i><i></i><i></i></div></div>
-<div><p class="fig__k">then holds <b data-held-name>shoot</b> for the next 4 ticks</p><div class="peek__held" data-held><i></i><i></i><i></i><i></i></div></div>
+<p class="fig__k">It sees these 4 frames, <span data-seen-ticks></span>, then plays <b data-held-name>shoot</b> for the next 4. Tap a frame to enlarge it.</p>
+<div class="peek__seen" data-seen><i></i><i></i><i></i><i></i></div>
+<div class="peek__zoom" data-zoom hidden><i></i><small></small></div>
 </div>
 <figcaption>My 2018 agent playing Aliens, retrained in 2026. It sees only the screen, in grey at half size. Every four ticks it scores its three moves and plays the highest, the tomato bar. Step through it one decision at a time.</figcaption>
 </figure>
@@ -38,15 +39,17 @@ Two improvements sit on top, each from a paper two or three years old when I use
 
 ### Double DQN: a second opinion
 
-The nudge aims at the network's own score for the next moment's best-looking move. Best-looking by its own noisy guesses, so it leans high, and the lean compounds. Double DQN lets the network pick the next move but asks an older copy of itself how good that move is.[^ddqn]
+The nudge aims at "the reward, plus the score of the best move next". But every score is a guess with some error, and picking the best-looking move picks the one whose error happened to be most positive. Score it with the same guesses and the target comes out too high, every time, and those targets train the next guesses. Double DQN lets the network pick the move and asks an older copy of itself, which has different errors, to score it.[^ddqn]
 
-<figure class="fig">
-<p class="fig__k">Three moves, all truly worth 1 point, guessed with noise: what the chosen move gets scored (illustration)</p>
-<div class="cmp-ref" style="--ref:0.704">
-<div class="cmp"><span>scores its own pick</span><em class="track" style="--ref:0.704"><i style="--w:1"></i></em><b>1.42</b></div>
-<div class="cmp cmp--after"><span>older copy scores it</span><em class="track" style="--ref:0.704"><i style="--w:0.704"></i></em><b>1.00</b></div>
+<figure class="fig dice" data-widget="dice">
+<p class="fig__k">Three moves, all truly worth 1. Each network guesses with random error.</p>
+<div class="dice__grid" data-grid></div>
+<div class="dice__out">
+<div><span>Same network picks and scores</span><b data-same>…</b></div>
+<div class="is-hi"><span>Older copy scores the pick</span><b data-other>…</b></div>
 </div>
-<figcaption>Dashed line: the true value. Picking the best-looking guess and trusting its score keeps the noise that made it look best; a second opinion doesn't.</figcaption>
+<div class="ctl"><button type="button" data-roll="1">Roll again</button><button type="button" data-roll="200">Roll 200 times</button><output data-avg></output></div>
+<figcaption>Dashed line: the true value. The pick (outlined) is whichever move looks best to the network. Its own score of that move is usually too high; the older copy's isn't, because its errors aren't the ones that made the move look best.</figcaption>
 </figure>
 
 ### Prioritised replay: practise the surprises
@@ -147,5 +150,5 @@ This project trained 241 times in 15 hours. At 2018's speed, about 280 days. [Pa
 [^report]: From the 2018 report: 99 kB per full-colour frame × 4 frames × 100,000 samples = 39.6 GB and a network of 16.7 million weights; 8.25 kB in grey at half size = 3.3 GB and 1.5 million weights.
 [^saliency]: Gradient × input: how much each pixel, times how strongly it is lit, moves the score of the chosen move. The network reads 4 frames at a time and uses all four about equally; each frame of the clip shows its own share. Made with `tools/saliency.py` in the dissertation repo.
 [^bugs]: Rewards were credited one move late, and prioritised replay lacked its correction weights. Fixed: 48.2 points against 50.1, one run.
-[^frame]: 34 frames a second is 29.4 ms a frame. Each slice is the time per frame a change removed, 1/before − 1/after. The pause was 25 ms but overlapped with other work, so removing it saved 16 ms. Image files: steps 2, 3, 6 and 7.
+[^frame]: 34 frames a second is 29.4 ms a frame. Each slice is the time per frame a change removed, 1/before − 1/after: removing the pause took a frame from 29.4 to 13.3 ms. Image files: steps 2, 3, 6 and 7.
 [^improvements]: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/IMPROVEMENTS.md): all 30 changes, each with its before, after and a tagged commit.
