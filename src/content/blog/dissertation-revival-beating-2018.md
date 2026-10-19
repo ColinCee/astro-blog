@@ -15,14 +15,14 @@ pubDate: "Oct 21 2026"
 ## Results
 
 <figure class="fig">
+<p class="fig__k">Same level, same random seed, half speed</p>
 <div class="vids">
 <figure class="vid"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video><figcaption><b>My 2018 agent</b>, 1M ticks of training: won, 57 points</figcaption></figure>
 <figure class="vid vid--hi"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-dqn-best.png"><source src="/blog/gvgai/aliens-dqn-best.webm" type="video/webm"><source src="/blog/gvgai/aliens-dqn-best.mp4" type="video/mp4"></video><figcaption><b>Recommended 2026 DQN</b>, 5M ticks, win/lose + score reward: won, 60 points</figcaption></figure>
 </div>
-<figcaption>The same level and random seed for both, at half speed.</figcaption>
 </figure>
 
-With five times the training my 2018 agent got, and rewarded only for winning, today's DQN wins **every** game of Aliens on every run, on levels it never trained on too. But the number that mattered most turned out to be **82%**: what you win by holding the shoot button and doing nothing else.
+With five times the training my 2018 agent got, and rewarded only for winning, today's DQN wins **every** game of Aliens on every run, on levels it never trained on too. Add a little reward for points, as in the clip, and it wins 98% while outscoring my 2018 agent. But the number that mattered most turned out to be **82%**: what you win by holding the shoot button and doing nothing else.
 
 This is part 2 of 3. [Part 1](/blog/dissertation-revival-speed/) is how the 2018 code came back and got 65× faster; [part 3](/blog/dissertation-revival-research-speed/) is what it's like doing research at this speed.
 
@@ -49,14 +49,14 @@ Each box learns from the box after it. But a box's score is really one guess per
 <figure class="fig">
 <p class="fig__k">How box 7 learns from box 8 (illustration)</p>
 <div class="chart chart--narrow">
-<svg viewBox="0 0 320 250" role="img" aria-label="Box 8 has one guess per move: left 0.92, shoot 1.05, right 0.90. Shoot is really worth 1.00. DQN uses the highest guess as it is, so box 7 learns 0.99 times 1.05, which is 1.04: too high. Double DQN picks shoot, then an older copy of the network scores it at 1.01, so box 7 learns 1.00, close to the true 0.99.">
+<svg viewBox="0 0 320 250" role="img" aria-label="Box 8 has one guess per move: left 0.92, shoot 1.05, right 0.90. Shoot is really worth 1.00. DQN uses the highest guess as it is, so box 7 learns 0.99 times 1.05, which is 1.04: too high. Double DQN picks shoot, then an older copy of the network guesses 1.01 for it, so box 7 learns 1.00, close to the true 0.99.">
 <defs><marker id="dd-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--faint)"/></marker><marker id="dd-head-hi" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--accent)"/></marker></defs>
 <text x="160" y="14" text-anchor="middle" class="ink">box 8: one guess per move</text>
 <rect x="8" y="24" width="92" height="40" rx="4" style="fill:var(--pane);stroke:var(--line)"/><text x="54" y="40" text-anchor="middle">left</text><text x="54" y="56" text-anchor="middle" class="ink">0.92</text>
 <rect x="114" y="24" width="92" height="40" rx="4" style="fill:var(--pane);stroke:var(--ink)"/><text x="160" y="40" text-anchor="middle">shoot</text><text x="160" y="56" text-anchor="middle" class="ink">1.05</text>
 <rect x="220" y="24" width="92" height="40" rx="4" style="fill:var(--pane);stroke:var(--line)"/><text x="266" y="40" text-anchor="middle">right</text><text x="266" y="56" text-anchor="middle" class="ink">0.90</text>
-<text x="160" y="80" text-anchor="middle">really worth 1.00</text>
-<path d="M160,86 V96 H80 V116" class="ax" style="stroke:var(--faint)" marker-end="url(#dd-head)"/>
+<text x="168" y="84">really worth 1.00</text>
+<path d="M160,64 V96 H80 V116" class="ax" style="stroke:var(--faint)" marker-end="url(#dd-head)"/>
 <path d="M160,96 H240 V116" class="ax" style="stroke:var(--accent)" marker-end="url(#dd-head-hi)"/>
 <rect x="4" y="120" width="152" height="104" rx="5" style="fill:var(--pane);stroke:var(--line)"/>
 <text x="14" y="140" class="ink" style="font-weight:700">DQN</text>
@@ -66,14 +66,14 @@ Each box learns from the box after it. But a box's score is really one guess per
 <text x="174" y="140" class="hi">Double DQN</text>
 <text x="174" y="156">picks shoot, then</text>
 <text x="174" y="168">an older copy</text>
-<text x="174" y="180">scores it: 1.01</text>
+<text x="174" y="180">guesses 1.01</text>
 <text x="174" y="198" class="ink">box 7: 1.00</text><text x="174" y="214">close</text>
 <text x="160" y="244" text-anchor="middle">box 7 is truly worth 0.99</text>
 </svg>
 </div>
 </figure>
 
-Every box does this, so the optimism piles up going back through the game:
+Across the whole game:
 
 <figure class="fig">
 <p class="fig__k">The whole won game after plenty of practice (illustration). Hatched: well above the true score.</p>
@@ -85,10 +85,10 @@ Every box does this, so the optimism piles up going back through the game:
 </div>
 </figure>
 
-In my 2018 runs, DQN started out wildly optimistic and spent its training talking itself down; Double DQN's expectations rose as it got better, and it won 57% of games to DQN's 35%.[^ddqn]
+My 2018 runs show it for real. Over the last 500 training games, Double DQN won 57% to DQN's 35%.[^ddqn]
 
 <figure class="fig">
-<p class="fig__k">What the network expected one moment to be worth, over training (2018)</p>
+<p class="fig__k">My 2018 runs: what the network expected one moment to be worth, in points, over training</p>
 <div class="chart chart--narrow">
 <svg viewBox="0 0 320 190" role="img" aria-label="Average score the network expected per moment over training, 2018. Plain DQN starts very high (off the chart) and comes down to about 10; Double DQN starts near 0 and rises to about 9.">
 <line class="ax" x1="30" x2="310" y1="164" y2="164"/><text x="25" y="168" text-anchor="end">0</text>
@@ -96,7 +96,7 @@ In my 2018 runs, DQN started out wildly optimistic and spent its training talkin
 <line class="ax" x1="30" x2="310" y1="14" y2="14"/><text x="25" y="18" text-anchor="end">20</text>
 <polyline class="ln" points="30.0,14.0 32.8,14.0 35.6,14.0 38.4,14.0 41.2,14.0 44.0,14.0 46.8,14.0 49.6,14.0 52.4,14.0 55.2,36.6 58.0,40.8 60.8,39.0 63.6,37.8 66.4,50.1 69.2,57.9 72.0,56.1 74.8,48.6 77.6,51.3 80.5,62.1 83.3,61.0 86.1,59.9 88.9,60.3 91.7,54.7 94.5,50.1 97.3,51.8 100.1,42.7 102.9,38.7 105.7,45.3 108.5,50.4 111.3,53.6 114.1,59.3 116.9,60.0 119.7,57.6 122.5,50.8 125.3,51.3 128.1,61.8 130.9,61.1 133.7,52.1 136.5,57.1 139.3,60.4 142.1,63.9 144.9,53.1 147.7,52.1 150.5,59.4 153.3,59.8 156.1,66.1 158.9,60.4 161.7,61.4 164.5,58.6 167.3,64.8 170.1,56.2 172.9,54.9 175.7,56.0 178.5,63.9 181.4,69.2 184.2,68.3 187.0,69.1 189.8,68.4 192.6,69.7 195.4,71.5 198.2,72.9 201.0,68.3 203.8,73.0 206.6,72.2 209.4,69.9 212.2,70.7 215.0,68.2 217.8,67.7 220.6,74.2 223.4,76.1 226.2,79.4 229.0,79.7 231.8,81.2 234.6,78.9 237.4,76.5 240.2,75.4 243.0,78.7 245.8,74.6 248.6,75.1 251.4,76.4 254.2,75.7 257.0,80.0 259.8,87.3 262.6,91.4 265.4,85.3 268.2,82.0 271.0,81.4 273.8,81.1 276.6,83.1 279.4,87.5 282.3,87.3 285.1,84.8 287.9,86.8 290.7,87.7 293.5,84.4 296.3,78.4 299.1,81.5 301.9,86.7 304.7,91.3 307.5,87.5 310.0,86.6"/>
 <polyline class="ln hi" points="30.0,168.2 32.8,167.7 35.6,165.8 38.4,163.9 41.2,162.6 44.0,161.4 46.8,160.1 49.6,159.1 52.4,158.3 55.2,157.6 58.0,157.1 60.8,156.9 63.6,156.7 66.4,155.8 69.2,154.8 72.0,153.1 74.8,152.3 77.6,151.9 80.5,150.8 83.3,149.2 86.1,147.9 88.9,146.7 91.7,146.2 94.5,144.8 97.3,142.8 100.1,141.1 102.9,139.7 105.7,138.4 108.5,137.5 111.3,135.9 114.1,134.7 116.9,133.0 119.7,132.6 122.5,132.0 125.3,132.1 128.1,131.4 130.9,131.3 133.7,131.0 136.5,130.3 139.3,129.8 142.1,129.0 144.9,127.6 147.7,126.7 150.5,125.6 153.3,124.9 156.1,124.1 158.9,122.2 161.7,120.2 164.5,118.5 167.3,117.7 170.1,117.9 172.9,118.0 175.7,118.6 178.5,118.1 181.4,119.1 184.2,118.6 187.0,118.0 189.8,114.9 192.6,114.8 195.4,115.5 198.2,115.5 201.0,113.5 203.8,112.4 206.6,110.5 209.4,110.9 212.2,112.3 215.0,111.6 217.8,111.9 220.6,110.2 223.4,108.7 226.2,107.8 229.0,107.5 231.8,108.1 234.6,106.3 237.4,106.2 240.2,104.9 243.0,105.0 245.8,104.9 248.6,103.8 251.4,102.0 254.2,102.0 257.0,102.4 259.8,103.2 262.6,100.7 265.4,99.3 268.2,98.3 271.0,98.8 273.8,100.2 276.6,101.4 279.4,99.6 282.3,98.0 285.1,100.1 287.9,101.0 290.7,99.9 293.5,97.8 296.3,96.8 299.1,97.6 301.9,98.6 304.7,96.8 307.5,95.2 310.0,96.1"/>
-<text x="310" y="22" text-anchor="end" class="ink">DQN: starts sky-high,</text><text x="310" y="34" text-anchor="end" class="ink">then talks itself down</text>
+<text x="34" y="10" class="ink">↑ DQN starts off the chart, up to 900</text><text x="310" y="34" text-anchor="end" class="ink">DQN: talks itself down</text>
 <text x="310" y="157" text-anchor="end" class="hi">Double DQN: rises as it learns</text>
 <text x="30" y="184">start of training</text><text x="310" y="184" text-anchor="end">end</text>
 </svg>
@@ -107,16 +107,17 @@ Its other trick was prioritised replay: practising the moments it guessed worst 
 
 ## Round 1: same budget as 2018
 
-First the fair fight: every agent gets the 1 million game ticks my 2018 agent trained on, three runs each, 50 test games.[^results]
+First the fair fight: every agent gets the 1 million game ticks my 2018 agent trained on, three runs each, 50 test games.[^results] In the race:
 
-- **Modern DQN**, the 2015 method done properly: 57% wins. Lost to my 2018 agent.
-- **Rainbow**, six improvements combined (2017), both my tricks among them: 66%.
-- **A bigger network**, the IMPALA network (2018), more layers with shortcuts between them: 73% with DQN, 85% with Rainbow.
-- **PPO**, a different family that learns the moves directly instead of their values: 82%.
-- **My 2018 reward on today's DQN**: 85%.
+- **Modern DQN**: the 2015 method, done properly.
+- **Rainbow** (2017): six improvements combined, both my tricks among them.
+- **A bigger network** (IMPALA, 2018), for DQN and Rainbow: more layers, with shortcuts between them.
+- **4× updates**: DQN learning four times as often.
+- **PPO**: a different family that learns the moves directly instead of their scores.
+- **My 2018 reward** on today's DQN.
 
 <figure class="fig" data-widget="reveal">
-<p class="fig__k">Aliens wins, 1M ticks of training</p>
+<p class="fig__k">Aliens wins after 1M ticks of training, mean of 3 runs</p>
 <div class="cmp-ref reveal-ref" style="--ref:0.82">
 <div class="cmp"><span>Modern DQN</span><em class="track"><i style="--w:0.57" title="Modern DQN: 57% wins, 39.5 points"></i></em><b>57%</b></div>
 <div class="cmp"><span>DQN, bigger network</span><em class="track"><i style="--w:0.73" title="DQN, bigger network: 73% wins, 52.7 points"></i></em><b>73%</b></div>
@@ -127,21 +128,22 @@ First the fair fight: every agent gets the 1 million game ticks my 2018 agent tr
 <div class="cmp"><span>DQN + 2018 reward</span><em class="track"><i style="--w:0.85" title="DQN + 2018 reward: 85% wins, 39.4 points"></i></em><b>85%</b></div>
 <div class="cmp cmp--after"><span>My 2018 agent</span><em class="track"><i style="--w:0.81" title="My 2018 agent: 81% wins, 50.1 points"></i></em><b>81%</b></div>
 </div>
-<p class="fig__k reveal">Dashed line: holding shoot, 82%</p>
+<p class="fig__k reveal">Dashed line: holding shoot and nothing else, 82%</p>
 <div class="ctl"><button type="button" aria-pressed="false">Add the button</button></div>
-<figcaption>Each bar is the mean of 3 runs of 50 games (my 2018 agent: the 2018 code replayed 3 times). Runs vary a lot: modern DQN's three won 42% to 84%.</figcaption>
 </figure>
+
+Three of them beat my 2018 agent's 81%.[^runs3] Then Claude checked something I never had.
 
 ## Then Claude checked the button
 
 The next morning Claude ran the dumbest policies it could think of against every game: random moves, and every button held down for the whole game. Holding shoot wins 82% of Aliens games. On levels it has never seen, also 82%.
 
 <figure class="fig">
+<p class="fig__k">Same level, same seed: the aliens drift down into a stream of shots</p>
 <div class="vids">
 <figure class="vid"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-hold-shoot.png"><source src="/blog/gvgai/aliens-hold-shoot.webm" type="video/webm"><source src="/blog/gvgai/aliens-hold-shoot.mp4" type="video/mp4"></video><figcaption><b>Holding shoot</b>, no learning: won, 42 points</figcaption></figure>
 <figure class="vid vid--hi"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video><figcaption><b>My 2018 agent</b>: won, 57 points</figcaption></figure>
 </div>
-<figcaption>Same level, same seed. The aliens drift down into a stream of shots.</figcaption>
 </figure>
 
 On two of the other games it's worse: the button wins every game. (On Chase no learning agent wins at all.)
@@ -159,7 +161,7 @@ So the bar for Aliens is 82%, not 0%. My 2018 agent's 81% wasn't evidence of any
 
 ## Did my 2018 agent learn anything?
 
-Yes, and score is how you tell: 50 points a game against the button's 36. In the games it wins it averages 54 points, against 43 for today's DQN with my 2018 reward: it also shoots the protective bases in front of the aliens. Its attention shows it:[^saliency]
+Yes, and score is how you tell: 50 points a game against the button's 36. In the games it wins it averages 54 points, against 43 for today's DQN with my 2018 reward: it also shoots the protective bases in front of the aliens. Its attention shows it:
 
 <figure class="fig">
 <p class="fig__k">Where it looks: brighter means it matters more to its move. Mostly the bases, then the lowest aliens.</p>
@@ -167,27 +169,17 @@ Yes, and score is how you tell: 50 points a game against the button's 36. In the
 <figure class="vid vid--hi"><video data-rate="1" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-saliency.png"><source src="/blog/gvgai/aliens-2018-saliency.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-saliency.mp4" type="video/mp4"></video></figure>
 </div>
 </figure>
-
-<figure class="fig" data-widget="qview" data-src="/blog/gvgai/aliens-2018-agent.json">
-<div class="vids">
-<figure class="vid vid--hi"><video data-rate="0.5" muted playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
-</div>
-<div class="qbars" aria-live="off"></div>
-<figcaption>What the network thinks of each move, every time it chooses one: the tomato bar is the move it makes. Bars run from that moment's worst move to its best; the numbers are the network's estimate of the reward still to come.</figcaption>
-</figure>
-
 ## Round 2: rewarding the win
 
-Then the reward. Mine, from 2018, gave −0.5 on every move of a game that ended in a loss. It lifted wins (DQN: 57% to 85%) but not score (39 points, close to the button). It mostly taught "don't lose", which on Aliens is close to holding shoot.
+Then the reward. Mine, from 2018, gave +1 or −1 for the result, plus −0.5 on every move of a game that ended in a loss. It lifted wins (DQN: 57% to 85%) but not score (39 points, close to the button). It mostly taught "don't lose", which on Aliens is close to holding shoot.
 
-The textbook alternative is to reward only what you want: +1 for a win, −1 for a loss. At 2018's budget it didn't help: added to the score, wins fell to 45%. The reason is how slowly a single number at the end of a game reaches the moves that caused it:
+The textbook alternative is to drop the penalty and reward only what you want: +1 for a win, −1 for a loss. At 2018's budget it didn't help: added to the score, wins fell to 45%. The reason is how slowly a single number at the end of a game reaches the moves that caused it. 2018's penalty got round that by signalling every move at once, which also blames good moves in games that were lost. Try both:
 
 <figure class="fig" data-widget="chain" data-moves="150">
-<p class="fig__k">One lost game, 150 moves; the only reward is at the end</p>
+<p class="fig__k">The same row of boxes at real length: one lost game, 150 moves, a −1 at the end. Drag to practise (a toy, not the real agent).</p>
 <div class="chart"><svg viewBox="0 0 600 60" role="img" aria-label="A row of 150 moves; colour shows how much each move has learned that the game was lost"><text x="0" y="12">first move</text><text x="600" y="12" text-anchor="end">−1 at the end</text></svg></div>
 <div class="ctl"><input type="range" min="0" max="1750" value="0" step="1" aria-label="Learning updates"><span>updates: <output>0</output></span><button type="button" aria-pressed="false">2018's penalty</button></div>
 <p class="fig__k">Moves that have felt it: <span data-reached>none yet</span></p>
-<figcaption>A toy, not the real agent: plain Q-learning updates on randomly replayed moves of one game. The end signal crawls back one move at a time. With 2018's penalty every move gets a signal at once, which helps a small budget and also blames good moves in lost games.</figcaption>
 </figure>
 
 With five times the practice, 5 million ticks or about 17 minutes a run, the slow signal arrives:
@@ -202,20 +194,20 @@ With five times the practice, 5 million ticks or about 17 minutes a run, the slo
 
 Win/lose alone wins every game on all three runs, including on two levels it never trained on, where the button still gets 82%. Adding a tenth of the score as a tie-break keeps 98% and plays for points too. Reward what you want. It just needs the practice.
 
-The other thing that helped was the network: the part that turns the screen into a value for each move. Both networks below are looking at the same moment of the same game.
+The other thing that helped was the network, the part that turns the screen into a score for each move. The 2015 one shrinks the screen to 12 × 36 in one step. IMPALA keeps far more detail for longer, with shortcuts that let each stage skip ahead. It costs 2 to 3 times the time per tick, and gives the best Aliens score: 62.5 points, 96% wins.
 
 <figure class="fig">
+<p class="fig__k">One moment of Aliens inside each trained network; bright means more active. Tap a layer to face it.</p>
 <p class="fig__k">2015 DQN network: 3 layers, 1.55M weights</p>
 <div class="net"><figure class="slab" tabindex="0"><div class="deck" style="--dw:9rem;aspect-ratio:300/110"><img src="/blog/gvgai/net/2018-input-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-input-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-input-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-input-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>4 frames<small>55 × 150</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="--dw:6rem;aspect-ratio:144/48"><img src="/blog/gvgai/net/2018-conv1-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-conv1-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-conv1-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-conv1-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>layer 1<small>32 maps, 12 × 36</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="--dw:5rem;aspect-ratio:153/45"><img src="/blog/gvgai/net/2018-conv2-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-conv2-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-conv2-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-conv2-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>layer 2<small>64, 5 × 17</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="--dw:4.4rem;aspect-ratio:240/48"><img src="/blog/gvgai/net/2018-conv3-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-conv3-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-conv3-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-conv3-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>layer 3<small>64, 3 × 15</small></figcaption></figure><figure class="slab slab--out"><span>3 moves</span><figcaption>&nbsp;<small>via 512</small></figcaption></figure></div>
 <p class="fig__k">IMPALA network: 15 layers in 3 stages, 2.3M weights</p>
 <div class="net"><figure class="slab" tabindex="0"><div class="deck" style="--dw:9rem;aspect-ratio:300/110"><img src="/blog/gvgai/net/impala-input-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/impala-input-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/impala-input-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/impala-input-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>4 frames<small>55 × 150</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="--dw:8rem;aspect-ratio:75/28"><img src="/blog/gvgai/net/impala-stage1-res2-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/impala-stage1-res2-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/impala-stage1-res2-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/impala-stage1-res2-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>stage 1<small>16, 28 × 75</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="--dw:6rem;aspect-ratio:114/42"><img src="/blog/gvgai/net/impala-stage2-res2-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/impala-stage2-res2-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/impala-stage2-res2-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/impala-stage2-res2-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>stage 2<small>32, 14 × 38</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="--dw:4.4rem;aspect-ratio:114/42"><img src="/blog/gvgai/net/impala-stage3-res2-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/impala-stage3-res2-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/impala-stage3-res2-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/impala-stage3-res2-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>stage 3<small>32, 7 × 19</small></figcaption></figure><figure class="slab slab--out"><span>3 moves</span><figcaption>&nbsp;<small>via 512</small></figcaption></figure></div>
-<figcaption>Real activations from the trained networks, one moment of Aliens: each layer shows the 4 of its maps with the most contrast; within each, bright = more active. Tap or hover a layer to face it. Layers counted are the ones that scan the image. The 2015 network shrinks the screen to 12 × 36 in one step; IMPALA keeps far more detail for longer, with shortcuts that let each stage skip ahead. That costs 2 to 3 times the time per tick, and gives the best Aliens score: 62.5 points, 96% wins.</figcaption>
 </figure>
 
 ## The leaderboard
 
 <figure class="fig">
-<p class="fig__k">Aliens: score against wins</p>
+<p class="fig__k">Aliens: score against wins. Tap a dot for its numbers.</p>
 <div class="chart">
 <svg viewBox="0 0 640 330" role="img" aria-label="Aliens score against win rate per agent. Holding shoot: 36 points, 82 percent. My 2018 agent: 50 points, 81 percent. Best 2026: 60 to 62 points, 96 to 98 percent. MCTS: 78 points, 100 percent.">
 <rect class="band" x="44" y="74" width="580" height="216"/>
@@ -232,13 +224,13 @@ The other thing that helped was the network: the part that turns the screen into
 <line class="ax" x1="602" x2="602" y1="14" y2="290"/><text x="602" y="308" text-anchor="middle">80</text>
 <line class="ref" x1="114" x2="114" y1="14" y2="290"/>
 <text x="334" y="326" text-anchor="middle">score per game →</text>
-<text x="620" y="90" text-anchor="end">below the button's 82%</text>
+<text x="620" y="90" text-anchor="end">below the button's 82%</text><text x="118" y="286" text-anchor="start">button: 36 points</text>
 <circle class="mk" cx="114" cy="74" r="4.5" tabindex="0"><title>Hold shoot: 36.3 points, 82% wins</title></circle>
 <text x="108" y="88" text-anchor="end" class="ink">Hold shoot</text>
 <circle class="mk" cx="85" cy="269" r="4.5" tabindex="0"><title>Random play: 33.7 points, 8% wins</title></circle>
 <text x="93" y="273" text-anchor="start" class="ink">Random play</text>
-<circle class="mk" cx="185" cy="27" r="4.5" tabindex="0"><title>Me, 2018: 42.6 points, 100% wins</title></circle>
-<text x="177" y="31" text-anchor="end" class="ink">Me, 2018</text>
+<circle class="mk" cx="185" cy="27" r="4.5" tabindex="0"><title>Me playing, 2018: 42.6 points, 100% wins</title></circle>
+<text x="177" y="31" text-anchor="end" class="ink">Me playing</text>
 <circle class="hi" cx="268" cy="77" r="6" tabindex="0"><title>My 2018 agent: 50.1 points, 81% wins, 1M ticks</title></circle>
 <text x="276" y="93" text-anchor="start" class="hi">My 2018 agent</text>
 <circle class="mk" cx="150" cy="140" r="4.5" tabindex="0"><title>Modern DQN: 39.5 points, 57% wins, 1M ticks</title></circle>
@@ -257,14 +249,13 @@ The other thing that helped was the network: the part that turns the screen into
 <text x="569" y="19" text-anchor="end" class="ink">MCTS, no training</text>
 </svg>
 </div>
-<figcaption>Tap or hover a dot for its numbers. The shaded band is below the button's 82%; the dashed line is its 36 points. 2026 agents are the mean of 3 runs; "me" is my own 2018 play.</figcaption>
 </figure>
 
 Two things still stand out. I won every game I played in 2018 but scored 43: winning was never the hard part of Aliens, scoring is. And a tree search (MCTS) that simulates moves ahead with no training at all still scores 78, well above every learning agent.
 
 [Part 3](/blog/dissertation-revival-research-speed/) is about how this got done in two days, and what's still unsolved.
 
-[^results]: Every number is from [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/RESULTS.md), except the button on unseen levels (50 games on Aliens levels 3 and 4: 36.5 points, 82%), run for this post.
-[^ddqn]: From my 2018 report's training logs; the curves are smoothed. My 2018 DQN had no older copy at all, so the gap is both changes together.
-[^per]: It scored more points but didn't win more (54% vs 57%), until I changed the reward.
-[^saliency]: Gradient × input, made with `tools/saliency.py` in the dissertation repo.
+[^results]: Every number is from [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md), except the button on unseen levels (50 games on Aliens levels 3 and 4: 36.5 points, 82%), run for this post.
+[^ddqn]: From my 2018 report's training logs. My 2018 DQN had no older copy at all, so the gap is both changes together. The method: [van Hasselt et al., 2015](https://arxiv.org/abs/1509.06461).
+[^per]: In 2018 it scored more points but didn't win more (54% vs 57%). The method: [Schaul et al., 2016](https://arxiv.org/abs/1511.05952).
+[^runs3]: My 2018 agent: the 2018 code replayed 3 times. Runs vary a lot: modern DQN's three won 42% to 84%.

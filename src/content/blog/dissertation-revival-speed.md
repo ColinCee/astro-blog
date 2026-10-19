@@ -37,7 +37,7 @@ The bars are its scores: how much reward it expects from each move, from now to 
 <div class="runs runs--axis"><span></span><div><em>0</em><em>3 h</em><em>6 h</em><em>9 h</em><em>12 h</em></div><b></b></div>
 </figure>
 
-There was nothing plug-and-play for this, so I wrote it all from the papers: about 700 lines of Python, on a GTX 980 with 4 GB of memory. Full-colour screens crashed it, which is why the agent sees grey at half size.[^report]
+There was nothing plug-and-play for this, so I wrote it all from the papers: about 700 lines of Python, on a GTX 980 with 4 GB of memory. Full colour would have needed 39.6 GB just to store the moments it practises on, so I never tried: the agent sees grey at half size, 3.3 GB.
 
 My report said training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was. I was a student trying things I'd never done before, most ideas were wrong, and each one cost a night.
 
@@ -69,7 +69,7 @@ It also found two real bugs in my code. Fixing them barely changed the result.[^
 
 ## Where the 12 hours went
 
-Mostly waiting, not learning.[^frame]
+Mostly waiting, not learning.
 
 <figure class="fig">
 <p class="fig__k">One frame of the game in 2018: 29 ms</p>
@@ -99,10 +99,8 @@ This project trained 241 times, in 15 hours of training. At 2018 speed, that's a
 - [Part 2](/blog/dissertation-revival-beating-2018/): what I did with them.
 - [Part 3](/blog/dissertation-revival-research-speed/): what research is like at this speed.
 
-[^speed]: At 1,550 frames a second on an RTX 4090 with the PC to itself; with other work running, 23 to 34 minutes. All the numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/RESULTS.md).
-[^methods]: DQN (2015), Double DQN (2015) and prioritised replay (2016), on four GVGAI games. I also tried dueling networks; they didn't help on Aliens, so the final agent leaves them out.
-[^report]: Full colour would have needed 39.6 GB of memory; grey at half size, 3.3 GB (2018 report).
-[^runs]: The line is the run in my report's training log. The report's table came from a second run that ended lower (about 760 wins); my two 2018 runs differed by 10 to 17 points.
-[^bugs]: Rewards credited one move late, and prioritised replay missing its correction weights. Fixed: 48.2 points vs 50.1.
-[^frame]: 34 frames a second is 29.4 ms a frame; each slice is what a change saved. Training in 2018 also spent another 14 ms per frame learning, one sample at a time.
-[^improvements]: The benchmark was tightened partway, so the steps don't always line up exactly. All 30 changes, with before, after and a commit each: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/IMPROVEMENTS.md).
+[^speed]: At 1,550 frames a second on an RTX 4090 with the PC to itself; with other work running, 23 to 34 minutes. All the numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
+[^methods]: [DQN](https://www.nature.com/articles/nature14236), [Double DQN](https://arxiv.org/abs/1509.06461) and [prioritised replay](https://arxiv.org/abs/1511.05952), on four [GVGAI](http://www.gvgai.net/) games. I also tried [dueling networks](https://arxiv.org/abs/1511.06581); they didn't help on Aliens.
+[^runs]: The line is the run in my report's training log; the run behind the report's table ended lower, at about 760.
+[^bugs]: Rewards credited one move late, and prioritised replay missing its correction weights. Fixed: 48.2 points vs 50.1. More in [LEARNINGS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/LEARNINGS.md).
+[^improvements]: The benchmark was tightened partway, so the steps don't always line up exactly. All 30 changes, with before, after and a commit each: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/IMPROVEMENTS.md).

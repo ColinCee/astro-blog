@@ -122,4 +122,4 @@ My dissertation would have had three runs of everything instead of one, so the n
 
 The part that was still mine was asking the question, and not accepting the first answer.
 
-[^results]: Numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/RESULTS.md). Timeline and quotes: the Claude Code session log, 18 and 19 October 2026.
+[^results]: Numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md). Timeline and quotes: the Claude Code session log, 18 and 19 October 2026.
