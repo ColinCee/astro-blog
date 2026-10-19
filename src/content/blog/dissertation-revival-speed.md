@@ -52,14 +52,6 @@ def get_targets(self, data):
 
 The network guesses how good each move is. Training nudges each guess towards a target: the reward, plus how good the network thinks the next moment is. The highlighted lines are the Double DQN trick: the network picks the next move, and an older copy of it says how good that move is, which stops the guesses from inflating.
 
-Here is that network running, 60 decisions of the game, one layer after another:
-
-<figure class="fig" data-widget="explode" data-src="/blog/gvgai/explode/">
-<div class="xstage"></div>
-<div class="ctl"><button type="button">Pause</button><input type="range" min="0" max="59" value="0" step="1" aria-label="Moment in the clip"></div>
-<figcaption>Left to right: what it sees, its three layers (each map lights up where it finds its own pattern), and its value for each move; the tomato one is the move it makes. Every layer shrinks the picture and adds maps.</figcaption>
-</figure>
-
 My GTX 980 had 4 GB. Full-colour screens would have needed 39.6 GB of memory and a network of 16.7 million weights, and it simply crashed. So the agent sees the screen in grey at half size: 3.3 GB and 1.5 million weights.[^report] Here is what that network pays attention to while it plays:[^saliency]
 
 <figure class="fig">
@@ -67,6 +59,15 @@ My GTX 980 had 4 GB. Full-colour screens would have needed 39.6 GB of memory and
 <figure class="vid vid--hi"><video data-rate="1" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-saliency.png"><source src="/blog/gvgai/aliens-2018-saliency.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-saliency.mp4" type="video/mp4"></video></figure>
 </div>
 <figcaption>Brighter means that part of the screen changes the network's choice more. It mostly watches the bases, then the aliens that have come down lowest.</figcaption>
+</figure>
+
+And here is the whole network doing it, every layer, over a few seconds of that game:
+
+<figure class="fig" data-widget="net3d" data-src="/blog/gvgai/net3d/">
+<div class="n3-stage">Loading the 3D view…</div>
+<div class="ctl"><button type="button" data-play>Pause</button><input type="range" min="0" max="29" value="0" step="1" aria-label="Moment in the clip"><button type="button" data-reset>Reset view</button></div>
+<div class="n3-panel" aria-live="polite"></div>
+<figcaption>Left to right: the 4 frames it sees, three layers of maps (32, 64, 64), 512 hidden units, and a value for each move; the tomato bar is the move it makes. Drag to turn it (two fingers on a phone), scroll to zoom. Click a map to see where on the screen it looks, or a move to see what drove it.</figcaption>
 </figure>
 
 In my report I wrote that training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was. I was a student trying things I'd never done before, most ideas were wrong, and each one took a night to find out.
