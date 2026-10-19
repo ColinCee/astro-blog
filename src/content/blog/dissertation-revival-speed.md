@@ -14,23 +14,24 @@ pubDate: "Oct 20 2026"
 
 <figure class="fig">
 <div class="vids">
-<figure class="vid vid--hi"><video muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video><figcaption><b>My 2018 agent</b>, retrained in 2026</figcaption></figure>
+<figure class="vid vid--hi"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video><figcaption><b>My 2018 agent</b>, retrained in 2026</figcaption></figure>
 </div>
 <figcaption>Aliens. The agent sees only the screen and the score.</figcaption>
 </figure>
 
 For my final-year project at Strathclyde in 2018, I wrote an AI that learns to play video games from the screen. One training run took 12 hours. This October I gave the code to Claude to see how far it could get with today's tools. The same agent now trains in **11 minutes**, and learns the way it did in 2018.[^speed]
 
-Scroll, and the clock runs.
-
-<div class="scrolly" data-widget="scrollrace" data-ticks="1000000" data-max="43200" data-unit="frames">
+<div class="scrolly" data-widget="iterate">
 <figure class="fig">
-<p class="fig__k">One training run: a million frames of play</p>
+<p class="fig__k">Trying ideas: one training run each</p>
 <output class="clock">12 h</output>
-<div class="cmp" data-secs="43200" style="grid-template-columns:5rem minmax(0,1fr) 7.6rem"><span>2018</span><i style="--w:1"></i><b>12 h</b></div>
-<div class="cmp cmp--after" data-secs="660" style="grid-template-columns:5rem minmax(0,1fr) 7.6rem"><span>2026</span><i style="--w:1"></i><b>11 min</b></div>
-<figcaption>Same agent, same settings, same million frames.</figcaption>
+<div class="cmp" data-run="43200"><span>2018</span><i style="--w:1"></i><b>1 idea tested</b></div>
+<div class="cmp cmp--after" data-run="660"><span>2026</span><i style="--w:1"></i><b>65 ideas tested</b></div>
 </figure>
+<p data-t="0">I was a student trying things I'd never done before, and most ideas were wrong. The only way to find out was a full training run.</p>
+<p data-t="660">11 minutes: in 2026 the first answer is in. Change something, go again.</p>
+<p data-t="3600">An hour: five ideas tried in 2026. In 2018, the first run is 8% done.</p>
+<p data-t="43200">12 hours: 2018 has its first answer. 2026 has tried 65 ideas.</p>
 </div>
 
 Part 1 of 3. [Part 2](/blog/dissertation-revival-beating-2018/): beating it. [Part 3](/blog/dissertation-revival-research-speed/): what research at this speed is like.
@@ -66,7 +67,7 @@ My GTX 980 had 4 GB. Full-colour screens would have needed 39.6 GB of memory and
 <figcaption>The real network, retrained in 2026, at one moment of Aliens. Each layer shows 4 of its maps; bright = active. Tap or hover a layer to face it.</figcaption>
 </figure>
 
-In my report I wrote that training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was: every idea got one run.
+In my report I wrote that training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was: every idea got one run, overnight.
 
 ## It still learns the same way
 

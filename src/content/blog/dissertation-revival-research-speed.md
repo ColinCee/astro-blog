@@ -108,8 +108,8 @@ Two problems need the agent to explore, not just learn from what it stumbles int
 
 <figure class="fig">
 <div class="vids">
-<figure class="vid"><video muted loop playsinline preload="none" poster="/blog/gvgai/aliens-dqn-impala.png"><source src="/blog/gvgai/aliens-dqn-impala.webm" type="video/webm"><source src="/blog/gvgai/aliens-dqn-impala.mp4" type="video/mp4"></video><figcaption><b>Best learning agent</b>, 5M ticks: won, 60 points</figcaption></figure>
-<figure class="vid vid--hi"><video muted loop playsinline preload="none" poster="/blog/gvgai/aliens-mcts.png"><source src="/blog/gvgai/aliens-mcts.webm" type="video/webm"><source src="/blog/gvgai/aliens-mcts.mp4" type="video/mp4"></video><figcaption><b>MCTS</b>, no training, 50 simulations a move: won, 71 points</figcaption></figure>
+<figure class="vid"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-dqn-impala.png"><source src="/blog/gvgai/aliens-dqn-impala.webm" type="video/webm"><source src="/blog/gvgai/aliens-dqn-impala.mp4" type="video/mp4"></video><figcaption><b>Best learning agent</b>, 5M ticks: won, 60 points</figcaption></figure>
+<figure class="vid vid--hi"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-mcts.png"><source src="/blog/gvgai/aliens-mcts.webm" type="video/webm"><source src="/blog/gvgai/aliens-mcts.mp4" type="video/mp4"></video><figcaption><b>MCTS</b>, no training, 50 simulations a move: won, 71 points</figcaption></figure>
 </div>
 <figcaption>The same level and seed. MCTS gets to look ahead in a copy of the game; the learning agent only sees the screen.</figcaption>
 </figure>

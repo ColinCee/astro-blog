@@ -672,6 +672,7 @@ const last = entries[entries.length - 1];
       for (const it of items) {
         const el = it.target as HTMLElement;
         if (el instanceof HTMLVideoElement) {
+          el.playbackRate = Number(el.dataset.rate ?? 1);
           if (it.isIntersecting && !still) el.play().catch(() => {});
           else el.pause();
         } else if (it.isIntersecting) {
@@ -1505,23 +1506,49 @@ const last = entries[entries.length - 1];
       transform: none;
     }
   }
-  /* Scroll race: a tall section with its figure pinned; the reader's scroll
-     runs the clock. Armed by JS (not under reduced motion); otherwise it is an
-     ordinary figure showing the final times. */
-  .prose .scrolly.is-armed {
-    height: 200vh;
-  }
-  .prose .scrolly.is-armed > .fig {
-    position: sticky;
-    top: 20vh;
-  }
+  /* Iterate (widget): the figure pins while the story steps scroll past it.
+     Armed by JS (not under reduced motion); otherwise the steps are plain
+     paragraphs and the figure shows the final state. */
   .prose .scrolly .clock {
+    display: block;
     font-family: var(--grotesk);
     font-size: clamp(1.8rem, 6vw, 2.6rem);
     font-weight: 800;
     color: var(--ink);
     font-variant-numeric: tabular-nums;
     line-height: 1;
+  }
+  .prose .scrolly .cmp {
+    grid-template-columns: 5rem minmax(0, 1fr) 8.6rem;
+  }
+  @media (max-width: 34rem) {
+    .prose .scrolly .cmp {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+  }
+  .prose .scrolly.is-armed > .fig {
+    position: sticky;
+    top: 3.5rem;
+    z-index: 1;
+  }
+  .prose .scrolly.is-armed [data-t] {
+    position: relative;
+    margin: 0 0 45vh;
+    padding: 0.9rem 1.1rem;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    opacity: 0.45;
+    transition: opacity var(--dur-slow) var(--ease-out);
+  }
+  .prose .scrolly.is-armed [data-t]:first-of-type {
+    margin-top: 45vh;
+  }
+  .prose .scrolly.is-armed [data-t]:last-of-type {
+    margin-bottom: 30vh;
+  }
+  .prose .scrolly.is-armed [data-t].is-on {
+    opacity: 1;
   }
   /* The learning loop: hand-written parts outlined in the accent; a dot runs
      each loop (fast: playing, slow: learning). */

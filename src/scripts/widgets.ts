@@ -7,7 +7,8 @@ const fmt = new Intl.NumberFormat("en-GB");
 function duration(s: number): string {
   if (s < 90) return `${Math.round(s)} s`;
   if (s < 5400) return `${Math.round(s / 60)} min`;
-  return `${(s / 3600).toFixed(1)} h`;
+  const h = s / 3600;
+  return `${h >= 9.95 ? Math.round(h) : h.toFixed(1)} h`;
 }
 
 // Race: how far each setup gets through the same training budget as the
@@ -180,32 +181,45 @@ async function qview(root: HTMLElement) {
 }
 
 
-// Scroll race: the same lanes as race, but the clock is the reader's scroll
-// through a tall section while the figure stays pinned (see .scrolly).
-function scrollrace(root: HTMLElement) {
-  const ticks = Number(root.dataset.ticks);
-  const max = Number(root.dataset.max);
-  const fig = root.querySelector<HTMLElement>(".fig")!;
-  const lanes = [...root.querySelectorAll<HTMLElement>("[data-secs]")];
-  const clock = root.querySelector<HTMLOutputElement>("output")!;
+// Iterate: a pinned figure while story steps scroll past. Each step carries
+// data-t, the training clock (seconds) when it reaches the reading line; the
+// clock is interpolated between steps. Each setup runs one idea per training
+// run, so the counters show ideas tested. Without JS or under reduced motion
+// the steps are plain paragraphs and the figure shows the final state.
+function iterate(root: HTMLElement) {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   root.classList.add("is-armed");
+  const steps = [...root.querySelectorAll<HTMLElement>("[data-t]")];
+  const clock = root.querySelector<HTMLOutputElement>("output")!;
+  const lanes = [...root.querySelectorAll<HTMLElement>("[data-run]")];
   let queued = false;
   const draw = () => {
     queued = false;
-    const top = window.innerHeight * 0.2;
-    const travel = root.offsetHeight - fig.offsetHeight;
-    const p = Math.min(1, Math.max(0, (top - root.getBoundingClientRect().top) / travel));
-    // Cubic: the 2026 run finishes a quarter of the way down; the rest is 2018.
-    const t = p ** 3 * max;
+    const line = window.innerHeight * 0.75;
+    let t = 0;
+    for (let k = 0; k < steps.length; k++) {
+      const top = steps[k].getBoundingClientRect().top;
+      if (top > line) {
+        if (k > 0) {
+          const prev = steps[k - 1].getBoundingClientRect().top;
+          const f = (line - prev) / (top - prev);
+          const a = Number(steps[k - 1].dataset.t);
+          t = a + f * (Number(steps[k].dataset.t) - a);
+        }
+        break;
+      }
+      t = Number(steps[k].dataset.t);
+    }
     clock.value = duration(t);
+    steps.forEach((s) => s.classList.toggle("is-on", s.getBoundingClientRect().top <= line));
     for (const lane of lanes) {
-      const secs = Number(lane.dataset.secs);
-      const done = Math.min(1, t / secs);
-      lane.querySelector<HTMLElement>("i")!.style.setProperty("--w", String(done));
+      const run = Number(lane.dataset.run);
+      const ideas = Math.floor(t / run + 1e-9);
+      const part = t / run - ideas;
+      lane.querySelector<HTMLElement>("i")!.style.setProperty("--w", String(ideas && part < 1e-6 ? 1 : part));
       lane.querySelector("b")!.textContent =
-        done >= 1 ? `done in ${duration(secs)}` : `${fmt.format(Math.round(done * ticks))} ${root.dataset.unit}`;
-      lane.classList.toggle("cmp--after", done >= 1);
+        ideas === 0 ? `run 1: ${Math.round(part * 100)}%` : `${ideas} idea${ideas === 1 ? "" : "s"} tested`;
+      lane.classList.toggle("cmp--after", ideas > 1);
     }
   };
   const ask = () => {
@@ -271,7 +285,7 @@ function ladder(root: HTMLElement) {
   pick(best);
 }
 
-const widgets: Record<string, (el: HTMLElement) => void> = { race, chain, reveal, qview, scrollrace, ladder };
+const widgets: Record<string, (el: HTMLElement) => void> = { race, chain, reveal, qview, iterate, ladder };
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });

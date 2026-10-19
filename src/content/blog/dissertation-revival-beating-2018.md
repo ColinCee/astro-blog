@@ -16,10 +16,10 @@ pubDate: "Oct 21 2026"
 
 <figure class="fig">
 <div class="vids">
-<figure class="vid"><video muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video><figcaption><b>My 2018 agent</b>, 1M ticks of training: won, 57 points</figcaption></figure>
-<figure class="vid vid--hi"><video muted loop playsinline preload="none" poster="/blog/gvgai/aliens-dqn-best.png"><source src="/blog/gvgai/aliens-dqn-best.webm" type="video/webm"><source src="/blog/gvgai/aliens-dqn-best.mp4" type="video/mp4"></video><figcaption><b>Recommended 2026 DQN</b>, 5M ticks, win/lose + score reward: won, 60 points</figcaption></figure>
+<figure class="vid"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video><figcaption><b>My 2018 agent</b>, 1M ticks of training: won, 57 points</figcaption></figure>
+<figure class="vid vid--hi"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-dqn-best.png"><source src="/blog/gvgai/aliens-dqn-best.webm" type="video/webm"><source src="/blog/gvgai/aliens-dqn-best.mp4" type="video/mp4"></video><figcaption><b>Recommended 2026 DQN</b>, 5M ticks, win/lose + score reward: won, 60 points</figcaption></figure>
 </div>
-<figcaption>The same level and random seed for both, at three-quarters of the speed the 2018 engine showed games to people.</figcaption>
+<figcaption>The same level and random seed for both, at half speed.</figcaption>
 </figure>
 
 With five times the training my 2018 agent got, and rewarded only for winning, today's DQN wins **every** game of Aliens on every run, on levels it never trained on too. But the number that mattered most turned out to be **82%**: what you win by holding the shoot button and doing nothing else.
@@ -59,8 +59,8 @@ The next morning Claude ran the dumbest policies it could think of against every
 
 <figure class="fig">
 <div class="vids">
-<figure class="vid"><video muted loop playsinline preload="none" poster="/blog/gvgai/aliens-hold-shoot.png"><source src="/blog/gvgai/aliens-hold-shoot.webm" type="video/webm"><source src="/blog/gvgai/aliens-hold-shoot.mp4" type="video/mp4"></video><figcaption><b>Holding shoot</b>, no learning: won, 42 points</figcaption></figure>
-<figure class="vid vid--hi"><video muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video><figcaption><b>My 2018 agent</b>: won, 57 points</figcaption></figure>
+<figure class="vid"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-hold-shoot.png"><source src="/blog/gvgai/aliens-hold-shoot.webm" type="video/webm"><source src="/blog/gvgai/aliens-hold-shoot.mp4" type="video/mp4"></video><figcaption><b>Holding shoot</b>, no learning: won, 42 points</figcaption></figure>
+<figure class="vid vid--hi"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video><figcaption><b>My 2018 agent</b>: won, 57 points</figcaption></figure>
 </div>
 <figcaption>Same level, same seed. The aliens drift down into a stream of shots.</figcaption>
 </figure>
@@ -84,7 +84,7 @@ Yes, and score is how you tell: 50 points a game against the button's 36. In the
 
 <figure class="fig" data-widget="qview" data-src="/blog/gvgai/aliens-2018-agent.json">
 <div class="vids">
-<figure class="vid vid--hi"><video muted playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
+<figure class="vid vid--hi"><video data-rate="0.5" muted playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
 </div>
 <div class="qbars" aria-live="off"></div>
 <figcaption>What the network thinks of each move, every time it chooses one: the tomato bar is the move it makes. Bars run from that moment's worst move to its best; the numbers are the network's estimate of the reward still to come.</figcaption>
