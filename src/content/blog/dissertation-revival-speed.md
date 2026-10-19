@@ -99,7 +99,7 @@ Once the game stopped being the bottleneck, today's GPU did the rest: 11 minutes
 This project trained 241 times, in 15 hours of training. At 2018 speed, that's about 280 days.
 
 [^speed]: At 1,550 frames a second on an RTX 4090 with the PC to itself; with other work running, 23 to 34 minutes. All the numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
-[^methods]: [DQN](https://www.nature.com/articles/nature14236), [Double DQN](https://arxiv.org/abs/1509.06461) and [prioritised replay](https://arxiv.org/abs/1511.05952), on four [GVGAI](http://www.gvgai.net/) games. I also tried [dueling networks](https://arxiv.org/abs/1511.06581); they didn't help on Aliens.
-[^runs]: The line is the run in my report's training log; the run behind the report's table ended lower, at about 760.
+[^methods]: DQN, Double DQN and prioritised replay, on four GVGAI games. I also tried dueling networks; they didn't help on Aliens. My 2018 code: [2018-dissertation](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2018-dissertation).
+[^runs]: The line is the run in my dissertation's training log; the run behind its results table ended lower, at about 760. The 2018 code: [2018-dissertation](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2018-dissertation).
 [^bugs]: Rewards credited one move late, and prioritised replay missing its correction weights. Fixed: 48.2 points vs 50.1. More in [LEARNINGS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/LEARNINGS.md).
 [^improvements]: The benchmark was tightened partway, so the steps don't always line up exactly. All 30 changes, with before, after and a commit each: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/IMPROVEMENTS.md).
