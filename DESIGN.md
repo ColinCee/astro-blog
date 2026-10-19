@@ -346,7 +346,32 @@ homepage terminal window's ambient lift, nothing else.
   (one bar split into parts), `.split` (two panels),
   `.rows` / `.cols` (row vs column illustration), `.boxes` / `.box` (simple flow).
   Marks are neutral; only the result takes the accent. Aim for at least one figure
-  per post so no screen is text alone.
+  per post so no screen is text alone. Explanations sit next to what they explain
+  (a short title above, labels on the marks), not in a paragraph under the figure.
+  Every chart axis says what it measures and in what units. Figure text comes in two
+  sizes only, at any screen width: 11px for titles, ticks and notes, 12.8px for labels
+  on the marks and values. SVG charts get there through `--k` (set by the layout
+  script), so their text never scales with the drawing.
+- **More figure blocks** (added with the dissertation series, Oct 2026):
+  `.vids` / `.vid` (game recordings side by side, pixelated, stacking on phones;
+  videos play only while on screen and never on their own under reduced motion),
+  `.chart` (inline SVG on a 640-wide viewBox with `.ax`, `.ref`, `.band`, `.mk`,
+  `.ln`, `.bar` and `.hi` marks; it keeps that width and scrolls sideways on phones
+  so labels stay at 11px), `.net` / `.slab` / `.deck` (a network's layers as tilted
+  stacks of real activation maps that face the reader on hover or focus), `.map`
+  (an SVG route drawn over a game screen), `.gains` / `.gain` (before → after with
+  a log-scale bar of the multiplier; `.gain--hi` is the headline row), `.arch` / `.cube` (a network as 3D blocks sized
+  by each layer's shape; a face can carry a real frame as an inline background, and `--slices` rules the depth faces into that many layers), `.flow` (a game as a row of equal decision boxes ending in the win, each shaded by its score; `.flow__b--over` hatches a score above the true value), `.player` (one bar of recording controls split by dividers: play/pause, a chevron each way for one decision, a scrubber and the position), `.tlist` / `.trow` (a timing ladder:
+  one row per part, explanation beside the bar, time at the end), `.runs` (blocks on a
+  shared time axis: how long each run takes and how many fit), `.loop` (a process diagram with a dot running
+  each loop; accent outlines mark the parts the post is about), and `data-grow` (`.cmp` bars grow in once
+  when seen).
+- **Interactive figures** carry `data-widget` and load `src/scripts/widgets.ts`
+  only on posts that use one: `ladder` (a step chart of a sequence of speed changes, x axis the change number; tap a step for its detail), `lines` (a line chart from JSON data: axes, an optional band, a line and labels), both drawn at the figure's real width in pixels and redrawn on resize, so they run full width with text at true size,
+  `chain` (a toy of a reward travelling back through a game), `reveal` (a button
+  that adds a baseline to a chart) and `qview` (a recording with the network's
+  value for each move under it; optionally `.ctl` buttons to pause and step one decision at a time and a `.peek` block showing the four frames that decision saw, cut from a sprite sheet, and the four ticks its move is held), `pick` (tap a part of a figure to open its detail), `flow` (a slider of training passes for the `.flow` row: the win's value reaching back one box per pass). Controls use `.ctl`: pill buttons and range
+  inputs at least 44px tall. Numbers live in the Markdown's data- attributes.
 - **Post header:** title, then the post's `description` as a standfirst
   (`.post__lede`, Body 500, `--muted`), a hairline, and the meta row: the `stat`
   chip (when set), date and read time. Header, prose, timeline and footer all share one measure, `--measure` (44rem),

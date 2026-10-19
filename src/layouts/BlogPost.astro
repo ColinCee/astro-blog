@@ -664,6 +664,55 @@ const last = entries[entries.length - 1];
     window.addEventListener("resize", update);
   }
 
+  // Charts: SVG text scales with the drawing, so each chart sets --k (viewBox
+  // units per screen pixel) and its text is sized in screen pixels through it.
+  // Every chart's text then matches the figure text around it at any width.
+  const charts = document.querySelectorAll<SVGSVGElement>(".prose .chart svg, .prose .ladder svg");
+  if (charts.length) {
+    const fit = new ResizeObserver((entries) => {
+      for (const e of entries) {
+        const svg = e.target as SVGSVGElement;
+        if (svg.dataset.px !== undefined) continue; // drawn in pixels already
+        const w = svg.viewBox.baseVal.width;
+        if (w && e.contentRect.width) svg.style.setProperty("--k", (w / e.contentRect.width).toFixed(4));
+      }
+    });
+    charts.forEach((svg) => fit.observe(svg));
+  }
+
+  // Figures: recordings play only while on screen (and never on their own
+  // under reduced motion); [data-grow] figures animate once when seen.
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const seen = new IntersectionObserver(
+    (items) => {
+      for (const it of items) {
+        const el = it.target as HTMLElement;
+        if (el instanceof HTMLVideoElement) {
+          el.playbackRate = Number(el.dataset.rate ?? 1);
+          // A video inside a qview waits for its data (data-ready) so the
+          // scores under it start with it; the widget starts it then.
+          const waits = el.closest("[data-widget='qview']") && !el.dataset.ready;
+          if (it.isIntersecting && !still && !el.dataset.hold && !waits) el.play().catch(() => {});
+          else el.pause();
+        } else if (it.isIntersecting) {
+          el.classList.add("is-in");
+          seen.unobserve(el);
+        }
+      }
+    },
+    { threshold: 0.35 },
+  );
+  document.querySelectorAll<HTMLVideoElement>(".prose video").forEach((v) => {
+    if (still) v.controls = true;
+    seen.observe(v);
+  });
+  document
+    .querySelectorAll<HTMLElement>(".prose [data-grow]")
+    .forEach((f) => seen.observe(f));
+
+  // Interactive figures load their code only on posts that use them.
+  if (document.querySelector("[data-widget]")) import("../scripts/widgets");
+
   // Timeline scroll-spy: the entry crossing a line 40% down the viewport is
   // current; entries above it are past. Their nodes fill in as you read.
   const entries = Array.from(
@@ -1161,6 +1210,1048 @@ const last = entries[entries.length - 1];
     .prose .cmp span,
     .prose .dot span {
       grid-column: 1 / -1;
+    }
+  }
+  /* Game recordings: one or more tiles side by side, pixel art kept crisp.
+     Tiles stack on phones. */
+  .prose .vids {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: 0.9rem;
+  }
+  .prose .vid {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0;
+  }
+  .prose .vid video,
+  .prose .vid img {
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    border-radius: 4px;
+    background: var(--panel);
+  }
+  .prose .vid b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .prose .vid--hi b {
+    color: var(--accent-soft);
+  }
+  /* Charts drawn as inline SVG. Marks are neutral; .hi takes the accent. Text
+     in SVG is sized in the viewBox (640 wide), so charts keep that width and
+     scroll sideways on phones rather than shrink labels below 11px. */
+  .prose .chart {
+    overflow-x: auto;
+  }
+  .prose .chart svg {
+    display: block;
+    width: 100%;
+    min-width: 40rem;
+    height: auto;
+    overflow: visible;
+  }
+  /* Chart text in screen pixels, whatever the drawing's scale (--k is set
+     by the layout script): ticks and notes at the figure's small size, labels
+     on the marks at its body size, the same as the HTML figures. */
+  .prose .chart text,
+  .prose .ladder text {
+    font-family: var(--mono);
+    font-size: calc(0.6875rem * var(--k, 1));
+    fill: var(--faint);
+  }
+  .prose .chart text.ink,
+  .prose .chart text.hi {
+    font-size: calc(0.8rem * var(--k, 1));
+  }
+  /* Narrow charts fit a phone without scrolling: their 12px text still
+     renders at 11px or more down to a ~300px column. */
+  .prose .chart--narrow svg {
+    min-width: 0;
+    max-width: 24rem;
+    margin: 0 auto;
+  }
+  .prose .chart .ax {
+    stroke: var(--line);
+    stroke-width: 1;
+    fill: none;
+  }
+  .prose .chart .ref {
+    stroke: var(--faint);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 4;
+    fill: none;
+  }
+  /* Charts drawn in code at the figure's own width: full width, 1:1 pixels. */
+  .prose .chart--fluid svg {
+    min-width: 0;
+  }
+  .prose .chart .band--runs {
+    fill: color-mix(in oklch, var(--muted) 45%, transparent);
+  }
+  .prose .chart .band {
+    fill: color-mix(in oklch, var(--bar) 45%, transparent);
+  }
+  .prose .chart .mk {
+    fill: var(--muted);
+    stroke: none;
+  }
+  .prose .chart .ln {
+    stroke: var(--muted);
+    stroke-width: 2;
+    fill: none;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .prose .chart .bar {
+    fill: var(--bar);
+  }
+  .prose .chart .hi {
+    fill: var(--accent);
+  }
+  .prose .chart .ln--dash {
+    stroke-dasharray: 5 4;
+  }
+  .prose .chart .ln.hi {
+    fill: none;
+    stroke: var(--accent);
+  }
+  .prose .chart text.hi {
+    fill: var(--accent-soft);
+    font-weight: 700;
+  }
+  .prose .chart text.ink {
+    fill: var(--ink);
+  }
+  /* Controls inside interactive figures. */
+  .prose .ctl {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.9rem;
+  }
+  .prose .ctl input[type="range"] {
+    flex: 1 1 10rem;
+    accent-color: var(--accent);
+    min-height: 2.75rem;
+  }
+  .prose .ctl button {
+    font: inherit;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.5rem 0.95rem;
+    min-height: 2.75rem;
+    cursor: pointer;
+  }
+  .prose .ctl button[aria-pressed="true"] {
+    border-color: var(--accent);
+    color: var(--accent-soft);
+  }
+  .prose .ctl button:hover {
+    border-color: var(--accent-line);
+  }
+  .prose .ctl button:disabled,
+  .prose .ctl button:disabled:hover {
+    color: var(--faint);
+    border-color: var(--line);
+    cursor: default;
+  }
+  .prose .ctl button:focus-visible,
+  .prose .ctl input:focus-visible {
+    outline: none;
+    box-shadow: var(--ring);
+  }
+  .prose .ctl output {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  /* A network drawn as its layers: each layer's real activation maps on a
+     panel turned into the page; hover or focus turns it to face the reader. */
+  .prose .net {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.9rem;
+    overflow-x: auto;
+    padding: 0.4rem 0 0.2rem;
+  }
+  .prose .slab {
+    margin: 0;
+    flex: 0 0 auto;
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    perspective: 40rem;
+    outline: none;
+  }
+  .prose .deck {
+    width: var(--dw);
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateY(-28deg) rotateX(6deg);
+    margin: 0.6rem 0.9rem 0.4rem 0.3rem;
+  }
+  .prose .deck img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    transform: translate3d(calc(var(--i) * 0.45rem), calc(var(--i) * -0.45rem), calc(var(--i) * -0.8rem));
+  }
+  @media (max-width: 40rem) {
+    .prose .deck {
+      width: calc(var(--dw) * 0.55);
+      margin: 0.4rem 0.45rem 0.3rem 0.1rem;
+    }
+    .prose .slab--out span {
+      padding: 0.35rem 0.4rem;
+    }
+    .prose .net {
+      gap: 0.6rem 0.3rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+  .prose .slab:hover .deck,
+  .prose .slab:focus-visible .deck {
+    transform: none;
+  }
+  .prose .slab:focus-visible .deck img:first-child {
+    box-shadow: var(--ring);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .prose .deck {
+      transition: transform var(--dur-slow) var(--ease-out);
+    }
+  }
+  .prose .slab figcaption {
+    display: grid;
+    justify-items: center;
+    font-size: 0.6875rem;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .prose .slab small {
+    color: var(--faint);
+    font-size: 0.6875rem;
+  }
+  .prose .slab--out span {
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    color: var(--accent-soft);
+    white-space: nowrap;
+  }
+  /* A game screen with a route drawn over it (same viewBox as the image). */
+  .prose .map {
+    position: relative;
+    max-width: 26rem;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .prose .map img {
+    display: block;
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    border-radius: 4px;
+  }
+  .prose .map svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .prose .map .ln {
+    fill: none;
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .prose .map .ln.hi {
+    stroke: var(--accent);
+  }
+  .prose .map .ring {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+  .prose .map .ring.hi {
+    stroke: var(--accent);
+  }
+  /* Multiplier rows: before → after, and a log-scale bar for how many times
+     bigger after is. Neutral marks; .gain--hi (the post's headline) is the accent. */
+  .prose .gains {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .prose .gain {
+    display: grid;
+    grid-template-columns: 10rem 8.5rem minmax(0, 1fr) 3.2rem;
+    align-items: center;
+    gap: 0.25rem 0.8rem;
+  }
+  .prose .gain em {
+    font-style: normal;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+  .prose .gain em b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .prose .gain i {
+    display: block;
+    height: 0.7rem;
+    width: calc(var(--w) * 100%);
+    background: var(--muted);
+    border-radius: 1px;
+    transform-origin: left;
+  }
+  .prose .gain strong {
+    color: var(--ink);
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .prose .gain--hi span,
+  .prose .gain--hi em b {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .prose .gain--hi i {
+    background: var(--accent);
+    height: 0.9rem;
+  }
+  .prose .gain--hi strong {
+    color: var(--accent-soft);
+    font-size: 1.25rem;
+  }
+  @media (max-width: 34rem) {
+    .prose .gain {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .prose .gain em {
+      text-align: right;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .prose .fig[data-grow] .gain i {
+      transform: scaleX(0);
+      transition: transform 0.9s var(--ease-out);
+    }
+    .prose .fig[data-grow].is-in .gain i {
+      transform: none;
+    }
+  }
+  /* Runs: a shared time axis, one block per run, so the row shows both how
+     long a run takes and how many fit. */
+  .prose .runs {
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr) 5.5rem;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .prose .runs span {
+    display: grid;
+    color: var(--ink);
+  }
+  .prose .runs small {
+    color: var(--faint);
+    font-size: 0.6875rem;
+  }
+  .prose .runs > div {
+    display: flex;
+    gap: 1px;
+    height: 1.6rem;
+  }
+  .prose .runs i {
+    flex: 0 1 auto;
+    min-width: 1px;
+    background: var(--muted);
+    border-radius: 2px;
+  }
+  .prose .runs b {
+    color: var(--ink);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .prose .runs--hi i {
+    background: var(--accent);
+  }
+  .prose .runs--hi b {
+    color: var(--accent-soft);
+  }
+  .prose .runs--axis > div {
+    height: auto;
+    justify-content: space-between;
+    border-top: 1px solid var(--line);
+    padding-top: 0.3rem;
+  }
+  .prose .runs--axis em {
+    font-style: normal;
+    color: var(--faint);
+    font-size: 0.6875rem;
+  }
+  @media (max-width: 34rem) {
+    .prose .runs {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .prose .runs > div {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .prose .runs--axis span,
+    .prose .runs--axis b {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .prose .fig[data-grow] .runs i {
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s var(--ease-out);
+      transition-delay: calc(var(--n, 0) * 20ms);
+    }
+    .prose .fig[data-grow] .runs:not(.runs--hi) i {
+      transition-duration: 1.6s;
+    }
+    .prose .fig[data-grow].is-in .runs i {
+      transform: none;
+    }
+  }
+  /* The learning loop: hand-written parts outlined in the accent; a dot runs
+     each loop (fast: playing, slow: learning). */
+  .prose .loop svg {
+    display: block;
+    width: 100%;
+    max-width: 30rem;
+    margin: 0 auto;
+  }
+  .prose .loop rect {
+    fill: var(--pane);
+    stroke: var(--line);
+    stroke-width: 1.2;
+  }
+  .prose .loop .mine rect {
+    stroke: var(--accent);
+    stroke-width: 1.6;
+  }
+  .prose .loop text {
+    font-family: var(--mono);
+    font-size: 12px;
+    fill: var(--ink);
+  }
+  .prose .loop text.sub {
+    font-size: 11px;
+    fill: var(--faint);
+  }
+  .prose .loop .arr {
+    fill: none;
+    stroke: var(--faint);
+    stroke-width: 1.2;
+    marker-end: url(#loop-head);
+  }
+  .prose .loop .pulse {
+    fill: var(--accent);
+    offset-rotate: 0deg;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .prose .loop .pulse {
+      animation: loop-run 2.4s linear infinite;
+    }
+    .prose .loop .pulse--slow {
+      animation-duration: 5s;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .prose .loop .pulse {
+      display: none;
+    }
+  }
+  @keyframes loop-run {
+    from {
+      offset-distance: 0%;
+    }
+    to {
+      offset-distance: 100%;
+    }
+  }
+  /* Pick (widget): tappable parts and the panel they open. */
+  .prose [data-pick] {
+    cursor: pointer;
+  }
+  .prose .loop [data-pick]:hover rect,
+  .prose .loop [data-pick]:focus-visible rect,
+  .prose .loop [data-pick].is-on rect {
+    fill: color-mix(in oklch, var(--accent) 14%, var(--pane));
+  }
+  .prose .loop [data-pick] {
+    outline: none;
+  }
+  .prose .slab.is-on .deck {
+    transform: none;
+  }
+  .prose .slab.is-on figcaption {
+    color: var(--accent-soft);
+  }
+  .prose .slab--out.is-on span {
+    background: color-mix(in oklch, var(--accent) 14%, transparent);
+  }
+  .prose .pick-panel:empty {
+    display: none;
+  }
+  .prose .pick-panel {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid var(--accent-line);
+    border-radius: 8px;
+    color: var(--muted);
+  }
+  .prose .pick-panel > b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .prose .pick-panel p {
+    margin: 0;
+  }
+  .prose .pick-panel img {
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    border-radius: 3px;
+  }
+  .prose .pick-panel small {
+    color: var(--faint);
+  }
+  .prose .qmini {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr) 3rem;
+    align-items: center;
+    gap: 0.3rem 0.6rem;
+  }
+  .prose .qmini i {
+    height: 0.6rem;
+    width: calc(var(--w) * 100%);
+    background: var(--muted);
+    border-radius: 1px;
+  }
+  .prose .qmini i:first-of-type {
+    background: var(--accent);
+  }
+  .prose .qmini b {
+    color: var(--ink);
+    font-weight: 500;
+    text-align: right;
+  }
+  /* Architecture: each layer a 3D block sized by its shape (--w, --h: the
+     picture; --d: how many maps). Neutral blocks; the output takes the accent. */
+  .prose .arch {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+    gap: 1rem 0.25rem; /* tight enough for six blocks on one row at the post measure with 11px labels */
+    padding: 0.6rem 0;
+  }
+  .prose .arch__l {
+    margin: 0;
+    display: grid;
+    grid-template-rows: 1fr 3.4rem;
+    justify-items: center;
+    align-items: center;
+    gap: 0.9rem;
+    perspective: 30rem;
+  }
+  .prose .arch__to {
+    display: grid;
+    justify-items: center;
+    gap: 0.2rem;
+    color: var(--faint);
+    align-self: center;
+    margin-bottom: 2.5rem;
+  }
+  .prose .arch__to small {
+    font-size: 0.6875rem;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .prose .cube {
+    position: relative;
+    width: var(--w);
+    height: var(--h);
+    margin: calc(var(--d) * 0.35) calc(var(--d) * 0.3);
+    transform-style: preserve-3d;
+    transform: rotateX(-16deg) rotateY(-32deg);
+  }
+  .prose .cube i {
+    position: absolute;
+    border: 1px solid color-mix(in oklch, var(--ink) 35%, transparent);
+    background-repeat: no-repeat;
+    image-rendering: pixelated; /* a face may carry a real game frame (inline background-image) */
+  }
+  /* The window the next layer slides over this block: a square on the front
+     face, its side as a fraction of the block's width (--kw). */
+  .prose .cube s {
+    position: absolute;
+    top: 12%;
+    left: 10%;
+    width: calc(var(--kw) * var(--w));
+    aspect-ratio: 1;
+    min-width: 5px;
+    border: 1.5px solid var(--ink);
+    transform: translateZ(calc(var(--d) / 2 + 1px));
+  }
+  /* --slices on a cube rules its depth faces into that many layers (the
+     screen block: one per frame it sees). */
+  .prose .cube[style*="--slices"] i:nth-child(2) {
+    background-image: repeating-linear-gradient(
+      0deg,
+      color-mix(in oklch, var(--ink) 30%, transparent) 0 1px,
+      transparent 1px calc(var(--d) / var(--slices))
+    );
+  }
+  .prose .cube[style*="--slices"] i:nth-child(3) {
+    background-image: repeating-linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--ink) 30%, transparent) 0 1px,
+      transparent 1px calc(var(--d) / var(--slices))
+    );
+  }
+  .prose .cube i:nth-child(1) {
+    inset: 0;
+    background: color-mix(in oklch, var(--bar) 85%, var(--pane));
+    transform: translateZ(calc(var(--d) / 2));
+  }
+  .prose .cube i:nth-child(2) {
+    left: 0;
+    width: var(--w);
+    height: var(--d);
+    top: calc((var(--h) - var(--d)) / 2);
+    background: color-mix(in oklch, var(--bar) 55%, var(--pane));
+    transform: rotateX(90deg) translateZ(calc(var(--h) / 2));
+  }
+  .prose .cube i:nth-child(3) {
+    top: 0;
+    height: var(--h);
+    width: var(--d);
+    left: calc((var(--w) - var(--d)) / 2);
+    background: var(--bar);
+    transform: rotateY(90deg) translateZ(calc(var(--w) / 2));
+  }
+  .prose .cube--hi i:nth-child(1) {
+    background: var(--accent);
+  }
+  .prose .cube--hi i:nth-child(2) {
+    background: color-mix(in oklch, var(--accent) 70%, var(--pane));
+  }
+  .prose .cube--hi i:nth-child(3) {
+    background: color-mix(in oklch, var(--accent) 80%, var(--ink));
+  }
+  .prose .arch figcaption {
+    display: grid;
+    align-self: start;
+    justify-items: center;
+    text-align: center;
+    font-size: 0.6875rem;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+  .prose .arch figcaption b {
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 0.75rem;
+  }
+  .prose .arch figcaption small {
+    font-size: inherit; /* the browser's <small> would drop below the 11px floor */
+  }
+  /* Ladder (widget): step chart with a focusable column per step. */
+  .prose .ladder svg {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    overflow: visible;
+  }
+
+  .prose .ladder .ax {
+    stroke: var(--line);
+  }
+  .prose .ladder .ln {
+    fill: none;
+    stroke: var(--muted);
+    stroke-width: 2;
+  }
+  .prose .ladder .riser {
+    stroke: transparent;
+    stroke-width: 4;
+  }
+  .prose .ladder .riser.is-on {
+    stroke: var(--accent);
+  }
+  .prose .ladder .hit {
+    fill: transparent;
+    cursor: pointer;
+    outline: none;
+  }
+  .prose .ladder .hit.is-on {
+    fill: color-mix(in oklch, var(--accent) 10%, transparent);
+  }
+  .prose .ladder .hit:focus-visible {
+    stroke: var(--accent);
+  }
+  .prose .ladder [data-out] {
+    display: grid;
+    gap: 0.2rem;
+    min-height: 4.6rem;
+    margin: 0;
+  }
+  .prose .ladder [data-out] b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .prose .ladder [data-out] strong {
+    color: var(--accent-soft);
+  }
+  .prose .ladder [data-out] small {
+    color: var(--faint);
+    font-size: 0.6875rem;
+  }
+  /* Q-value bars under a recording (widget "qview"). */
+  .prose .qbars {
+    display: grid;
+    gap: 0.35rem;
+  }
+  .prose .qbars i {
+    transition: width 0.12s linear;
+  }
+  /* "More" panel: an optional deeper explanation, closed by default. */
+  .prose details.more {
+    margin: 1.2rem 0;
+  }
+  .prose details.more > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.4rem 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--ink);
+    cursor: pointer;
+    list-style: none;
+  }
+  .prose details.more > summary::-webkit-details-marker {
+    display: none;
+  }
+  .prose details.more > summary::before {
+    content: "+";
+    color: var(--accent-soft);
+  }
+  .prose details.more[open] > summary::before {
+    content: "−";
+  }
+  .prose details.more > summary:hover,
+  .prose details.more > summary:focus-visible {
+    border-color: var(--accent-line);
+    outline: none;
+  }
+  /* Timing ladder: one row per part of a total, the explanation beside the
+     bar and the time at the end (--w: share of the longest). Waiting is
+     hatched; the part that matters is the accent. */
+  .prose .tlist {
+    display: grid;
+    gap: 0.55rem;
+  }
+  .prose .trow {
+    display: grid;
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 4rem;
+    align-items: center;
+    gap: 0.3rem 0.9rem;
+  }
+  .prose .trow span {
+    color: var(--muted);
+  }
+  .prose .trow span b {
+    color: var(--ink);
+  }
+  .prose .trow span small {
+    display: block;
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .prose .trow i {
+    display: block;
+    height: 1.1rem;
+    min-width: 3px;
+    width: calc(var(--w) * 100%);
+    background: var(--bar);
+    border-radius: 2px;
+  }
+  .prose .trow--wait i {
+    background: repeating-linear-gradient(135deg, var(--bar) 0 6px, transparent 6px 10px);
+    border: 1px solid var(--bar);
+  }
+  .prose .trow em {
+    font-style: normal;
+    color: var(--ink);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .prose .trow--hi span b,
+  .prose .trow--hi em {
+    color: var(--accent-soft);
+  }
+  .prose .trow--hi i {
+    background: var(--accent);
+  }
+  @media (max-width: 34rem) {
+    .prose .trow {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .prose .trow span {
+      grid-column: 1 / -1;
+    }
+  }
+  /* Flow (widget): a game as a row of equal decision boxes ending in the
+     win; each whole box is shaded by its score (--v, 0..1). */
+  .prose .flow {
+    display: grid;
+    gap: 0.35rem;
+  }
+  .prose .flow__lab {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--faint);
+  }
+  .prose .flow__lab--back {
+    color: var(--accent-soft);
+  }
+  .prose .flow__lab--ink {
+    color: var(--ink);
+    margin-top: 0.4rem;
+  }
+  /* A score above the true value: a hatched band over the shading. */
+  .prose .flow__b.flow__b--over {
+    background-image: repeating-linear-gradient(135deg, color-mix(in oklch, var(--ink) 30%, transparent) 0 3px, transparent 3px 7px);
+  }
+  .prose .flow__row {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 3px;
+  }
+  .prose .flow__b,
+  .prose .flow__win {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 0.15rem;
+    min-height: 3.4rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+  .prose .flow__b {
+    background: color-mix(in oklch, var(--accent) calc(var(--v, 0) * 70%), var(--pane));
+    transition: background-color 0.35s var(--ease-out);
+  }
+  .prose .flow__b small,
+  .prose .flow__win small {
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .prose .flow__b b {
+    font-size: 0.8rem;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .prose .flow__win {
+    border-color: var(--accent);
+  }
+  .prose .flow__win b {
+    color: var(--accent-soft);
+    font-size: 0.95rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .prose .flow__b {
+      transition: none;
+    }
+  }
+  @media (max-width: 34rem) {
+    .prose .flow__b b {
+      font-size: 0.6875rem;
+    }
+  }
+  /* Player: one bar of controls for a recording, segments split by dividers:
+     play/pause, step back, step forward, a scrubber, and where it is. */
+  .prose .player {
+    display: flex;
+    align-items: stretch;
+    height: 2.5rem;
+    margin-top: 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .prose .player > * + * {
+    border-left: 1px solid var(--line);
+  }
+  .prose .player button {
+    display: grid;
+    place-items: center;
+    flex: 0 0 2.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .prose .player button + button {
+    border-left: 1px solid var(--line);
+  }
+  .prose .player button:hover,
+  .prose .player button:focus-visible {
+    color: var(--ink);
+    background: var(--pane);
+    outline: none;
+  }
+  .prose .player svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    fill: currentColor;
+  }
+  /* Step buttons: a single chevron each, drawn as a stroke. */
+  .prose .player [data-step] svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .prose .player [data-play] .i-pause,
+  .prose .player [data-play][aria-pressed="true"] .i-play {
+    display: none;
+  }
+  .prose .player [data-play][aria-pressed="true"] .i-pause {
+    display: inline;
+  }
+  .prose .player input[type="range"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0 0.85rem;
+    accent-color: var(--accent);
+    background: none;
+  }
+  .prose .player output {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    padding: 0 0.85rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  /* Peek (qview): what one decision saw. .peek__seen shows four frames cut
+     from a sprite sheet (--sheet on the figure; one row per decision, --n rows,
+     --k the current row); tapping one shows it large in .peek__zoom. */
+  .prose .peek {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .prose .peek .fig__k {
+    margin: 0;
+  }
+  .prose .peek .fig__k b {
+    color: var(--accent-soft);
+    font-weight: 700;
+  }
+  .prose .peek__seen {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 3px;
+  }
+  .prose .peek__seen i,
+  .prose .peek__zoom i {
+    display: block;
+    aspect-ratio: 150 / 55;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background-color: var(--panel);
+    background-image: var(--sheet);
+    background-repeat: no-repeat;
+    background-size: 400% calc(var(--n, 1) * 100%);
+    background-position: calc(var(--i) * 100% / 3) calc(var(--k, 0) * 100% / max(1, var(--n, 1) - 1));
+    image-rendering: pixelated;
+  }
+  .prose .peek__seen i {
+    cursor: zoom-in;
+    outline: none;
+  }
+  .prose .peek__seen i.is-on,
+  .prose .peek__seen i:focus-visible {
+    border-color: var(--accent);
+  }
+  .prose .peek__seen i:nth-child(1) { --i: 0; }
+  .prose .peek__seen i:nth-child(2) { --i: 1; }
+  .prose .peek__seen i:nth-child(3) { --i: 2; }
+  .prose .peek__seen i:nth-child(4) { --i: 3; }
+  .prose .peek__zoom {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .prose .peek__zoom[hidden] {
+    display: none;
+  }
+  .prose .peek__zoom small {
+    color: var(--faint);
+    font-size: 0.6875rem;
+  }
+  .prose .ctl output[data-at] {
+    flex: 1 1 12rem;
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  /* A hidden layer a button reveals (widget "reveal"); visible without JS. */
+  .prose [data-widget="reveal"].is-armed:not(.is-revealed) .reveal {
+    opacity: 0;
+  }
+  .prose [data-widget="reveal"].is-revealed .hide-on-reveal {
+    opacity: 0;
+  }
+  .prose [data-widget="reveal"].is-armed:not(.is-revealed) .reveal-ref::after,
+  .prose [data-widget="reveal"].is-armed:not(.is-revealed) .reveal-ref .track::after {
+    opacity: 0;
+  }
+  .prose .reveal-ref::after,
+  .prose .reveal-ref .track::after {
+    transition: opacity var(--dur-slow) var(--ease-out);
+  }
+  .prose [data-widget="reveal"] .reveal,
+  .prose [data-widget="reveal"] .hide-on-reveal {
+    transition: opacity var(--dur-slow) var(--ease-out);
+  }
+  /* Bars grow in once when their figure scrolls into view (JS adds .is-in). */
+  @media (prefers-reduced-motion: no-preference) {
+    .prose .fig[data-grow] .cmp i {
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.9s var(--ease-out);
+    }
+    .prose .fig[data-grow].is-in .cmp i {
+      transform: none;
     }
   }
   .prose .expressive-code {
