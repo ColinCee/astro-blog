@@ -1785,15 +1785,24 @@ const last = entries[entries.length - 1];
     perspective: 30rem;
   }
   .prose .arch__to {
+    display: grid;
+    justify-items: center;
+    gap: 0.2rem;
     color: var(--faint);
     align-self: center;
     margin-bottom: 2.5rem;
+  }
+  .prose .arch__to small {
+    font-size: 0.6875rem;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
   }
   .prose .cube {
     position: relative;
     width: var(--w);
     height: var(--h);
-    margin: calc(var(--d) * 0.35) calc(var(--d) * 0.45);
+    margin: calc(var(--d) * 0.35) calc(var(--d) * 0.3);
     transform-style: preserve-3d;
     transform: rotateX(-16deg) rotateY(-32deg);
   }
@@ -1802,6 +1811,18 @@ const last = entries[entries.length - 1];
     border: 1px solid color-mix(in oklch, var(--ink) 35%, transparent);
     background-repeat: no-repeat;
     image-rendering: pixelated; /* a face may carry a real game frame (inline background-image) */
+  }
+  /* The window the next layer slides over this block: a square on the front
+     face, its side as a fraction of the block's width (--kw). */
+  .prose .cube s {
+    position: absolute;
+    top: 12%;
+    left: 10%;
+    width: calc(var(--kw) * var(--w));
+    aspect-ratio: 1;
+    min-width: 5px;
+    border: 1.5px solid var(--ink);
+    transform: translateZ(calc(var(--d) / 2 + 1px));
   }
   /* --slices on a cube rules its depth faces into that many layers (the
      screen block: one per frame it sees). */
