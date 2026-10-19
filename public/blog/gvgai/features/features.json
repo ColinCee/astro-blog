@@ -1,0 +1,272 @@
+{
+ "game": "aliens",
+ "level": 0,
+ "seed": 2,
+ "tick": 221,
+ "actions": [
+  "ACTION_USE",
+  "ACTION_LEFT",
+  "ACTION_RIGHT"
+ ],
+ "normalisation": "each channel scaled to its own min..max, greyscale; up to 16 channels",
+ "nets": {
+  "2018": {
+   "layers": [
+    {
+     "name": "input",
+     "kind": "frames",
+     "shape": [
+      4,
+      55,
+      150
+     ],
+     "params": 0,
+     "png": "features-2018-input.png"
+    },
+    {
+     "name": "conv1",
+     "kind": "Conv2d",
+     "shape": [
+      32,
+      12,
+      36
+     ],
+     "params": 8224,
+     "png": "features-2018-conv1.png",
+     "kernel": 8,
+     "stride": 4,
+     "after": "ReLU"
+    },
+    {
+     "name": "conv2",
+     "kind": "Conv2d",
+     "shape": [
+      64,
+      5,
+      17
+     ],
+     "params": 32832,
+     "png": "features-2018-conv2.png",
+     "kernel": 4,
+     "stride": 2,
+     "after": "ReLU"
+    },
+    {
+     "name": "conv3",
+     "kind": "Conv2d",
+     "shape": [
+      64,
+      3,
+      15
+     ],
+     "params": 36928,
+     "png": "features-2018-conv3.png",
+     "kernel": 3,
+     "stride": 1,
+     "after": "ReLU"
+    },
+    {
+     "name": "head.0",
+     "kind": "Linear",
+     "shape": [
+      512
+     ],
+     "in": 2880,
+     "params": 1475072
+    },
+    {
+     "name": "head.2",
+     "kind": "Linear",
+     "shape": [
+      3
+     ],
+     "in": 512,
+     "params": 1539
+    }
+   ],
+   "total_params": 1554595,
+   "q": [
+    1.6758,
+    1.521,
+    1.1871
+   ]
+  },
+  "impala": {
+   "layers": [
+    {
+     "name": "input",
+     "kind": "frames",
+     "shape": [
+      4,
+      55,
+      150
+     ],
+     "params": 0,
+     "png": "features-impala-input.png"
+    },
+    {
+     "name": "stage1.conv",
+     "kind": "Conv2d",
+     "shape": [
+      16,
+      55,
+      150
+     ],
+     "params": 592,
+     "png": "features-impala-stage1-conv.png",
+     "kernel": 3,
+     "stride": 1
+    },
+    {
+     "name": "stage1.pool",
+     "kind": "MaxPool2d",
+     "shape": [
+      16,
+      28,
+      75
+     ],
+     "params": 0,
+     "png": "features-impala-stage1-pool.png"
+    },
+    {
+     "name": "stage1.res1",
+     "kind": "ResBlock",
+     "shape": [
+      16,
+      28,
+      75
+     ],
+     "params": 4640,
+     "png": "features-impala-stage1-res1.png"
+    },
+    {
+     "name": "stage1.res2",
+     "kind": "ResBlock",
+     "shape": [
+      16,
+      28,
+      75
+     ],
+     "params": 4640,
+     "png": "features-impala-stage1-res2.png"
+    },
+    {
+     "name": "stage2.conv",
+     "kind": "Conv2d",
+     "shape": [
+      32,
+      28,
+      75
+     ],
+     "params": 4640,
+     "png": "features-impala-stage2-conv.png",
+     "kernel": 3,
+     "stride": 1
+    },
+    {
+     "name": "stage2.pool",
+     "kind": "MaxPool2d",
+     "shape": [
+      32,
+      14,
+      38
+     ],
+     "params": 0,
+     "png": "features-impala-stage2-pool.png"
+    },
+    {
+     "name": "stage2.res1",
+     "kind": "ResBlock",
+     "shape": [
+      32,
+      14,
+      38
+     ],
+     "params": 18496,
+     "png": "features-impala-stage2-res1.png"
+    },
+    {
+     "name": "stage2.res2",
+     "kind": "ResBlock",
+     "shape": [
+      32,
+      14,
+      38
+     ],
+     "params": 18496,
+     "png": "features-impala-stage2-res2.png"
+    },
+    {
+     "name": "stage3.conv",
+     "kind": "Conv2d",
+     "shape": [
+      32,
+      14,
+      38
+     ],
+     "params": 9248,
+     "png": "features-impala-stage3-conv.png",
+     "kernel": 3,
+     "stride": 1
+    },
+    {
+     "name": "stage3.pool",
+     "kind": "MaxPool2d",
+     "shape": [
+      32,
+      7,
+      19
+     ],
+     "params": 0,
+     "png": "features-impala-stage3-pool.png"
+    },
+    {
+     "name": "stage3.res1",
+     "kind": "ResBlock",
+     "shape": [
+      32,
+      7,
+      19
+     ],
+     "params": 18496,
+     "png": "features-impala-stage3-res1.png"
+    },
+    {
+     "name": "stage3.res2",
+     "kind": "ResBlock",
+     "shape": [
+      32,
+      7,
+      19
+     ],
+     "params": 18496,
+     "png": "features-impala-stage3-res2.png"
+    },
+    {
+     "name": "adv.0",
+     "kind": "Linear",
+     "shape": [
+      512
+     ],
+     "in": 4256,
+     "params": 2179584
+    },
+    {
+     "name": "adv.2",
+     "kind": "Linear",
+     "shape": [
+      3
+     ],
+     "in": 512,
+     "params": 1539
+    }
+   ],
+   "total_params": 2278867,
+   "q": [
+    9.0596,
+    9.2668,
+    9.0125
+   ]
+  }
+ }
+}

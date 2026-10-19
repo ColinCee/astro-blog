@@ -1,0 +1,146 @@
+{
+ "game": "deceptizelda",
+ "level": 0,
+ "seed": 2,
+ "grid": [
+  13,
+  12
+ ],
+ "tile_px_native": 10,
+ "scale": 2,
+ "tile_px": 20,
+ "image": [
+  260,
+  240
+ ],
+ "coords": "pixels in the scaled PNG, top-left origin; x, y is the tile's top-left corner",
+ "level_file": [
+  "wwwwwwwwwwwww",
+  "w...........w",
+  "w.wwwwwwwww.w",
+  "w.w..2......w",
+  "w.w.........w",
+  "w.w.wwwwwwwww",
+  "w.w..2......w",
+  "w.w.........w",
+  "w.w....2...lw",
+  "w.wwwwwwwwwww",
+  "wA........+gw",
+  "wwwwwwwwwwwww"
+ ],
+ "objects": {
+  "monsterNormal": [
+   {
+    "col": 5,
+    "row": 3,
+    "x": 100,
+    "y": 60,
+    "w": 20,
+    "h": 20,
+    "center": [
+     110.0,
+     70.0
+    ]
+   },
+   {
+    "col": 5,
+    "row": 6,
+    "x": 100,
+    "y": 120,
+    "w": 20,
+    "h": 20,
+    "center": [
+     110.0,
+     130.0
+    ]
+   },
+   {
+    "col": 7,
+    "row": 8,
+    "x": 140,
+    "y": 160,
+    "w": 20,
+    "h": 20,
+    "center": [
+     150.0,
+     170.0
+    ]
+   }
+  ],
+  "largegoal": [
+   {
+    "col": 11,
+    "row": 8,
+    "x": 220,
+    "y": 160,
+    "w": 20,
+    "h": 20,
+    "center": [
+     230.0,
+     170.0
+    ]
+   }
+  ],
+  "nokey": [
+   {
+    "col": 1,
+    "row": 10,
+    "x": 20,
+    "y": 200,
+    "w": 20,
+    "h": 20,
+    "center": [
+     30.0,
+     210.0
+    ]
+   }
+  ],
+  "key": [
+   {
+    "col": 10,
+    "row": 10,
+    "x": 200,
+    "y": 200,
+    "w": 20,
+    "h": 20,
+    "center": [
+     210.0,
+     210.0
+    ]
+   }
+  ],
+  "smallgoal": [
+   {
+    "col": 11,
+    "row": 10,
+    "x": 220,
+    "y": 200,
+    "w": 20,
+    "h": 20,
+    "center": [
+     230.0,
+     210.0
+    ]
+   }
+  ]
+ },
+ "rules": {
+  "monsterNormal": [],
+  "largegoal": [
+   "largegoal nokey > killSprite scoreChange=10",
+   "largegoal withkey > killSprite scoreChange=10"
+  ],
+  "nokey": [
+   "nokey smallgoal    > stepBack",
+   "largegoal nokey > killSprite scoreChange=10",
+   "nokey key     > transformTo stype=withkey scoreChange=1 killSecond=True"
+  ],
+  "key": [
+   "nokey key     > transformTo stype=withkey scoreChange=1 killSecond=True"
+  ],
+  "smallgoal": [
+   "nokey smallgoal    > stepBack",
+   "smallgoal withkey  > killSprite scoreChange=1"
+  ]
+ }
+}

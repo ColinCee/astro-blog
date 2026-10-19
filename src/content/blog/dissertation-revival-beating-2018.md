@@ -38,37 +38,17 @@ First the fair fight: every agent gets the 1 million game ticks my 2018 agent tr
 
 <figure class="fig" data-widget="reveal">
 <p class="fig__k">Aliens wins, 1M ticks of training</p>
-<div class="chart">
-<svg viewBox="0 0 640 262" role="img" aria-label="Aliens win rate at 2018's training budget: modern agents 57 to 85 percent, my 2018 agent 81 percent. Holding shoot wins 82 percent.">
-<rect class="band reveal" x="190.0" y="4" width="323" height="228"/>
-<text x="180" y="23" text-anchor="end" class="ink">Modern DQN</text>
-<rect class="mk" x="190.0" y="13" width="225" height="12" rx="1"><title>Modern DQN: 57% wins, 39.5 points</title></rect>
-<text x="421" y="23" class="ink">57%</text>
-<text x="180" y="51" text-anchor="end" class="ink">DQN, bigger network</text>
-<rect class="mk" x="190.0" y="41" width="288" height="12" rx="1"><title>DQN, bigger network: 73% wins, 52.7 points</title></rect>
-<text x="484" y="51" class="ink">73%</text>
-<text x="180" y="79" text-anchor="end" class="ink">DQN, 4× updates</text>
-<rect class="mk" x="190.0" y="69" width="276" height="12" rx="1"><title>DQN, 4× updates: 70% wins, 53.0 points</title></rect>
-<text x="472" y="79" class="ink">70%</text>
-<text x="180" y="107" text-anchor="end" class="ink">Rainbow</text>
-<rect class="mk" x="190.0" y="97" width="260" height="12" rx="1"><title>Rainbow: 66% wins, 43.2 points</title></rect>
-<text x="456" y="107" class="ink">66%</text>
-<text x="180" y="135" text-anchor="end" class="ink">Rainbow, bigger network</text>
-<rect class="mk" x="190.0" y="125" width="335" height="12" rx="1"><title>Rainbow, bigger network: 85% wins, 54.7 points</title></rect>
-<text x="531" y="135" class="ink">85%</text>
-<text x="180" y="163" text-anchor="end" class="ink">PPO</text>
-<rect class="mk" x="190.0" y="153" width="323" height="12" rx="1"><title>PPO: 82% wins, 37.6 points</title></rect>
-<text x="519" y="163" class="ink">82%</text>
-<text x="180" y="191" text-anchor="end" class="ink">DQN + 2018 reward</text>
-<rect class="mk" x="190.0" y="181" width="335" height="12" rx="1"><title>DQN + 2018 reward: 85% wins, 39.4 points</title></rect>
-<text x="531" y="191" class="ink">85%</text>
-<text x="180" y="219" text-anchor="end" class="hi">My 2018 agent</text>
-<rect class="hi" x="190.0" y="209" width="319" height="12" rx="1"><title>My 2018 agent: 81% wins, 50.1 points</title></rect>
-<text x="515" y="219" class="ink">81%</text>
-<line class="ref reveal" x1="513" x2="513" y1="2" y2="234"/>
-<text class="reveal ink" x="513" y="250" text-anchor="middle">hold shoot: 82%</text>
-<text x="190.0" y="250">0%</text><text class="hide-on-reveal" x="584.0" y="250" text-anchor="end">100%</text></svg>
+<div class="cmp-ref reveal-ref" style="--ref:0.82">
+<div class="cmp"><span>Modern DQN</span><em class="track"><i style="--w:0.57" title="Modern DQN: 57% wins, 39.5 points"></i></em><b>57%</b></div>
+<div class="cmp"><span>DQN, bigger network</span><em class="track"><i style="--w:0.73" title="DQN, bigger network: 73% wins, 52.7 points"></i></em><b>73%</b></div>
+<div class="cmp"><span>DQN, 4× updates</span><em class="track"><i style="--w:0.70" title="DQN, 4× updates: 70% wins, 53.0 points"></i></em><b>70%</b></div>
+<div class="cmp"><span>Rainbow</span><em class="track"><i style="--w:0.66" title="Rainbow: 66% wins, 43.2 points"></i></em><b>66%</b></div>
+<div class="cmp"><span>Rainbow, bigger network</span><em class="track"><i style="--w:0.85" title="Rainbow, bigger network: 85% wins, 54.7 points"></i></em><b>85%</b></div>
+<div class="cmp"><span>PPO</span><em class="track"><i style="--w:0.82" title="PPO: 82% wins, 37.6 points"></i></em><b>82%</b></div>
+<div class="cmp"><span>DQN + 2018 reward</span><em class="track"><i style="--w:0.85" title="DQN + 2018 reward: 85% wins, 39.4 points"></i></em><b>85%</b></div>
+<div class="cmp cmp--after"><span>My 2018 agent</span><em class="track"><i style="--w:0.81" title="My 2018 agent: 81% wins, 50.1 points"></i></em><b>81%</b></div>
 </div>
+<p class="fig__k reveal">Dashed line: holding shoot, 82%</p>
 <div class="ctl"><button type="button" aria-pressed="false">Add the button</button></div>
 <figcaption>Each bar is the mean of 3 runs of 50 games (my 2018 agent: the 2018 code replayed 3 times). Runs vary a lot: modern DQN's three won 42% to 84%.</figcaption>
 </figure>
@@ -136,7 +116,15 @@ With five times the practice, 5 million ticks or about 17 minutes a run, the slo
 
 Win/lose alone wins every game on all three runs, including on two levels it never trained on, where the button still gets 82%. Adding a tenth of the score as a tie-break keeps 98% and plays for points too. Reward what you want. It just needs the practice.
 
-PLACEHOLDER_NETWORK
+The other thing that helped was the network: the part that turns the screen into a value for each move. Both networks below are looking at the same moment of the same game.
+
+<figure class="fig">
+<p class="fig__k">2015 DQN network: 3 layers, 1.6M weights</p>
+<div class="net"><figure class="slab" tabindex="0"><div class="deck" style="width:9rem;aspect-ratio:300/110"><img src="/blog/gvgai/net/2018-input-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-input-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-input-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-input-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>4 frames<small>55 × 150</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="width:6rem;aspect-ratio:144/48"><img src="/blog/gvgai/net/2018-conv1-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-conv1-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-conv1-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-conv1-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>layer 1<small>32 maps, 12 × 36</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="width:5rem;aspect-ratio:153/45"><img src="/blog/gvgai/net/2018-conv2-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-conv2-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-conv2-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-conv2-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>layer 2<small>64, 5 × 17</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="width:4.4rem;aspect-ratio:240/48"><img src="/blog/gvgai/net/2018-conv3-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-conv3-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-conv3-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-conv3-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>layer 3<small>64, 3 × 15</small></figcaption></figure><figure class="slab slab--out"><span>3 moves</span><figcaption>&nbsp;<small>via 512</small></figcaption></figure></div>
+<p class="fig__k">IMPALA network: 15 layers in 3 stages, 2.3M weights</p>
+<div class="net"><figure class="slab" tabindex="0"><div class="deck" style="width:9rem;aspect-ratio:300/110"><img src="/blog/gvgai/net/impala-input-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/impala-input-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/impala-input-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/impala-input-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>4 frames<small>55 × 150</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="width:8rem;aspect-ratio:75/28"><img src="/blog/gvgai/net/impala-stage1-res2-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/impala-stage1-res2-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/impala-stage1-res2-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/impala-stage1-res2-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>stage 1<small>16, 28 × 75</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="width:6rem;aspect-ratio:114/42"><img src="/blog/gvgai/net/impala-stage2-res2-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/impala-stage2-res2-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/impala-stage2-res2-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/impala-stage2-res2-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>stage 2<small>32, 14 × 38</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="width:4.4rem;aspect-ratio:114/42"><img src="/blog/gvgai/net/impala-stage3-res2-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/impala-stage3-res2-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/impala-stage3-res2-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/impala-stage3-res2-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>stage 3<small>32, 7 × 19</small></figcaption></figure><figure class="slab slab--out"><span>3 moves</span><figcaption>&nbsp;<small>via 512</small></figcaption></figure></div>
+<figcaption>Real activations from the trained networks, one moment of Aliens: each layer shows 4 of its maps, the most active first (bright = active). Tap or hover a layer to face it. Layers counted are the ones that scan the image. The 2015 network shrinks the screen to 12 × 36 in one step; IMPALA keeps far more detail for longer, with shortcuts that let each stage skip ahead. That costs 2 to 3 times the time per tick, and gives the best Aliens score: 62.5 points, 96% wins.</figcaption>
+</figure>
 
 ## The leaderboard
 
@@ -164,7 +152,7 @@ PLACEHOLDER_NETWORK
 <circle class="mk" cx="85" cy="269" r="4.5" tabindex="0"><title>Random play: 33.7 points, 8% wins</title></circle>
 <text x="93" y="273" text-anchor="start" class="ink">Random play</text>
 <circle class="mk" cx="185" cy="27" r="4.5" tabindex="0"><title>Me, 2018: 42.6 points, 100% wins</title></circle>
-<text x="185" y="17" text-anchor="middle" class="ink">Me, 2018</text>
+<text x="177" y="31" text-anchor="end" class="ink">Me, 2018</text>
 <circle class="hi" cx="268" cy="77" r="6" tabindex="0"><title>My 2018 agent: 50.1 points, 81% wins, 1M ticks</title></circle>
 <text x="276" y="93" text-anchor="start" class="hi">My 2018 agent</text>
 <circle class="mk" cx="150" cy="140" r="4.5" tabindex="0"><title>Modern DQN: 39.5 points, 57% wins, 1M ticks</title></circle>
@@ -172,7 +160,7 @@ PLACEHOLDER_NETWORK
 <circle class="mk" cx="363" cy="56" r="4.5" tabindex="0"><title>DQN, 5M: 58.6 points, 89% wins, 5M ticks</title></circle>
 <text x="355" y="60" text-anchor="end" class="ink">DQN, 5M</text>
 <circle class="mk" cx="206" cy="27" r="4.5" tabindex="0"><title>Reward: win/lose only: 44.5 points, 100% wins, 5M ticks</title></circle>
-<text x="206" y="17" text-anchor="middle" class="ink">win/lose only</text>
+<text x="214" y="42" text-anchor="start" class="ink">win/lose only</text>
 <circle class="hi" cx="380" cy="32" r="6" tabindex="0"><title>Reward: win/lose + 0.1 × score: 60.1 points, 98% wins, 5M ticks</title></circle>
 <text x="372" y="24" text-anchor="end" class="hi">win/lose + score</text>
 <circle class="hi" cx="406" cy="38" r="6" tabindex="0"><title>DQN, bigger network: 62.5 points, 96% wins, 5M ticks</title></circle>

@@ -1220,15 +1220,15 @@ const last = entries[entries.length - 1];
     color: var(--accent-soft);
   }
   /* Charts drawn as inline SVG. Marks are neutral; .hi takes the accent. Text
-     in SVG is sized in the viewBox, so charts keep a minimum width and scroll
-     sideways on very small phones rather than shrinking labels below 11px. */
+     in SVG is sized in the viewBox (640 wide), so charts keep that width and
+     scroll sideways on phones rather than shrink labels below 11px. */
   .prose .chart {
     overflow-x: auto;
   }
   .prose .chart svg {
     display: block;
     width: 100%;
-    min-width: 20rem;
+    min-width: 40rem;
     height: auto;
     overflow: visible;
   }
@@ -1317,6 +1317,107 @@ const last = entries[entries.length - 1];
     color: var(--ink);
     font-variant-numeric: tabular-nums;
   }
+  /* A network drawn as its layers: each layer's real activation maps on a
+     panel turned into the page; hover or focus turns it to face the reader. */
+  .prose .net {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.9rem;
+    overflow-x: auto;
+    padding: 0.4rem 0 0.2rem;
+  }
+  .prose .slab {
+    margin: 0;
+    flex: 0 0 auto;
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    perspective: 40rem;
+    outline: none;
+  }
+  .prose .deck {
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateY(-28deg) rotateX(6deg);
+    margin: 0.6rem 0.9rem 0.4rem 0.3rem;
+  }
+  .prose .deck img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    transform: translate3d(calc(var(--i) * 0.45rem), calc(var(--i) * -0.45rem), calc(var(--i) * -0.8rem));
+  }
+  .prose .slab:hover .deck,
+  .prose .slab:focus-visible .deck {
+    transform: none;
+  }
+  .prose .slab:focus-visible .deck img:first-child {
+    box-shadow: var(--ring);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .prose .deck {
+      transition: transform var(--dur-slow) var(--ease-out);
+    }
+  }
+  .prose .slab figcaption {
+    display: grid;
+    justify-items: center;
+    font-size: 0.6875rem;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .prose .slab small {
+    color: var(--faint);
+    font-size: 0.6875rem;
+  }
+  .prose .slab--out span {
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    color: var(--accent-soft);
+    white-space: nowrap;
+  }
+  /* A game screen with a route drawn over it (same viewBox as the image). */
+  .prose .map {
+    position: relative;
+    max-width: 26rem;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .prose .map img {
+    display: block;
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    border-radius: 4px;
+  }
+  .prose .map svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .prose .map .ln {
+    fill: none;
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .prose .map .ln.hi {
+    stroke: var(--accent);
+  }
+  .prose .map .ring {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+  .prose .map .ring.hi {
+    stroke: var(--accent);
+  }
   /* Q-value bars under a recording (widget "qview"). */
   .prose .qbars {
     display: grid;
@@ -1331,6 +1432,14 @@ const last = entries[entries.length - 1];
   }
   .prose [data-widget="reveal"].is-revealed .hide-on-reveal {
     opacity: 0;
+  }
+  .prose [data-widget="reveal"].is-armed:not(.is-revealed) .reveal-ref::after,
+  .prose [data-widget="reveal"].is-armed:not(.is-revealed) .reveal-ref .track::after {
+    opacity: 0;
+  }
+  .prose .reveal-ref::after,
+  .prose .reveal-ref .track::after {
+    transition: opacity var(--dur-slow) var(--ease-out);
   }
   .prose [data-widget="reveal"] .reveal,
   .prose [data-widget="reveal"] .hide-on-reveal {
