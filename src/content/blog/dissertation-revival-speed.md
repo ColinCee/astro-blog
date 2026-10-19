@@ -143,11 +143,9 @@ Mostly waiting, not learning.[^frame]
 
 <figure class="fig">
 <p class="fig__k">One frame of the game in 2018: 29 ms</p>
-<div class="tbar">
-<span class="tbar__wait" style="--w:16.1"><b>16 ms</b> pause<em>, so people could watch</em></span><span style="--w:11.4"><b>11 ms</b> image files</span><span class="tbar__thin" style="--w:1.5" title="1.5 ms: other work that wasn't needed"></span><span class="tbar__hi" style="--w:0.4" title="0.4 ms: the game itself"></span>
-</div>
-<p class="tbar__note"><span>1.5 ms other work that wasn't needed</span><b>0.4 ms the game itself</b></p>
-<figcaption>What each of the nine changes below saved, per frame.</figcaption>
+<div class="tbar"><span class="tbar__wait" style="--w:16.1"></span><span style="--w:11.4"></span><span class="tbar__thin" style="--w:1.5"></span><span class="tbar__hi" style="--w:0.4"></span></div>
+<div class="tlabs"><span class="tlab" style="--x:27.4%"><b>16 ms</b> a pause</span><span class="tlab" style="--x:74.1%"><b>11 ms</b> image files</span><span class="tlab tlab--end" style="--x:96.1%"><b>1.5 ms</b> other</span><span class="tlab tlab--end tlab--deep tlab--hi" style="--x:99.3%"><b>0.4 ms</b> the game</span></div>
+<figcaption>The pause was 25 ms a frame so people could watch; 16 ms of it showed in the frame rate. Image files: every frame saved as a PNG, read back and decoded. Hatched: waiting.</figcaption>
 </figure>
 
 Claude cut it one change at a time, almost every one checked by a test that replays recorded games and fails if a single pixel changes.[^improvements]

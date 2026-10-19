@@ -173,10 +173,16 @@ async function qview(root: HTMLElement) {
   };
   video.addEventListener("play", () => requestAnimationFrame(loop));
   video.addEventListener("seeked", draw);
-  // The video may already be playing: autoplay can start before the data above
-  // has loaded, and then its "play" event has already gone by.
-  if (!video.paused) requestAnimationFrame(loop);
   draw();
+  // BlogPost's autoplay holds this video until its data is ready; start it
+  // now if it's on screen (and the reader allows motion).
+  video.dataset.ready = "1";
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+    new IntersectionObserver(([e], io) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      if (!video.dataset.hold) video.play().catch(() => {});
+    }, { threshold: 0.35 }).observe(video);
 
   // Controls. data-hold on the video tells BlogPost's autoplay-when-visible
   // observer to leave a video the reader paused alone.

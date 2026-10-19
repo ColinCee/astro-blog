@@ -673,7 +673,10 @@ const last = entries[entries.length - 1];
         const el = it.target as HTMLElement;
         if (el instanceof HTMLVideoElement) {
           el.playbackRate = Number(el.dataset.rate ?? 1);
-          if (it.isIntersecting && !still && !el.dataset.hold) el.play().catch(() => {});
+          // A video inside a qview waits for its data (data-ready) so the
+          // scores under it start with it; the widget starts it then.
+          const waits = el.closest("[data-widget='qview']") && !el.dataset.ready;
+          if (it.isIntersecting && !still && !el.dataset.hold && !waits) el.play().catch(() => {});
           else el.pause();
         } else if (it.isIntersecting) {
           el.classList.add("is-in");
@@ -1928,42 +1931,23 @@ const last = entries[entries.length - 1];
     border-color: var(--accent-line);
     outline: none;
   }
-  /* Time bar: one total split into labelled parts, to scale. Waiting is
-     hatched, ordinary parts are neutral, the part that matters is the accent
-     (with its label below, since it is too thin to hold one). */
+  /* Time bar: one total split into parts, to scale, with labels hung below
+     on leader lines (--x: the part's centre), so thin parts are as easy to
+     read as wide ones. Waiting is hatched; the part that matters is the accent. */
   .prose .tbar {
     display: flex;
     gap: 2px;
-    height: 3rem;
+    height: 2.2rem;
   }
   .prose .tbar span {
     flex: var(--w) 0 0;
     min-width: 3px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.1rem;
-    padding: 0 0.6rem;
-    overflow: hidden;
-    white-space: nowrap;
-    font-size: 0.6875rem;
-    color: var(--ink);
     background: var(--bar);
     border-radius: 3px;
-  }
-  .prose .tbar b {
-    font-size: 0.85rem;
-  }
-  .prose .tbar em {
-    font-style: normal;
   }
   .prose .tbar .tbar__wait {
     background: repeating-linear-gradient(135deg, var(--bar) 0 7px, transparent 7px 12px);
     border: 1px solid var(--bar);
-  }
-  .prose .tbar .tbar__thin,
-  .prose .tbar .tbar__hi {
-    padding: 0;
   }
   .prose .tbar .tbar__thin {
     background: color-mix(in oklch, var(--bar) 55%, var(--pane));
@@ -1971,29 +1955,52 @@ const last = entries[entries.length - 1];
   .prose .tbar .tbar__hi {
     background: var(--accent);
   }
-  .prose .tbar__note {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1.2rem;
-    margin: 0;
-    font-size: 0.6875rem;
-    color: var(--faint);
+  .prose .tlabs {
+    position: relative;
+    height: 5.6rem;
   }
-  .prose .tbar__note b {
+  .prose .tlab {
+    position: absolute;
+    top: 0;
+    left: var(--x);
+    transform: translateX(-50%);
+    padding-top: 1rem;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .prose .tlab::before {
+    content: "";
+    position: absolute;
+    top: 0.15rem;
+    left: 50%;
+    height: 0.75rem;
+    border-left: 1px solid var(--faint);
+  }
+  .prose .tlab b {
+    color: var(--ink);
+  }
+  /* Thin parts at the end: text ends at the leader line; the last hangs lower. */
+  .prose .tlab--end {
+    transform: translateX(calc(-100% + 0.5px));
+    padding-top: 2.3rem;
+  }
+  .prose .tlab--end::before {
+    height: 2.05rem;
+  }
+  .prose .tlab--end::before {
+    left: auto;
+    right: 0;
+  }
+  .prose .tlab--deep {
+    padding-top: 3.8rem;
+  }
+  .prose .tlab--deep::before {
+    height: 3.55rem;
+  }
+  .prose .tlab--hi,
+  .prose .tlab--hi b {
     color: var(--accent-soft);
-  }
-  @media (max-width: 34rem) {
-    .prose .tbar span {
-      padding: 0 0.35rem;
-    }
-    .prose .tbar em {
-      display: none;
-    }
-    .prose .tbar__note {
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.1rem;
-    }
   }
   /* Dice (widget): two rows of guesses for three moves, a dashed true-value
      line at half height, the pick outlined; below, the two targets. */
