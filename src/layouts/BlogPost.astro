@@ -1931,76 +1931,57 @@ const last = entries[entries.length - 1];
     border-color: var(--accent-line);
     outline: none;
   }
-  /* Time bar: one total split into parts, to scale, with labels hung below
-     on leader lines (--x: the part's centre), so thin parts are as easy to
-     read as wide ones. Waiting is hatched; the part that matters is the accent. */
-  .prose .tbar {
-    display: flex;
-    gap: 2px;
-    height: 2.2rem;
+  /* Timing ladder: one row per part of a total, the explanation beside the
+     bar and the time at the end (--w: share of the longest). Waiting is
+     hatched; the part that matters is the accent. */
+  .prose .tlist {
+    display: grid;
+    gap: 0.55rem;
   }
-  .prose .tbar span {
-    flex: var(--w) 0 0;
-    min-width: 3px;
-    background: var(--bar);
-    border-radius: 3px;
+  .prose .trow {
+    display: grid;
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 4rem;
+    align-items: center;
+    gap: 0.3rem 0.9rem;
   }
-  .prose .tbar .tbar__wait {
-    background: repeating-linear-gradient(135deg, var(--bar) 0 7px, transparent 7px 12px);
-    border: 1px solid var(--bar);
-  }
-  .prose .tbar .tbar__thin {
-    background: color-mix(in oklch, var(--bar) 55%, var(--pane));
-  }
-  .prose .tbar .tbar__hi {
-    background: var(--accent);
-  }
-  .prose .tlabs {
-    position: relative;
-    height: 5.6rem;
-  }
-  .prose .tlab {
-    position: absolute;
-    top: 0;
-    left: var(--x);
-    transform: translateX(-50%);
-    padding-top: 1rem;
-    white-space: nowrap;
-    font-size: 0.75rem;
+  .prose .trow span {
     color: var(--muted);
   }
-  .prose .tlab::before {
-    content: "";
-    position: absolute;
-    top: 0.15rem;
-    left: 50%;
-    height: 0.75rem;
-    border-left: 1px solid var(--faint);
-  }
-  .prose .tlab b {
+  .prose .trow span b {
     color: var(--ink);
   }
-  /* Thin parts at the end: text ends at the leader line; the last hangs lower. */
-  .prose .tlab--end {
-    transform: translateX(calc(-100% + 0.5px));
-    padding-top: 2.3rem;
+  .prose .trow i {
+    display: block;
+    height: 1.1rem;
+    min-width: 3px;
+    width: calc(var(--w) * 100%);
+    background: var(--bar);
+    border-radius: 2px;
   }
-  .prose .tlab--end::before {
-    height: 2.05rem;
+  .prose .trow--wait i {
+    background: repeating-linear-gradient(135deg, var(--bar) 0 6px, transparent 6px 10px);
+    border: 1px solid var(--bar);
   }
-  .prose .tlab--end::before {
-    left: auto;
-    right: 0;
+  .prose .trow em {
+    font-style: normal;
+    color: var(--ink);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
   }
-  .prose .tlab--deep {
-    padding-top: 3.8rem;
-  }
-  .prose .tlab--deep::before {
-    height: 3.55rem;
-  }
-  .prose .tlab--hi,
-  .prose .tlab--hi b {
+  .prose .trow--hi span b,
+  .prose .trow--hi em {
     color: var(--accent-soft);
+  }
+  .prose .trow--hi i {
+    background: var(--accent);
+  }
+  @media (max-width: 34rem) {
+    .prose .trow {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .prose .trow span {
+      grid-column: 1 / -1;
+    }
   }
   /* Dice (widget): two rows of guesses for three moves, a dashed true-value
      line at half height, the pick outlined; below, the two targets. */
