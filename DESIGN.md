@@ -366,7 +366,7 @@ homepage terminal window's ambient lift, nothing else.
   only on posts that use one: `ladder` (a step chart of a sequence of speed changes, x axis the change number; tap a step for its detail),
   `chain` (a toy of a reward travelling back through a game), `reveal` (a button
   that adds a baseline to a chart) and `qview` (a recording with the network's
-  value for each move under it; optionally `.ctl` buttons to pause and step one decision at a time and a `.peek` block showing the four frames that decision saw, cut from a sprite sheet, and the four ticks its move is held), `pick` (tap a part of a figure to open its detail). Controls use `.ctl`: pill buttons and range
+  value for each move under it; optionally `.ctl` buttons to pause and step one decision at a time and a `.peek` block showing the four frames that decision saw, cut from a sprite sheet, and the four ticks its move is held), `pick` (tap a part of a figure to open its detail), `corridor` (a toy game that shows scores spreading back from a goal as it plays) and `dice` (why picking the best-looking guess overrates it). Controls use `.ctl`: pill buttons and range
   inputs at least 44px tall. Numbers live in the Markdown's data- attributes.
 - **Post header:** title, then the post's `description` as a standfirst
   (`.post__lede`, Body 500, `--muted`), a hairline, and the meta row: the `stat`

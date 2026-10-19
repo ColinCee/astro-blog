@@ -36,6 +36,13 @@ The network looks at the screen and scores each move: how many points it expects
 2. **After each move it checks** what happened: the reward, plus its own score for the next moment.
 3. **It nudges its guess** towards that.
 
+<figure class="fig cor" data-widget="corridor">
+<p class="fig__k">Try it: a corridor with a pit and a goal. Each square shows the agent's score for going ← and →; the bold one is what it would play.</p>
+<div class="cor__row" data-row></div>
+<div class="ctl"><button type="button" data-one>Play a game</button><button type="button" data-many>Play 25 more</button><button type="button" data-reset>Start over</button></div>
+<output></output>
+</figure>
+
 A million frames of nudging later, the scores are worth playing by. That's DQN, DeepMind's 2015 method.[^methods]
 
 <figure class="fig">
@@ -47,9 +54,19 @@ My version added two newer tricks.
 
 ### Double DQN: don't trust the luckiest guess
 
-Every score is a guess, and the best-looking guess is usually one the network overrated. That matters because the agent plays whatever it scores highest, and learns each score from the next one. Overrate a move and it plays it more, and the overrating leaks back into every moment before it. The scores stop meaning "what I'll actually get", so it can't tell a good move from a lucky one.
+Every score is a guess, and the move that looks best is usually one the network overrated. Since it plays that move and learns each score from the next, the overrating snowballs. Double DQN asks an older copy of the network to score the pick instead:
 
-Double DQN gets a second opinion from an older copy of the network. My 2018 runs show the difference:[^ddqn]
+<figure class="fig dice" data-widget="dice">
+<p class="fig__k">Three moves, all truly worth 1 (dashed line). Each network guesses with random error; the outlined bar is the pick.</p>
+<div class="dice__grid" data-grid></div>
+<div class="dice__out">
+<div><span>Same network picks and scores</span><b data-same>…</b></div>
+<div class="is-hi"><span>Older copy scores the pick</span><b data-other>…</b></div>
+</div>
+<div class="ctl"><button type="button" data-roll="1">New guesses</button><button type="button" data-roll="200">200 more</button><output data-avg></output></div>
+</figure>
+
+In my 2018 runs, plain DQN started out wildly optimistic and spent its training talking itself down; Double DQN's expectations rose as it actually got better, and it won 57% of games to DQN's 35%.[^ddqn]
 
 <figure class="fig">
 <p class="fig__k">What the network expected one moment to be worth, over training (2018)</p>
@@ -66,27 +83,6 @@ Double DQN gets a second opinion from an older copy of the network. My 2018 runs
 </svg>
 </div>
 </figure>
-
-<figure class="fig" data-grow>
-<p class="fig__k">And the payoff: Aliens wins in the last 500 of 2,000 training games</p>
-<div class="cmp"><span>DQN</span><i style="--w:0.35"></i><b>35%</b></div>
-<div class="cmp cmp--after"><span>Double DQN</span><i style="--w:0.57"></i><b>57%</b></div>
-</figure>
-
-<details class="more">
-<summary>Why a second opinion fixes it</summary>
-
-<figure class="fig dice" data-widget="dice">
-<p class="fig__k">Three moves, all truly worth 1 (dashed line). Each network guesses with random error; the outlined bar is the pick.</p>
-<div class="dice__grid" data-grid></div>
-<div class="dice__out">
-<div><span>Same network picks and scores</span><b data-same>…</b></div>
-<div class="is-hi"><span>Older copy scores the pick</span><b data-other>…</b></div>
-</div>
-<div class="ctl"><button type="button" data-roll="1">New guesses</button><button type="button" data-roll="200">200 more</button><output data-avg></output></div>
-</figure>
-
-</details>
 
 ### Prioritised replay: practise the mistakes
 

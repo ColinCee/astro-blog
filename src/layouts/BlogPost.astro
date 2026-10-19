@@ -1243,7 +1243,8 @@ const last = entries[entries.length - 1];
   }
   .prose .chart--narrow svg {
     min-width: 20rem;
-    max-width: 30rem;
+    max-width: 24rem;
+    margin: 0 auto;
   }
   .prose .chart--narrow text {
     font-size: 12px;
@@ -1987,6 +1988,75 @@ const last = entries[entries.length - 1];
     .prose .trow span {
       grid-column: 1 / -1;
     }
+  }
+  /* Corridor (widget): a row of squares, each with its two move scores; the
+     better one is bold and tinted by how good it is (--v, 0..1). */
+  .prose .cor__row {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 3px;
+    padding-bottom: 0.9rem;
+  }
+  .prose .cor__cell {
+    position: relative;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 0.2rem;
+    min-height: 3.6rem;
+    padding: 0.3rem 0.1rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    white-space: nowrap;
+  }
+  .prose .cor__cell i {
+    font-style: normal;
+    padding: 0 0.2rem;
+    border-radius: 2px;
+    color: var(--faint);
+    background: color-mix(in oklch, var(--accent) calc(var(--v, 0) * 45%), transparent);
+  }
+  .prose .cor__cell i.is-best {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .prose .cor__cell i.is-neg {
+    color: var(--faint);
+    font-weight: 400;
+  }
+  .prose .cor__end b {
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+  .prose .cor__end small {
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .prose .cor__pit {
+    background: repeating-linear-gradient(135deg, color-mix(in oklch, var(--bar) 60%, transparent) 0 5px, transparent 5px 9px);
+  }
+  .prose .cor__goal {
+    border-color: var(--accent);
+  }
+  .prose .cor__goal b {
+    color: var(--accent-soft);
+  }
+  .prose .cor__cell u {
+    display: none;
+  }
+  .prose .cor__cell.is-here u {
+    display: block;
+    position: absolute;
+    bottom: -0.75rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+  .prose .cor output {
+    color: var(--muted);
+    font-size: 0.8rem;
   }
   /* Dice (widget): two rows of guesses for three moves, a dashed true-value
      line at half height, the pick outlined; below, the two targets. */
