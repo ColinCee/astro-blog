@@ -1,6 +1,6 @@
 ---
-title: "Eleven Weeks of Research in a Weekend"
-shortTitle: "Eleven Weeks in a Weekend"
+title: "Eleven Weeks of Research in Two Days"
+shortTitle: "Eleven Weeks in Two Days"
 description: "What it was like handing my 2018 dissertation to Claude: who did what, what it found that I never checked, and what's still unsolved."
 stat: "241 runs in 28 h"
 figures:
@@ -16,25 +16,25 @@ pubDate: "Oct 22 2026"
 <div class="split">
 <div><p class="fig__k">2018: me, a GTX 980</p>
 <div class="cmp"><span>Time</span><i style="--w:1"></i><b>11 weeks</b></div>
-<div class="cmp"><span>Commits</span><i style="--w:0.41"></i><b>39</b></div>
+<div class="cmp"><span>Commits</span><i style="--w:0.6"></i><b>56</b></div>
 <div class="cmp"><span>Runs per idea</span><i style="--w:0.33"></i><b>1</b></div></div>
 <div><p class="fig__k">2026: me, Claude, an RTX 4090</p>
 <div class="cmp cmp--after"><span>Time</span><i style="--w:0.015"></i><b>28 h</b></div>
 <div class="cmp cmp--after"><span>Commits</span><i style="--w:1"></i><b>94</b></div>
 <div class="cmp cmp--after"><span>Runs per idea</span><i style="--w:1"></i><b>3</b></div></div>
 </div>
-<figcaption>2018: first to last commit of the dissertation code, 11 January to 28 March. 2026: one weekend, overnight included, 241 training runs.</figcaption>
+<figcaption>2018: first to last commit of the dissertation code, 11 January to 28 March. 2026: a Sunday morning to Monday afternoon, overnight included, 241 training runs.</figcaption>
 </figure>
 
-In 2018 the code for my dissertation took eleven weeks, and every idea got one run because each run took a night. This October Claude rebuilt it, reproduced it, tried every method that came after it and found a flaw in how I'd measured it, in one weekend. I didn't write a line of code.[^results]
+In 2018 the code for my dissertation took eleven weeks, and every idea got one run because each run took a night. This October Claude did it again in two days. It rebuilt the code, reproduced my results, tried the main methods that came after, and found a flaw in how I'd measured it all. I didn't write a line of code.[^results]
 
 This is part 3 of 3. [Part 1](/blog/dissertation-revival-speed/): the 2018 code came back, 29× faster. [Part 2](/blog/dissertation-revival-beating-2018/): beating it, and the button that wins 82%.
 
-## The weekend
+## The two days
 
 <figure class="fig">
 <div class="chart">
-<svg viewBox="0 0 640 150" role="img" aria-label="The 28 and a half hours: Claude worked through, Colin steered nine times, numbered below">
+<svg viewBox="0 0 640 150" role="img" aria-label="The 28 and a half hours: Claude worked through, nine of the times Colin stepped in, numbered below">
 <rect class="band" x="270" y="8" width="228" height="112"/><text x="384" y="22" text-anchor="middle">Colin asleep, runs going</text>
 <text x="16" y="40">Colin</text>
 <line class="ax" x1="16" x2="624" y1="58" y2="58"/>
@@ -50,15 +50,15 @@ This is part 3 of 3. [Part 1](/blog/dissertation-revival-speed/): the 2018 code 
 <text x="16" y="86">Claude</text>
 <rect class="mk" x="28" y="92" width="103" height="12" rx="1"><title>revive + speed up</title></rect>
 <rect class="mk" x="132" y="92" width="132" height="12" rx="1"><title>2018 replay, today's agents</title></rect>
-<rect class="mk" x="267" y="92" width="222" height="12" rx="1"><title>overnight: 13 queues of runs</title></rect>
+<rect class="mk" x="267" y="92" width="222" height="12" rx="1"><title>overnight runs</title></rect>
 <rect class="mk" x="491" y="92" width="51" height="12" rx="1"><title>button check, reward</title></rect>
 <rect class="mk" x="544" y="92" width="79" height="12" rx="1"><title>all games, docs</title></rect>
-<text x="16" y="138" text-anchor="start">Sat 10:39</text>
+<text x="16" y="138" text-anchor="start">Sun 10:39</text>
 <text x="301" y="138" text-anchor="middle">midnight</text>
-<text x="624" y="138" text-anchor="end">Sun 15:08</text>
+<text x="624" y="138" text-anchor="end">Mon 15:08</text>
 </svg>
 </div>
-<figcaption>Grey: what Claude was working on. Tomato: each time I stepped in, numbered below. Times are approximate, from the session log.</figcaption>
+<figcaption>Grey: what Claude was working on. Tomato: each time I stepped in, numbered below. Times are approximate (UTC), from the session log.</figcaption>
 </figure>
 
 1. Asked it to update everything, retrain, improve on the findings, and get each big decision reviewed by a second AI model.
@@ -68,7 +68,7 @@ This is part 3 of 3. [Part 1](/blog/dissertation-revival-speed/): the 2018 code 
 5. Went to bed: "don't stop early". It queued runs all night.
 6. Asked what reward the research recommends.
 7. Asked why an experiment took hours, not minutes.
-8. Picked the reward to run on all four games.
+8. Told it to run the reward it recommended on all four games.
 9. Called it done, and asked for these posts.
 
 ## Who did what
@@ -76,19 +76,19 @@ This is part 3 of 3. [Part 1](/blog/dissertation-revival-speed/): the 2018 code 
 <figure class="fig">
 <div class="split">
 <div><p class="fig__k">Claude</p>
-<div class="boxes"><div class="box">All the code<small>engine fixes, the 2018 port, Rainbow, PPO, IMPALA</small></div><div class="box">The checks I never did<small>replaying recorded games pixel for pixel; random play and the one-button baseline</small></div><div class="box">The experiment plan<small>what to run overnight, and when to stop</small></div></div></div>
+<div class="boxes"><div class="box">All the code<small>engine fixes, the 2018 port, Rainbow, PPO, IMPALA</small></div><div class="box">The checks I never did<small>replaying recorded games pixel for pixel; comparing against random play</small></div><div class="box">The experiment plan<small>what to run overnight, and when to stop</small></div></div></div>
 <div><p class="fig__k">Me</p>
 <div class="boxes"><div class="box box--fast">The question<small>how far can this get?</small></div><div class="box box--fast">"Keep going"<small>its default was to wrap up early</small></div><div class="box box--fast">"Why?"<small>about a third of my messages were me learning PPO and IMPALA</small></div></div></div>
 </div>
 </figure>
 
-The most useful thing I did was refuse to let it stop. Left alone it wrapped up after the obvious wins; most of the speed in part 1 came after I pushed back. The most useful thing it did was distrust the results: checking against random play was its idea in the first hour, and the one-button check that reframed part 2 came from the same habit.
+The most useful thing I did was refuse to let it stop. Left alone it wrapped up after the obvious wins; most of the speed in part 1 came after I pushed back. The most useful thing it did was distrust the results: checking against random play was its idea in the first hour, and the one-button check that reframed part 2 followed the next morning.
 
 I also spent an hour lost on why it chose Rainbow. It's an odd feeling to be the least informed person on your own dissertation.
 
 ## What's still unsolved
 
-Speed didn't fix everything. Two problems need the agent to explore, not just learn from what it stumbles into.
+Two problems need the agent to explore, not just learn from what it stumbles into.
 
 <figure class="fig">
 PLACEHOLDER_DECEPTIZELDA
@@ -113,6 +113,6 @@ Next would be an exploration bonus that rewards the agent for seeing something n
 
 My dissertation would have had three runs of everything instead of one, so the noise between runs, 10 to 17 points, wouldn't have hidden what worked. It would have had the button baseline, so I'd have known which of my win rates meant anything. And I'd have spent the eleven weeks on the questions instead of on waiting.
 
-What hasn't changed is that someone has to ask the question and refuse the first answer. In 2018 that was all I had time for, too.
+The part that was still mine was asking the question, and not accepting the first answer.
 
 [^results]: Numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/RESULTS.md). Timeline and quotes: the Claude Code session log, 18 and 19 October 2026.

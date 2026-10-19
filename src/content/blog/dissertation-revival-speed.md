@@ -19,24 +19,24 @@ pubDate: "Oct 20 2026"
 <figcaption>Aliens, one of the four games in the dissertation. The agent sees only the pixels and the score, and has to learn to shoot the aliens before they land.</figcaption>
 </figure>
 
-In 2018 my final-year project taught an AI to play video games, and one training run took about 12 hours. This October I gave the whole thing to Claude, the AI coding agent, to see how far it could get with today's tools. Two days later the same agent, with the same settings and even the same bugs, trains in about **25 minutes** and learns the same way it did in 2018.[^results]
+In 2018 my final-year project taught an AI to play video games, and one training run took about 12 hours. This October I gave the whole thing to Claude, the AI coding agent, to see how far it could get with today's tools. Two days later the same agent, with the same settings and even the same bugs, trains in about **25 minutes** (11 on a quiet machine) and learns the same way it did in 2018.[^results]
 
 <figure class="fig" data-widget="race" data-ticks="1000000" data-max="43200">
-<p class="fig__k">One million game ticks of training</p>
+<p class="fig__k">One million game ticks of training (a tick is one frame of the game)</p>
 <div class="ctl"><button type="button">Play</button><input type="range" min="0" max="1000" value="0" step="1" aria-label="Time since training started"><output>0 s</output></div>
 <div class="cmp" data-secs="43200" style="grid-template-columns:8.5rem minmax(0,1fr) 7.6rem"><span>2018, GTX 980</span><i style="--w:0"></i><b></b></div>
 <div class="cmp" data-secs="1620" style="grid-template-columns:8.5rem minmax(0,1fr) 7.6rem"><span>Same agent, 2026</span><i style="--w:0"></i><b></b></div>
 <div class="cmp" data-secs="240" style="grid-template-columns:8.5rem minmax(0,1fr) 7.6rem"><span>Today's DQN</span><i style="--w:0"></i><b></b></div>
-<figcaption>Drag or press play: the clock runs from zero to 12 hours. The 2026 rows are the 2018 agent rebuilt (27 min on average over three runs on a busy PC; 11 alone) and a modern DQN (3 to 5 min).</figcaption>
+<figcaption>Drag or press play: the clock runs from zero to 12 hours. The 2026 rows are the 2018 agent rebuilt (27 min on average over three runs on a busy PC; 11 with the machine to itself) and a modern DQN (3 to 5 min).</figcaption>
 </figure>
 
 This is part 1 of 3. Part 2 is about using that speed to beat my 2018 results, and part 3 about what it's like doing research this fast.
 
-## 2018: the state of the art, by hand
+## 2018: the 2016 state of the art, by hand
 
 The project took the deep Q-network (DQN), the method DeepMind used to learn Atari games from pixels in 2015, and the three improvements published in the year after it: Double DQN, prioritised replay and dueling networks. It tested them on four games from the General Video Game AI competition (GVGAI), against a tree search and against me.
 
-There was no reinforcement learning library I could lean on, so I wrote the agent myself: the replay memory, the sum tree that prioritised replay samples from, the training loop and the reward. Keras ran the network, on a GTX 980 with 4 GB of memory. Then each idea cost a night.
+I didn't use a reinforcement learning library; I wrote the agent myself: the replay memory, the sum tree that prioritised replay samples from, the training loop and the reward. Keras ran the network, on a GTX 980 with 4 GB of memory. Then each idea cost a night.
 
 <figure class="fig">
 <div class="split">
@@ -62,22 +62,22 @@ Claude ported my agent to PyTorch and kept everything, including things that loo
 <line class="ax" x1="40" x2="630" y1="60" y2="60"/><text x="34" y="64" text-anchor="end">75%</text>
 <line class="ax" x1="40" x2="630" y1="14" y2="14"/><text x="34" y="18" text-anchor="end">100%</text>
 <rect class="bar" x="77" y="189" width="34" height="7"><title>2018 report: 4%</title></rect>
-<rect class="hi" x="117" y="181" width="34" height="15"><title>2026 replay, mean of 3 seeds: 8% (seeds 6 to 10%)</title></rect>
+<rect class="hi" x="117" y="181" width="34" height="15"><title>2026 replay, mean of 3 runs: 8% (runs 6 to 10%)</title></rect>
 <line class="ax" style="stroke:var(--ink)" x1="134" x2="134" y1="178" y2="185"/>
 <text x="94" y="184" text-anchor="middle">4</text><text x="134" y="173" text-anchor="middle" class="ink">8</text>
 <text x="114" y="218" text-anchor="middle">games 1–500</text>
 <rect class="bar" x="224" y="156" width="34" height="40"><title>2018 report: 22%</title></rect>
-<rect class="hi" x="264" y="141" width="34" height="55"><title>2026 replay, mean of 3 seeds: 30% (seeds 28 to 31%)</title></rect>
+<rect class="hi" x="264" y="141" width="34" height="55"><title>2026 replay, mean of 3 runs: 30% (runs 28 to 31%)</title></rect>
 <line class="ax" style="stroke:var(--ink)" x1="281" x2="281" y1="140" y2="145"/>
 <text x="241" y="151" text-anchor="middle">22</text><text x="281" y="135" text-anchor="middle" class="ink">30</text>
 <text x="261" y="218" text-anchor="middle">games 501–1000</text>
 <rect class="bar" x="372" y="90" width="34" height="106"><title>2018 report: 58%</title></rect>
-<rect class="hi" x="412" y="92" width="34" height="104"><title>2026 replay, mean of 3 seeds: 57% (seeds 53 to 61%)</title></rect>
+<rect class="hi" x="412" y="92" width="34" height="104"><title>2026 replay, mean of 3 runs: 57% (runs 53 to 61%)</title></rect>
 <line class="ax" style="stroke:var(--ink)" x1="429" x2="429" y1="85" y2="100"/>
 <text x="389" y="85" text-anchor="middle">58</text><text x="429" y="80" text-anchor="middle" class="ink">57</text>
 <text x="409" y="218" text-anchor="middle">games 1001–1500</text>
 <rect class="bar" x="519" y="72" width="34" height="124"><title>2018 report: 68%</title></rect>
-<rect class="hi" x="559" y="70" width="34" height="126"><title>2026 replay, mean of 3 seeds: 69% (seeds 64 to 75%)</title></rect>
+<rect class="hi" x="559" y="70" width="34" height="126"><title>2026 replay, mean of 3 runs: 69% (runs 64 to 75%)</title></rect>
 <line class="ax" style="stroke:var(--ink)" x1="576" x2="576" y1="58" y2="78"/>
 <text x="536" y="67" text-anchor="middle">68</text><text x="576" y="53" text-anchor="middle" class="ink">69</text>
 <text x="556" y="218" text-anchor="middle">games 1501–2000</text>
@@ -96,7 +96,7 @@ Almost none of it was learning. The game engine I used paused for 25 ms every ti
 <figure class="fig">
 <p class="fig__k">One game, ticks per second (log scale)</p>
 <div class="chart">
-<svg viewBox="0 0 640 260" role="img" aria-label="Ticks per second for one Aliens game, log scale, from 34 in 2018 to 2,590 after ten engine changes">
+<svg viewBox="0 0 640 260" role="img" aria-label="Ticks per second for one Aliens game, log scale, from 34 in 2018 to 2,590 after nine engine changes">
 <line class="ax" x1="44" x2="620" y1="211" y2="211"/><text x="38" y="215" text-anchor="end">30</text>
 <line class="ax" x1="44" x2="620" y1="162" y2="162"/><text x="38" y="166" text-anchor="end">100</text>
 <line class="ax" x1="44" x2="620" y1="117" y2="117"/><text x="38" y="121" text-anchor="end">300</text>
@@ -123,7 +123,7 @@ Almost none of it was learning. The game engine I used paused for 25 ms every ti
 <figcaption>Hover or tap a dot for the change. Measured with random play; the benchmark was tightened partway, so neighbouring steps can differ by a few percent from the next row's starting point.</figcaption>
 </figure>
 
-The biggest single jump was sending raw pixels instead of PNG files: 274 to 1,017 ticks per second. Then the learning side: replay memory on the GPU, the whole update recorded once as a CUDA graph and replayed, and the network choosing moves while it trains. A modern DQN now trains at about 9,000 ticks per second, and three train side by side on one PC.[^improvements]
+The biggest single jump was sending raw pixels instead of PNG files: 274 to 1,017 ticks per second. Then the learning side: replay memory on the GPU, each training step recorded once on the GPU and replayed as a single command, and the network choosing moves while it trains. A modern DQN now trains at about 9,000 ticks per second, and three train side by side on one PC.[^improvements]
 
 <figure class="fig" data-grow>
 <p class="fig__k">Everything this project trained: 241 runs, 554M ticks</p>

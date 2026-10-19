@@ -1317,6 +1317,14 @@ const last = entries[entries.length - 1];
     color: var(--ink);
     font-variant-numeric: tabular-nums;
   }
+  /* Q-value bars under a recording (widget "qview"). */
+  .prose .qbars {
+    display: grid;
+    gap: 0.35rem;
+  }
+  .prose .qbars i {
+    transition: width 0.12s linear;
+  }
   /* A hidden layer a button reveals (widget "reveal"); visible without JS. */
   .prose [data-widget="reveal"].is-armed:not(.is-revealed) .reveal {
     opacity: 0;

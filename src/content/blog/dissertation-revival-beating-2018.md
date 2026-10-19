@@ -22,7 +22,7 @@ pubDate: "Oct 21 2026"
 <figcaption>The same level and random seed for both.</figcaption>
 </figure>
 
-With five times the training my 2018 agent got, today's DQN wins **every** game of Aliens on every run, on levels it never trained on too. But the number that mattered most turned out to be **82%**: what you win by holding the shoot button and doing nothing else.
+With five times the training my 2018 agent got, and rewarded only for winning, today's DQN wins **every** game of Aliens on every run, on levels it never trained on too. But the number that mattered most turned out to be **82%**: what you win by holding the shoot button and doing nothing else.
 
 This is part 2 of 3. [Part 1](/blog/dissertation-revival-speed/) is how the 2018 code came back and got 29× faster; part 3 is what it's like doing research at this speed.
 
@@ -32,7 +32,7 @@ First the fair fight: every agent gets the 1 million game ticks my 2018 agent tr
 
 - **Modern DQN**, the 2015 method done properly: 57% wins. Lost to my 2018 agent.
 - **Rainbow**, six improvements combined (2017): 66%.
-- **A bigger network**, the IMPALA network (2018), more layers with shortcuts between them: up to 85%.
+- **A bigger network**, the IMPALA network (2018), more layers with shortcuts between them: 73% with DQN, 85% with Rainbow.
 - **PPO**, a different family that learns the moves directly instead of their values: 82%.
 - **My 2018 reward on today's DQN**: 85%.
 
@@ -75,7 +75,7 @@ First the fair fight: every agent gets the 1 million game ticks my 2018 agent tr
 
 ## Then Claude checked the button
 
-Before trusting any of it, Claude ran the dumbest policies it could think of: random moves, and every button held down for the whole game. Holding shoot wins 82% of Aliens games. On levels it has never seen, also 82%.
+The next morning Claude ran the dumbest policies it could think of against every game: random moves, and every button held down for the whole game. Holding shoot wins 82% of Aliens games. On levels it has never seen, also 82%.
 
 <figure class="fig">
 <div class="vids">
@@ -134,7 +134,7 @@ With five times the practice, 5 million ticks or about 17 minutes a run, the slo
 | **Win/lose + 0.1 × score** | **60.1** | 98% | 94% |
 | Holding shoot, for reference | 36.3 | 82% | 82% |
 
-Win/lose alone wins every game on all three runs, including on two levels it never trained on, where the button still gets 82%. Adding a tenth of the score as a tie-break keeps 98% and plays for points too. Reward what you want, and give it enough practice to find out what that means.
+Win/lose alone wins every game on all three runs, including on two levels it never trained on, where the button still gets 82%. Adding a tenth of the score as a tie-break keeps 98% and plays for points too. Reward what you want. It just needs the practice.
 
 PLACEHOLDER_NETWORK
 
@@ -186,7 +186,7 @@ PLACEHOLDER_NETWORK
 <figcaption>Tap or hover a dot for its numbers. The shaded band is below the button's 82%; the dashed line is its 36 points. 2026 agents are the mean of 3 runs; "me" is my own 2018 play.</figcaption>
 </figure>
 
-Two things still stand out. I won every game as a human but scored 43: winning was never the hard part of Aliens, scoring is. And a tree search (MCTS) that simulates moves ahead with no training at all still scores 78, well above every learning agent.
+Two things still stand out. I won every game I played in 2018 but scored 43: winning was never the hard part of Aliens, scoring is. And a tree search (MCTS) that simulates moves ahead with no training at all still scores 78, well above every learning agent.
 
 Part 3 is about how this got done in two days, and what's still unsolved.
 

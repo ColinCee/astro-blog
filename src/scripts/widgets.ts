@@ -2,7 +2,6 @@
 // [data-widget] element. Each widget reads its numbers from data- attributes in
 // the Markdown, so the post stays the one place its figures live.
 
-const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const fmt = new Intl.NumberFormat("en-GB");
 
 function duration(s: number): string {
@@ -79,7 +78,7 @@ function chain(root: HTMLElement) {
     r.setAttribute("y", "18");
     r.setAttribute("width", String(Math.max(0.5, w - 0.6)));
     r.setAttribute("height", "34");
-    svg.append(r);
+    svg.appendChild(r);
     cells.push(r);
   }
   const slider = root.querySelector<HTMLInputElement>("input")!;
@@ -92,7 +91,7 @@ function chain(root: HTMLElement) {
     const v = new Float64Array(n + 1);
     let seed = 7; // same random moves every time, so dragging back and forth is stable
     for (let k = 0; k < updates; k++) {
-      seed = (seed * 1103515245 + 12345) % 2147483648;
+      seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
       const i = seed % n;
       const end = i === n - 1;
       const r = (end ? -1 : 0) + (penalty ? -0.5 : 0);
@@ -128,9 +127,59 @@ function reveal(root: HTMLElement) {
   });
 }
 
-const widgets: Record<string, (el: HTMLElement) => void> = { race, chain, reveal };
+// Q-view: a recording with the network's value for each move drawn under it,
+// from the recorder's JSON (one entry per decision, with the tick it was made).
+type Decision = { tick: number; action: number; q?: number[] };
+async function qview(root: HTMLElement) {
+  const video = root.querySelector("video")!;
+  const box = root.querySelector<HTMLElement>(".qbars")!;
+  const data: any = await (await fetch(root.dataset.src!)).json();
+  const names: string[] = data.action_names.map((n: string) =>
+    n.replace(/^ACTION_/, "").toLowerCase().replace("use", "shoot"),
+  );
+  const fps: number = data.fps ?? 30;
+  const ticksPerFrame: number = data.ticks_per_frame ?? 1;
+  const decisions: Decision[] = data.decisions.filter((d: Decision) => d.q);
+  const rows = names.map((n) => {
+    const row = document.createElement("div");
+    row.className = "cmp";
+    row.innerHTML = `<span>${n}</span><i style="--w:0"></i><b></b>`;
+    box.appendChild(row);
+    return row;
+  });
+  let last = -1;
+  const draw = () => {
+    const tick = video.currentTime * fps * ticksPerFrame + (data.first_tick ?? 0);
+    let lo = 0;
+    let hi = decisions.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      if (decisions[mid].tick <= tick) lo = mid;
+      else hi = mid - 1;
+    }
+    if (lo === last) return;
+    last = lo;
+    const d = decisions[lo];
+    const q = d.q!;
+    const min = Math.min(...q);
+    const span = Math.max(...q) - min || 1;
+    rows.forEach((row, i) => {
+      row.querySelector<HTMLElement>("i")!.style.setProperty("--w", String(0.04 + (0.96 * (q[i] - min)) / span));
+      row.querySelector("b")!.textContent = q[i].toFixed(2);
+      row.classList.toggle("cmp--after", i === d.action);
+    });
+  };
+  const loop = () => {
+    draw();
+    if (!video.paused) requestAnimationFrame(loop);
+  };
+  video.addEventListener("play", () => requestAnimationFrame(loop));
+  video.addEventListener("seeked", draw);
+  draw();
+}
+
+const widgets: Record<string, (el: HTMLElement) => void> = { race, chain, reveal, qview };
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });
 export {};
-void still;
