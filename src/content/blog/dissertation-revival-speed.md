@@ -58,7 +58,7 @@ My GTX 980 had 4 GB. Full-colour screens would have needed 39.6 GB of memory and
 <div class="vids">
 <figure class="vid vid--hi"><video data-rate="1" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-saliency.png"><source src="/blog/gvgai/aliens-2018-saliency.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-saliency.mp4" type="video/mp4"></video></figure>
 </div>
-<figcaption>Brighter means that part of the screen changes the network's choice more. It watches the bases, and the space just behind each alien: from 4 frames, that is probably how it tells which way they move.</figcaption>
+<figcaption>Brighter means that part of the screen changes the network's choice more. It mostly watches the bases, then the aliens that have come down lowest.</figcaption>
 </figure>
 
 In my report I wrote that training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was. I was a student trying things I'd never done before, most ideas were wrong, and each one took a night to find out.
@@ -111,6 +111,6 @@ This project trained 241 times in 15 hours. At 2018's speed, about 280 days. [Pa
 [^speed]: 1 million frames on an RTX 4090 with the machine to itself (about 25 minutes with other runs sharing it). 2018: a GTX 980. Every number: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/RESULTS.md).
 [^methods]: DQN (2015), Double DQN (2015), prioritised replay (2016) and dueling networks (2016), on four games from the General Video Game AI competition. Python 3.6 and Keras then; Python 3.14 and PyTorch now. The 2018 code no longer installs.
 [^report]: From the 2018 report: 99 kB per full-colour frame × 4 frames × 100,000 samples = 39.6 GB; 8.25 kB in grey at half size = 3.3 GB.
-[^saliency]: Gradient × input: how much each pixel, times how strongly it is lit, moves the value of the chosen move. Made with `tools/saliency.py` in the dissertation repo.
+[^saliency]: Gradient × input: how much each pixel, times how strongly it is lit, moves the value of the chosen move. The network reads 4 frames at a time and uses all four about equally; each frame of the clip shows its own share. Made with `tools/saliency.py` in the dissertation repo.
 [^bugs]: Rewards were credited one move late, and prioritised replay lacked its correction weights. Fixed: 48.2 points against 50.1, one run.
 [^improvements]: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/IMPROVEMENTS.md): all 30 changes, each with its before, after and a tagged commit.

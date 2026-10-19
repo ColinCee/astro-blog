@@ -8,5 +8,5 @@
  "ticks": 446,
  "fps": 15,
  "scale": "99th percentile of all maps",
- "method": "|input \u00d7 d Q(chosen move) / d input| summed over the 4 frames, Gaussian blur 2 px"
+ "method": "|input \u00d7 dQ/dinput| per input frame, drawn on that frame; blur 2 px"
 }
