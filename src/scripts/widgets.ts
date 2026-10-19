@@ -118,7 +118,7 @@ async function qview(root: HTMLElement) {
     if (zoomed < 0) return;
     zoom.style.setProperty("--i", String(zoomed));
     const d = decisions[Math.max(0, last)];
-    zoom.querySelector("small")!.textContent = `tick ${d.tick - 3 + zoomed}`;
+    zoom.querySelector("small")!.textContent = `frame ${d.tick - 3 + zoomed}`;
   };
   seen?.querySelectorAll<HTMLElement>("i").forEach((cell, i) => {
     cell.tabIndex = 0;
@@ -166,7 +166,7 @@ async function qview(root: HTMLElement) {
     });
     root.style.setProperty("--k", String(lo));
     showZoom();
-    if (seenTicks) seenTicks.textContent = `ticks ${d.tick - 3} to ${d.tick}`;
+    if (seenTicks) seenTicks.textContent = `frames ${d.tick - 3} to ${d.tick}`;
     if (heldName) heldName.textContent = names[data.action_names.indexOf(d.action)];
     if (at) at.textContent = `${lo + 1} / ${decisions.length}`;
     if (scrub) scrub.value = String(lo);

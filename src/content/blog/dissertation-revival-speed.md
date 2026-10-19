@@ -11,7 +11,7 @@ figures:
 pubDate: "Oct 20 2026"
 ---
 <figure class="fig" data-widget="qview" data-src="/blog/gvgai/aliens-2018-agent.json" data-stack="/blog/gvgai/aliens-2018-stacks.png">
-<p class="fig__k">My 2018 agent, retrained in 2026. Every 4 ticks it scores its 3 moves and plays the top one.</p>
+<p class="fig__k">My 2018 agent, retrained in 2026. Every 4 frames it scores its 3 moves and plays the top one.</p>
 <div class="vids">
 <figure class="vid"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
 </div>
@@ -24,7 +24,7 @@ pubDate: "Oct 20 2026"
 </div>
 </figure>
 
-In 2018, for my final year project at Strathclyde University, I wrote an AI that teaches itself to play video games from the screen. I handed the report and code to Claude and told it to find ways to improve it. Now it trains in about 11 minutes instead of 12 hours, with the same results.[^speed]
+In 2018, for my final year project at Strathclyde University, I wrote an AI that teaches itself to play video games from the screen. Above, it's playing Aliens, a Space Invaders clone. I handed the report and code to Claude and told it to find ways to improve it. Now it trains in about 11 minutes instead of 12 hours, with the same results.[^speed]
 
 The bars are its scores: how much reward it expects from each move, from now to the end of the game.[^replay] It plays the top one. It's DQN, DeepMind's 2015 method, plus two newer tricks.[^methods] Getting those scores right takes about a million frames of practice.
 
@@ -87,6 +87,8 @@ Mostly waiting, not learning.
 </div>
 </figure>
 
+A newer graphics card wouldn't have touched any of that: all 29 ms happened before the network saw the frame, and all but 0.4 ms of it was overhead. Over a million frames, that's about 8 of the 12 hours.
+
 Claude cut them out one change at a time. Here are the nine, in order:
 
 <figure class="fig ladder" data-widget="ladder" data-base="The 2018 engine|34 frames/s, with a 25 ms pause and image files on every frame">
@@ -101,6 +103,8 @@ Once the game stopped being the bottleneck, today's GPU did the rest: 11 minutes
 ## What that buys
 
 This project trained 241 times, in 15 hours of training. At 2018 speed, that's about 280 days.
+
+In 2018 every idea cost a night. Now it costs a coffee break.
 
 ## How
 
