@@ -393,7 +393,60 @@ function dice(root: HTMLElement) {
   show();
 }
 
-const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, pick, dice, ladder };
+// Backup: a won game as a row of decisions. Each pass applies one Q-learning
+// update to every decision (score = points now + gamma x next moment's best;
+// the last decision's score is its points alone), starting from zeros, so the
+// win reaches back one decision per pass. The SVG in the Markdown holds the
+// pass-4 state; this only rewrites it.
+function backup(root: HTMLElement) {
+  const gamma = Number(root.dataset.gamma);
+  const rewards = root.dataset.rewards!.split(",").map(Number);
+  const n = rewards.length;
+  const q = <T extends Element>(sel: string) => root.querySelector<T>(sel)!;
+  const out = q<HTMLOutputElement>("[data-pass]");
+  const buttons = [...root.querySelectorAll<HTMLButtonElement>("[data-step]")];
+  const num = (v: number) => (v === 0 ? "0" : v.toFixed(2).replace(/\.?0+$/, ""));
+  const after = (passes: number) => {
+    let v = new Array<number>(n).fill(0);
+    for (let k = 0; k < passes; k++) {
+      v = v.map((_, i) => (i === n - 1 ? rewards[i] : rewards[i] + gamma * v[i + 1]));
+    }
+    return v.map((x) => Number(x.toFixed(2)));
+  };
+  let pass = 4;
+  const draw = () => {
+    const v = after(pass);
+    const prev = after(pass - 1);
+    const i = v.findIndex((x, k) => x !== prev[k]);
+    v.forEach((x, k) => {
+      const h = Math.min(1, x) * 26;
+      const lvl = q<SVGRectElement>(`[data-lvl="${k}"]`);
+      lvl.setAttribute("y", String(66 - h));
+      lvl.setAttribute("height", String(h));
+      q<SVGTextElement>(`[data-v="${k}"]`).textContent = num(x);
+      q<SVGRectElement>(`[data-box="${k}"]`).classList.toggle("nd__box--on", k === i);
+    });
+    const next = i + 1 < n ? prev[i + 1] : 0;
+    const x = 4 + 40 * i + 17;
+    q<SVGPathElement>("[data-arrow]").setAttribute("d", i + 1 < n ? `M${x + 40},68 C${x + 40},88 ${x},88 ${x},70` : "");
+    q<SVGTextElement>("[data-who]").textContent = `decision ${i + 1} learns`;
+    q<SVGTextElement>("[data-r]").textContent = rewards[i] > 0 ? `+${num(rewards[i])}` : num(rewards[i]);
+    q<SVGTextElement>("[data-next]").textContent = num(next);
+    q<SVGTextElement>("[data-out]").textContent = num(v[i]);
+    out.value = `pass ${pass} of ${n}`;
+    buttons[0].disabled = pass <= 1;
+    buttons[1].disabled = pass >= n;
+  };
+  buttons.forEach((b) =>
+    b.addEventListener("click", () => {
+      pass = Math.max(1, Math.min(n, pass + Number(b.dataset.step)));
+      draw();
+    }),
+  );
+  draw();
+}
+
+const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, pick, dice, ladder, backup };
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });

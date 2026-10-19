@@ -1320,6 +1320,12 @@ const last = entries[entries.length - 1];
   .prose .ctl button:hover {
     border-color: var(--accent-line);
   }
+  .prose .ctl button:disabled,
+  .prose .ctl button:disabled:hover {
+    color: var(--faint);
+    border-color: var(--line);
+    cursor: default;
+  }
   .prose .ctl button:focus-visible,
   .prose .ctl input:focus-visible {
     outline: none;
@@ -1989,37 +1995,45 @@ const last = entries[entries.length - 1];
       grid-column: 1 / -1;
     }
   }
-  /* Score chain: moments of a game as boxes, forward arrows for what happened,
-     curved arrows back for what each score learns from. */
+  /* Backup (widget): a game as a row of decision boxes, each score drawn as
+     a level that rises as the win reaches back pass by pass. The box being
+     worked is outlined in ink; .nd__term outlines the "next moment's best"
+     term of the formula, the part Double DQN changes. */
   .prose .nd-wrap svg {
     max-width: 30rem;
   }
-  .prose .nd rect {
+  .prose .nd__box {
     fill: var(--pane);
     stroke: var(--line);
     stroke-width: 1.2;
   }
-  .prose .nd .nd__hi {
-    stroke: var(--accent);
+  .prose .nd__box--on {
+    stroke: var(--ink);
     stroke-width: 1.6;
   }
-  .prose .nd .nd__end {
-    stroke: var(--ink);
+  .prose .nd__lvl {
+    fill: color-mix(in oklch, var(--accent) 35%, var(--pane));
+    pointer-events: none;
   }
-  .prose .nd__fwd,
   .prose .nd__back {
     fill: none;
     stroke: var(--faint);
     stroke-width: 1.2;
+    stroke-dasharray: 3 3;
     marker-end: url(#nd-head);
   }
-  .prose .nd__back {
-    stroke-dasharray: 3 3;
+  .prose .nd__term {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.2;
   }
-  .prose .nd__back--hi {
-    stroke: var(--accent);
-    stroke-dasharray: none;
-    marker-end: url(#nd-head-hi);
+  .prose .nd text.ink {
+    font-weight: 600;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .prose .nd__lvl {
+      transition: y var(--dur-fast) var(--ease-out), height var(--dur-fast) var(--ease-out);
+    }
   }
   /* Dice (widget): two rows of guesses for three moves, a dashed true-value
      line at half height, the pick outlined; below, the two targets. */
