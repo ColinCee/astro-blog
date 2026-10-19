@@ -26,12 +26,75 @@ With five times the training my 2018 agent got, and rewarded only for winning, t
 
 This is part 2 of 3. [Part 1](/blog/dissertation-revival-speed/) is how the 2018 code came back and got 65× faster; [part 3](/blog/dissertation-revival-research-speed/) is what it's like doing research at this speed.
 
+## How it learns
+
+The network looks at the screen and scores each move: all the reward it expects from here to the end of the game. It plays the top score. It can't see the future, so it learns each score from the box after it, shaved by 1% a step (the discount, 0.99). The win at the end reaches back one decision at a time:
+
+<figure class="fig" data-widget="flow" data-n="8" data-gamma="0.99">
+<p class="fig__k">One won game, decision by decision. Each box is shaded by its score: how much of the win it expects.</p>
+<div class="flow">
+<p class="flow__lab">time →</p>
+<div class="flow__row"><div class="flow__b" style="--v:0.000"><small>1</small><b>0</b></div><div class="flow__b" style="--v:0.000"><small>2</small><b>0</b></div><div class="flow__b" style="--v:0.000"><small>3</small><b>0</b></div><div class="flow__b" style="--v:0.000"><small>4</small><b>0</b></div><div class="flow__b" style="--v:0.000"><small>5</small><b>0</b></div><div class="flow__b" style="--v:0.980"><small>6</small><b>0.98</b></div><div class="flow__b" style="--v:0.990"><small>7</small><b>0.99</b></div><div class="flow__b" style="--v:1.000"><small>8</small><b>1</b></div><div class="flow__win"><b>+1</b><small>win</small></div></div>
+<p class="flow__lab flow__lab--back">← each box learns 0.99 × the score of the box after it</p>
+</div>
+<div class="ctl"><input type="range" min="0" max="8" value="3" step="1" aria-label="Training passes over the game"><output>after 3 passes</output></div>
+</figure>
+
+Points scored along the way are rewards too; Round 2 is about when they mislead.
+
+### Double DQN, my 2018 agent's main trick
+
+Each box learns from the next box's best score. But every score is a guess, and the best-looking guess is usually one that came out too high. Zoom in on one arrow:
+
+<figure class="fig">
+<p class="fig__k">Zoom in on one arrow: box 7 learning from box 8 (illustration)</p>
+<div class="pq">
+<div class="pq__res" style="grid-area:a"><small>box 7 learns</small><b>DQN</b><span>0.99 × 1.05 = <strong>1.04</strong></span><small>too high</small></div>
+<div class="pq__to" style="grid-area:b"><i aria-hidden="true"></i>its own highest guess, as it is</div>
+<div class="pq__next" style="grid-area:n"><small>box 8: one guess per move</small><span>left <b>0.92</b></span><span class="is-max">shoot <b>1.05</b><small>really worth 1.00</small></span><span>right <b>0.90</b></span></div>
+<div class="pq__res pq__res--hi" style="grid-area:c"><small>box 7 learns</small><b>Double DQN</b><span>0.99 × 1.01 = <strong>1.00</strong></span><small>true value 0.99</small></div>
+<div class="pq__to pq__to--hi" style="grid-area:d"><i aria-hidden="true"></i>picks shoot, then an older copy of the network, with different errors, scores it: 1.01</div>
+</div>
+</figure>
+
+Every box does this, so the optimism piles up going back through the game:
+
+<figure class="fig">
+<p class="fig__k">The whole won game after plenty of practice (illustration). Hatched: well above the true score.</p>
+<div class="flow">
+<p class="flow__lab flow__lab--ink">DQN: each box inherits the next one's optimism and adds its own</p>
+<div class="flow__row"><div class="flow__b flow__b--over" style="--v:0.978"><small>1</small><b>1.27</b></div><div class="flow__b flow__b--over" style="--v:0.949"><small>2</small><b>1.23</b></div><div class="flow__b flow__b--over" style="--v:0.920"><small>3</small><b>1.20</b></div><div class="flow__b flow__b--over" style="--v:0.890"><small>4</small><b>1.16</b></div><div class="flow__b flow__b--over" style="--v:0.861"><small>5</small><b>1.12</b></div><div class="flow__b flow__b--over" style="--v:0.830"><small>6</small><b>1.08</b></div><div class="flow__b flow__b--over" style="--v:0.800"><small>7</small><b>1.04</b></div><div class="flow__b" style="--v:0.769"><small>8</small><b>1.00</b></div><div class="flow__win"><b>+1</b><small>win</small></div></div>
+<p class="flow__lab flow__lab--ink">Double DQN: small errors, up and down, that don't pile up</p>
+<div class="flow__row"><div class="flow__b" style="--v:0.723"><small>1</small><b>0.94</b></div><div class="flow__b" style="--v:0.731"><small>2</small><b>0.95</b></div><div class="flow__b" style="--v:0.723"><small>3</small><b>0.94</b></div><div class="flow__b" style="--v:0.738"><small>4</small><b>0.96</b></div><div class="flow__b" style="--v:0.754"><small>5</small><b>0.98</b></div><div class="flow__b" style="--v:0.746"><small>6</small><b>0.97</b></div><div class="flow__b" style="--v:0.769"><small>7</small><b>1.00</b></div><div class="flow__b" style="--v:0.769"><small>8</small><b>1.00</b></div><div class="flow__win"><b>+1</b><small>win</small></div></div>
+</div>
+</figure>
+
+In my 2018 runs, DQN started out wildly optimistic and spent its training talking itself down; Double DQN's expectations rose as it got better, and it won 57% of games to DQN's 35%.[^ddqn]
+
+<figure class="fig">
+<p class="fig__k">What the network expected one moment to be worth, over training (2018)</p>
+<div class="chart chart--narrow">
+<svg viewBox="0 0 320 190" role="img" aria-label="Average score the network expected per moment over training, 2018. Plain DQN starts very high (off the chart) and comes down to about 10; Double DQN starts near 0 and rises to about 9.">
+<line class="ax" x1="30" x2="310" y1="164" y2="164"/><text x="25" y="168" text-anchor="end">0</text>
+<line class="ax" x1="30" x2="310" y1="89" y2="89"/><text x="25" y="93" text-anchor="end">10</text>
+<line class="ax" x1="30" x2="310" y1="14" y2="14"/><text x="25" y="18" text-anchor="end">20</text>
+<polyline class="ln" points="30.0,14.0 32.8,14.0 35.6,14.0 38.4,14.0 41.2,14.0 44.0,14.0 46.8,14.0 49.6,14.0 52.4,14.0 55.2,36.6 58.0,40.8 60.8,39.0 63.6,37.8 66.4,50.1 69.2,57.9 72.0,56.1 74.8,48.6 77.6,51.3 80.5,62.1 83.3,61.0 86.1,59.9 88.9,60.3 91.7,54.7 94.5,50.1 97.3,51.8 100.1,42.7 102.9,38.7 105.7,45.3 108.5,50.4 111.3,53.6 114.1,59.3 116.9,60.0 119.7,57.6 122.5,50.8 125.3,51.3 128.1,61.8 130.9,61.1 133.7,52.1 136.5,57.1 139.3,60.4 142.1,63.9 144.9,53.1 147.7,52.1 150.5,59.4 153.3,59.8 156.1,66.1 158.9,60.4 161.7,61.4 164.5,58.6 167.3,64.8 170.1,56.2 172.9,54.9 175.7,56.0 178.5,63.9 181.4,69.2 184.2,68.3 187.0,69.1 189.8,68.4 192.6,69.7 195.4,71.5 198.2,72.9 201.0,68.3 203.8,73.0 206.6,72.2 209.4,69.9 212.2,70.7 215.0,68.2 217.8,67.7 220.6,74.2 223.4,76.1 226.2,79.4 229.0,79.7 231.8,81.2 234.6,78.9 237.4,76.5 240.2,75.4 243.0,78.7 245.8,74.6 248.6,75.1 251.4,76.4 254.2,75.7 257.0,80.0 259.8,87.3 262.6,91.4 265.4,85.3 268.2,82.0 271.0,81.4 273.8,81.1 276.6,83.1 279.4,87.5 282.3,87.3 285.1,84.8 287.9,86.8 290.7,87.7 293.5,84.4 296.3,78.4 299.1,81.5 301.9,86.7 304.7,91.3 307.5,87.5 310.0,86.6"/>
+<polyline class="ln hi" points="30.0,168.2 32.8,167.7 35.6,165.8 38.4,163.9 41.2,162.6 44.0,161.4 46.8,160.1 49.6,159.1 52.4,158.3 55.2,157.6 58.0,157.1 60.8,156.9 63.6,156.7 66.4,155.8 69.2,154.8 72.0,153.1 74.8,152.3 77.6,151.9 80.5,150.8 83.3,149.2 86.1,147.9 88.9,146.7 91.7,146.2 94.5,144.8 97.3,142.8 100.1,141.1 102.9,139.7 105.7,138.4 108.5,137.5 111.3,135.9 114.1,134.7 116.9,133.0 119.7,132.6 122.5,132.0 125.3,132.1 128.1,131.4 130.9,131.3 133.7,131.0 136.5,130.3 139.3,129.8 142.1,129.0 144.9,127.6 147.7,126.7 150.5,125.6 153.3,124.9 156.1,124.1 158.9,122.2 161.7,120.2 164.5,118.5 167.3,117.7 170.1,117.9 172.9,118.0 175.7,118.6 178.5,118.1 181.4,119.1 184.2,118.6 187.0,118.0 189.8,114.9 192.6,114.8 195.4,115.5 198.2,115.5 201.0,113.5 203.8,112.4 206.6,110.5 209.4,110.9 212.2,112.3 215.0,111.6 217.8,111.9 220.6,110.2 223.4,108.7 226.2,107.8 229.0,107.5 231.8,108.1 234.6,106.3 237.4,106.2 240.2,104.9 243.0,105.0 245.8,104.9 248.6,103.8 251.4,102.0 254.2,102.0 257.0,102.4 259.8,103.2 262.6,100.7 265.4,99.3 268.2,98.3 271.0,98.8 273.8,100.2 276.6,101.4 279.4,99.6 282.3,98.0 285.1,100.1 287.9,101.0 290.7,99.9 293.5,97.8 296.3,96.8 299.1,97.6 301.9,98.6 304.7,96.8 307.5,95.2 310.0,96.1"/>
+<text x="310" y="22" text-anchor="end" class="ink">DQN: starts sky-high,</text><text x="310" y="34" text-anchor="end" class="ink">then talks itself down</text>
+<text x="310" y="157" text-anchor="end" class="hi">Double DQN: rises as it learns</text>
+<text x="30" y="184">start of training</text><text x="310" y="184" text-anchor="end">end</text>
+</svg>
+</div>
+</figure>
+
+Its other trick was prioritised replay: practising the moments it guessed worst more often.[^per]
+
 ## Round 1: same budget as 2018
 
 First the fair fight: every agent gets the 1 million game ticks my 2018 agent trained on, three runs each, 50 test games.[^results]
 
 - **Modern DQN**, the 2015 method done properly: 57% wins. Lost to my 2018 agent.
-- **Rainbow**, six improvements combined (2017): 66%.
+- **Rainbow**, six improvements combined (2017), both my tricks among them: 66%.
 - **A bigger network**, the IMPALA network (2018), more layers with shortcuts between them: 73% with DQN, 85% with Rainbow.
 - **PPO**, a different family that learns the moves directly instead of their values: 82%.
 - **My 2018 reward on today's DQN**: 85%.
@@ -80,7 +143,14 @@ So the bar for Aliens is 82%, not 0%. My 2018 agent's 81% wasn't evidence of any
 
 ## Did my 2018 agent learn anything?
 
-Yes, and score is how you tell: 50 points a game against the button's 36. In the games it wins it averages 54 points, against 43 for today's DQN with my 2018 reward: it also shoots the protective bases in front of the aliens.
+Yes, and score is how you tell: 50 points a game against the button's 36. In the games it wins it averages 54 points, against 43 for today's DQN with my 2018 reward: it also shoots the protective bases in front of the aliens. Its attention shows it:[^saliency]
+
+<figure class="fig">
+<p class="fig__k">Where it looks: brighter means it matters more to its move. Mostly the bases, then the lowest aliens.</p>
+<div class="vids">
+<figure class="vid vid--hi"><video data-rate="1" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-saliency.png"><source src="/blog/gvgai/aliens-2018-saliency.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-saliency.mp4" type="video/mp4"></video></figure>
+</div>
+</figure>
 
 <figure class="fig" data-widget="qview" data-src="/blog/gvgai/aliens-2018-agent.json">
 <div class="vids">
@@ -179,3 +249,6 @@ Two things still stand out. I won every game I played in 2018 but scored 43: win
 [Part 3](/blog/dissertation-revival-research-speed/) is about how this got done in two days, and what's still unsolved.
 
 [^results]: Every number is from [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/RESULTS.md), except the button on unseen levels (50 games on Aliens levels 3 and 4: 36.5 points, 82%), run for this post.
+[^ddqn]: From my 2018 report's training logs; the curves are smoothed. My 2018 DQN had no older copy at all, so the gap is both changes together.
+[^per]: It scored more points but didn't win more (54% vs 57%), until I changed the reward.
+[^saliency]: Gradient × input, made with `tools/saliency.py` in the dissertation repo.
