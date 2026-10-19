@@ -47,10 +47,28 @@ My version added two newer tricks.
 
 ### Double DQN: don't trust the luckiest guess
 
-Every score is a guess, and the best-looking guess is usually one the network overrated. Aim at it and the agent keeps aiming a bit too high, and the error builds on itself. Double DQN gets a second opinion from an older copy of the network. In my 2018 runs it was the biggest single gain.[^ddqn]
+Every score is a guess, and the best-looking guess is usually one the network overrated. That matters because the agent plays whatever it scores highest, and learns each score from the next one. Overrate a move and it plays it more, and the overrating leaks back into every moment before it. The scores stop meaning "what I'll actually get", so it can't tell a good move from a lucky one.
+
+Double DQN gets a second opinion from an older copy of the network. My 2018 runs show the difference:[^ddqn]
+
+<figure class="fig">
+<p class="fig__k">What the network expected one moment to be worth, over training (2018)</p>
+<div class="chart chart--narrow">
+<svg viewBox="0 0 320 190" role="img" aria-label="Average score the network expected per moment over training, 2018. Plain DQN starts very high (off the chart) and comes down to about 10; Double DQN starts near 0 and rises to about 9.">
+<line class="ax" x1="30" x2="310" y1="164" y2="164"/><text x="25" y="168" text-anchor="end">0</text>
+<line class="ax" x1="30" x2="310" y1="89" y2="89"/><text x="25" y="93" text-anchor="end">10</text>
+<line class="ax" x1="30" x2="310" y1="14" y2="14"/><text x="25" y="18" text-anchor="end">20</text>
+<polyline class="ln" points="30.0,14.0 32.8,14.0 35.6,14.0 38.4,14.0 41.2,14.0 44.0,14.0 46.8,14.0 49.6,14.0 52.4,14.0 55.2,36.6 58.0,40.8 60.8,39.0 63.6,37.8 66.4,50.1 69.2,57.9 72.0,56.1 74.8,48.6 77.6,51.3 80.5,62.1 83.3,61.0 86.1,59.9 88.9,60.3 91.7,54.7 94.5,50.1 97.3,51.8 100.1,42.7 102.9,38.7 105.7,45.3 108.5,50.4 111.3,53.6 114.1,59.3 116.9,60.0 119.7,57.6 122.5,50.8 125.3,51.3 128.1,61.8 130.9,61.1 133.7,52.1 136.5,57.1 139.3,60.4 142.1,63.9 144.9,53.1 147.7,52.1 150.5,59.4 153.3,59.8 156.1,66.1 158.9,60.4 161.7,61.4 164.5,58.6 167.3,64.8 170.1,56.2 172.9,54.9 175.7,56.0 178.5,63.9 181.4,69.2 184.2,68.3 187.0,69.1 189.8,68.4 192.6,69.7 195.4,71.5 198.2,72.9 201.0,68.3 203.8,73.0 206.6,72.2 209.4,69.9 212.2,70.7 215.0,68.2 217.8,67.7 220.6,74.2 223.4,76.1 226.2,79.4 229.0,79.7 231.8,81.2 234.6,78.9 237.4,76.5 240.2,75.4 243.0,78.7 245.8,74.6 248.6,75.1 251.4,76.4 254.2,75.7 257.0,80.0 259.8,87.3 262.6,91.4 265.4,85.3 268.2,82.0 271.0,81.4 273.8,81.1 276.6,83.1 279.4,87.5 282.3,87.3 285.1,84.8 287.9,86.8 290.7,87.7 293.5,84.4 296.3,78.4 299.1,81.5 301.9,86.7 304.7,91.3 307.5,87.5 310.0,86.6"/>
+<polyline class="ln hi" points="30.0,168.2 32.8,167.7 35.6,165.8 38.4,163.9 41.2,162.6 44.0,161.4 46.8,160.1 49.6,159.1 52.4,158.3 55.2,157.6 58.0,157.1 60.8,156.9 63.6,156.7 66.4,155.8 69.2,154.8 72.0,153.1 74.8,152.3 77.6,151.9 80.5,150.8 83.3,149.2 86.1,147.9 88.9,146.7 91.7,146.2 94.5,144.8 97.3,142.8 100.1,141.1 102.9,139.7 105.7,138.4 108.5,137.5 111.3,135.9 114.1,134.7 116.9,133.0 119.7,132.6 122.5,132.0 125.3,132.1 128.1,131.4 130.9,131.3 133.7,131.0 136.5,130.3 139.3,129.8 142.1,129.0 144.9,127.6 147.7,126.7 150.5,125.6 153.3,124.9 156.1,124.1 158.9,122.2 161.7,120.2 164.5,118.5 167.3,117.7 170.1,117.9 172.9,118.0 175.7,118.6 178.5,118.1 181.4,119.1 184.2,118.6 187.0,118.0 189.8,114.9 192.6,114.8 195.4,115.5 198.2,115.5 201.0,113.5 203.8,112.4 206.6,110.5 209.4,110.9 212.2,112.3 215.0,111.6 217.8,111.9 220.6,110.2 223.4,108.7 226.2,107.8 229.0,107.5 231.8,108.1 234.6,106.3 237.4,106.2 240.2,104.9 243.0,105.0 245.8,104.9 248.6,103.8 251.4,102.0 254.2,102.0 257.0,102.4 259.8,103.2 262.6,100.7 265.4,99.3 268.2,98.3 271.0,98.8 273.8,100.2 276.6,101.4 279.4,99.6 282.3,98.0 285.1,100.1 287.9,101.0 290.7,99.9 293.5,97.8 296.3,96.8 299.1,97.6 301.9,98.6 304.7,96.8 307.5,95.2 310.0,96.1"/>
+<text x="310" y="22" text-anchor="end" class="ink">DQN: starts sky-high,</text><text x="310" y="34" text-anchor="end" class="ink">then talks itself down</text>
+<text x="310" y="157" text-anchor="end" class="hi">Double DQN: rises as it learns</text>
+<text x="30" y="184">start of training</text><text x="310" y="184" text-anchor="end">end</text>
+</svg>
+</div>
+</figure>
 
 <figure class="fig" data-grow>
-<p class="fig__k">Aliens, wins in the last 500 of 2,000 training games (2018)</p>
+<p class="fig__k">And the payoff: Aliens wins in the last 500 of 2,000 training games</p>
 <div class="cmp"><span>DQN</span><i style="--w:0.35"></i><b>35%</b></div>
 <div class="cmp cmp--after"><span>Double DQN</span><i style="--w:0.57"></i><b>57%</b></div>
 </figure>
@@ -140,20 +158,20 @@ Mostly waiting, not learning.[^frame]
 <figure class="fig">
 <p class="fig__k">One frame of the game in 2018: 29 ms</p>
 <div class="tlist">
-<div class="trow trow--wait"><span><b>Pause</b> so people could watch</span><i style="--w:1.000"></i><em>16 ms</em></div>
-<div class="trow "><span><b>Image files</b> saved, then read back</span><i style="--w:0.708"></i><em>11 ms</em></div>
-<div class="trow "><span><b>Other</b> small overheads</span><i style="--w:0.093"></i><em>1.5 ms</em></div>
+<div class="trow trow--wait"><span><b>Pause</b> so people could watch <small>change 1</small></span><i style="--w:1.000"></i><em>16 ms</em></div>
+<div class="trow "><span><b>Image files</b> saved, then read back <small>changes 2, 3, 6, 7</small></span><i style="--w:0.708"></i><em>11 ms</em></div>
+<div class="trow "><span><b>Other</b> small overheads <small>changes 4, 5, 8, 9</small></span><i style="--w:0.093"></i><em>1.5 ms</em></div>
 <div class="trow trow--hi"><span><b>The game</b> itself</span><i style="--w:0.025"></i><em>0.4 ms</em></div>
 </div>
 </figure>
 
-Claude cut it one change at a time, almost every one checked by a test that replays recorded games and fails if a single pixel changes.[^improvements]
+Claude cut those out one change at a time, almost every one checked by a test that replays recorded games and fails if a single pixel changes.[^improvements] Here are the nine, in order:
 
 <figure class="fig ladder" data-widget="ladder" data-base="The 2018 engine|34 frames/s, with a 25 ms pause and image files on every frame">
 <p class="fig__k">One game, frames per second (log scale). 0 is the 2018 engine; tap a step.</p>
 <svg viewBox="0 0 320 170" role="img" aria-label="Step chart: one game went from 34 to 2,590 frames per second in nine changes; the biggest was sending raw pixels instead of PNG files, 274 to 1,017."></svg>
 <p data-out><b>Raw pixels instead of PNG files</b> <span>274 → 1,017 frames/s, <strong>×3.7</strong></span></p>
-<script type="application/json">[{"name": "Removed a 25 ms pause per frame", "before": 34, "after": 75, "note": "It paced the game for people watching. My 2018 runs had it too."}, {"name": "Frames decoded in memory", "before": 75, "after": 136, "note": "Instead of written to disk and read back."}, {"name": "Engine sends the image it already made", "before": 136, "after": 200, "note": "Instead of saving it, reading it back and encoding it again."}, {"name": "Sprites scaled once", "before": 214, "after": 233, "note": "Instead of on every draw."}, {"name": "One write per message", "before": 233, "after": 274, "note": "Buffered output, sent in one go."}, {"name": "Raw pixels instead of PNG files", "before": 274, "after": 1017, "note": "No image encoded, written or read per frame. The biggest jump."}, {"name": "Raw bytes instead of text", "before": 1017, "after": 1738, "note": "The frame was sent as text inside JSON: 44% of the engine's time."}, {"name": "No sprite copies the agent never reads", "before": 2100, "after": 2400, "note": "Only tree-search agents need them."}, {"name": "Drawn straight into one reused image", "before": 2400, "after": 2590, "note": "Then the work moved to the training side."}]</script>
+<script type="application/json">[{"name": "Removed a 25 ms pause per frame", "before": 34, "after": 75, "note": "Pause. It paced the game for people watching. My 2018 runs had it too."}, {"name": "Frames decoded in memory", "before": 75, "after": 136, "note": "Image files. Instead of written to disk and read back."}, {"name": "Engine sends the image it already made", "before": 136, "after": 200, "note": "Image files. Instead of saving it, reading it back and encoding it again."}, {"name": "Sprites scaled once", "before": 214, "after": 233, "note": "Other. Instead of on every draw."}, {"name": "One write per message", "before": 233, "after": 274, "note": "Other. Buffered output, sent in one go."}, {"name": "Raw pixels instead of PNG files", "before": 274, "after": 1017, "note": "Image files. No image encoded, written or read per frame. The biggest jump."}, {"name": "Raw bytes instead of text", "before": 1017, "after": 1738, "note": "Image files. The frame was sent as text inside JSON: 44% of the engine's time."}, {"name": "No sprite copies the agent never reads", "before": 2100, "after": 2400, "note": "Other. Only tree-search agents need them."}, {"name": "Drawn straight into one reused image", "before": 2400, "after": 2590, "note": "Other. Then the work moved to the training side."}]</script>
 </figure>
 
 Once the game stopped being the bottleneck, today's GPU did the rest: 11 minutes. Today's agents go further still, at 3 to 11 minutes a run.
@@ -167,7 +185,7 @@ This project trained 241 times, in 15 hours of training. At 2018 speed, that's a
 
 [^speed]: At 1,550 frames a second on an RTX 4090 with the PC to itself; with other work running, 23 to 34 minutes. All the numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/RESULTS.md).
 [^methods]: DQN (2015), Double DQN (2015) and prioritised replay (2016), on four GVGAI games. I also tried dueling networks; they didn't help on Aliens, so the final agent leaves them out.
-[^ddqn]: Wins in the last 500 of 2,000 training games: 35% → 57%. My 2018 DQN had no older copy at all, so that's both changes together.
+[^ddqn]: From my 2018 report's training logs; the curves are smoothed. My 2018 DQN had no older copy at all, so the gap is both changes together.
 [^per]: It scored more points but didn't win more (54% vs 57%), until I changed the reward.
 [^report]: Full colour would have needed 39.6 GB of memory; grey at half size, 3.3 GB (2018 report).
 [^saliency]: Gradient × input, made with `tools/saliency.py` in the dissertation repo.
