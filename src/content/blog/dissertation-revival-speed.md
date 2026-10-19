@@ -52,6 +52,14 @@ def get_targets(self, data):
 
 The network guesses how good each move is. Training nudges each guess towards a target: the reward, plus how good the network thinks the next moment is. The highlighted lines are the Double DQN trick: the network picks the next move, and an older copy of it says how good that move is, which stops the guesses from inflating.
 
+Here is that network running, 60 decisions of the game, one layer after another:
+
+<figure class="fig" data-widget="explode" data-src="/blog/gvgai/explode/">
+<div class="xstage"></div>
+<div class="ctl"><button type="button">Pause</button><input type="range" min="0" max="59" value="0" step="1" aria-label="Moment in the clip"></div>
+<figcaption>Left to right: what it sees, its three layers (each map lights up where it finds its own pattern), and its value for each move; the tomato one is the move it makes. Every layer shrinks the picture and adds maps.</figcaption>
+</figure>
+
 My GTX 980 had 4 GB. Full-colour screens would have needed 39.6 GB of memory and a network of 16.7 million weights, and it simply crashed. So the agent sees the screen in grey at half size: 3.3 GB and 1.5 million weights.[^report] Here is what that network pays attention to while it plays:[^saliency]
 
 <figure class="fig">

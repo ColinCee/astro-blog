@@ -363,7 +363,9 @@ homepage terminal window's ambient lift, nothing else.
   only on posts that use one: `ladder` (a step chart of speed changes; tap a step for its detail),
   `chain` (a toy of a reward travelling back through a game), `reveal` (a button
   that adds a baseline to a chart) and `qview` (a recording with the network's
-  value for each move under it). Controls use `.ctl`: pill buttons and range
+  value for each move under it), `pick` (tap a part of a figure to open its detail)
+  and `explode` (a network's layers as 3D decks of maps stepping through a clip,
+  data from `tools/explode.py` in the dissertation repo). Controls use `.ctl`: pill buttons and range
   inputs at least 44px tall. Numbers live in the Markdown's data- attributes.
 - **Post header:** title, then the post's `description` as a standfirst
   (`.post__lede`, Body 500, `--muted`), a hairline, and the meta row: the `stat`

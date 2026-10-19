@@ -1764,6 +1764,91 @@ const last = entries[entries.length - 1];
     font-weight: 500;
     text-align: right;
   }
+  /* Explode (widget): the network's layers as 3D decks of maps whose textures
+     step through a clip, with the move values updating beside them. */
+  .prose .xstage {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1rem 0.9rem;
+    padding: 0.6rem 0 0.2rem;
+    min-height: 9rem;
+  }
+  .prose .xlayer {
+    margin: 0;
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    perspective: 40rem;
+  }
+  .prose .xdeck {
+    position: relative;
+    width: var(--dw);
+    transform-style: preserve-3d;
+    transform: rotateY(-34deg) rotateX(10deg);
+    margin: 0.9rem 1.2rem 0.6rem 0.1rem;
+  }
+  .prose .xdeck i {
+    position: absolute;
+    inset: 0;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    transform: translate3d(calc(var(--m) * 0.55rem), calc(var(--m) * -0.55rem), calc(var(--m) * -1.8rem));
+  }
+  .prose .xlayer figcaption {
+    display: grid;
+    justify-items: center;
+    font-size: 0.6875rem;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .prose .xlayer small {
+    color: var(--faint);
+    font-size: 0.6875rem;
+  }
+  .prose .xq {
+    display: grid;
+    gap: 0.35rem;
+    flex: 1 1 7rem;
+    padding-left: 1rem;
+    align-self: center;
+  }
+  .prose .xq div {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .prose .xq i {
+    height: 0.6rem;
+    width: calc(var(--w, 0) * 100%);
+    background: var(--muted);
+    border-radius: 1px;
+    transition: width 0.2s linear;
+  }
+  .prose .xq .is-on span {
+    color: var(--accent-soft);
+    font-weight: 700;
+  }
+  .prose .xq .is-on i {
+    background: var(--accent);
+  }
+  @media (max-width: 40rem) {
+    .prose .xstage {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.8rem 0.6rem;
+    }
+    .prose .xdeck {
+      width: calc(var(--dw) * 0.6);
+      margin: 0.6rem 0.9rem 0.4rem 0.1rem;
+    }
+    .prose .xq {
+      flex-basis: 100%;
+    }
+  }
   /* Q-value bars under a recording (widget "qview"). */
   .prose .qbars {
     display: grid;

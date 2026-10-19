@@ -203,7 +203,97 @@ function pick(root: HTMLElement) {
   });
 }
 
-const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, ladder, pick };
+// Explode: the 2018 network running over a stretch of game. Each layer is a
+// deck of maps in 3D whose textures step through the clip (one atlas row per
+// decision); the move values update with them. Data from tools/explode.py.
+type XLayer = { name: string; png: string; maps: number; h: number; w: number; channels: number };
+async function explode(root: HTMLElement) {
+  const base = root.dataset.src!;
+  const data: any = await (await fetch(base + "explode.json")).json();
+  const n: number = data.frames;
+  const stage = root.querySelector<HTMLElement>(".xstage")!;
+  const widths = [7.5, 5.5, 4.5, 3.8];
+  const cells: HTMLElement[] = [];
+  (data.layers as XLayer[]).forEach((L, li) => {
+    const fig = document.createElement("figure");
+    fig.className = "xlayer";
+    const deck = document.createElement("div");
+    deck.className = "xdeck";
+    deck.style.setProperty("--dw", `${widths[li]}rem`);
+    deck.style.aspectRatio = `${L.w} / ${L.h}`;
+    for (let m = 0; m < L.maps; m++) {
+      const c = document.createElement("i");
+      c.style.setProperty("--m", String(m));
+      c.style.backgroundImage = `url(${base}${L.png})`;
+      c.style.backgroundSize = `${L.maps * 100}% ${n * 100}%`;
+      c.style.backgroundPositionX = L.maps > 1 ? `${(m / (L.maps - 1)) * 100}%` : "0";
+      deck.appendChild(c);
+      cells.push(c);
+    }
+    const cap = document.createElement("figcaption");
+    cap.innerHTML = li === 0 ? `screen<small>55 × 150</small>` : `${L.name}<small>${L.maps} of ${L.channels}, ${L.h} × ${L.w}</small>`;
+    fig.appendChild(deck);
+    fig.appendChild(cap);
+    stage.appendChild(fig);
+  });
+  const names: string[] = data.actions.map((a: string) => a.replace(/^ACTION_/, "").toLowerCase().replace("use", "shoot"));
+  const qbox = document.createElement("div");
+  qbox.className = "xq";
+  const rows = names.map((nm) => {
+    const r = document.createElement("div");
+    r.innerHTML = `<span>${nm}</span><i></i>`;
+    qbox.appendChild(r);
+    return r;
+  });
+  stage.appendChild(qbox);
+
+  const slider = root.querySelector<HTMLInputElement>("input")!;
+  const btn = root.querySelector<HTMLButtonElement>("button")!;
+  slider.max = String(n - 1);
+  const show = (t: number) => {
+    const y = n > 1 ? `${(t / (n - 1)) * 100}%` : "0";
+    for (const c of cells) c.style.backgroundPositionY = y;
+    const q: number[] = data.q[t];
+    const lo = Math.min(...q);
+    const span = Math.max(...q) - lo || 1;
+    rows.forEach((r, i) => {
+      r.querySelector<HTMLElement>("i")!.style.setProperty("--w", String(0.06 + (0.94 * (q[i] - lo)) / span));
+      r.classList.toggle("is-on", data.chosen[t] === data.actions[i]);
+    });
+    slider.value = String(t);
+  };
+  let frame = 0;
+  let timer = 0;
+  let visible = false;
+  let playing = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const tick = () => {
+    frame = (frame + 1) % n;
+    show(frame);
+  };
+  const sync = () => {
+    clearInterval(timer);
+    if (playing && visible) timer = window.setInterval(tick, 250);
+    btn.textContent = playing ? "Pause" : "Play";
+  };
+  btn.addEventListener("click", () => {
+    playing = !playing;
+    sync();
+  });
+  slider.addEventListener("input", () => {
+    playing = false;
+    frame = Number(slider.value);
+    show(frame);
+    sync();
+  });
+  new IntersectionObserver(([e]) => {
+    visible = e.isIntersecting;
+    sync();
+  }).observe(root);
+  show(0);
+  sync();
+}
+
+const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, ladder, pick, explode };
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });
