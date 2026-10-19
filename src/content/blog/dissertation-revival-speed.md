@@ -39,7 +39,7 @@ The bars are its scores: how much reward it expects from each move, from now to 
 
 There was nothing plug-and-play for this, so I wrote it all from the papers: about 700 lines of Python, on a GTX 980 with 4 GB of memory. Full colour would have needed 39.6 GB just to store the moments it practises on, so I never tried: the agent sees grey at half size, 3.3 GB.
 
-My report said training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was. I was a student trying things I'd never done before, most ideas were wrong, and each one cost a night.
+[My report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf) said training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was. I was a student trying things I'd never done before, most ideas were wrong, and each one cost a night.
 
 ## It still learns the same way
 
@@ -99,7 +99,7 @@ Once the game stopped being the bottleneck, today's GPU did the rest: 11 minutes
 This project trained 241 times, in 15 hours of training. At 2018 speed, that's about 280 days.
 
 [^speed]: At 1,550 frames a second on an RTX 4090 with the PC to itself; with other work running, 23 to 34 minutes. All the numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
-[^methods]: DQN, Double DQN and prioritised replay, on four GVGAI games. I also tried dueling networks; they didn't help on Aliens. My 2018 code: [2018-dissertation](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2018-dissertation).
-[^runs]: The line is the run in my dissertation's training log; the run behind its results table ended lower, at about 760. The 2018 code: [2018-dissertation](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2018-dissertation).
+[^methods]: DQN, Double DQN and prioritised replay, on four GVGAI games; dueling networks didn't help on Aliens. All in [my dissertation](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf), with [the 2018 code](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2018-dissertation).
+[^runs]: The line is the run in [my dissertation](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf)'s training log; the run behind its results table ended lower, at about 760. [The 2018 logs](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2026-revival/results/2018).
 [^bugs]: Rewards credited one move late, and prioritised replay missing its correction weights. Fixed: 48.2 points vs 50.1. More in [LEARNINGS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/LEARNINGS.md).
 [^improvements]: The benchmark was tightened partway, so the steps don't always line up exactly. All 30 changes, with before, after and a commit each: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/IMPROVEMENTS.md).

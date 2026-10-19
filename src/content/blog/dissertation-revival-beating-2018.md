@@ -258,6 +258,6 @@ Two things still stand out. I won every game I played in 2018 but scored 43: win
 [Part 3](/blog/dissertation-revival-research-speed/) is about how this got done in two days, and what's still unsolved.
 
 [^results]: Every number is from [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md), except the button on unseen levels (50 games on Aliens levels 3 and 4: 36.5 points, 82%), run for this post.
-[^ddqn]: From my 2018 report's training logs. My 2018 DQN had no older copy at all, so the gap is both changes together. The method: [van Hasselt et al., 2015](https://arxiv.org/abs/1509.06461).
-[^per]: In 2018 it scored more points but didn't win more (54% vs 57%). The method: [Schaul et al., 2016](https://arxiv.org/abs/1511.05952).
+[^ddqn]: From the training logs in [my dissertation](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf). My 2018 DQN had no older copy at all, so the gap is both changes together.
+[^per]: In 2018 it scored more points but didn't win more (54% vs 57%); see [my dissertation](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf).
 [^runs3]: My 2018 agent: the 2018 code replayed 3 times. Runs vary a lot: modern DQN's three won 42% to 84%.
