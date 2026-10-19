@@ -255,17 +255,30 @@ function ladder(root: HTMLElement) {
   // The x axis is the order of the changes, not time.
   for (let i = 0; i <= steps.length; i++)
     el("text", { x: L + (i + 0.5) * dx, y: H - 6, "text-anchor": "middle" }).textContent = String(i);
+  // Column 0, the starting point, is tappable too when the figure gives it
+  // a data-base of "name|detail".
+  const [baseName, baseNote] = (root.dataset.base ?? "").split("|");
+  const baseHit = baseName
+    ? el("rect", { class: "hit", x: L, y: T, width: dx, height: H - T - B, tabindex: 0, role: "button" })
+    : null;
+  baseHit?.setAttribute("aria-label", `${baseName}: ${baseNote}`);
   const pick = (i: number) => {
-    const s = steps[i];
     risers.forEach((r, j) => r.classList.toggle("is-on", j === i));
     hits.forEach((r, j) => r.classList.toggle("is-on", j === i));
+    baseHit?.classList.toggle("is-on", i < 0);
+    if (i < 0) {
+      out.innerHTML = `<b>0. ${baseName}</b> <span>${baseNote}</span>`;
+      return;
+    }
+    const s = steps[i];
     const x = s.after / s.before;
     out.innerHTML = `<b>${i + 1}. ${s.name}</b> <span>${fmt.format(s.before)} → ${fmt.format(s.after)} frames/s, <strong>×${x.toFixed(1)}</strong></span>${s.note ? `<small>${s.note}</small>` : ""}`;
   };
-  hits.forEach((r, i) => {
-    r.addEventListener("mouseenter", () => pick(i));
-    r.addEventListener("focus", () => pick(i));
-    r.addEventListener("click", () => pick(i));
+  [...hits, ...(baseHit ? [baseHit] : [])].forEach((r, i) => {
+    const k = i < hits.length ? i : -1;
+    r.addEventListener("mouseenter", () => pick(k));
+    r.addEventListener("focus", () => pick(k));
+    r.addEventListener("click", () => pick(k));
   });
   let best = 0;
   steps.forEach((s, i) => s.after / s.before > steps[best].after / steps[best].before && (best = i));

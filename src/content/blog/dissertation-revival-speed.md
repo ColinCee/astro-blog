@@ -21,25 +21,33 @@ pubDate: "Oct 20 2026"
 <div class="peek__seen" data-seen><i></i><i></i><i></i><i></i></div>
 <div class="peek__zoom" data-zoom hidden><i></i><small></small></div>
 </div>
-<figcaption>My 2018 agent playing Aliens, retrained in 2026. It sees only the screen, in grey at half size. Every four ticks it scores its three moves and plays the highest, the tomato bar. Step through it one decision at a time.</figcaption>
+<figcaption>My 2018 agent, retrained in 2026. Every four ticks it scores its three moves and plays the top one (tomato). Step through it.</figcaption>
 </figure>
 
-For my final-year project at Strathclyde in 2018, I wrote an AI that learns to play video games from the screen. This October I gave the code to Claude. The same agent, bugs and all, now trains in about 11 minutes instead of 12 hours, and learns the same way.[^speed] To see why that matters, it helps to know what "learns" means here.
+In 2018, for my final-year project at Strathclyde, I wrote an AI that teaches itself to play video games from the screen. This October I handed the code to Claude. Same agent, same bugs: it now trains in about 11 minutes instead of 12 hours, and learns exactly the same way.[^speed]
+
+First, what "learns" means here.
 
 ## A score for every move
 
-The network looks at the screen and gives each move a score: the points it expects to follow. It plays the top score. At first it plays at random on purpose, and over the first 1,000 games it trusts its own scores more and more. For each move it has played, it later checks what really followed, the reward plus its own score for the next moment, and nudges the guess towards that. A million frames of nudging and the guesses are worth playing by. That is DQN, DeepMind's 2015 method.[^methods]
+The network looks at the screen and scores each move: how many points it expects if it plays it. Then it plays the top score. To get those scores right:
+
+1. **It starts out playing at random**, on purpose, and trusts its own scores a little more each game.
+2. **After each move it checks** what happened: the reward, plus its own score for the next moment.
+3. **It nudges its guess** towards that.
+
+A million frames of nudging later, the scores are worth playing by. That's DQN, DeepMind's 2015 method.[^methods]
 
 <figure class="fig">
 <div class="arch"><figure class="arch__l"><div class="cube" style="--w:5.4rem;--h:3.27rem;--d:0.70rem;--slices:4"><i style="background-image:url(/blog/gvgai/aliens-2018-stacks.png);background-size:400% 11100%;background-position:100% 49.0909%"></i><i></i><i></i><s style="--kw:0.053"></s></div><figcaption><b>screen</b><small>4 frames</small><small>55 × 150</small></figcaption></figure><span class="arch__to" aria-hidden="true">→<small>8×8<br>step 4</small></span><figure class="arch__l"><div class="cube" style="--w:3.60rem;--h:2.08rem;--d:1.98rem;--slices:8"><i></i><i></i><i></i><s style="--kw:0.111"></s></div><figcaption><b>layer 1</b><small>32 maps</small><small>12 × 36</small></figcaption></figure><span class="arch__to" aria-hidden="true">→<small>4×4<br>step 2</small></span><figure class="arch__l"><div class="cube" style="--w:2.47rem;--h:1.34rem;--d:2.80rem;--slices:16"><i></i><i></i><i></i><s style="--kw:0.176"></s></div><figcaption><b>layer 2</b><small>64 maps</small><small>5 × 17</small></figcaption></figure><span class="arch__to" aria-hidden="true">→<small>3×3<br>step 1</small></span><figure class="arch__l"><div class="cube" style="--w:2.32rem;--h:1.04rem;--d:2.80rem;--slices:16"><i></i><i></i><i></i></div><figcaption><b>layer 3</b><small>64 maps</small><small>3 × 15</small></figcaption></figure><span class="arch__to" aria-hidden="true">→<small>all</small></span><figure class="arch__l"><div class="cube" style="--w:0.50rem;--h:5.00rem;--d:0.50rem"><i></i><i></i><i></i></div><figcaption><b>512 units</b><small>sees it all</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube cube--hi" style="--w:0.50rem;--h:1.40rem;--d:0.50rem"><i></i><i></i><i></i></div><figcaption><b>3 scores</b><small>one per move</small><small>highest wins</small></figcaption></figure></div>
-<figcaption>The network, 1.5 million weights, drawn to each layer's shape: width and height for the picture, depth for the number of patterns it looks for. The screen block carries the frame from the clip above. The small square on each block is the window the next layer slides across it. Each layer shrinks the picture and finds more kinds of pattern, until 512 units see the whole screen at once and give one score per move.</figcaption>
+<figcaption>1.5 million weights. Each block is drawn to its layer's shape: width and height for the picture, depth for how many patterns it looks for. The squares are the window the next layer slides across it.</figcaption>
 </figure>
 
-Two improvements sit on top, each from a paper two or three years old when I used it.
+My version added two newer tricks.
 
 ### Double DQN: don't trust the luckiest guess
 
-The agent learns by nudging each score towards "the reward, plus the best score it sees next". But scores are guesses, and the best-looking one is usually one it overrated. So plain DQN keeps aiming a little too high, and because each target is built from other scores, the error feeds on itself. Double DQN asks an older copy of the network for a second opinion on that best move. In my 2018 runs it was the biggest single gain.[^ddqn]
+Every score is a guess, and the best-looking guess is usually one the network overrated. Aim at it and the agent keeps aiming a bit too high, and the error builds on itself. Double DQN gets a second opinion from an older copy of the network. In my 2018 runs it was the biggest single gain.[^ddqn]
 
 <figure class="fig" data-grow>
 <p class="fig__k">Aliens, wins in the last 500 of 2,000 training games (2018)</p>
@@ -58,14 +66,14 @@ The agent learns by nudging each score towards "the reward, plus the best score 
 <div class="is-hi"><span>Older copy scores the pick</span><b data-other>…</b></div>
 </div>
 <div class="ctl"><button type="button" data-roll="1">New guesses</button><button type="button" data-roll="200">200 more</button><output data-avg></output></div>
-<figcaption>Dashed line: the true value. The pick (outlined) is whichever move looks best to the network. Its own score of that move is usually too high; the older copy's is closer, because its errors aren't the ones that made the move look best. (Real copies share some errors, so in practice it reduces the bias rather than removing it.)</figcaption>
+<figcaption>Dashed line: the true value. The network's own score of its pick runs high; the older copy's doesn't, because its errors aren't the ones that made that move look best.</figcaption>
 </figure>
 
 </details>
 
-### Prioritised replay: practise the surprises
+### Prioritised replay: practise the mistakes
 
-The agent keeps its last 100,000 moments and practises on random ones, so it never learns from one frame and then the near-identical next. Prioritised replay draws the moments it guessed worst more often.[^per]
+The agent keeps its last 100,000 moments and practises on random ones. Prioritised replay picks the ones it got most wrong more often.[^per]
 
 <figure class="fig">
 <p class="fig__k">Chance each stored moment is picked to practise on (illustration)</p>
@@ -89,20 +97,22 @@ The agent keeps its last 100,000 moments and practises on random ones, so it nev
 <figcaption>One 2018 run lasts as long as 65 of today's.</figcaption>
 </figure>
 
-In 2018 there was nothing plug-and-play for this, so I wrote all of the above from the papers: about 700 lines of Python around the network, on a GTX 980 with 4 GB of memory. Full-colour screens crashed it, which is why the agent sees grey at half size.[^report] Here is what it watches:[^saliency]
+There was nothing plug-and-play for this, so I wrote it all from the papers: about 700 lines of Python, on a GTX 980 with 4 GB of memory. Full-colour screens crashed it, which is why the agent sees grey at half size.[^report]
+
+Here's what it pays attention to:[^saliency]
 
 <figure class="fig">
 <div class="vids">
 <figure class="vid vid--hi"><video data-rate="1" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-saliency.png"><source src="/blog/gvgai/aliens-2018-saliency.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-saliency.mp4" type="video/mp4"></video></figure>
 </div>
-<figcaption>Brighter means that part of the screen changes the network's choice more. It mostly watches the bases, then the aliens that have come down lowest.</figcaption>
+<figcaption>Brighter means it matters more to the move it picks. Mostly the bases, then the lowest aliens.</figcaption>
 </figure>
 
-In my report I wrote that training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was. I was a student trying things I'd never done before, most ideas were wrong, and each one took a night to find out.
+My report said training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was. I was a student trying things I'd never done before, most ideas were wrong, and each one cost a night.
 
 ## It still learns the same way
 
-Claude rebuilt it on today's software, kept every setting, and trained it three times.
+Claude rebuilt it on today's software with every setting kept, and trained it three times.[^runs]
 
 <figure class="fig">
 <p class="fig__k">Aliens: wins so far</p>
@@ -122,10 +132,10 @@ Claude rebuilt it on today's software, kept every setting, and trained it three 
 <text x="173" y="218" text-anchor="middle">training games →</text>
 </svg>
 </div>
-<figcaption>My 2018 run, from the report's training log, finished with 876 wins out of 2,000 games; the three 2026 runs, 792 to 869. The flat start is the random play of the first few hundred games.[^runs]</figcaption>
+<figcaption>My 2018 run: 876 wins out of 2,000 games. The 2026 runs: 792 to 869. The flat start is the random play.</figcaption>
 </figure>
 
-It also found two real bugs in my code. Fixing them changed little.[^bugs]
+It also found two real bugs in my code. Fixing them barely changed the result.[^bugs]
 
 ## Where the 12 hours went
 
@@ -140,29 +150,32 @@ Mostly waiting, not learning.[^frame]
 <figcaption>What each of the nine changes below saved, per frame.</figcaption>
 </figure>
 
-Claude cut it one change at a time, almost all checked by a test that replays recorded games and fails if a single pixel changes.[^improvements]
+Claude cut it one change at a time, almost every one checked by a test that replays recorded games and fails if a single pixel changes.[^improvements]
 
-<figure class="fig ladder" data-widget="ladder">
+<figure class="fig ladder" data-widget="ladder" data-base="The 2018 engine|34 frames/s, with a 25 ms pause and image files on every frame">
 <p class="fig__k">One game, frames per second (log scale)</p>
 <svg viewBox="0 0 320 170" role="img" aria-label="Step chart: one game went from 34 to 2,590 frames per second in nine changes; the biggest was sending raw pixels instead of PNG files, 274 to 1,017."></svg>
 <p data-out><b>Raw pixels instead of PNG files</b> <span>274 → 1,017 frames/s, <strong>×3.7</strong></span></p>
 <script type="application/json">[{"name": "Removed a 25 ms pause per frame", "before": 34, "after": 75, "note": "It paced the game for people watching. My 2018 runs had it too."}, {"name": "Frames decoded in memory", "before": 75, "after": 136, "note": "Instead of written to disk and read back."}, {"name": "Engine sends the image it already made", "before": 136, "after": 200, "note": "Instead of saving it, reading it back and encoding it again."}, {"name": "Sprites scaled once", "before": 214, "after": 233, "note": "Instead of on every draw."}, {"name": "One write per message", "before": 233, "after": 274, "note": "Buffered output, sent in one go."}, {"name": "Raw pixels instead of PNG files", "before": 274, "after": 1017, "note": "No image encoded, written or read per frame. The biggest jump."}, {"name": "Raw bytes instead of text", "before": 1017, "after": 1738, "note": "The frame was sent as text inside JSON: 44% of the engine's time."}, {"name": "No sprite copies the agent never reads", "before": 2100, "after": 2400, "note": "Only tree-search agents need them."}, {"name": "Drawn straight into one reused image", "before": 2400, "after": 2590, "note": "Then the work moved to the training side."}]</script>
-<figcaption>0 is the 2018 engine; then changes 1 to 9, in the order they were made. Hover or tap a step. Each was measured on its own; the benchmark was tightened partway, so a step can start a little off where the last one ended.</figcaption>
+<figcaption>0 is the 2018 engine, then each change in order. Tap a step. The benchmark was tightened partway, so steps don't always line up exactly.</figcaption>
 </figure>
 
-With the game no longer the bottleneck, my 2018 agent only needed its network on today's GPU: 11 minutes. Today's agents go further, with the replay memory on the GPU and each learning step recorded once and replayed as a single GPU command: 3 to 11 minutes a run.
+Once the game stopped being the bottleneck, today's GPU did the rest: 11 minutes. Today's agents go further still, at 3 to 11 minutes a run.
 
 ## What that buys
 
-This project trained 241 times, in 15 hours of training. At 2018's speed, about 280 days. [Part 2](/blog/dissertation-revival-beating-2018/) is what I did with them; [part 3](/blog/dissertation-revival-research-speed/) is what research at this speed is like.
+This project trained 241 times, in 15 hours of training. At 2018 speed, that's about 280 days.
 
-[^speed]: 1 million frames at the 1,550 frames a second it trains at on an RTX 4090 with the machine to itself; the three timed runs, sharing the PC with other work, took 23 to 34 minutes. 2018: a GTX 980. Every number: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/RESULTS.md).
-[^methods]: DQN (DeepMind, 2015), Double DQN (2015) and prioritised replay (2016), on four games from the General Video Game AI competition: Aliens, Chase, Deceptizelda and Wafer Thin Mints. I also tried dueling networks (2016), which split the score into "how good is now" and "how much each move adds"; built for Atari's 18 buttons, on three-button Aliens they were ahead early and behind by the end, so the final agent leaves them out. Python 3.6 and Keras then; Python 3.14 and PyTorch now. The 2018 code no longer installs. The scores in the opening clip are the network's estimate of the reward still to come; the four frames it sees are the last four ticks, in grey at half size, as the network gets them.
-[^ddqn]: The older copy is refreshed from the network every 5,000 frame stacks. In 2018 it lifted wins in the last 500 of 2,000 training games from 35% (DQN) to 57%. My 2018 DQN had no older copy at all, so that jump is both together. The illustration: three moves each truly worth 1, guessed with independent Gaussian noise (σ 0.3); the best-looking guess averages about 1.25, the second network's score of that pick about 1.00.
-[^runs]: The report's own table comes from a second run that finished lower (4, 22, 58 and 68% wins per 500 games, about 760 wins); my two 2018 runs of this agent differed by 10 to 17 points.
-[^per]: Each moment's chance is set by how wrong the network's last guess for it was. In 2018 it raised the points scored but not the wins (54% against 57% in the last 500 games), until I changed the reward to penalise every move of a lost game.
-[^report]: From the 2018 report: 99 kB per full-colour frame × 4 frames × 100,000 samples = 39.6 GB and a network of 16.7 million weights; 8.25 kB in grey at half size = 3.3 GB and 1.5 million weights.
-[^saliency]: Gradient × input: how much each pixel, times how strongly it is lit, moves the score of the chosen move. The network reads 4 frames at a time and uses all four about equally (the tool prints the split: 23% to 29% each); each frame of the clip shows its own share. Made with `tools/saliency.py` in the dissertation repo.
-[^bugs]: Rewards were credited one move late, and prioritised replay lacked its correction weights. Fixed: 48.2 points against 50.1, one run.
-[^frame]: 34 frames a second is 29.4 ms a frame. Each slice is the time per frame a change removed, 1/before − 1/after: removing the 25 ms pause took a frame from 29.4 to 13.3 ms, because part of the pause overlapped other work. Image files: steps 2, 3, 6 and 7; the remaining 1.5 ms covers the other steps and a benchmark that was tightened partway. In training, a 2018 frame took 43 ms (23 a second): the 29 ms here, plus learning from one sample at a time.
-[^improvements]: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/IMPROVEMENTS.md): all 30 changes, each with its before, after and a tagged commit.
+- [Part 2](/blog/dissertation-revival-beating-2018/): what I did with them.
+- [Part 3](/blog/dissertation-revival-research-speed/): what research is like at this speed.
+
+[^speed]: At 1,550 frames a second on an RTX 4090 with the PC to itself; with other work running, 23 to 34 minutes. All the numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/RESULTS.md).
+[^methods]: DQN (2015), Double DQN (2015) and prioritised replay (2016), on four GVGAI games. I also tried dueling networks; they didn't help on Aliens, so the final agent leaves them out.
+[^ddqn]: Wins in the last 500 of 2,000 training games: 35% → 57%. My 2018 DQN had no older copy at all, so that's both changes together.
+[^per]: It scored more points but didn't win more (54% vs 57%), until I changed the reward.
+[^report]: Full colour would have needed 39.6 GB of memory; grey at half size, 3.3 GB (2018 report).
+[^saliency]: Gradient × input, made with `tools/saliency.py` in the dissertation repo.
+[^runs]: The line is the run in my report's training log. The report's table came from a second run that ended lower (about 760 wins); my two 2018 runs differed by 10 to 17 points.
+[^bugs]: Rewards credited one move late, and prioritised replay missing its correction weights. Fixed: 48.2 points vs 50.1.
+[^frame]: 34 frames a second is 29.4 ms a frame; each slice is what a change saved. Training in 2018 also spent another 14 ms per frame learning, one sample at a time.
+[^improvements]: All 30 changes, with before, after and a commit each: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/IMPROVEMENTS.md).
