@@ -176,7 +176,34 @@ function ladder(root: HTMLElement) {
   pick(best);
 }
 
-const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, ladder };
+// Pick: tappable parts of a figure ([data-pick]); choosing one shows its
+// <template data-for> in the figure's [data-panel]. Choosing it again closes it.
+function pick(root: HTMLElement) {
+  const items = [...root.querySelectorAll<HTMLElement | SVGElement>("[data-pick]")];
+  const panel = root.querySelector<HTMLElement>("[data-panel]")!;
+  let open: Element | null = null;
+  const show = (el: HTMLElement | SVGElement) => {
+    open = open === el ? null : el;
+    items.forEach((i) => {
+      i.classList.toggle("is-on", i === open);
+      i.setAttribute("aria-pressed", String(i === open));
+    });
+    const t = open && root.querySelector<HTMLTemplateElement>(`template[data-for="${el.dataset.pick}"]`);
+    panel.replaceChildren(...(t ? [t.content.cloneNode(true)] : []));
+  };
+  items.forEach((el) => {
+    el.addEventListener("click", () => show(el));
+    el.addEventListener("keydown", (e) => {
+      const k = (e as KeyboardEvent).key;
+      if (k === "Enter" || k === " ") {
+        e.preventDefault();
+        show(el);
+      }
+    });
+  });
+}
+
+const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, ladder, pick };
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });

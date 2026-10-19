@@ -19,7 +19,7 @@ pubDate: "Oct 20 2026"
 <figcaption>Aliens. The agent sees only the screen and the score.</figcaption>
 </figure>
 
-For my final-year project at Strathclyde in 2018, I wrote an AI that learns to play video games from the screen. One training run took 12 hours. This October I gave the code to Claude to see how far it could get with today's tools. The same agent now trains in **11 minutes**, and learns the way it did in 2018.[^speed]
+For my final-year project at Strathclyde in 2018, I wrote an AI that learns to play video games from the screen. This October I gave the code to Claude to see how far it could get with today's tools. The same agent, bugs and all, now trains 65 times faster.[^speed]
 
 <figure class="fig" data-grow>
 <p class="fig__k">One training run, to scale</p>
@@ -35,7 +35,7 @@ Part 1 of 3. [Part 2](/blog/dissertation-revival-beating-2018/): beating it. [Pa
 
 In 2018 there was nothing to plug in. DeepMind's DQN and the three improvements I used were two or three years old, so I wrote them from the papers: about 700 lines of Python around the network.[^methods] This is the loop I built:
 
-<figure class="fig loop">
+<figure class="fig loop" data-widget="pick">
 <svg viewBox="0 -4 340 204" role="img" aria-label="The learning loop: the screen goes into the network, which picks a move; the game moves on. Each move goes into a memory; batches of 32 from the memory train the network.">
 <defs><marker id="loop-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--faint)"/></marker></defs>
 <path class="arr" d="M282,34 C282,-2 58,-2 58,32"/>
@@ -43,30 +43,42 @@ In 2018 there was nothing to plug in. DeepMind's DQN and the three improvements 
 <path class="arr" d="M108,51 H118"/><path class="arr" d="M220,51 H230"/>
 <path class="arr" d="M282,68 V148"/><path class="arr" d="M232,167 H222"/><path class="arr" d="M170,150 V70"/>
 <text x="164" y="114" text-anchor="end" class="sub">nudge the weights</text>
-<g class="mine"><rect x="8" y="34" width="100" height="34" rx="4"/><text x="58" y="49" text-anchor="middle">screen</text><text x="58" y="62" text-anchor="middle" class="sub">grey, ½ size</text></g>
-<g><rect x="120" y="34" width="100" height="34" rx="4"/><text x="170" y="49" text-anchor="middle">network</text><text x="170" y="62" text-anchor="middle" class="sub">Keras</text></g>
-<g class="mine"><rect x="232" y="34" width="100" height="34" rx="4"/><text x="282" y="49" text-anchor="middle">move</text><text x="282" y="62" text-anchor="middle" class="sub">best or random</text></g>
-<g class="mine"><rect x="120" y="150" width="100" height="34" rx="4"/><text x="170" y="165" text-anchor="middle">learn</text><text x="170" y="178" text-anchor="middle" class="sub">32 at a time</text></g>
-<g class="mine"><rect x="232" y="150" width="100" height="34" rx="4"/><text x="282" y="165" text-anchor="middle">memory</text><text x="282" y="178" text-anchor="middle" class="sub">100,000 moves</text></g>
+<g class="mine" data-pick="screen" tabindex="0" role="button" aria-label="screen"><rect x="8" y="34" width="100" height="34" rx="4"/><text x="58" y="49" text-anchor="middle">screen</text><text x="58" y="62" text-anchor="middle" class="sub">grey, ½ size</text></g>
+<g data-pick="network" tabindex="0" role="button" aria-label="network"><rect x="120" y="34" width="100" height="34" rx="4"/><text x="170" y="49" text-anchor="middle">network</text><text x="170" y="62" text-anchor="middle" class="sub">Keras</text></g>
+<g class="mine" data-pick="move" tabindex="0" role="button" aria-label="move"><rect x="232" y="34" width="100" height="34" rx="4"/><text x="282" y="49" text-anchor="middle">move</text><text x="282" y="62" text-anchor="middle" class="sub">best or random</text></g>
+<g class="mine" data-pick="learn" tabindex="0" role="button" aria-label="learn"><rect x="120" y="150" width="100" height="34" rx="4"/><text x="170" y="165" text-anchor="middle">learn</text><text x="170" y="178" text-anchor="middle" class="sub">32 at a time</text></g>
+<g class="mine" data-pick="memory" tabindex="0" role="button" aria-label="memory"><rect x="232" y="150" width="100" height="34" rx="4"/><text x="282" y="165" text-anchor="middle">memory</text><text x="282" y="178" text-anchor="middle" class="sub">100,000 moves</text></g>
 <circle class="pulse" r="4" style="offset-path:path('M58,51 L282,51 L282,34 C282,-2 58,-2 58,34 Z')"/>
 <circle class="pulse pulse--slow" r="4" style="offset-path:path('M282,51 L282,167 L170,167 L170,51')"/>
 </svg>
 <ul class="legend"><li class="is-data">Written by hand</li><li>A library (Keras)</li></ul>
-<figcaption>Playing (fast loop) and learning (slow loop). The memory replays the moves it learns most from first: prioritised replay.</figcaption>
+<div class="pick-panel" data-panel aria-live="polite"></div>
+<template data-for="screen"><b>Screen</b><p>The game's 300 × 110 colour frame, turned grey and halved to 150 × 55. The last 4 frames go in together, so the network can see things move.</p><img src="/blog/gvgai/maps/2018-input.png" alt="Four greyscale frames of Aliens, side by side"></template>
+<template data-for="network"><b>Network</b><p>Three layers that scan the image, then 512 numbers, then one value per move: how much reward it expects from here. 1.5 million weights. The only part from a library.</p></template>
+<template data-for="move"><b>Move</b><p>Usually the move with the highest value; sometimes a random one, so it keeps exploring. Random for the first 20,000 moves, then less and less, down to 1 in 10.</p><div class="qmini"><span>shoot</span><i style="--w:1"></i><b>1.68</b><span>left</span><i style="--w:0.69"></i><b>1.52</b><span>right</span><i style="--w:0.04"></i><b>1.19</b></div><small>Its values at one moment of the game above. It shoots.</small></template>
+<template data-for="memory"><b>Memory</b><p>The last 100,000 moves, each with the frames before and after and the reward. The moves it got most wrong are replayed first: prioritised replay.</p></template>
+<template data-for="learn"><b>Learn</b><p>After each game, batches of 32 from the memory. For each, compare the network's guess with the reward plus its guess one move later, and nudge the weights to close the gap. An older copy of the network supplies that second guess, which keeps it steady: Double DQN.</p></template>
+<figcaption>Playing (fast loop) and learning (slow loop). Tap a step.</figcaption>
 </figure>
 
 My GTX 980 had 4 GB. Full-colour screens would have needed 39.6 GB of memory and a network of 16.7 million weights, and it simply crashed. So the agent sees the screen in grey at half size: 3.3 GB and 1.5 million weights.[^report] Here is that network, looking at one moment of the game above:
 
-<figure class="fig">
-<div class="net"><figure class="slab" tabindex="0"><div class="deck" style="--dw:9rem;aspect-ratio:300/110"><img src="/blog/gvgai/net/2018-input-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-input-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-input-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-input-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>4 frames<small>55 × 150</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="--dw:6rem;aspect-ratio:144/48"><img src="/blog/gvgai/net/2018-conv1-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-conv1-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-conv1-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-conv1-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>layer 1<small>32 maps</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="--dw:5rem;aspect-ratio:153/45"><img src="/blog/gvgai/net/2018-conv2-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-conv2-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-conv2-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-conv2-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>layer 2<small>64 maps</small></figcaption></figure><figure class="slab" tabindex="0"><div class="deck" style="--dw:4.4rem;aspect-ratio:240/48"><img src="/blog/gvgai/net/2018-conv3-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-conv3-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-conv3-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-conv3-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>layer 3<small>64 maps</small></figcaption></figure><figure class="slab slab--out"><span>3 moves</span><figcaption>&nbsp;<small>shoot, left, right</small></figcaption></figure></div>
-<figcaption>The real network, retrained in 2026, at one moment of Aliens. Each layer shows 4 of its maps; bright = active. Tap or hover a layer to face it.</figcaption>
+<figure class="fig" data-widget="pick">
+<div class="net"><figure class="slab" data-pick="input" tabindex="0" role="button"><div class="deck" style="--dw:9rem;aspect-ratio:300/110"><img src="/blog/gvgai/net/2018-input-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-input-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-input-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-input-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>4 frames<small>55 × 150</small></figcaption></figure><figure class="slab" data-pick="layer1" tabindex="0" role="button"><div class="deck" style="--dw:6rem;aspect-ratio:144/48"><img src="/blog/gvgai/net/2018-conv1-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-conv1-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-conv1-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-conv1-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>layer 1<small>32 maps</small></figcaption></figure><figure class="slab" data-pick="layer2" tabindex="0" role="button"><div class="deck" style="--dw:5rem;aspect-ratio:153/45"><img src="/blog/gvgai/net/2018-conv2-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-conv2-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-conv2-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-conv2-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>layer 2<small>64 maps</small></figcaption></figure><figure class="slab" data-pick="layer3" tabindex="0" role="button"><div class="deck" style="--dw:4.4rem;aspect-ratio:240/48"><img src="/blog/gvgai/net/2018-conv3-0.png" alt="" loading="lazy" style="--i:0"><img src="/blog/gvgai/net/2018-conv3-1.png" alt="" loading="lazy" style="--i:1"><img src="/blog/gvgai/net/2018-conv3-2.png" alt="" loading="lazy" style="--i:2"><img src="/blog/gvgai/net/2018-conv3-3.png" alt="" loading="lazy" style="--i:3"></div><figcaption>layer 3<small>64 maps</small></figcaption></figure><figure class="slab slab--out" data-pick="moves" tabindex="0" role="button"><span>3 moves</span><figcaption>&nbsp;<small>shoot, left, right</small></figcaption></figure></div>
+<div class="pick-panel" data-panel aria-live="polite"></div>
+<template data-for="input"><b>Input: 4 frames</b><p>Grey, 55 × 150 each: what the network sees.</p><img src="/blog/gvgai/maps/2018-input.png" alt="Four greyscale frames of Aliens"></template>
+<template data-for="layer1"><b>Layer 1: 32 maps, 12 × 36</b><p>Each map responds to its own small pattern and lights up where it finds it. 16 of the 32:</p><img src="/blog/gvgai/maps/2018-conv1.png" alt="16 activation maps of layer 1"></template>
+<template data-for="layer2"><b>Layer 2: 64 maps, 5 × 17</b><p>Patterns of layer 1's patterns, over larger areas. 16 of the 64:</p><img src="/blog/gvgai/maps/2018-conv2.png" alt="16 activation maps of layer 2"></template>
+<template data-for="layer3"><b>Layer 3: 64 maps, 3 × 15</b><p>The coarsest view. These 2,880 numbers become 512, then a value for each move. 16 of the 64:</p><img src="/blog/gvgai/maps/2018-conv3.png" alt="16 activation maps of layer 3"></template>
+<template data-for="moves"><b>3 moves</b><div class="qmini"><span>shoot</span><i style="--w:1"></i><b>1.68</b><span>left</span><i style="--w:0.69"></i><b>1.52</b><span>right</span><i style="--w:0.04"></i><b>1.19</b></div><small>Bars from the lowest value to the highest. It shoots.</small></template>
+<figcaption>The real network, retrained in 2026, at one moment of Aliens; bright = active. Tap a layer to open it.</figcaption>
 </figure>
 
 In my report I wrote that training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was. I was a student trying things I'd never done before, most ideas were wrong, and each one took a night to find out.
 
 ## It still learns the same way
 
-Claude rebuilt it on today's software, kept every setting, even my bugs, and trained it three times.
+Claude rebuilt it on today's software, kept every setting, and trained it three times.
 
 <figure class="fig">
 <p class="fig__k">Aliens: wins so far</p>
@@ -93,7 +105,7 @@ It also found two real bugs in my code. Fixing them changed little.[^bugs]
 
 ## Where the 12 hours went
 
-Mostly waiting. The game paused for 25 ms every frame so people could watch, and saved every frame as an image file for the agent to read back. Claude removed them one at a time, with a test that replays recorded games and fails if a single pixel changes.[^improvements]
+Mostly waiting, not learning. Claude cut it one change at a time, each checked by a test that replays recorded games and fails if a single pixel changes.[^improvements]
 
 <figure class="fig ladder" data-widget="ladder">
 <p class="fig__k">One game, frames per second (log scale)</p>
@@ -103,7 +115,7 @@ Mostly waiting. The game paused for 25 ms every frame so people could watch, and
 <figcaption>Hover or tap a step. Each was measured on its own; the benchmark was tightened partway, so a step can start a little off where the last one ended.</figcaption>
 </figure>
 
-Then the training side: the memory moved onto the GPU, and each learning step is recorded once and replayed as a single GPU command. Together: 12 hours to 11 minutes.
+Then the training side: the memory moved onto the GPU, and each learning step became a single GPU command.
 
 ## What that buys
 

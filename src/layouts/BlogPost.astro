@@ -1696,6 +1696,74 @@ const last = entries[entries.length - 1];
   .prose .ladder [data-out] small {
     color: var(--faint);
   }
+  /* Pick (widget): tappable parts and the panel they open. */
+  .prose [data-pick] {
+    cursor: pointer;
+  }
+  .prose .loop [data-pick]:hover rect,
+  .prose .loop [data-pick]:focus-visible rect,
+  .prose .loop [data-pick].is-on rect {
+    fill: color-mix(in oklch, var(--accent) 14%, var(--pane));
+  }
+  .prose .loop [data-pick] {
+    outline: none;
+  }
+  .prose .slab.is-on .deck {
+    transform: none;
+  }
+  .prose .slab.is-on figcaption {
+    color: var(--accent-soft);
+  }
+  .prose .slab--out.is-on span {
+    background: color-mix(in oklch, var(--accent) 14%, transparent);
+  }
+  .prose .pick-panel:empty {
+    display: none;
+  }
+  .prose .pick-panel {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid var(--accent-line);
+    border-radius: 8px;
+    color: var(--muted);
+  }
+  .prose .pick-panel > b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .prose .pick-panel p {
+    margin: 0;
+  }
+  .prose .pick-panel img {
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    border-radius: 3px;
+  }
+  .prose .pick-panel small {
+    color: var(--faint);
+  }
+  .prose .qmini {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr) 3rem;
+    align-items: center;
+    gap: 0.3rem 0.6rem;
+  }
+  .prose .qmini i {
+    height: 0.6rem;
+    width: calc(var(--w) * 100%);
+    background: var(--muted);
+    border-radius: 1px;
+  }
+  .prose .qmini i:first-of-type {
+    background: var(--accent);
+  }
+  .prose .qmini b {
+    color: var(--ink);
+    font-weight: 500;
+    text-align: right;
+  }
   /* Q-value bars under a recording (widget "qview"). */
   .prose .qbars {
     display: grid;
