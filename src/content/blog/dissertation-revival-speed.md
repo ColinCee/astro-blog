@@ -61,13 +61,11 @@ My GTX 980 had 4 GB. Full-colour screens would have needed 39.6 GB of memory and
 <figcaption>Brighter means that part of the screen changes the network's choice more. It mostly watches the bases, then the aliens that have come down lowest.</figcaption>
 </figure>
 
-And here is the whole network doing it, every layer, over a few seconds of that game:
+The network itself is small by today's standards: 1.5 million weights, three layers that scan the screen for patterns, and three numbers out.
 
-<figure class="fig" data-widget="net3d" data-src="/blog/gvgai/net3d/">
-<div class="n3-stage">Loading the 3D view…</div>
-<div class="ctl"><button type="button" data-play>Pause</button><input type="range" min="0" max="29" value="0" step="1" aria-label="Moment in the clip"><button type="button" data-reset>Reset view</button></div>
-<div class="n3-panel" aria-live="polite"></div>
-<figcaption>Left to right: the 4 frames it sees, three layers of maps (32, 64, 64), 512 hidden units, and a value for each move; the tomato bar is the move it makes. Drag to turn it (two fingers on a phone), scroll to zoom. Click a map to see where on the screen it looks, or a move to see what drove it.</figcaption>
+<figure class="fig">
+<div class="arch"><figure class="arch__l"><div class="cube" style="--w:7.35rem;--h:4.45rem;--d:0.70rem"><i></i><i></i><i></i></div><figcaption><b>screen</b><small>4 frames</small><small>55 × 150</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:3.60rem;--h:2.08rem;--d:1.98rem"><i></i><i></i><i></i></div><figcaption><b>layer 1</b><small>32 maps</small><small>12 × 36</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:2.47rem;--h:1.34rem;--d:2.80rem"><i></i><i></i><i></i></div><figcaption><b>layer 2</b><small>64 maps</small><small>5 × 17</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:2.32rem;--h:1.04rem;--d:2.80rem"><i></i><i></i><i></i></div><figcaption><b>layer 3</b><small>64 maps</small><small>3 × 15</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:0.50rem;--h:5.00rem;--d:0.50rem"><i></i><i></i><i></i></div><figcaption><b>512 units</b><small>sees it all</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube cube--hi" style="--w:0.50rem;--h:1.40rem;--d:0.50rem"><i></i><i></i><i></i></div><figcaption><b>3 values</b><small>shoot, left, right</small><small>highest wins</small></figcaption></figure></div>
+<figcaption>Block sizes follow each layer's shape: width and height for the picture, depth for the number of maps. Every layer shrinks the picture and finds more kinds of pattern, until 512 units see the whole screen at once and give one value per move.</figcaption>
 </figure>
 
 In my report I wrote that training "took approximately 12 hours. This is problematic when attempting to test different parameters". It was. I was a student trying things I'd never done before, most ideas were wrong, and each one took a night to find out.

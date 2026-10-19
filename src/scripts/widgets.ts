@@ -203,21 +203,7 @@ function pick(root: HTMLElement) {
   });
 }
 
-// Net3d: the Three.js explorer, loaded only when its figure comes near the
-// screen, so posts without it (and readers who never reach it) pay nothing.
-function net3d(root: HTMLElement) {
-  const io = new IntersectionObserver(
-    ([e]) => {
-      if (!e.isIntersecting) return;
-      io.disconnect();
-      import("./net3d").then((m) => m.mount(root));
-    },
-    { rootMargin: "400px" },
-  );
-  io.observe(root);
-}
-
-const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, ladder, pick, net3d };
+const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, ladder, pick };
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });
