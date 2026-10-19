@@ -2129,9 +2129,10 @@ const last = entries[entries.length - 1];
     position: absolute;
     left: 0;
     top: -4px;
-    border: 4.5px solid transparent;
-    border-left: 0;
-    border-right: 7px solid var(--faint);
+    width: 7px;
+    height: 9px;
+    background: var(--faint);
+    clip-path: polygon(0 50%, 100% 0, 100% 100%);
   }
   .prose .pq__to--hi {
     color: var(--ink);
@@ -2140,7 +2141,7 @@ const last = entries[entries.length - 1];
     background: var(--accent);
   }
   .prose .pq__to--hi i::before {
-    border-right-color: var(--accent);
+    background: var(--accent);
   }
   @media (max-width: 40rem) {
     .prose .pq {
