@@ -45,7 +45,7 @@ It was. Every new idea waited on a full training run, so I'd leave the PC runnin
 
 ## The results still hold
 
-Claude rebuilt it on today's software with every setting kept, and [trained it three times](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2026-revival/results/curves).
+Claude rebuilt it on today's software with every setting kept, and trained it three times, 2,000 games each.
 
 <figure class="fig" data-widget="lines">
 <p class="fig__k">Aliens, wins so far: my two 2018 runs against three 2026 runs</p>
@@ -118,9 +118,9 @@ Claude found each speed-up in the same loop:[^improvements]
 4. **Replay recorded games**, failing if a single pixel differs, so it still plays exactly the same.
 
 
-[^speed]: At 1,550 frames a second on an RTX 4090 with the PC to itself; with other work running, 23 to 34 minutes. All the numbers: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
-[^methods]: DQN, Double DQN and prioritised replay, compared on Aliens, then the final agent on four GVGAI games; dueling networks didn't help on Aliens. All in [my dissertation](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf), with [the 2018 code](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2018-dissertation).
-[^bugs]: Rewards credited one move late, and prioritised replay missing its correction weights. Fixed: 48.2 points vs 50.1. More in [LEARNINGS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/LEARNINGS.md).
-[^improvements]: Frames per second before and after each change, timed with `bench/game_speed.py`; each slice of the 29 ms is the time per frame before a change minus after. The benchmark was tightened partway, so the steps don't always line up exactly. All 30 changes, with a commit each: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/IMPROVEMENTS.md).
-[^replay]: The 2026 rebuild's first training run, playing Aliens level 0, recorded with [tools/record.py](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/tools/record.py). The bars are the network's own values at each decision.
-[^runs]: Run 1 is the first 2,000 games of [my training log](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/results/2018/aliens-ddqn-per-reward.csv). Run 2 is the results table in [my report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf): 4.0, 22.2, 58.0 and 68.2% wins per 500 games.
+[^speed]: 1,550 frames a second on an RTX 4090 with the PC to itself; 23 to 34 minutes with other work running. The code and every number: [the dissertation repo](https://github.com/ColinCee/GVGAI-Dissertation).
+[^methods]: DQN, Double DQN and prioritised replay, compared on Aliens; the final agent also played three other GVGAI games. Dueling networks didn't help.
+[^bugs]: Rewards credited one move late, and prioritised replay missing its correction weights. Fixed: 48.2 points against 50.1.
+[^improvements]: Timed on one benchmark game; each slice of the 29 ms is the time per frame before a change minus after. The benchmark was tightened partway, so the steps don't always line up. 30 changes in all.
+[^replay]: The 2026 rebuild's first training run, on Aliens level 0. The bars are the network's own values at each decision.
+[^runs]: Run 1: my 2018 training log, first 2,000 games. Run 2: the results table in my report, 4.0, 22.2, 58.0 and 68.2% wins per 500 games.
