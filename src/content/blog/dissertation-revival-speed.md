@@ -32,22 +32,14 @@ First, what "learns" means here.
 
 The network looks at the screen and scores each move: all the reward it expects from here on. Then it plays the top score. It starts out playing at random, on purpose, and trusts its own scores a little more each game. It can't see the future, so it learns each score from what happened next and its own score for the next moment, shaved by 1% a step (the discount, 0.99). The win at the end reaches back through the game one decision at a time:
 
-<figure class="fig" data-widget="backup" data-gamma="0.99" data-rewards="0,0,0,0,0,0,0,1">
-<p class="fig__k">One won game, 8 decisions (4 ticks each). A pass practises every decision once (illustration, round numbers)</p>
-<div class="chart chart--narrow nd-wrap">
-<svg viewBox="0 -2 340 150" role="img" aria-label="Eight boxes in a row, one per decision, ending in a win worth +1. Each box shows its score as a filled level. After four passes the win has reached back to decision 5: it learns 0 points now plus 0.99 times the next moment's best score, 0.98, so 0.97. Decisions 1 to 4 still score 0.">
-<defs><marker id="nd-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--faint)"/></marker></defs>
-<text x="321" y="7" text-anchor="middle">win</text><text x="321" y="22" text-anchor="middle" class="ink">+1</text><line class="ax" x1="321" x2="321" y1="24" y2="30"/>
-<g class="nd"><rect class="nd__box" data-box="0" x="4" y="26" width="34" height="40" rx="4"/><rect class="nd__lvl" data-lvl="0" x="4" y="66" width="34" height="0" rx="4"/><text x="21" y="39" text-anchor="middle">1</text><text class="ink" data-v="0" x="21" y="58" text-anchor="middle">0</text><rect class="nd__box" data-box="1" x="44" y="26" width="34" height="40" rx="4"/><rect class="nd__lvl" data-lvl="1" x="44" y="66" width="34" height="0" rx="4"/><text x="61" y="39" text-anchor="middle">2</text><text class="ink" data-v="1" x="61" y="58" text-anchor="middle">0</text><rect class="nd__box" data-box="2" x="84" y="26" width="34" height="40" rx="4"/><rect class="nd__lvl" data-lvl="2" x="84" y="66" width="34" height="0" rx="4"/><text x="101" y="39" text-anchor="middle">3</text><text class="ink" data-v="2" x="101" y="58" text-anchor="middle">0</text><rect class="nd__box" data-box="3" x="124" y="26" width="34" height="40" rx="4"/><rect class="nd__lvl" data-lvl="3" x="124" y="66" width="34" height="0" rx="4"/><text x="141" y="39" text-anchor="middle">4</text><text class="ink" data-v="3" x="141" y="58" text-anchor="middle">0</text><rect class="nd__box nd__box--on" data-box="4" x="164" y="26" width="34" height="40" rx="4"/><rect class="nd__lvl" data-lvl="4" x="164" y="40.8" width="34" height="25.2" rx="4"/><text x="181" y="39" text-anchor="middle">5</text><text class="ink" data-v="4" x="181" y="58" text-anchor="middle">0.97</text><rect class="nd__box" data-box="5" x="204" y="26" width="34" height="40" rx="4"/><rect class="nd__lvl" data-lvl="5" x="204" y="40.5" width="34" height="25.5" rx="4"/><text x="221" y="39" text-anchor="middle">6</text><text class="ink" data-v="5" x="221" y="58" text-anchor="middle">0.98</text><rect class="nd__box" data-box="6" x="244" y="26" width="34" height="40" rx="4"/><rect class="nd__lvl" data-lvl="6" x="244" y="40.3" width="34" height="25.7" rx="4"/><text x="261" y="39" text-anchor="middle">7</text><text class="ink" data-v="6" x="261" y="58" text-anchor="middle">0.99</text><rect class="nd__box" data-box="7" x="284" y="26" width="34" height="40" rx="4"/><rect class="nd__lvl" data-lvl="7" x="284" y="40" width="34" height="26" rx="4"/><text x="301" y="39" text-anchor="middle">8</text><text class="ink" data-v="7" x="301" y="58" text-anchor="middle">1</text></g>
-<path class="nd__back" data-arrow d="M221,68 C221,88 181,88 181,70"/>
-<text x="4" y="104" data-who>decision 5 learns</text>
-<text x="48" y="122" text-anchor="middle" class="ink" data-r>0</text><text x="76" y="122" text-anchor="middle">+</text><text x="90" y="122">0.99 ×</text>
-<rect class="nd__term" x="152" y="109" width="48" height="19" rx="3"/><text x="176" y="122" text-anchor="middle" class="ink" data-next>0.98</text>
-<text x="216" y="122" text-anchor="middle">=</text><text x="232" y="122" class="ink" data-out>0.97</text>
-<text x="48" y="140" text-anchor="middle">points now</text><text x="176" y="140" text-anchor="middle">next moment's best</text>
-</svg>
+<figure class="fig" data-widget="flow" data-n="8" data-gamma="0.99">
+<p class="fig__k">One won game, decision by decision. Each box is shaded by its score: how much of the win it expects.</p>
+<div class="flow">
+<p class="flow__lab">time →</p>
+<div class="flow__row"><div class="flow__b" style="--v:0.000"><small>1</small><b>0</b></div><div class="flow__b" style="--v:0.000"><small>2</small><b>0</b></div><div class="flow__b" style="--v:0.000"><small>3</small><b>0</b></div><div class="flow__b" style="--v:0.000"><small>4</small><b>0</b></div><div class="flow__b" style="--v:0.000"><small>5</small><b>0</b></div><div class="flow__b" style="--v:0.980"><small>6</small><b>0.98</b></div><div class="flow__b" style="--v:0.990"><small>7</small><b>0.99</b></div><div class="flow__b" style="--v:1.000"><small>8</small><b>1</b></div><div class="flow__win"><b>+1</b><small>win</small></div></div>
+<p class="flow__lab flow__lab--back">← each box learns 0.99 × the score of the box after it</p>
 </div>
-<div class="ctl"><button type="button" data-step="-1">← back</button><button type="button" data-step="1">next pass →</button><output data-pass>pass 4 of 8</output></div>
+<div class="ctl"><input type="range" min="0" max="8" value="3" step="1" aria-label="Training passes over the game"><output>after 3 passes</output></div>
 </figure>
 
 Points scored along the way count too (in 2018: +1 per point, ±1 at the end, −0.5 on every move of a lost game); [Part 2](/blog/dissertation-revival-beating-2018/) shows when they mislead. A million frames of nudging later, the scores are worth playing by. That's DQN, DeepMind's 2015 method.[^methods]
@@ -61,7 +53,7 @@ My version added two newer tricks.
 
 ### Double DQN: don't trust the luckiest guess
 
-Every score is a guess, and the move that looks best is usually one the network overrated. The outlined part above, the next moment's best, is picked and scored by the same network that's learning from it, so the overrating snowballs. Double DQN changes only that part: the network still picks the next move, but an older copy of it, refreshed every 5,000 moves, scores it:
+Every score is a guess, and the move that looks best is usually one the network overrated. Each box learns from the best-looking score in the box after it, and that score comes from the same network that's learning, so the overrating snowballs back through the game. Double DQN changes just that step: the network still picks the next move, but an older copy of it, refreshed every 5,000 moves, scores it:
 
 <figure class="fig dice" data-widget="dice">
 <p class="fig__k">Three moves, all truly worth 1 (dashed line). Each network guesses with random error; the outlined bar is the pick.</p>

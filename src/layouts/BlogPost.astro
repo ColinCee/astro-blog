@@ -1995,44 +1995,64 @@ const last = entries[entries.length - 1];
       grid-column: 1 / -1;
     }
   }
-  /* Backup (widget): a game as a row of decision boxes, each score drawn as
-     a level that rises as the win reaches back pass by pass. The box being
-     worked is outlined in ink; .nd__term outlines the "next moment's best"
-     term of the formula, the part Double DQN changes. */
-  .prose .nd-wrap svg {
-    max-width: 30rem;
+  /* Flow (widget): a game as a row of equal decision boxes ending in the
+     win; each whole box is shaded by its score (--v, 0..1). */
+  .prose .flow {
+    display: grid;
+    gap: 0.35rem;
   }
-  .prose .nd__box {
-    fill: var(--pane);
-    stroke: var(--line);
-    stroke-width: 1.2;
+  .prose .flow__lab {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--faint);
   }
-  .prose .nd__box--on {
-    stroke: var(--ink);
-    stroke-width: 1.6;
+  .prose .flow__lab--back {
+    color: var(--accent-soft);
   }
-  .prose .nd__lvl {
-    fill: color-mix(in oklch, var(--accent) 35%, var(--pane));
-    pointer-events: none;
+  .prose .flow__row {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 3px;
   }
-  .prose .nd__back {
-    fill: none;
-    stroke: var(--faint);
-    stroke-width: 1.2;
-    stroke-dasharray: 3 3;
-    marker-end: url(#nd-head);
+  .prose .flow__b,
+  .prose .flow__win {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 0.15rem;
+    min-height: 3.4rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
   }
-  .prose .nd__term {
-    fill: none;
-    stroke: var(--ink);
-    stroke-width: 1.2;
+  .prose .flow__b {
+    background: color-mix(in oklch, var(--accent) calc(var(--v, 0) * 70%), var(--pane));
+    transition: background-color 0.35s var(--ease-out);
   }
-  .prose .nd text.ink {
-    font-weight: 600;
+  .prose .flow__b small,
+  .prose .flow__win small {
+    font-size: 0.6875rem;
+    color: var(--faint);
   }
-  @media (prefers-reduced-motion: no-preference) {
-    .prose .nd__lvl {
-      transition: y var(--dur-fast) var(--ease-out), height var(--dur-fast) var(--ease-out);
+  .prose .flow__b b {
+    font-size: 0.8rem;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .prose .flow__win {
+    border-color: var(--accent);
+  }
+  .prose .flow__win b {
+    color: var(--accent-soft);
+    font-size: 0.95rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .prose .flow__b {
+      transition: none;
+    }
+  }
+  @media (max-width: 34rem) {
+    .prose .flow__b b {
+      font-size: 0.6875rem;
     }
   }
   /* Dice (widget): two rows of guesses for three moves, a dashed true-value
