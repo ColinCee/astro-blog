@@ -1241,8 +1241,10 @@ const last = entries[entries.length - 1];
     font-size: 11px;
     fill: var(--faint);
   }
+  /* Narrow charts fit a phone without scrolling: their 12px text still
+     renders at 11px or more down to a ~300px column. */
   .prose .chart--narrow svg {
-    min-width: 20rem;
+    min-width: 0;
     max-width: 24rem;
     margin: 0 auto;
   }

@@ -90,7 +90,8 @@ My 2018 runs show it for real. Over the last 500 training games, Double DQN won 
 <figure class="fig">
 <p class="fig__k">My 2018 runs: what the network expected one moment to be worth, in points, over training</p>
 <div class="chart chart--narrow">
-<svg viewBox="0 0 320 190" role="img" aria-label="Average score the network expected per moment over training, 2018. Plain DQN starts very high (off the chart) and comes down to about 10; Double DQN starts near 0 and rises to about 9.">
+<svg viewBox="-18 0 338 190" role="img" aria-label="Average score the network expected per moment over training, 2018. Plain DQN starts very high (off the chart) and comes down to about 10; Double DQN starts near 0 and rises to about 9.">
+<text x="-8" y="89" text-anchor="middle" transform="rotate(-90 -8 89)">points expected</text>
 <line class="ax" x1="30" x2="310" y1="164" y2="164"/><text x="25" y="168" text-anchor="end">0</text>
 <line class="ax" x1="30" x2="310" y1="89" y2="89"/><text x="25" y="93" text-anchor="end">10</text>
 <line class="ax" x1="30" x2="310" y1="14" y2="14"/><text x="25" y="18" text-anchor="end">20</text>
@@ -98,7 +99,7 @@ My 2018 runs show it for real. Over the last 500 training games, Double DQN won 
 <polyline class="ln hi" points="30.0,168.2 32.8,167.7 35.6,165.8 38.4,163.9 41.2,162.6 44.0,161.4 46.8,160.1 49.6,159.1 52.4,158.3 55.2,157.6 58.0,157.1 60.8,156.9 63.6,156.7 66.4,155.8 69.2,154.8 72.0,153.1 74.8,152.3 77.6,151.9 80.5,150.8 83.3,149.2 86.1,147.9 88.9,146.7 91.7,146.2 94.5,144.8 97.3,142.8 100.1,141.1 102.9,139.7 105.7,138.4 108.5,137.5 111.3,135.9 114.1,134.7 116.9,133.0 119.7,132.6 122.5,132.0 125.3,132.1 128.1,131.4 130.9,131.3 133.7,131.0 136.5,130.3 139.3,129.8 142.1,129.0 144.9,127.6 147.7,126.7 150.5,125.6 153.3,124.9 156.1,124.1 158.9,122.2 161.7,120.2 164.5,118.5 167.3,117.7 170.1,117.9 172.9,118.0 175.7,118.6 178.5,118.1 181.4,119.1 184.2,118.6 187.0,118.0 189.8,114.9 192.6,114.8 195.4,115.5 198.2,115.5 201.0,113.5 203.8,112.4 206.6,110.5 209.4,110.9 212.2,112.3 215.0,111.6 217.8,111.9 220.6,110.2 223.4,108.7 226.2,107.8 229.0,107.5 231.8,108.1 234.6,106.3 237.4,106.2 240.2,104.9 243.0,105.0 245.8,104.9 248.6,103.8 251.4,102.0 254.2,102.0 257.0,102.4 259.8,103.2 262.6,100.7 265.4,99.3 268.2,98.3 271.0,98.8 273.8,100.2 276.6,101.4 279.4,99.6 282.3,98.0 285.1,100.1 287.9,101.0 290.7,99.9 293.5,97.8 296.3,96.8 299.1,97.6 301.9,98.6 304.7,96.8 307.5,95.2 310.0,96.1"/>
 <text x="34" y="10" class="ink">↑ DQN starts off the chart, up to 900</text><text x="310" y="34" text-anchor="end" class="ink">DQN: talks itself down</text>
 <text x="310" y="157" text-anchor="end" class="hi">Double DQN: rises as it learns</text>
-<text x="30" y="184">start of training</text><text x="310" y="184" text-anchor="end">end</text>
+<text x="30" y="184">start</text><text x="170" y="184" text-anchor="middle">training →</text><text x="310" y="184" text-anchor="end">end</text>
 </svg>
 </div>
 </figure>
@@ -209,8 +210,9 @@ The other thing that helped was the network, the part that turns the screen into
 <figure class="fig">
 <p class="fig__k">Aliens: score against wins. Tap a dot for its numbers.</p>
 <div class="chart">
-<svg viewBox="0 0 640 330" role="img" aria-label="Aliens score against win rate per agent. Holding shoot: 36 points, 82 percent. My 2018 agent: 50 points, 81 percent. Best 2026: 60 to 62 points, 96 to 98 percent. MCTS: 78 points, 100 percent.">
+<svg viewBox="-18 0 658 330" role="img" aria-label="Aliens score against win rate per agent. Holding shoot: 36 points, 82 percent. My 2018 agent: 50 points, 81 percent. Best 2026: 60 to 62 points, 96 to 98 percent. MCTS: 78 points, 100 percent.">
 <rect class="band" x="44" y="74" width="580" height="216"/>
+<text x="-8" y="152" text-anchor="middle" transform="rotate(-90 -8 152)">games won</text>
 <text x="38" y="294" text-anchor="end">0%</text>
 <text x="38" y="228" text-anchor="end">25%</text>
 <text x="38" y="163" text-anchor="end">50%</text>
@@ -224,7 +226,7 @@ The other thing that helped was the network, the part that turns the screen into
 <line class="ax" x1="602" x2="602" y1="14" y2="290"/><text x="602" y="308" text-anchor="middle">80</text>
 <line class="ref" x1="114" x2="114" y1="14" y2="290"/>
 <text x="334" y="326" text-anchor="middle">score per game →</text>
-<text x="620" y="90" text-anchor="end">below the button's 82%</text><text x="118" y="286" text-anchor="start">button: 36 points</text>
+<text x="620" y="90" text-anchor="end">below the button's 82%</text><text x="118" y="240" text-anchor="start">← button: 36 points</text>
 <circle class="mk" cx="114" cy="74" r="4.5" tabindex="0"><title>Hold shoot: 36.3 points, 82% wins</title></circle>
 <text x="108" y="88" text-anchor="end" class="ink">Hold shoot</text>
 <circle class="mk" cx="85" cy="269" r="4.5" tabindex="0"><title>Random play: 33.7 points, 8% wins</title></circle>

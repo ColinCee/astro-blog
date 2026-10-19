@@ -231,7 +231,7 @@ function ladder(root: HTMLElement) {
   const steps: Step[] = JSON.parse(root.querySelector("script")!.textContent!);
   const svg = root.querySelector("svg")!;
   const out = root.querySelector<HTMLElement>("[data-out]")!;
-  const W = 320, H = 170, L = 34, R = 8, T = 12, B = 22;
+  const W = 320, H = 190, L = 58, R = 8, T = 12, B = 42;
   const lo = Math.log10(20), hi = Math.log10(4000);
   const y = (v: number) => T + (H - T - B) * (1 - (Math.log10(v) - lo) / (hi - lo));
   const dx = (W - L - R) / (steps.length + 1); // column 0 is the 2018 engine, before any change
@@ -260,7 +260,11 @@ function ladder(root: HTMLElement) {
   });
   // The x axis is the order of the changes, not time.
   for (let i = 0; i <= steps.length; i++)
-    el("text", { x: L + (i + 0.5) * dx, y: H - 6, "text-anchor": "middle" }).textContent = String(i);
+    el("text", { x: L + (i + 0.5) * dx, y: H - B + 16, "text-anchor": "middle" }).textContent = String(i);
+  // Axis titles: what each axis measures, in its units.
+  el("text", { x: L + (W - L - R) / 2, y: H - 4, "text-anchor": "middle" }).textContent = "change, in order (0 = 2018) →";
+  const yt = (T + H - B) / 2;
+  el("text", { x: 9, y: yt, "text-anchor": "middle", transform: `rotate(-90 9 ${yt})` }).textContent = "frames/s, log";
   // Column 0, the starting point, is tappable too when the figure gives it
   // a data-base of "name|detail".
   const [baseName, baseNote] = (root.dataset.base ?? "").split("|");
