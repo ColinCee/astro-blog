@@ -241,6 +241,7 @@ function ladder(root: HTMLElement) {
   const [baseName, baseNote] = (root.dataset.base ?? "").split("|");
   const lo = Math.log10(20), hi = Math.log10(4000);
   let risers: SVGElement[] = [], hits: SVGElement[] = [], baseHit: SVGElement | null = null;
+  let colL = 0, colW = 1; // where the columns sit, from the last draw
   let picked = 0;
   steps.forEach((s, i) => s.after / s.before > steps[picked].after / steps[picked].before && (picked = i));
   const pick = (i: number) => {
@@ -269,6 +270,8 @@ function ladder(root: HTMLElement) {
     const el = svgEl(svg);
     const y = (v: number) => T + (H - T - B) * (1 - (Math.log10(v) - lo) / (hi - lo));
     const dx = (W - L - R) / (steps.length + 1); // column 0 is the 2018 engine, before any change
+    colL = L;
+    colW = dx;
     const X = (i: number) => L + (i + 1) * dx; // left edge of change i's column
     for (const v of [30, 100, 300, 1000, 3000]) {
       el("line", { class: "ax", x1: L, x2: W - R, y1: y(v), y2: y(v) });
@@ -304,6 +307,29 @@ function ladder(root: HTMLElement) {
   };
   new ResizeObserver(draw).observe(svg.parentElement!);
   draw();
+  // On a phone each column is narrow, so a finger can also drag across the
+  // chart to pick the step under it; the page still scrolls vertically.
+  const first = baseHit ? -1 : 0;
+  const at = (e: PointerEvent) => {
+    const x = e.clientX - svg.getBoundingClientRect().left;
+    return Math.max(first, Math.min(steps.length - 1, Math.floor((x - colL) / colW) - 1));
+  };
+  let dragging = false;
+  svg.addEventListener("pointerdown", (e) => {
+    dragging = true;
+    pick(at(e));
+  });
+  svg.addEventListener("pointermove", (e) => dragging && pick(at(e)));
+  for (const end of ["pointerup", "pointercancel", "pointerleave"]) svg.addEventListener(end, () => (dragging = false));
+  // Arrow keys move between steps once one has focus.
+  svg.addEventListener("keydown", (e) => {
+    const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!d) return;
+    e.preventDefault();
+    const i = Math.max(first, Math.min(steps.length - 1, picked + d));
+    pick(i);
+    ((i < 0 ? baseHit : hits[i]) as SVGElement | null)?.focus();
+  });
 }
 
 // SVG element factory for charts drawn in code.

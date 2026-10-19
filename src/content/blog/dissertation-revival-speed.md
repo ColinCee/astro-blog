@@ -15,7 +15,7 @@ pubDate: "Oct 20 2026"
 <figure class="fig" data-widget="qview" data-src="/blog/gvgai/aliens-2018-agent.json" data-stack="/blog/gvgai/aliens-2018-stacks.png">
 <p class="fig__k">My 2018 agent, retrained in 2026. Every 4 frames it scores its 3 moves and plays the top one.</p>
 <div class="vids">
-<figure class="vid"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
+<figure class="vid"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png" aria-label="My 2018 agent playing a game of Aliens, which it wins with 57 points"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
 </div>
 <div class="qbars" aria-live="off"></div>
 <div class="player"><button type="button" data-play aria-pressed="true" aria-label="Pause"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9-5.5z"/><path class="i-pause" d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/></svg></button><button type="button" data-step="-1" aria-label="Previous decision"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button><button type="button" data-step="1" aria-label="Next decision"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button><span class="player__track"><input type="range" data-scrub min="0" max="0" value="0" step="1" aria-label="Decision"></span><output data-at></output></div>
