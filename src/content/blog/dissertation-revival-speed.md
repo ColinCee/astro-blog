@@ -25,12 +25,12 @@ In 2018 my final-year project taught an AI to play video games, and one training
 <p class="fig__k">One million game ticks of training (a tick is one frame of the game)</p>
 <div class="ctl"><button type="button">Play</button><input type="range" min="0" max="1000" value="0" step="1" aria-label="Time since training started"><output>0 s</output></div>
 <div class="cmp" data-secs="43200" style="grid-template-columns:8.5rem minmax(0,1fr) 7.6rem"><span>2018, GTX 980</span><i style="--w:0"></i><b></b></div>
-<div class="cmp" data-secs="1620" style="grid-template-columns:8.5rem minmax(0,1fr) 7.6rem"><span>Same agent, 2026</span><i style="--w:0"></i><b></b></div>
+<div class="cmp" data-secs="1500" style="grid-template-columns:8.5rem minmax(0,1fr) 7.6rem"><span>Same agent, 2026</span><i style="--w:0"></i><b></b></div>
 <div class="cmp" data-secs="240" style="grid-template-columns:8.5rem minmax(0,1fr) 7.6rem"><span>Today's DQN</span><i style="--w:0"></i><b></b></div>
-<figcaption>Drag or press play: the clock runs from zero to 12 hours. The 2026 rows are the 2018 agent rebuilt (27 min on average over three runs on a busy PC; 11 with the machine to itself) and a modern DQN (3 to 5 min).</figcaption>
+<figcaption>Drag or press play: the clock runs from zero to 12 hours. The 2026 rows are the 2018 agent rebuilt (about 25 min: 23 to 34 across three runs on a busy PC, 11 with the machine to itself) and a modern DQN (3 to 5 min).</figcaption>
 </figure>
 
-This is part 1 of 3. Part 2 is about using that speed to beat my 2018 results, and part 3 about what it's like doing research this fast.
+This is part 1 of 3. [Part 2](/blog/dissertation-revival-beating-2018/) is about using that speed to beat my 2018 results, and [part 3](/blog/dissertation-revival-research-speed/) about what it's like doing research this fast.
 
 ## 2018: the 2016 state of the art, by hand
 
@@ -134,7 +134,7 @@ The biggest single jump was sending raw pixels instead of PNG files: 274 to 1,01
 
 ## What the speed buys
 
-In 2018 every bug took a night to check, so I tested a handful of ideas, once each. In 2026 one evening was enough for three runs of every variant, a second look at the reward, and newer methods like Rainbow and PPO. That's part 2: trying to beat my 2018 agent, and finding out what "beat" should mean.
+In 2018 every bug took a night to check, so I tested a handful of ideas, once each. In 2026 one evening was enough for three runs of every variant, a second look at the reward, and newer methods like Rainbow and PPO. That's [part 2](/blog/dissertation-revival-beating-2018/): trying to beat my 2018 agent, and finding out what "beat" should mean.
 
 [^results]: Every number here is from [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/RESULTS.md) in my dissertation repo. The 2018 time is from the original report.
 [^quirks]: Among them: a learning-rate decay, squared-error loss, exploration held at 100% for 20,000 moves and then lowered over 1,000 games, and the target network synced every 5,000 moves.

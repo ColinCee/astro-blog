@@ -347,6 +347,21 @@ homepage terminal window's ambient lift, nothing else.
   `.rows` / `.cols` (row vs column illustration), `.boxes` / `.box` (simple flow).
   Marks are neutral; only the result takes the accent. Aim for at least one figure
   per post so no screen is text alone.
+- **More figure blocks** (added with the dissertation series, Oct 2026):
+  `.vids` / `.vid` (game recordings side by side, pixelated, stacking on phones;
+  videos play only while on screen and never on their own under reduced motion),
+  `.chart` (inline SVG on a 640-wide viewBox with `.ax`, `.ref`, `.band`, `.mk`,
+  `.ln`, `.bar` and `.hi` marks; it keeps that width and scrolls sideways on phones
+  so labels stay at 11px), `.net` / `.slab` / `.deck` (a network's layers as tilted
+  stacks of real activation maps that face the reader on hover or focus), `.map`
+  (an SVG route drawn over a game screen), and `data-grow` (`.cmp` bars grow in once
+  when seen).
+- **Interactive figures** carry `data-widget` and load `src/scripts/widgets.ts`
+  only on posts that use one: `race` (a clock slider against training time),
+  `chain` (a toy of a reward travelling back through a game), `reveal` (a button
+  that adds a baseline to a chart) and `qview` (a recording with the network's
+  value for each move under it). Controls use `.ctl`: pill buttons and range
+  inputs at least 44px tall. Numbers live in the Markdown's data- attributes.
 - **Post header:** title, then the post's `description` as a standfirst
   (`.post__lede`, Body 500, `--muted`), a hairline, and the meta row: the `stat`
   chip (when set), date and read time. Header, prose, timeline and footer all share one measure, `--measure` (44rem),

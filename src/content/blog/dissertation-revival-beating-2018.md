@@ -24,7 +24,7 @@ pubDate: "Oct 21 2026"
 
 With five times the training my 2018 agent got, and rewarded only for winning, today's DQN wins **every** game of Aliens on every run, on levels it never trained on too. But the number that mattered most turned out to be **82%**: what you win by holding the shoot button and doing nothing else.
 
-This is part 2 of 3. [Part 1](/blog/dissertation-revival-speed/) is how the 2018 code came back and got 29× faster; part 3 is what it's like doing research at this speed.
+This is part 2 of 3. [Part 1](/blog/dissertation-revival-speed/) is how the 2018 code came back and got 29× faster; [part 3](/blog/dissertation-revival-research-speed/) is what it's like doing research at this speed.
 
 ## Round 1: same budget as 2018
 
@@ -65,7 +65,7 @@ The next morning Claude ran the dumbest policies it could think of against every
 <figcaption>Same level, same seed. The aliens drift down into a stream of shots.</figcaption>
 </figure>
 
-On two of the other games it's worse: the button wins every game. (Chase nobody wins.)
+On two of the other games it's worse: the button wins every game. (On Chase no learning agent wins at all.)
 
 | Game | Button held all game | Wins |
 |---|---|---:|
@@ -176,6 +176,6 @@ The other thing that helped was the network: the part that turns the screen into
 
 Two things still stand out. I won every game I played in 2018 but scored 43: winning was never the hard part of Aliens, scoring is. And a tree search (MCTS) that simulates moves ahead with no training at all still scores 78, well above every learning agent.
 
-Part 3 is about how this got done in two days, and what's still unsolved.
+[Part 3](/blog/dissertation-revival-research-speed/) is about how this got done in two days, and what's still unsolved.
 
 [^results]: Every number is from [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/RESULTS.md), except the button on unseen levels (50 games on Aliens levels 3 and 4: 36.5 points, 82%), run for this post.

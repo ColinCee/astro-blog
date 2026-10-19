@@ -23,7 +23,7 @@ pubDate: "Oct 22 2026"
 <div class="cmp cmp--after"><span>Commits</span><i style="--w:1"></i><b>94</b></div>
 <div class="cmp cmp--after"><span>Runs per idea</span><i style="--w:1"></i><b>3</b></div></div>
 </div>
-<figcaption>2018: first to last commit of the dissertation code, 11 January to 28 March. 2026: a Sunday morning to Monday afternoon, overnight included, 241 training runs.</figcaption>
+<figcaption>2018: from the first commit to the finished report, 11 January to 28 March. 2026: a Sunday morning to Monday afternoon, overnight included, 241 training runs.</figcaption>
 </figure>
 
 In 2018 the code for my dissertation took eleven weeks, and every idea got one run because each run took a night. This October Claude did it again in two days. It rebuilt the code, reproduced my results, tried the main methods that came after, and found a flaw in how I'd measured it all. I didn't write a line of code.[^results]
