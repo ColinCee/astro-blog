@@ -29,6 +29,8 @@ Each video shows one engine tick per frame, scaled up 2× with nearest-neighbour
 
 **Compared with each agent's evaluation:** hold-shoot averages 36.3 points with 82% wins; the best modern DQN 60.3 with 96%; IMPALA 62.0 with 98%; MCTS-50 77.9 with 100%. So MCTS scored a little below its average in this game (71). The modern networks run in fp32 on the CPU here, but were evaluated in bf16 on the GPU, so a near-tied move could go the other way. The game above is the CPU's.
 
+`aliens-2018-stacks.png` is the 2018 agent's input for that same game: one row per decision (111), the four greyscale half-size frames it saw side by side, oldest first, 150×55 each. Made with `tools/stacks.py --check aliens-2018-agent.json`, which asserts the replay's decisions match the clip's JSON.
+
 ## Deceptizelda
 
 | File | What | Command |

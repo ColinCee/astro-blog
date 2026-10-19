@@ -673,7 +673,7 @@ const last = entries[entries.length - 1];
         const el = it.target as HTMLElement;
         if (el instanceof HTMLVideoElement) {
           el.playbackRate = Number(el.dataset.rate ?? 1);
-          if (it.isIntersecting && !still) el.play().catch(() => {});
+          if (it.isIntersecting && !still && !el.dataset.hold) el.play().catch(() => {});
           else el.pause();
         } else if (it.isIntersecting) {
           el.classList.add("is-in");
@@ -1800,6 +1800,24 @@ const last = entries[entries.length - 1];
   .prose .cube i {
     position: absolute;
     border: 1px solid color-mix(in oklch, var(--ink) 35%, transparent);
+    background-repeat: no-repeat;
+    image-rendering: pixelated; /* a face may carry a real game frame (inline background-image) */
+  }
+  /* --slices on a cube rules its depth faces into that many layers (the
+     screen block: one per frame it sees). */
+  .prose .cube[style*="--slices"] i:nth-child(2) {
+    background-image: repeating-linear-gradient(
+      0deg,
+      color-mix(in oklch, var(--ink) 30%, transparent) 0 1px,
+      transparent 1px calc(var(--d) / var(--slices))
+    );
+  }
+  .prose .cube[style*="--slices"] i:nth-child(3) {
+    background-image: repeating-linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--ink) 30%, transparent) 0 1px,
+      transparent 1px calc(var(--d) / var(--slices))
+    );
   }
   .prose .cube i:nth-child(1) {
     inset: 0;
@@ -1855,6 +1873,69 @@ const last = entries[entries.length - 1];
   }
   .prose .qbars i {
     transition: width 0.12s linear;
+  }
+  /* Peek (qview): what one decision saw and does. .peek__seen shows four
+     frames cut from a sprite sheet (--sheet; one row per decision, --n rows,
+     --k the current row); .peek__held has four cells that fill as the move is
+     held, one per tick. */
+  .prose .peek {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); /* the frames get the room; one column on phones */
+    gap: 0.75rem 1.4rem;
+    align-items: start;
+  }
+  .prose .peek .fig__k {
+    margin-bottom: 0.35rem;
+  }
+  .prose .peek .fig__k b {
+    color: var(--accent-soft);
+    font-weight: 700;
+  }
+  .prose .peek__seen {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 3px;
+  }
+  .prose .peek__seen i {
+    display: block;
+    aspect-ratio: 150 / 55;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background-color: var(--panel);
+    background-image: var(--sheet);
+    background-repeat: no-repeat;
+    background-size: 400% calc(var(--n, 1) * 100%);
+    background-position: calc(var(--i) * 100% / 3) calc(var(--k, 0) * 100% / max(1, var(--n, 1) - 1));
+    image-rendering: pixelated;
+  }
+  .prose .peek__seen i:nth-child(1) { --i: 0; }
+  .prose .peek__seen i:nth-child(2) { --i: 1; }
+  .prose .peek__seen i:nth-child(3) { --i: 2; }
+  .prose .peek__seen i:nth-child(4) { --i: 3; }
+  .prose .peek__held {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 3px;
+  }
+  .prose .peek__held i {
+    display: block;
+    height: 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+  }
+  .prose .peek__held i.is-on {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  @media (max-width: 34rem) {
+    .prose .peek {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .prose .ctl output[data-at] {
+    flex: 1 1 12rem;
+    font-size: 0.74rem;
+    color: var(--faint);
   }
   /* A hidden layer a button reveals (widget "reveal"); visible without JS. */
   .prose [data-widget="reveal"].is-armed:not(.is-revealed) .reveal {

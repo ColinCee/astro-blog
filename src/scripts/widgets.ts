@@ -73,7 +73,12 @@ function reveal(root: HTMLElement) {
 
 // Q-view: a recording with the network's value for each move drawn under it,
 // from the recorder's JSON (one entry per decision, with the tick it was made).
-type Decision = { tick: number; action: string; q?: number[] };
+// Optional parts, used when the figure has them: [data-step] / [data-play]
+// buttons to pause and move one decision at a time; [data-seen] with four cells
+// showing the frames that decision saw (rows of the sprite sheet in data-stack,
+// one per decision, from tools/stacks.py); [data-held] with four cells that
+// fill as the chosen move is held; [data-at] for where the game is.
+type Decision = { tick: number; action: string; score?: number; q?: number[] };
 async function qview(root: HTMLElement) {
   const video = root.querySelector("video")!;
   const box = root.querySelector<HTMLElement>(".qbars")!;
@@ -92,6 +97,15 @@ async function qview(root: HTMLElement) {
     box.appendChild(row);
     return row;
   });
+  const seen = root.querySelector<HTMLElement>("[data-seen]");
+  const heldCells = [...root.querySelectorAll<HTMLElement>("[data-held] i")];
+  const heldName = root.querySelector<HTMLElement>("[data-held-name]");
+  const seenTicks = root.querySelector<HTMLElement>("[data-seen-ticks]");
+  const at = root.querySelector<HTMLElement>("[data-at]");
+  if (seen && root.dataset.stack) {
+    seen.style.setProperty("--sheet", `url(${root.dataset.stack})`);
+    seen.style.setProperty("--n", String(decisions.length));
+  }
   let last = -1;
   const draw = () => {
     const tick = video.currentTime * fps * ticksPerFrame;
@@ -102,9 +116,11 @@ async function qview(root: HTMLElement) {
       if (decisions[mid].tick <= tick) lo = mid;
       else hi = mid - 1;
     }
+    const d = decisions[lo];
+    // The move chosen on tick t plays on ticks t+1 to t+4.
+    heldCells.forEach((c, j) => c.classList.toggle("is-on", tick >= d.tick + 1 + j));
     if (lo === last) return;
     last = lo;
-    const d = decisions[lo];
     const q = d.q!;
     const min = Math.min(...q);
     const span = Math.max(...q) - min || 1;
@@ -113,6 +129,10 @@ async function qview(root: HTMLElement) {
       row.querySelector("b")!.textContent = q[i].toFixed(2);
       row.classList.toggle("cmp--after", data.action_names[i] === d.action);
     });
+    seen?.style.setProperty("--k", String(lo));
+    if (seenTicks) seenTicks.textContent = `ticks ${d.tick - 3} to ${d.tick}`;
+    if (heldName) heldName.textContent = names[data.action_names.indexOf(d.action)];
+    if (at) at.textContent = `decision ${lo + 1} of ${decisions.length} · tick ${d.tick} · ${d.score ?? 0} points`;
   };
   const loop = () => {
     draw();
@@ -121,6 +141,36 @@ async function qview(root: HTMLElement) {
   video.addEventListener("play", () => requestAnimationFrame(loop));
   video.addEventListener("seeked", draw);
   draw();
+
+  // Controls. data-hold on the video tells BlogPost's autoplay-when-visible
+  // observer to leave a video the reader paused alone.
+  const playBtn = root.querySelector<HTMLButtonElement>("[data-play]");
+  const setPlayBtn = () => {
+    if (!playBtn) return;
+    playBtn.setAttribute("aria-pressed", String(!video.paused));
+    playBtn.textContent = video.paused ? "play" : "pause";
+  };
+  video.addEventListener("play", setPlayBtn);
+  video.addEventListener("pause", setPlayBtn);
+  setPlayBtn();
+  playBtn?.addEventListener("click", () => {
+    if (video.paused) {
+      delete video.dataset.hold;
+      video.play().catch(() => {});
+    } else {
+      video.dataset.hold = "1";
+      video.pause();
+    }
+  });
+  root.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((b) =>
+    b.addEventListener("click", () => {
+      video.dataset.hold = "1";
+      video.pause();
+      const i = Math.min(decisions.length - 1, Math.max(0, last + Number(b.dataset.step)));
+      // Land in the middle of the frame that shows the decision's tick.
+      video.currentTime = (decisions[i].tick + 0.5) / (fps * ticksPerFrame);
+    }),
+  );
 }
 
 

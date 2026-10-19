@@ -356,7 +356,7 @@ homepage terminal window's ambient lift, nothing else.
   stacks of real activation maps that face the reader on hover or focus), `.map`
   (an SVG route drawn over a game screen), `.gains` / `.gain` (before → after with
   a log-scale bar of the multiplier; `.gain--hi` is the headline row), `.arch` / `.cube` (a network as 3D blocks sized
-  by each layer's shape), `.runs` (blocks on a
+  by each layer's shape; a face can carry a real frame as an inline background, and `--slices` rules the depth faces into that many layers), `.runs` (blocks on a
   shared time axis: how long each run takes and how many fit), `.loop` (a process diagram with a dot running
   each loop; accent outlines mark the parts the post is about), and `data-grow` (`.cmp` bars grow in once
   when seen).
@@ -364,7 +364,7 @@ homepage terminal window's ambient lift, nothing else.
   only on posts that use one: `ladder` (a step chart of speed changes; tap a step for its detail),
   `chain` (a toy of a reward travelling back through a game), `reveal` (a button
   that adds a baseline to a chart) and `qview` (a recording with the network's
-  value for each move under it), `pick` (tap a part of a figure to open its detail). Controls use `.ctl`: pill buttons and range
+  value for each move under it; optionally `.ctl` buttons to pause and step one decision at a time and a `.peek` block showing the four frames that decision saw, cut from a sprite sheet, and the four ticks its move is held), `pick` (tap a part of a figure to open its detail). Controls use `.ctl`: pill buttons and range
   inputs at least 44px tall. Numbers live in the Markdown's data- attributes.
 - **Post header:** title, then the post's `description` as a standfirst
   (`.post__lede`, Body 500, `--muted`), a hairline, and the meta row: the `stat`

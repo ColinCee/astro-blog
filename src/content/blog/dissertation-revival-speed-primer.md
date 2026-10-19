@@ -10,12 +10,17 @@ figures:
     value: "11 min"
 pubDate: "Jan 1 2027"
 ---
-<figure class="fig" data-widget="qview" data-src="/blog/gvgai/aliens-2018-agent.json">
+<figure class="fig" data-widget="qview" data-src="/blog/gvgai/aliens-2018-agent.json" data-stack="/blog/gvgai/aliens-2018-stacks.png">
 <div class="vids">
 <figure class="vid"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
 </div>
 <div class="qbars" aria-live="off"></div>
-<figcaption>My 2018 agent playing Aliens, retrained in 2026. It sees only the screen. Every four frames it scores its three moves and plays the highest, the tomato bar.</figcaption>
+<div class="ctl"><button type="button" data-step="-1">← back</button><button type="button" data-play aria-pressed="true">pause</button><button type="button" data-step="1">next →</button><output data-at></output></div>
+<div class="peek">
+<div><p class="fig__k">It sees these 4 frames, <span data-seen-ticks></span></p><div class="peek__seen" data-seen><i></i><i></i><i></i><i></i></div></div>
+<div><p class="fig__k">then holds <b data-held-name>shoot</b> for the next 4 ticks</p><div class="peek__held" data-held><i></i><i></i><i></i><i></i></div></div>
+</div>
+<figcaption>My 2018 agent playing Aliens, retrained in 2026. It sees only the screen, in grey at half size. Every four ticks it scores its three moves and plays the highest, the tomato bar. Step through it one decision at a time.</figcaption>
 </figure>
 
 For my final-year project at Strathclyde in 2018, I wrote an AI that learns to play video games from the screen. This October I gave the code to Claude. The same agent, bugs and all, now trains in 11 minutes instead of 12 hours, and learns the same way.[^speed] To see why that matters, it helps to know what "learns" means here.
@@ -25,32 +30,24 @@ For my final-year project at Strathclyde in 2018, I wrote an AI that learns to p
 The network looks at the screen and gives each move a score: the points it expects to follow. It plays the top score. At first it plays at random on purpose, and over the first 1,000 games it trusts its own scores more and more. For each move it has played, it later checks what really followed, the reward plus its own score for the next moment, and nudges the guess towards that. A million frames of nudging and the guesses are worth playing by. That is DQN, DeepMind's 2015 method.[^methods]
 
 <figure class="fig">
-<div class="arch"><figure class="arch__l"><div class="cube" style="--w:7.35rem;--h:4.45rem;--d:0.70rem"><i></i><i></i><i></i></div><figcaption><b>screen</b><small>4 frames</small><small>55 × 150</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:3.60rem;--h:2.08rem;--d:1.98rem"><i></i><i></i><i></i></div><figcaption><b>layer 1</b><small>32 maps</small><small>12 × 36</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:2.47rem;--h:1.34rem;--d:2.80rem"><i></i><i></i><i></i></div><figcaption><b>layer 2</b><small>64 maps</small><small>5 × 17</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:2.32rem;--h:1.04rem;--d:2.80rem"><i></i><i></i><i></i></div><figcaption><b>layer 3</b><small>64 maps</small><small>3 × 15</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:0.50rem;--h:5.00rem;--d:0.50rem"><i></i><i></i><i></i></div><figcaption><b>512 units</b><small>sees it all</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube cube--hi" style="--w:0.50rem;--h:1.40rem;--d:0.50rem"><i></i><i></i><i></i></div><figcaption><b>3 scores</b><small>shoot, left, right</small><small>highest wins</small></figcaption></figure></div>
-<figcaption>The network, 1.5 million weights, drawn to each layer's shape: width and height for the picture, depth for the number of patterns it looks for. Each layer shrinks the picture and finds more kinds of pattern, until 512 units see the whole screen at once and give one score per move.</figcaption>
+<div class="arch"><figure class="arch__l"><div class="cube" style="--w:7.35rem;--h:4.45rem;--d:0.70rem;--slices:4"><i style="background-image:url(/blog/gvgai/aliens-2018-stacks.png);background-size:400% 11100%;background-position:100% 49.0909%"></i><i></i><i></i></div><figcaption><b>screen</b><small>4 frames</small><small>55 × 150</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:3.60rem;--h:2.08rem;--d:1.98rem"><i></i><i></i><i></i></div><figcaption><b>layer 1</b><small>32 maps</small><small>12 × 36</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:2.47rem;--h:1.34rem;--d:2.80rem"><i></i><i></i><i></i></div><figcaption><b>layer 2</b><small>64 maps</small><small>5 × 17</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:2.32rem;--h:1.04rem;--d:2.80rem"><i></i><i></i><i></i></div><figcaption><b>layer 3</b><small>64 maps</small><small>3 × 15</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:0.50rem;--h:5.00rem;--d:0.50rem"><i></i><i></i><i></i></div><figcaption><b>512 units</b><small>sees it all</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube cube--hi" style="--w:0.50rem;--h:1.40rem;--d:0.50rem"><i></i><i></i><i></i></div><figcaption><b>3 scores</b><small>shoot, left, right</small><small>highest wins</small></figcaption></figure></div>
+<figcaption>The network, 1.5 million weights, drawn to each layer's shape: width and height for the picture, depth for the number of patterns it looks for. The screen block carries the frame from the clip above. Each layer shrinks the picture and finds more kinds of pattern, until 512 units see the whole screen at once and give one score per move.</figcaption>
 </figure>
 
-Three improvements sit on top, each from a paper two or three years old when I used it.
+Two improvements sit on top, each from a paper two or three years old when I used it.
 
 ### Double DQN: a second opinion
 
-Nudging a guess towards your own next guess lets errors feed on themselves, and the scores inflate. Double DQN has the network pick the next move and an older copy of itself say how good that move is.[^ddqn] The heart of it, as I wrote it in 2018:
+The nudge aims at the network's own score for the next moment's best-looking move. Best-looking by its own noisy guesses, so it leans high, and the lean compounds. Double DQN lets the network pick the next move but asks an older copy of itself how good that move is.[^ddqn]
 
-```python title="Brain.py, 2018" {4-7}
-def get_targets(self, data):
-    if not data.done:
-        # Calculate the target depending on if the game has finished or not
-        q1_next_state = self.network.primary_network.predict(
-            Brain.transform_input_for_single_sample(data.next_state))
-        q2_next_state = self.network.target_network.predict(
-            Brain.transform_input_for_single_sample(data.next_state))
-        target = data.reward + self.gamma * q2_next_state[0][np.argmax(q1_next_state[0])]
-    else:
-        target = data.reward
-
-    return target
-```
-
-The highlighted lines are the trick: `primary_network` picks the move, `target_network`, the older copy, scores it.
+<figure class="fig">
+<p class="fig__k">Three moves, all truly worth 1 point, guessed with noise: what the chosen move gets scored (illustration)</p>
+<div class="cmp-ref" style="--ref:0.704">
+<div class="cmp"><span>scores its own pick</span><em class="track" style="--ref:0.704"><i style="--w:1"></i></em><b>1.42</b></div>
+<div class="cmp cmp--after"><span>older copy scores it</span><em class="track" style="--ref:0.704"><i style="--w:0.704"></i></em><b>1.00</b></div>
+</div>
+<figcaption>Dashed line: the true value. Picking the best-looking guess and trusting its score keeps the noise that made it look best; a second opinion doesn't.</figcaption>
+</figure>
 
 ### Prioritised replay: practise the surprises
 
@@ -68,23 +65,6 @@ The agent keeps its last 100,000 moments and practises on random ones, so it nev
 <figcaption>Taller is likelier. The tomato moments are the ones the network guessed worst, so it studies them most.</figcaption>
 </figure>
 
-### Dueling: how good is now, and how much each move adds
-
-A dueling network scores the moment and the moves separately, then adds them up. It was built for Atari's 18 buttons. Aliens has three, and in my tests it finished behind, so the final agent leaves it out.[^dueling]
-
-<figure class="fig loop">
-<svg viewBox="0 0 300 124" role="img" aria-label="Dueling network: the screen and layers split into two branches, how good this moment is (one number) and how much better each move is (three numbers), which are added into three scores.">
-<defs><marker id="prim-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill:var(--faint)"/></marker></defs>
-<g><rect x="2" y="42" width="56" height="40" rx="6"/><text x="30" y="59" text-anchor="middle">screen</text><text x="30" y="74" text-anchor="middle" class="sub">+ layers</text></g>
-<path class="arr" style="marker-end:url(#prim-head)" d="M58,56 L84,36"/><path class="arr" style="marker-end:url(#prim-head)" d="M58,68 L84,88"/>
-<g><rect x="86" y="12" width="122" height="40" rx="6"/><text x="147" y="29" text-anchor="middle">how good is now</text><text x="147" y="44" text-anchor="middle" class="sub">1 number</text></g>
-<g><rect x="86" y="72" width="122" height="40" rx="6"/><text x="147" y="89" text-anchor="middle">bonus per move</text><text x="147" y="104" text-anchor="middle" class="sub">3 numbers</text></g>
-<path class="arr" style="marker-end:url(#prim-head)" d="M208,36 L226,56"/><path class="arr" style="marker-end:url(#prim-head)" d="M208,88 L226,68"/>
-<g class="mine"><rect x="228" y="42" width="70" height="40" rx="6"/><text x="263" y="59" text-anchor="middle">3 scores</text><text x="263" y="74" text-anchor="middle" class="sub">added up</text></g>
-</svg>
-<figcaption>The split only changes the network's last two layers; everything before it is the same.</figcaption>
-</figure>
-
 ## 2018: one idea a night
 
 <figure class="fig" data-grow>
@@ -95,7 +75,7 @@ A dueling network scores the moment and the moves separately, then adds them up.
 <figcaption>One 2018 run lasts as long as 65 of today's.</figcaption>
 </figure>
 
-In 2018 there was nothing to plug in, so I wrote all of the above from the papers: about 700 lines of Python around the network, on a GTX 980 with 4 GB of memory. Full-colour screens crashed it, so the agent sees the screen in grey at half size.[^report] Here is what it watches:[^saliency]
+In 2018 there was nothing to plug in, so I wrote all of the above from the papers: about 700 lines of Python around the network, on a GTX 980 with 4 GB of memory. Full-colour screens crashed it, which is why the agent sees grey at half size.[^report] Here is what it watches:[^saliency]
 
 <figure class="fig">
 <div class="vids">
@@ -128,14 +108,23 @@ Claude rebuilt it on today's software, kept every setting, and trained it three 
 <text x="173" y="218" text-anchor="middle">training games →</text>
 </svg>
 </div>
-<figcaption>My 2018 run finished with 876 wins out of 2,000 games; the three 2026 runs, 792 to 869.</figcaption>
+<figcaption>My 2018 run finished with 876 wins out of 2,000 games; the three 2026 runs, 792 to 869. The flat start is the random play of the first few hundred games.</figcaption>
 </figure>
 
 It also found two real bugs in my code. Fixing them changed little.[^bugs]
 
 ## Where the 12 hours went
 
-Mostly waiting, not learning. Claude cut it one change at a time, each checked by a test that replays recorded games and fails if a single pixel changes.[^improvements]
+Mostly waiting, not learning.[^frame]
+
+<figure class="fig">
+<p class="fig__k">One frame of the game in 2018: 29 ms</p>
+<div class="stack"><span style="--w:16.1"></span><span style="--w:11.4"></span><span style="--w:1.5"></span><span class="is-data" style="--w:0.4"></span></div>
+<ul class="legend"><li><b>16&nbsp;ms</b> a built-in pause, so people could watch</li><li><b>11&nbsp;ms</b> image files written, read and encoded</li><li><b>1.5&nbsp;ms</b> other work that wasn't needed</li><li class="is-data"><b>0.4&nbsp;ms</b> the game itself</li></ul>
+<figcaption>What each of the nine changes below saved, per frame.</figcaption>
+</figure>
+
+Claude cut it one change at a time, each checked by a test that replays recorded games and fails if a single pixel changes.[^improvements]
 
 <figure class="fig ladder" data-widget="ladder">
 <p class="fig__k">One game, frames per second (log scale)</p>
@@ -152,11 +141,11 @@ With the game no longer the bottleneck, my 2018 agent only needed its network on
 This project trained 241 times in 15 hours. At 2018's speed, about 280 days. [Part 2](/blog/dissertation-revival-beating-2018/) is what I did with them; [part 3](/blog/dissertation-revival-research-speed/) is what research at this speed is like.
 
 [^speed]: 1 million frames on an RTX 4090 with the machine to itself (about 25 minutes with other runs sharing it). 2018: a GTX 980. Every number: [RESULTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/RESULTS.md).
-[^methods]: DQN (DeepMind, 2015), Double DQN (2015), prioritised replay (2016) and dueling networks (2016), on four games from the General Video Game AI competition: Aliens, Chase, Deceptizelda and Wafer Thin Mints. Python 3.6 and Keras then; Python 3.14 and PyTorch now. The 2018 code no longer installs. The scores in the opening clip are the network's estimate of the reward still to come; a decision every 4 frames, 4 frames seen at once.
-[^ddqn]: The older copy is refreshed from the network every 5,000 frame stacks. In 2018 it lifted wins in the last 500 of 2,000 training games from 35% (DQN) to 57%.
+[^methods]: DQN (DeepMind, 2015), Double DQN (2015) and prioritised replay (2016), on four games from the General Video Game AI competition: Aliens, Chase, Deceptizelda and Wafer Thin Mints. I also tried dueling networks (2016), which split the score into "how good is now" and "how much each move adds"; built for Atari's 18 buttons, they finished over 10 points of win rate behind on three-button Aliens, so the final agent leaves them out. Python 3.6 and Keras then; Python 3.14 and PyTorch now. The 2018 code no longer installs. The scores in the opening clip are the network's estimate of the reward still to come; the four frames it sees are the last four ticks, in grey at half size, as the network gets them.
+[^ddqn]: The older copy is refreshed from the network every 5,000 frame stacks. In 2018 it lifted wins in the last 500 of 2,000 training games from 35% (DQN) to 57%. The illustration: three moves each truly worth 1, guessed with Gaussian noise (σ 0.5), 200,000 draws; the max of the guesses averages 1.42, the second network's score for the first network's pick averages 1.00.
 [^per]: Each moment's chance is set by how wrong the network's last guess for it was. In 2018 it raised the points scored but not the wins (54% against 57% in the last 500 games), until I changed the reward to penalise every move of a lost game.
-[^dueling]: From the 2018 report: dueling led in earlier stretches but finished over 10 points of win rate behind Double DQN with prioritised replay over games 2,000 to 2,500. The final agent is Double DQN, prioritised replay and a reward that penalises every move of a lost game.
 [^report]: From the 2018 report: 99 kB per full-colour frame × 4 frames × 100,000 samples = 39.6 GB and a network of 16.7 million weights; 8.25 kB in grey at half size = 3.3 GB and 1.5 million weights.
 [^saliency]: Gradient × input: how much each pixel, times how strongly it is lit, moves the score of the chosen move. The network reads 4 frames at a time and uses all four about equally; each frame of the clip shows its own share. Made with `tools/saliency.py` in the dissertation repo.
 [^bugs]: Rewards were credited one move late, and prioritised replay lacked its correction weights. Fixed: 48.2 points against 50.1, one run.
+[^frame]: 34 frames a second is 29.4 ms a frame. Each slice is the time per frame a change removed, 1/before − 1/after. The pause was 25 ms but overlapped with other work, so removing it saved 16 ms. Image files: steps 2, 3, 6 and 7.
 [^improvements]: [IMPROVEMENTS.md](https://github.com/ColinCee/GVGAI-Dissertation/blob/revival-2026/2026-revival/IMPROVEMENTS.md): all 30 changes, each with its before, after and a tagged commit.
