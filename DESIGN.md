@@ -355,8 +355,8 @@ homepage terminal window's ambient lift, nothing else.
   so labels stay at 11px), `.net` / `.slab` / `.deck` (a network's layers as tilted
   stacks of real activation maps that face the reader on hover or focus), `.map`
   (an SVG route drawn over a game screen), `.gains` / `.gain` (before → after with
-  a log-scale bar of the multiplier; `.gain--hi` is the headline row), `.units` (a unit
-  chart, one square per thing counted), `.loop` (a process diagram with a dot running
+  a log-scale bar of the multiplier; `.gain--hi` is the headline row), `.runs` (blocks on a
+  shared time axis: how long each run takes and how many fit), `.loop` (a process diagram with a dot running
   each loop; accent outlines mark the parts the post is about), and `data-grow` (`.cmp` bars grow in once
   when seen).
 - **Interactive figures** carry `data-widget` and load `src/scripts/widgets.ts`
