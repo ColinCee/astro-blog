@@ -218,6 +218,60 @@ async function qview(root: HTMLElement) {
 }
 
 
+// Ladder: a step chart of speed changes. Each step is a focusable column;
+// choosing one fills the panel below with what changed and by how much.
+type Step = { name: string; before: number; after: number; note?: string };
+function ladder(root: HTMLElement) {
+  const steps: Step[] = JSON.parse(root.querySelector("script")!.textContent!);
+  const svg = root.querySelector("svg")!;
+  const out = root.querySelector<HTMLElement>("[data-out]")!;
+  const W = 320, H = 170, L = 34, R = 8, T = 12, B = 22;
+  const lo = Math.log10(20), hi = Math.log10(4000);
+  const y = (v: number) => T + (H - T - B) * (1 - (Math.log10(v) - lo) / (hi - lo));
+  const dx = (W - L - R) / (steps.length + 1); // column 0 is the 2018 engine, before any change
+  const X = (i: number) => L + (i + 1) * dx; // left edge of change i's column
+  const ns = "http://www.w3.org/2000/svg";
+  const el = (tag: string, attrs: Record<string, string | number>) => {
+    const e = document.createElementNS(ns, tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, String(v));
+    svg.appendChild(e);
+    return e;
+  };
+  for (const v of [30, 100, 300, 1000, 3000]) {
+    el("line", { class: "ax", x1: L, x2: W - R, y1: y(v), y2: y(v) });
+    el("text", { x: L - 5, y: y(v) + 4, "text-anchor": "end" }).textContent = fmt.format(v);
+  }
+  let pts = `${L},${y(steps[0].before)} ${X(0)},${y(steps[0].before)}`;
+  steps.forEach((s, i) => (pts += ` ${X(i)},${y(s.after)} ${X(i) + dx},${y(s.after)}`));
+  el("polyline", { class: "ln", points: pts.trim() });
+  const risers = steps.map((s, i) =>
+    el("line", { class: "riser", x1: X(i), x2: X(i), y1: y(s.before), y2: y(s.after) }),
+  );
+  const hits = steps.map((s, i) => {
+    const r = el("rect", { class: "hit", x: X(i), y: T, width: dx, height: H - T - B, tabindex: 0, role: "button" });
+    r.setAttribute("aria-label", `${s.name}: ${s.before} to ${s.after} frames per second`);
+    return r;
+  });
+  // The x axis is the order of the changes, not time.
+  for (let i = 0; i <= steps.length; i++)
+    el("text", { x: L + (i + 0.5) * dx, y: H - 6, "text-anchor": "middle" }).textContent = String(i);
+  const pick = (i: number) => {
+    const s = steps[i];
+    risers.forEach((r, j) => r.classList.toggle("is-on", j === i));
+    hits.forEach((r, j) => r.classList.toggle("is-on", j === i));
+    const x = s.after / s.before;
+    out.innerHTML = `<b>${i + 1}. ${s.name}</b> <span>${fmt.format(s.before)} → ${fmt.format(s.after)} frames/s, <strong>×${x.toFixed(1)}</strong></span>${s.note ? `<small>${s.note}</small>` : ""}`;
+  };
+  hits.forEach((r, i) => {
+    r.addEventListener("mouseenter", () => pick(i));
+    r.addEventListener("focus", () => pick(i));
+    r.addEventListener("click", () => pick(i));
+  });
+  let best = 0;
+  steps.forEach((s, i) => s.after / s.before > steps[best].after / steps[best].before && (best = i));
+  pick(best);
+}
+
 // Pick: tappable parts of a figure ([data-pick]); choosing one shows its
 // <template data-for> in the figure's [data-panel]. Choosing it again closes it.
 function pick(root: HTMLElement) {
@@ -320,7 +374,7 @@ function dice(root: HTMLElement) {
   show();
 }
 
-const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, pick, dice };
+const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, pick, dice, ladder };
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });
