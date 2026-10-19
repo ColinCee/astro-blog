@@ -355,10 +355,12 @@ homepage terminal window's ambient lift, nothing else.
   so labels stay at 11px), `.net` / `.slab` / `.deck` (a network's layers as tilted
   stacks of real activation maps that face the reader on hover or focus), `.map`
   (an SVG route drawn over a game screen), `.gains` / `.gain` (before → after with
-  a log-scale bar of the multiplier; `.gain--hi` is the headline row), and `data-grow` (`.cmp` bars grow in once
+  a log-scale bar of the multiplier; `.gain--hi` is the headline row), `.units` (a unit
+  chart, one square per thing counted), `.loop` (a process diagram with a dot running
+  each loop; accent outlines mark the parts the post is about), and `data-grow` (`.cmp` bars grow in once
   when seen).
 - **Interactive figures** carry `data-widget` and load `src/scripts/widgets.ts`
-  only on posts that use one: `race` (a clock slider against training time),
+  only on posts that use one: `ladder` (a step chart of speed changes; tap a step for its detail),
   `chain` (a toy of a reward travelling back through a game), `reveal` (a button
   that adds a baseline to a chart) and `qview` (a recording with the network's
   value for each move under it). Controls use `.ctl`: pill buttons and range

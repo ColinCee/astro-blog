@@ -21,18 +21,14 @@ pubDate: "Oct 20 2026"
 
 For my final-year project at Strathclyde in 2018, I wrote an AI that learns to play video games from the screen. One training run took 12 hours. This October I gave the code to Claude to see how far it could get with today's tools. The same agent now trains in **11 minutes**, and learns the way it did in 2018.[^speed]
 
-<div class="scrolly" data-widget="iterate">
-<figure class="fig">
-<p class="fig__k">Trying ideas: one training run each</p>
-<output class="clock">12 h</output>
-<div class="cmp" data-run="43200"><span>2018</span><i style="--w:1"></i><b>1 idea tested</b></div>
-<div class="cmp cmp--after" data-run="660"><span>2026</span><i style="--w:1"></i><b>65 ideas tested</b></div>
+That matters most when you're learning. I was a student trying things I'd never done before, and most ideas were wrong. The only way to find out was a full training run.
+
+<figure class="fig" data-grow>
+<p class="fig__k">Ideas tested in 12 hours, one training run each</p>
+<div class="units"><span>2018</span><div><i></i></div><b>1</b></div>
+<div class="units units--hi"><span>2026</span><div><i style="--n:0"></i><i style="--n:1"></i><i style="--n:2"></i><i style="--n:3"></i><i style="--n:4"></i><i style="--n:5"></i><i style="--n:6"></i><i style="--n:7"></i><i style="--n:8"></i><i style="--n:9"></i><i style="--n:10"></i><i style="--n:11"></i><i style="--n:12"></i><i style="--n:13"></i><i style="--n:14"></i><i style="--n:15"></i><i style="--n:16"></i><i style="--n:17"></i><i style="--n:18"></i><i style="--n:19"></i><i style="--n:20"></i><i style="--n:21"></i><i style="--n:22"></i><i style="--n:23"></i><i style="--n:24"></i><i style="--n:25"></i><i style="--n:26"></i><i style="--n:27"></i><i style="--n:28"></i><i style="--n:29"></i><i style="--n:30"></i><i style="--n:31"></i><i style="--n:32"></i><i style="--n:33"></i><i style="--n:34"></i><i style="--n:35"></i><i style="--n:36"></i><i style="--n:37"></i><i style="--n:38"></i><i style="--n:39"></i><i style="--n:40"></i><i style="--n:41"></i><i style="--n:42"></i><i style="--n:43"></i><i style="--n:44"></i><i style="--n:45"></i><i style="--n:46"></i><i style="--n:47"></i><i style="--n:48"></i><i style="--n:49"></i><i style="--n:50"></i><i style="--n:51"></i><i style="--n:52"></i><i style="--n:53"></i><i style="--n:54"></i><i style="--n:55"></i><i style="--n:56"></i><i style="--n:57"></i><i style="--n:58"></i><i style="--n:59"></i><i style="--n:60"></i><i style="--n:61"></i><i style="--n:62"></i><i style="--n:63"></i><i style="--n:64"></i></div><b>65</b></div>
+<figcaption>12 hours per run in 2018; 11 minutes now.</figcaption>
 </figure>
-<p data-t="0">I was a student trying things I'd never done before, and most ideas were wrong. The only way to find out was a full training run.</p>
-<p data-t="660">11 minutes: in 2026 the first answer is in. Change something, go again.</p>
-<p data-t="3600">An hour: five ideas tried in 2026. In 2018, the first run is 8% done.</p>
-<p data-t="43200">12 hours: 2018 has its first answer. 2026 has tried 65 ideas.</p>
-</div>
 
 Part 1 of 3. [Part 2](/blog/dissertation-revival-beating-2018/): beating it. [Part 3](/blog/dissertation-revival-research-speed/): what research at this speed is like.
 

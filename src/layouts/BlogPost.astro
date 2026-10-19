@@ -1506,49 +1506,45 @@ const last = entries[entries.length - 1];
       transform: none;
     }
   }
-  /* Iterate (widget): the figure pins while the story steps scroll past it.
-     Armed by JS (not under reduced motion); otherwise the steps are plain
-     paragraphs and the figure shows the final state. */
-  .prose .scrolly .clock {
-    display: block;
-    font-family: var(--grotesk);
-    font-size: clamp(1.8rem, 6vw, 2.6rem);
-    font-weight: 800;
+  /* Unit chart: one square per thing counted, in rows to compare. */
+  .prose .units {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr) 2.5rem;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .prose .units > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+  .prose .units i {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 2px;
+    background: var(--muted);
+  }
+  .prose .units b {
     color: var(--ink);
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
+    font-size: 1.1rem;
+    text-align: right;
   }
-  .prose .scrolly .cmp {
-    grid-template-columns: 5rem minmax(0, 1fr) 8.6rem;
+  .prose .units--hi i {
+    background: var(--accent);
   }
-  @media (max-width: 34rem) {
-    .prose .scrolly .cmp {
-      grid-template-columns: minmax(0, 1fr) auto;
+  .prose .units--hi b {
+    color: var(--accent-soft);
+    font-size: 1.4rem;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .prose .fig[data-grow] .units--hi i {
+      opacity: 0;
+      transition: opacity 0.2s var(--ease-out);
+      transition-delay: calc(var(--n) * 18ms);
     }
-  }
-  .prose .scrolly.is-armed > .fig {
-    position: sticky;
-    top: 3.5rem;
-    z-index: 1;
-  }
-  .prose .scrolly.is-armed [data-t] {
-    position: relative;
-    margin: 0 0 45vh;
-    padding: 0.9rem 1.1rem;
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    opacity: 0.45;
-    transition: opacity var(--dur-slow) var(--ease-out);
-  }
-  .prose .scrolly.is-armed [data-t]:first-of-type {
-    margin-top: 45vh;
-  }
-  .prose .scrolly.is-armed [data-t]:last-of-type {
-    margin-bottom: 30vh;
-  }
-  .prose .scrolly.is-armed [data-t].is-on {
-    opacity: 1;
+    .prose .fig[data-grow].is-in .units--hi i {
+      opacity: 1;
+    }
   }
   /* The learning loop: hand-written parts outlined in the accent; a dot runs
      each loop (fast: playing, slow: learning). */
