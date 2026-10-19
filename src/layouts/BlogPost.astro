@@ -1651,7 +1651,7 @@ const last = entries[entries.length - 1];
   }
   .prose .ladder text {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 11.5px; /* 320-wide viewBox renders a touch under 320px on phones; keeps labels at 11px */
     fill: var(--faint);
   }
   .prose .ladder .ax {
@@ -1695,6 +1695,7 @@ const last = entries[entries.length - 1];
   }
   .prose .ladder [data-out] small {
     color: var(--faint);
+    font-size: 0.6875rem;
   }
   /* Pick (widget): tappable parts and the panel they open. */
   .prose [data-pick] {
@@ -1771,7 +1772,7 @@ const last = entries[entries.length - 1];
     flex-wrap: wrap;
     align-items: stretch;
     justify-content: center;
-    gap: 1rem 0.5rem;
+    gap: 1rem 0.25rem; /* tight enough for six blocks on one row at the post measure with 11px labels */
     padding: 0.6rem 0;
   }
   .prose .arch__l {
@@ -1843,6 +1844,9 @@ const last = entries[entries.length - 1];
     color: var(--ink);
     font-weight: 600;
     font-size: 0.75rem;
+  }
+  .prose .arch figcaption small {
+    font-size: inherit; /* the browser's <small> would drop below the 11px floor */
   }
   /* Q-value bars under a recording (widget "qview"). */
   .prose .qbars {
