@@ -1,7 +1,7 @@
 ---
 title: "Primer draft: My 2018 Dissertation, 65× Faster"
 shortTitle: "Primer draft: 65× faster"
-description: "How the game-playing AI I wrote as a student learns, in four pictures. Then why training it took 12 hours in 2018 and takes 11 minutes now."
+description: "How the game-playing AI I wrote as a student learns, in a few pictures. Then why training it took 12 hours in 2018 and takes 11 minutes now."
 stat: "12 h → 11 min"
 figures:
   - label: "2018"
@@ -22,7 +22,7 @@ For my final-year project at Strathclyde in 2018, I wrote an AI that learns to p
 
 ## A score for every move
 
-The network looks at the screen and gives each move a score: the points it expects to follow. It plays the top score. The scores start as random guesses, so at first it plays almost at random. After each move it checks what it really got, the reward plus its own score for the next moment, and nudges the guess towards that. A million frames of nudging and the guesses are worth playing by. That is DQN, DeepMind's 2015 method.[^methods]
+The network looks at the screen and gives each move a score: the points it expects to follow. It plays the top score. At first it plays at random on purpose, and over the first 1,000 games it trusts its own scores more and more. For each move it has played, it later checks what really followed, the reward plus its own score for the next moment, and nudges the guess towards that. A million frames of nudging and the guesses are worth playing by. That is DQN, DeepMind's 2015 method.[^methods]
 
 <figure class="fig">
 <div class="arch"><figure class="arch__l"><div class="cube" style="--w:7.35rem;--h:4.45rem;--d:0.70rem"><i></i><i></i><i></i></div><figcaption><b>screen</b><small>4 frames</small><small>55 × 150</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:3.60rem;--h:2.08rem;--d:1.98rem"><i></i><i></i><i></i></div><figcaption><b>layer 1</b><small>32 maps</small><small>12 × 36</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:2.47rem;--h:1.34rem;--d:2.80rem"><i></i><i></i><i></i></div><figcaption><b>layer 2</b><small>64 maps</small><small>5 × 17</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:2.32rem;--h:1.04rem;--d:2.80rem"><i></i><i></i><i></i></div><figcaption><b>layer 3</b><small>64 maps</small><small>3 × 15</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube" style="--w:0.50rem;--h:5.00rem;--d:0.50rem"><i></i><i></i><i></i></div><figcaption><b>512 units</b><small>sees it all</small></figcaption></figure><span class="arch__to" aria-hidden="true">→</span><figure class="arch__l"><div class="cube cube--hi" style="--w:0.50rem;--h:1.40rem;--d:0.50rem"><i></i><i></i><i></i></div><figcaption><b>3 scores</b><small>shoot, left, right</small><small>highest wins</small></figcaption></figure></div>
@@ -82,7 +82,7 @@ A dueling network scores the moment and the moves separately, then adds them up.
 <path class="arr" style="marker-end:url(#prim-head)" d="M208,36 L226,56"/><path class="arr" style="marker-end:url(#prim-head)" d="M208,88 L226,68"/>
 <g class="mine"><rect x="228" y="42" width="70" height="40" rx="6"/><text x="263" y="59" text-anchor="middle">3 scores</text><text x="263" y="74" text-anchor="middle" class="sub">added up</text></g>
 </svg>
-<figcaption>Two branches instead of one, summed at the end. Left out of the final agent.</figcaption>
+<figcaption>The split only changes the network's last two layers; everything before it is the same.</figcaption>
 </figure>
 
 ## 2018: one idea a night
