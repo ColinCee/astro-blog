@@ -74,13 +74,13 @@ This is part 3 of 3. [Part 1](/blog/dissertation-revival-speed/): the 2018 code 
 <figure class="fig">
 <div class="split">
 <div><p class="fig__k">Claude</p>
-<div class="boxes"><div class="box">All the code<small>engine fixes, the 2018 port, Rainbow, PPO, IMPALA</small></div><div class="box">The checks I never did<small>replaying recorded games pixel for pixel; comparing against random play</small></div><div class="box">The experiment plan<small>what to run overnight, and when to stop</small></div></div></div>
+<div class="boxes"><div class="box">All the code<small>engine fixes, the 2018 port, Rainbow, PPO, IMPALA</small></div><div class="box">The checks I never did<small>replaying recorded games pixel for pixel; random play and the one-button baseline</small></div><div class="box">The experiment plan<small>what to run overnight, and when to stop</small></div></div></div>
 <div><p class="fig__k">Me</p>
 <div class="boxes"><div class="box box--fast">The question<small>how far can this get?</small></div><div class="box box--fast">"Keep going"<small>its default was to wrap up early</small></div><div class="box box--fast">"Why?"<small>about a third of my messages were me learning PPO and IMPALA</small></div></div></div>
 </div>
 </figure>
 
-The most useful thing I did was refuse to let it stop. Left alone it wrapped up after the obvious wins; most of the speed in part 1 came after I pushed back. The most useful thing it did was distrust the results: checking against random play was its idea in the first hour, and the one-button check that reframed part 2 followed the next morning.
+The most useful thing I did was refuse to let it stop. Left alone it wrapped up after the obvious wins; most of the speed in part 1 came after I pushed back. The most useful thing it did was distrust the results: checking against random play was its idea in the first hour, and so was the one-button check the next morning that reframed part 2.
 
 I also spent an hour lost on why it chose Rainbow. It's an odd feeling to be the least informed person on your own dissertation.
 
