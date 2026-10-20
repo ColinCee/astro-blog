@@ -76,10 +76,10 @@ Claude did find two real bugs in my code but fixing them barely changed the resu
 
 <figure class="fig">
 <p class="fig__k">Where one run's time goes, to scale</p>
-<p class="splits__key"><span class="split--hi">Game</span><span>Agent</span></p>
+<p class="splits__key"><span class="sbar--hi">Game</span><span>Agent</span></p>
 <div class="splits">
-<span class="splits__k">2018<small>estimate</small></span><div class="split"><i class="split--hi split--est" style="flex-basis:66.67%"><b>~8 h</b></i><i class="split--est" style="flex-basis:33.33%"><b>~4 h</b></i></div>
-<span class="splits__k">2026<small>today's PC</small></span><div class="split"><i class="split--hi split--thin" style="flex-basis:0.89%"></i><i class="split--thin" style="flex-basis:0.60%"></i><em class="split__after"><b>6.4 + 4.3 min</b></em></div>
+<span class="splits__k">2018<small>estimate</small></span><div class="sbar"><i class="sbar--hi sbar--est" style="flex-basis:66.67%"><b>~8 h</b></i><i class="sbar--est" style="flex-basis:33.33%"><b>~4 h</b></i></div>
+<span class="splits__k">2026<small>today's PC</small></span><div class="sbar"><i class="sbar--hi sbar--thin" style="flex-basis:0.89%"></i><i class="sbar--thin" style="flex-basis:0.60%"></i><em class="sbar__after"><b>6.4 + 4.3 min</b></em></div>
 </div>
 </figure>
 
