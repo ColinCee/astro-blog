@@ -20,7 +20,7 @@ pubDate: "Oct 21 2026"
 </div>
 </figure>
 
-In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster. My 2018 agent was DQN with two tricks on top, Double DQN and prioritised replay, all written from the papers. With runs that cheap the next question was whether today's methods could beat what I built as an undergrad, and they can, today's DQN with five times the training wins every game of Aliens even on levels it never trained on. The number I keep coming back to though is 82%, which is what you get by just holding the shoot button and doing nothing else.
+In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster. My 2018 agent was DQN with two tricks on top, Double DQN and prioritised replay, all written from the papers. With runs that cheap the next question was whether today's methods could beat what I built as an undergrad, and they can, today's DQN rewarded only for winning and given five times the training wins every game of Aliens, even on levels it never trained on. The number I keep coming back to though is 82%, which is what you get by just holding the shoot button and doing nothing else.
 
 ## Can today's methods beat it with the same budget?
 
@@ -53,7 +53,7 @@ Three edged past my 2018 agent's 81%, all within noise.[^runs3]
 
 ## What does holding one button get you?
 
-The next morning Claude ran the simplest policies it could against every game, random moves and every button held down for the whole game. Holding shoot wins 82% of Aliens games, and on levels it's never seen it's also 82%.
+Then Claude ran the simplest policies it could against every game, random moves and every button held down for the whole game. Holding shoot wins 82% of Aliens games, and on levels it's never seen it's also 82%.
 
 <figure class="fig">
 <p class="fig__k">Same level and seed, the aliens drift down into the shots</p>
@@ -86,6 +86,7 @@ Yes, and the score is how you can tell, 50 points a game against the button's 36
 <figure class="vid vid--hi"><video data-rate="1" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-saliency.png"><source src="/blog/gvgai/aliens-2018-saliency.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-saliency.mp4" type="video/mp4"></video></figure>
 </div>
 </figure>
+
 ## What should you reward?
 
 Then there's the reward. Mine from 2018 gave +1 or −1 for the result, plus −0.5 on every move of a game that ended in a loss. It lifted wins (DQN went from 57% to 85%) but not the score (39 points, close to the button). Mostly it taught "don't lose", which on Aliens is pretty close to just holding shoot.
@@ -171,7 +172,7 @@ The network is the part that turns the screen into a score for each move. The 20
 </div>
 </figure>
 
-I won every game I played back in 2018 but only scored 43, so the hard part of Aliens seems to be the score rather than winning. The best learning agent now gets 62.5 points and wins 96%, which outscores both me and my 2018 agent.
+I won every game I played back in 2018 but only scored 43, so the hard part of Aliens seems to be the score rather than winning. The best learning agent now gets 62.5 points and wins 96%, which outscores both me and my 2018 agent. MCTS, which doesn't learn at all, still beats it with 78.
 
 [^results]: All numbers from [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md), except the button on unseen levels (Aliens levels 3 and 4, 50 games), run for this post.
 [^runs3]: My 2018 agent here is the 2018 code replayed 3 times. Runs vary a lot, modern DQN's three won 42% to 84%. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
