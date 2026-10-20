@@ -1,6 +1,6 @@
 ---
 title: "Beating my 2018 agent"
-subtitle: "Turns out holding one button wins 82% of the time."
+subtitle: "Holding one button wins 82% of the time, which I never checked in 2018."
 stat: "82% → 100%"
 statLabel: "games won"
 figures:
@@ -20,7 +20,7 @@ pubDate: "Oct 21 2026"
 </div>
 </figure>
 
-In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster. With runs that cheap the obvious next question was whether today's methods could beat what I built as an undergrad. They can, today's DQN with five times the training wins **every** game of Aliens, even on levels it never trained on. But the more interesting number ended up being **82%**, which is what you get by just holding the shoot button and doing nothing else.
+In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster. With runs that cheap the next question was whether today's methods could beat what I built as an undergrad, and they can, today's DQN with five times the training wins every game of Aliens even on levels it never trained on. The number I keep coming back to though is 82%, which is what you get by just holding the shoot button and doing nothing else.
 
 ## How does it learn?
 
@@ -69,32 +69,32 @@ Each box learns from the box after it. But a box's score is really one guess per
 </div>
 </figure>
 
-And across a whole game it adds up:
+Over a whole game this adds up, roughly like this:
 
 <figure class="fig">
 <p class="fig__k">A whole won game after lots of practice (illustration), hatched means too high</p>
 <div class="flow">
-<p class="flow__lab flow__lab--ink">DQN: each box inherits the next one's optimism and adds its own</p>
+<p class="flow__lab flow__lab--ink">DQN: each box copies the box after it, which is already too high, and adds a bit more</p>
 <div class="flow__row"><div class="flow__b flow__b--over" style="--v:0.978"><small>1</small><b>1.27</b></div><div class="flow__b flow__b--over" style="--v:0.949"><small>2</small><b>1.23</b></div><div class="flow__b flow__b--over" style="--v:0.920"><small>3</small><b>1.20</b></div><div class="flow__b flow__b--over" style="--v:0.890"><small>4</small><b>1.16</b></div><div class="flow__b flow__b--over" style="--v:0.861"><small>5</small><b>1.12</b></div><div class="flow__b flow__b--over" style="--v:0.830"><small>6</small><b>1.08</b></div><div class="flow__b flow__b--over" style="--v:0.800"><small>7</small><b>1.04</b></div><div class="flow__b" style="--v:0.769"><small>8</small><b>1.00</b></div><div class="flow__win"><b>+1</b><small>win</small></div></div>
-<p class="flow__lab flow__lab--ink">Double DQN: small errors, up and down, that don't pile up</p>
+<p class="flow__lab flow__lab--ink">Double DQN: the errors go both ways so they mostly cancel</p>
 <div class="flow__row"><div class="flow__b" style="--v:0.723"><small>1</small><b>0.94</b></div><div class="flow__b" style="--v:0.731"><small>2</small><b>0.95</b></div><div class="flow__b" style="--v:0.723"><small>3</small><b>0.94</b></div><div class="flow__b" style="--v:0.738"><small>4</small><b>0.96</b></div><div class="flow__b" style="--v:0.754"><small>5</small><b>0.98</b></div><div class="flow__b" style="--v:0.746"><small>6</small><b>0.97</b></div><div class="flow__b" style="--v:0.769"><small>7</small><b>1.00</b></div><div class="flow__b" style="--v:0.769"><small>8</small><b>1.00</b></div><div class="flow__win"><b>+1</b><small>win</small></div></div>
 </div>
 </figure>
 
-You can see it in my 2018 runs too. Over the last 500 training games Double DQN won 57% against DQN's 35%.[^ddqn]
+My 2018 runs agree, Double DQN won 57% of the last 500 training games against DQN's 35%.[^ddqn]
 
 <figure class="fig">
-<p class="fig__k">My 2018 runs: points the network expected per moment, over training</p>
+<p class="fig__k">My 2018 runs: reward the network expected per moment, over training</p>
 <div class="chart chart--narrow">
 <svg viewBox="-18 0 338 190" role="img" aria-label="Average score the network expected per moment over training, 2018. Plain DQN starts very high (off the chart) and comes down to about 10; Double DQN starts near 0 and rises to about 9.">
-<text x="-8" y="89" text-anchor="middle" transform="rotate(-90 -8 89)">points expected</text>
+<text x="-8" y="89" text-anchor="middle" transform="rotate(-90 -8 89)">reward expected</text>
 <line class="ax" x1="30" x2="310" y1="164" y2="164"/><text x="25" y="168" text-anchor="end">0</text>
 <line class="ax" x1="30" x2="310" y1="89" y2="89"/><text x="25" y="93" text-anchor="end">10</text>
 <line class="ax" x1="30" x2="310" y1="14" y2="14"/><text x="25" y="18" text-anchor="end">20</text>
 <polyline class="ln" points="30.0,14.0 32.8,14.0 35.6,14.0 38.4,14.0 41.2,14.0 44.0,14.0 46.8,14.0 49.6,14.0 52.4,14.0 55.2,36.6 58.0,40.8 60.8,39.0 63.6,37.8 66.4,50.1 69.2,57.9 72.0,56.1 74.8,48.6 77.6,51.3 80.5,62.1 83.3,61.0 86.1,59.9 88.9,60.3 91.7,54.7 94.5,50.1 97.3,51.8 100.1,42.7 102.9,38.7 105.7,45.3 108.5,50.4 111.3,53.6 114.1,59.3 116.9,60.0 119.7,57.6 122.5,50.8 125.3,51.3 128.1,61.8 130.9,61.1 133.7,52.1 136.5,57.1 139.3,60.4 142.1,63.9 144.9,53.1 147.7,52.1 150.5,59.4 153.3,59.8 156.1,66.1 158.9,60.4 161.7,61.4 164.5,58.6 167.3,64.8 170.1,56.2 172.9,54.9 175.7,56.0 178.5,63.9 181.4,69.2 184.2,68.3 187.0,69.1 189.8,68.4 192.6,69.7 195.4,71.5 198.2,72.9 201.0,68.3 203.8,73.0 206.6,72.2 209.4,69.9 212.2,70.7 215.0,68.2 217.8,67.7 220.6,74.2 223.4,76.1 226.2,79.4 229.0,79.7 231.8,81.2 234.6,78.9 237.4,76.5 240.2,75.4 243.0,78.7 245.8,74.6 248.6,75.1 251.4,76.4 254.2,75.7 257.0,80.0 259.8,87.3 262.6,91.4 265.4,85.3 268.2,82.0 271.0,81.4 273.8,81.1 276.6,83.1 279.4,87.5 282.3,87.3 285.1,84.8 287.9,86.8 290.7,87.7 293.5,84.4 296.3,78.4 299.1,81.5 301.9,86.7 304.7,91.3 307.5,87.5 310.0,86.6"/>
 <polyline class="ln hi" points="30.0,168.2 32.8,167.7 35.6,165.8 38.4,163.9 41.2,162.6 44.0,161.4 46.8,160.1 49.6,159.1 52.4,158.3 55.2,157.6 58.0,157.1 60.8,156.9 63.6,156.7 66.4,155.8 69.2,154.8 72.0,153.1 74.8,152.3 77.6,151.9 80.5,150.8 83.3,149.2 86.1,147.9 88.9,146.7 91.7,146.2 94.5,144.8 97.3,142.8 100.1,141.1 102.9,139.7 105.7,138.4 108.5,137.5 111.3,135.9 114.1,134.7 116.9,133.0 119.7,132.6 122.5,132.0 125.3,132.1 128.1,131.4 130.9,131.3 133.7,131.0 136.5,130.3 139.3,129.8 142.1,129.0 144.9,127.6 147.7,126.7 150.5,125.6 153.3,124.9 156.1,124.1 158.9,122.2 161.7,120.2 164.5,118.5 167.3,117.7 170.1,117.9 172.9,118.0 175.7,118.6 178.5,118.1 181.4,119.1 184.2,118.6 187.0,118.0 189.8,114.9 192.6,114.8 195.4,115.5 198.2,115.5 201.0,113.5 203.8,112.4 206.6,110.5 209.4,110.9 212.2,112.3 215.0,111.6 217.8,111.9 220.6,110.2 223.4,108.7 226.2,107.8 229.0,107.5 231.8,108.1 234.6,106.3 237.4,106.2 240.2,104.9 243.0,105.0 245.8,104.9 248.6,103.8 251.4,102.0 254.2,102.0 257.0,102.4 259.8,103.2 262.6,100.7 265.4,99.3 268.2,98.3 271.0,98.8 273.8,100.2 276.6,101.4 279.4,99.6 282.3,98.0 285.1,100.1 287.9,101.0 290.7,99.9 293.5,97.8 296.3,96.8 299.1,97.6 301.9,98.6 304.7,96.8 307.5,95.2 310.0,96.1"/>
-<text x="34" y="10" class="ink">↑ DQN starts off the chart, up to 900</text><text x="310" y="34" text-anchor="end" class="ink">DQN: talks itself down</text>
-<text x="310" y="157" text-anchor="end" class="hi">Double DQN: rises as it learns</text>
+<text x="34" y="10" class="ink">↑ DQN starts off the chart, over 900</text><text x="310" y="34" text-anchor="end" class="ink">DQN: starts too high and comes down</text>
+<text x="310" y="157" text-anchor="end" class="hi">Double DQN: starts near 0 and goes up</text>
 <text x="30" y="184">start</text><text x="170" y="184" text-anchor="middle">training →</text><text x="310" y="184" text-anchor="end">end</text>
 </svg>
 </div>
@@ -106,7 +106,7 @@ The other trick it used was prioritised replay, which practises the moments it g
 
 To keep it fair every agent got the same 1 million game ticks my 2018 agent trained on, three runs each and 50 test games.[^results] The line up:
 
-- **Modern DQN**: the 2015 method, done properly.
+- **Modern DQN**: the 2015 method as it's usually implemented now.
 - **Rainbow** (2017): six improvements combined, including both of my tricks.
 - **A bigger network** (IMPALA, 2018), for both DQN and Rainbow: more layers, with shortcuts between them.
 - **4× updates**: DQN learning four times as often.
@@ -129,14 +129,14 @@ To keep it fair every agent got the same 1 million game ticks my 2018 agent trai
 <div class="ctl"><button type="button" aria-pressed="false">Add the button</button></div>
 </figure>
 
-Three of them beat my 2018 agent's 81%.[^runs3]
+Three edged past my 2018 agent's 81%, all within noise.[^runs3]
 
 ## What does holding one button get you?
 
 The next morning Claude ran the simplest policies it could against every game, random moves and every button held down for the whole game. Holding shoot wins 82% of Aliens games, and on levels it's never seen it's also 82%.
 
 <figure class="fig">
-<p class="fig__k">Same level, same seed: the aliens drift down into a stream of shots</p>
+<p class="fig__k">Same level and seed, the aliens drift down into the shots</p>
 <div class="vids">
 <figure class="vid"><figcaption><b>Holding shoot</b>, no learning: won, 42 points</figcaption><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-hold-shoot.png"><source src="/blog/gvgai/aliens-hold-shoot.webm" type="video/webm"><source src="/blog/gvgai/aliens-hold-shoot.mp4" type="video/mp4"></video></figure>
 <figure class="vid vid--hi"><figcaption><b>My 2018 agent</b>: won, 57 points</figcaption><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
@@ -152,9 +152,9 @@ On two of the other games it's even worse, the button wins every game. (On Chase
 | Wafer Thin Mints | any direction | 100% |
 | Chase | any | 0% |
 
-PPO hadn't really learned a strategy either. One PPO run played exactly the same 50 test games as holding shoot, game for game.
+PPO had learned nothing but the button. One PPO run played exactly the same 50 test games as holding shoot, game for game.
 
-So the bar for Aliens is really 82%, not 0%. My 2018 agent's 81% didn't prove anything on its own, and neither did half of the 2026 results above. I never checked this in 2018.
+So the bar for Aliens is 82% rather than 0%, which means my 2018 agent's 81% didn't prove anything on its own and nor did any of the 2026 win rates above. I never checked this in 2018.
 
 ## Did my 2018 agent learn anything?
 
@@ -189,7 +189,7 @@ With five times the practice, 5 million ticks or about 17 minutes a run, the slo
 | **Win/lose + 0.1 × score** | **60.1** | 98% | 94% |
 | Holding shoot, for reference | 36.3 | 82% | 82% |
 
-Win/lose alone wins every game on all three runs, including on two levels it never trained on where the button still gets 82%. Adding a tenth of the score as a tie-break keeps 98% and plays for points too. So reward what you want, it just needs more practice.
+Win/lose alone wins every game on all three runs, including on two levels it never trained on where the button still gets 82%. Adding a tenth of the score as a tie-break keeps 98% and plays for points too. So rewarding only what you want does work here, it just needed about five times the practice to get there.
 
 The other thing that helped was the network, the part that turns the screen into a score for each move. The 2015 one shrinks the screen down to 12 × 36 in one step, while IMPALA keeps a lot more detail for longer, with shortcuts that let each stage skip ahead. It's 2 to 3 times slower per tick but gets the best Aliens score, 62.5 points and 96% wins.
 
@@ -239,7 +239,7 @@ The other thing that helped was the network, the part that turns the screen into
 <text x="214" y="42" text-anchor="start" class="ink">win/lose only</text>
 <circle class="hi" cx="380" cy="32" r="6" tabindex="0"><title>Reward: win/lose + 0.1 × score: 60.1 points, 98% wins, 5M ticks</title></circle>
 <text x="372" y="24" text-anchor="end" class="hi">win/lose + score</text>
-<circle class="hi" cx="406" cy="38" r="6" tabindex="0"><title>DQN, bigger network: 62.5 points, 96% wins, 5M ticks</title></circle>
+<circle class="hi" cx="406" cy="38" r="6" tabindex="0"><title>DQN, bigger network: 62.5 points, 96% wins, up to 5M ticks</title></circle>
 <text x="414" y="54" text-anchor="start" class="hi">bigger network</text>
 <circle class="mk" cx="195" cy="43" r="4.5" tabindex="0"><title>PPO, win/lose only: 43.5 points, 94% wins, 5M ticks</title></circle>
 <text x="187" y="47" text-anchor="end" class="ink">PPO, win/lose</text>
@@ -249,7 +249,7 @@ The other thing that helped was the network, the part that turns the screen into
 </div>
 </figure>
 
-I won every game I played back in 2018 but only scored 43, so winning was never the hard part of Aliens, scoring is. And a tree search (MCTS), which simulates moves ahead with no training at all, still scores 78, well above every learning agent.
+I won every game I played back in 2018 but only scored 43, so the hard part of Aliens seems to be the score rather than winning. And a tree search (MCTS), which simulates moves ahead with no training at all, still scores 78, well above every learning agent.
 
 [^results]: All numbers from [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md), except the button on unseen levels (Aliens levels 3 and 4, 50 games), run for this post.
 [^ddqn]: From my 2018 training logs. My 2018 DQN had no older copy at all, so the gap is both changes together. [My report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf)
