@@ -4,18 +4,16 @@ import { defineCollection, z } from "astro:content";
 const blog = defineCollection({
   loader: glob({ base: "./src/content/blog", pattern: "**/*.md" }),
   schema: z.object({
+    // One short title, used everywhere: post page, blog index, homepage.
     title: z.string(),
-    // Optional trimmed title for the homepage terminal's `writing` pane, where
-    // a full headline does not fit. Falls back to `title`.
-    shortTitle: z.string().optional(),
-    description: z.string(),
+    // Optional one-line subtitle: the post's standfirst, its line on the
+    // blog index and homepage, and the page's meta description.
+    subtitle: z.string().optional(),
     // Optional headline number ("221MB", "£826.61"). Shown large in the
     // homepage writing section; posts without one show no figure.
     stat: z.string().optional(),
-    // Optional few words under the stat on the blog index ("95% smaller").
+    // Optional few words beside the stat on the blog index ("95% smaller").
     statLabel: z.string().optional(),
-    // Optional one-line hook on the blog index; falls back to `description`.
-    hook: z.string().optional(),
     // Optional headline figures shown as a ledger under the post title. The
     // last one is treated as the result and takes the accent.
     figures: z

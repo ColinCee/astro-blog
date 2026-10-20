@@ -19,7 +19,7 @@ type Props = CollectionEntry<"blog">["data"] & {
 };
 const {
   title,
-  description,
+  subtitle,
   pubDate,
   updatedDate,
   minutesRead,
@@ -142,7 +142,7 @@ const last = entries[entries.length - 1];
 
 <Base
   title={`${title} · Colin Cheung`}
-  description={description}
+  description={subtitle ?? title}
   ogType="article"
 >
   <article class="post">
@@ -151,7 +151,7 @@ const last = entries[entries.length - 1];
     <header class="post__head">
       <a class="post__back" href="/blog">// writing</a>
       <h1 class="post__title">{title}</h1>
-      <p class="post__lede">{description}</p>
+      {subtitle && <p class="post__lede">{subtitle}</p>}
       {
         figures && (
           <dl class="figs">
@@ -323,7 +323,7 @@ const last = entries[entries.length - 1];
     color: var(--ink);
     text-wrap: balance;
   }
-  /* Standfirst: the post's description, so the point lands before the body. */
+  /* Standfirst: the post's subtitle, so the point lands before the body. */
   .post__lede {
     margin: 1.1rem 0 0;
     max-width: 52ch;
@@ -1976,7 +1976,7 @@ const last = entries[entries.length - 1];
   }
   .prose .trow {
     display: grid;
-    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 4rem;
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 6.5rem;
     align-items: center;
     gap: 0.3rem 0.9rem;
   }
@@ -2009,6 +2009,12 @@ const last = entries[entries.length - 1];
     text-align: right;
     font-variant-numeric: tabular-nums;
   }
+  .prose .trow em small {
+    display: inline-block;
+    min-width: 2.6rem;
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
   .prose .trow--hi span b,
   .prose .trow--hi em {
     color: var(--accent-soft);
@@ -2023,6 +2029,97 @@ const last = entries[entries.length - 1];
     .prose .trow span {
       grid-column: 1 / -1;
     }
+  }
+  /* Splits: bars cut into parts, one row each, the row name at the left,
+     each part's time inside it, and one key above. Parts are shares of the
+     same total, so rows compare to scale; a part too thin for its time
+     (--thin) has it written after the bar (.split__after). Estimates
+     (--est) are drawn lighter. */
+  .prose .splits {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.7rem 0.9rem;
+  }
+  .prose .splits__key {
+    display: flex;
+    gap: 1rem;
+    margin: -0.2rem 0 0.8rem;
+    font-size: 0.6875rem;
+    color: var(--muted);
+  }
+  .prose .splits__key span::before {
+    content: "";
+    display: inline-block;
+    width: 0.6rem;
+    height: 0.6rem;
+    margin-right: 0.35rem;
+    border-radius: 2px;
+    background: var(--bar);
+    vertical-align: -0.05rem;
+  }
+  .prose .splits__key .split--hi::before {
+    background: var(--accent);
+  }
+  .prose .splits__k {
+    font-size: 0.8rem;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .prose .splits__k small {
+    display: block;
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .prose .split {
+    display: flex;
+    gap: 2px;
+    min-width: 0;
+  }
+  .prose .split i {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    height: 1.8rem;
+    padding: 0 0.5rem;
+    overflow: hidden;
+    background: var(--bar);
+    border-radius: 2px;
+    font-style: normal;
+    font-size: 0.8rem;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .prose .split i b {
+    font-weight: 700;
+  }
+  .prose .split i em {
+    margin-left: auto;
+    font-style: normal;
+  }
+  .prose .split .split--hi {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .prose .split .split--thin {
+    min-width: 3px;
+    padding: 0;
+  }
+  .prose .split__after {
+    align-self: center;
+    padding-left: 0.5rem;
+    font-style: normal;
+    font-size: 0.8rem;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .prose .split .split--est {
+    background: color-mix(in oklch, var(--bar) 55%, transparent);
+  }
+  .prose .split .split--hi.split--est {
+    background: color-mix(in oklch, var(--accent) 45%, transparent);
+    color: var(--ink);
   }
   /* Flow (widget): a game as a row of equal decision boxes ending in the
      win; each whole box is shaded by its score (--v, 0..1). */

@@ -1,10 +1,8 @@
 ---
-title: "I Sued easyJet for £544.92. I Got £826.61."
-shortTitle: "I sued easyJet and won"
-description: "It cost £127 to file and I didn't use a lawyer. easyJet sent in a defence denying everything, then nobody showed up to the hearing."
+title: "I Sued easyJet and Won"
+subtitle: "They lodged a defence denying everything, then didn't turn up to argue it."
 stat: "£127 → £826.61"
 statLabel: "one hearing"
-hook: "They lodged a defence denying everything, then didn't turn up to argue it."
 figures:
   - label: "We were out"
     value: "£544.92"
