@@ -11,22 +11,21 @@ figures:
 pubDate: "Oct 20 2026"
 ---
 <figure class="fig" data-widget="qview" data-src="/blog/gvgai/aliens-2018-agent.json" data-stack="/blog/gvgai/aliens-2018-stacks.png">
-<p class="fig__k">My 2018 agent, retrained in 2026. Every 4 frames it scores its 3 moves and plays the top one.</p>
 <div class="vids">
 <figure class="vid"><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png" aria-label="My 2018 agent playing a game of Aliens, which it wins with 57 points"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
 </div>
+<p>Below are how much total future reward it expects from each move. A Deep Q Network is a neural network that estimates the <a href="https://en.wikipedia.org/wiki/Q-learning">Q function</a>: the reward it expects from each move.</p>
 <div class="qbars" aria-live="off"></div>
 <div class="player"><button type="button" data-play aria-pressed="true" aria-label="Pause"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9-5.5z"/><path class="i-pause" d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/></svg></button><button type="button" data-step="-1" aria-label="Previous decision"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button><button type="button" data-step="1" aria-label="Next decision"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button><span class="player__track"><input type="range" data-scrub min="0" max="0" value="0" step="1" aria-label="Decision"></span><output data-at></output></div>
 <div class="peek">
-<p class="fig__k">It sees these 4 frames, <span data-seen-ticks></span>, then plays <b data-held-name>shoot</b> for the next 4. Tap a frame to enlarge it.</p>
+<p class="fig__k">The agent gets given 4 frames as input, <span data-seen-ticks></span>, then plays <b data-held-name>shoot</b> for the next 4. Tap a frame to enlarge it.</p>
 <div class="peek__seen" data-seen><i></i><i></i><i></i><i></i></div>
 <div class="peek__zoom" data-zoom hidden><i></i><small></small></div>
 </div>
 </figure>
 
-In 2018, for my final year project at Strathclyde University, I wrote an AI that teaches itself to play video games from the screen. Above, it's playing Aliens, a Space Invaders clone. I handed the report and code to Claude and told it to find ways to improve it. Now it trains in about 11 minutes instead of 12 hours, with the same results.[^speed]
+In 2018, for my final year project at the University of Strathclyde, inspired by the success of Google DeepMind's [DQN on Atari games](https://www.nature.com/articles/nature14236) I trained my own agent.[^methods] The above video, is playing Aliens, a Space Invaders clone from the [GVGAI](https://github.com/GAIGResearch/GVGAI) project.[^replay] 
 
-The bars are its scores: how much reward it expects from each move, from now to the end of the game.[^replay] It plays the top one. It's DQN, DeepMind's 2015 method, plus two newer tricks.[^methods] Getting those scores right takes about a million frames of practice.
 
 ## 2018: the cost of slow feedback loops
 
@@ -37,20 +36,20 @@ The bars are its scores: how much reward it expects from each move, from now to 
 <div class="runs runs--axis"><span></span><div><em>0</em><em>3 h</em><em>6 h</em><em>9 h</em><em>12 h</em></div><b></b></div>
 </figure>
 
-In 2018 there were no plug-and-play versions of these algorithms, so I wrote it all from the papers and other people's blog posts: about 800 lines of Python.
+In 2018 there weren't any easily plug and play versions of these algorithms for GVGAI, so I wrote it all from the papers and other people's blog posts, totalling [about 850 lines of Python](https://github.com/ColinCee/GVGAI-Dissertation/tree/2018-ddqn-per/src/QLearner).
 
-[My report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf) said training "took approximately 12 hours. This is problematic when attempting to test different parameters".
+[In my report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf) I said training "took approximately 12 hours. This is problematic when attempting to test different parameters, ideas or network architectures".
 
-It was. Every new idea waited on a full training run, so I'd leave the PC running overnight, or whenever I went out.
+It truly was. Every new idea needed on a full training run to verify, so I'd leave the PC running overnight, or whenever I went out. Imagine wanting to change one hyperparameter but you need a whole day to validate it, well thats what happened and it forced me to choose experiments very carefully.
 
-## The results still hold
+## The training runs still seem comparable
 
-Claude rebuilt it on today's software with every setting kept, and trained it three times, 2,000 games each.
+If a port is correct then the new results should be comparable to my old results, and indeed they were. 
 
 <figure class="fig" data-widget="lines">
 <p class="fig__k">Aliens, wins so far: my two 2018 runs against three 2026 runs</p>
 <div class="chart chart--fluid">
-<svg viewBox="-18 0 338 222" role="img" aria-label="Wins so far over 2,000 training games. My 2018 run ends at 876 wins; the three 2026 runs end between 792 and 869.">
+<svg viewBox="-18 0 338 222" role="img" aria-label="Wins so far over 2,000 training games. My two 2018 runs end at 876 and 762 wins; the three 2026 runs end between 792 and 869.">
 <text x="-8" y="95" text-anchor="middle" transform="rotate(-90 -8 95)">wins so far</text>
 <line class="ax" x1="34" x2="312" y1="180" y2="180"/><text x="29" y="184" text-anchor="end">0</text>
 <line class="ax" x1="34" x2="312" y1="123" y2="123"/><text x="29" y="127" text-anchor="end">300</text>
@@ -69,58 +68,59 @@ Claude rebuilt it on today's software with every setting kept, and trained it th
 <script type="application/json">{"x":{"max":2000,"ticks":[0,500,1000,1500,2000],"title":"training games →"},"y":{"max":900,"ticks":[0,300,600,900],"title":"wins so far"},"band":[[1,0,0],[40,0,2],[80,2,7],[120,3,11],[160,4,14],[200,7,15],[240,10,18],[280,14,21],[320,15,26],[360,17,32],[400,20,34],[440,24,37],[480,27,45],[520,38,51],[560,45,57],[600,53,62],[640,60,73],[680,72,87],[720,81,98],[760,92,114],[800,102,130],[840,113,143],[880,126,156],[920,140,171],[960,157,184],[1000,171,205],[1040,187,224],[1080,205,241],[1120,225,265],[1160,249,293],[1200,272,308],[1240,294,331],[1280,319,353],[1320,345,377],[1360,367,400],[1400,390,426],[1440,412,456],[1480,440,480],[1520,463,506],[1560,486,534],[1600,515,564],[1640,550,590],[1680,577,617],[1720,598,645],[1760,625,673],[1800,654,707],[1840,681,738],[1880,706,771],[1920,739,804],[1960,765,838],[2000,792,869]],"line":[[1,0],[40,3],[80,3],[120,6],[160,9],[200,9],[240,12],[280,14],[320,15],[360,21],[400,29],[440,37],[480,42],[520,47],[560,51],[600,59],[640,69],[680,78],[720,86],[760,98],[800,114],[840,130],[880,153],[920,169],[960,193],[1000,213],[1040,236],[1080,258],[1120,285],[1160,310],[1200,331],[1240,362],[1280,385],[1320,406],[1360,432],[1400,452],[1440,477],[1480,500],[1520,529],[1560,560],[1600,589],[1640,614],[1680,640],[1720,671],[1760,695],[1800,725],[1840,757],[1880,785],[1920,815],[1960,847],[2000,876]],"dots":[[0,0],[500,20],[1000,131],[1500,421],[2000,762]],"legend":[{"kind":"line","text":"2018, run 1: 876"},{"kind":"dots","text":"2018, run 2: 762"},{"kind":"band","text":"2026 ×3: 792–869"}]}</script>
 </figure>
 
-All three land between my two 2018 runs,[^runs] which differ from each other by more than the 2026 runs do. Not bad for something I wrote as an undergrad from papers and blog posts.
+All the new training runs produced similar performance to my recorded values,[^runs] I'm genuinely surprised back in 2018 what I wrote still holds up, as an undergrad who had yet to start my SWE career this was quite an accomplishment.
 
-Claude did find two real bugs in my code. Fixing them barely changed the result.[^bugs]
+Claude did find two real bugs in my code but fixing them barely changed the result.[^bugs]
 
-## Where the 12 hours went
-
-Mostly waiting, not learning.
+## So why did it take so long?
 
 <figure class="fig">
-<p class="fig__k">One frame of the game in 2018: 29 ms, split by what each fix saved</p>
-<div class="tlist">
-<div class="trow trow--wait"><span><b>Pause</b> so people could watch <small>change 1</small></span><i style="--w:1.000"></i><em>16 ms</em></div>
-<div class="trow "><span><b>Image files</b> saved, then read back <small>changes 2, 3, 6, 7</small></span><i style="--w:0.708"></i><em>11 ms</em></div>
-<div class="trow "><span><b>Other</b> small overheads <small>changes 4, 5, 8, 9</small></span><i style="--w:0.093"></i><em>1.5 ms</em></div>
-<div class="trow trow--hi"><span><b>The game</b> itself</span><i style="--w:0.025"></i><em>0.4 ms</em></div>
+<p class="fig__k">Where one run's time goes, to scale</p>
+<p class="splits__key"><span class="split--hi">Game</span><span>Agent</span></p>
+<div class="splits">
+<span class="splits__k">2018<small>estimate</small></span><div class="split"><i class="split--hi split--est" style="flex-basis:66.67%"><b>~8 h</b></i><i class="split--est" style="flex-basis:33.33%"><b>~4 h</b></i></div>
+<span class="splits__k">2026<small>today's PC</small></span><div class="split"><i class="split--hi split--thin" style="flex-basis:0.89%"></i><i class="split--thin" style="flex-basis:0.60%"></i><em class="split__after"><b>6.4 + 4.3 min</b></em></div>
 </div>
 </figure>
 
-A newer graphics card wouldn't have touched any of that: all 29 ms happened before the network saw the frame, and all but 0.4 ms of it was overhead. Over a million frames, that's about 8 of the 12 hours.
+Hardware upgrades, software updates to python, PyTorch in place of Keras, and feeding the network in batches instead of one sample at a time dropped training time by about 4 hours.[^speed]
 
-Not everything is fair: 2018 ran on a GTX 980, today on an RTX 4090. But the game side was timed on today's PC from the start. My 2018 engine still crawled at 34 frames a second on it, and the nine changes below took it to 2,590 on the same hardware.
+The rest was the GVGAI engine itself being inefficient.
 
-Claude cut them out one change at a time. Here are the nine, in order:
-
-<figure class="fig ladder" data-widget="ladder" data-base="The 2018 engine|34 frames/s, with a 25 ms pause and image files on every frame">
-<p class="fig__k">One game, sped up change by change. Tap a step.</p>
-<svg viewBox="0 0 320 190" role="img" aria-label="Step chart: one game went from 34 to 2,590 frames per second in nine changes; the biggest was sending raw pixels instead of PNG files, 274 to 1,017."></svg>
-<p data-out><b>Raw pixels instead of PNG files</b> <span>274 → 1,017 frames/s, <strong>×3.7</strong></span></p>
-<script type="application/json">[{"name": "Removed a 25 ms pause per frame", "before": 34, "after": 75, "note": "Pause. It paced the game for people watching. My 2018 runs had it too."}, {"name": "Frames decoded in memory", "before": 75, "after": 136, "note": "Image files. Instead of written to disk and read back."}, {"name": "Engine sends the image it already made", "before": 136, "after": 200, "note": "Image files. Instead of saving it, reading it back and encoding it again."}, {"name": "Sprites scaled once", "before": 214, "after": 233, "note": "Other. Instead of on every draw."}, {"name": "One write per message", "before": 233, "after": 274, "note": "Other. Buffered output, sent in one go."}, {"name": "Raw pixels instead of PNG files", "before": 274, "after": 1017, "note": "Image files. No image encoded, written or read per frame. The biggest jump."}, {"name": "Raw bytes instead of text", "before": 1017, "after": 1738, "note": "Image files. The frame was sent as text inside JSON: 44% of the game server's time."}, {"name": "No sprite copies the agent never reads", "before": 2100, "after": 2400, "note": "Other. Only tree-search agents need them."}, {"name": "Drawn straight into one reused image", "before": 2400, "after": 2590, "note": "Other. Then the work moved to the training side."}]</script>
+<figure class="fig">
+<p class="fig__k">One frame of the old game: 29 ms, 99% of it overhead</p>
+<div class="tlist">
+<div class="trow trow--wait"><span><b>Pause</b> for people watching</span><i style="--w:1.000"></i><em>16 ms<small>55%</small></em></div>
+<div class="trow "><span><b>Image files</b> written, read back</span><i style="--w:0.708"></i><em>11 ms<small>39%</small></em></div>
+<div class="trow "><span><b>Other</b> overheads</span><i style="--w:0.093"></i><em>1.5 ms<small>5%</small></em></div>
+<div class="trow trow--hi"><span><b>The game</b> itself</span><i style="--w:0.025"></i><em>0.4 ms<small>1%</small></em></div>
+</div>
 </figure>
 
-Once the game stopped being the bottleneck, today's GPU did the rest: 11 minutes. Today's agents go further still, at 3 to 11 minutes a run.
+A faster feedback loop means more experiments and different approaches. This project trained 241 times, in 15 hours of training. At 2018 speed, that's about 280 days. Bear in mind the entire research and write up of the report took 90 days.
 
-## What that buys
+## How did Claude improve this?
 
-This project trained 241 times, in 15 hours of training. At 2018 speed, that's about 280 days.
-
-In 2018 every idea cost a night. Now it costs a coffee break.
-
-## How
-
-Claude found each speed-up in the same loop:[^improvements]
+Loop engineering is something modern agents are good at and Claude found most of the speed-ups in the following loop:[^improvements]
 
 1. **Profile** the game to see where the time goes.
 2. **Change one thing.**
 3. **Time it** on the same benchmark game.
 4. **Replay recorded games**, failing if a single pixel differs, so it still plays exactly the same.
 
+Claude cut the overheads out one change at a time. Here are the nine, in order:
 
-[^speed]: 1,550 frames a second on an RTX 4090 with the PC to itself; 23 to 34 minutes with other work running. The code and every number: [the dissertation repo](https://github.com/ColinCee/GVGAI-Dissertation).
-[^methods]: DQN, Double DQN and prioritised replay, compared on Aliens; the final agent also played three other GVGAI games. Dueling networks didn't help.
-[^bugs]: Rewards credited one move late, and prioritised replay missing its correction weights. Fixed: 48.2 points against 50.1.
-[^improvements]: Timed on one benchmark game; each slice of the 29 ms is the time per frame before a change minus after. The benchmark was tightened partway, so the steps don't always line up. 30 changes in all.
-[^replay]: The 2026 rebuild's first training run, on Aliens level 0. The bars are the network's own values at each decision.
-[^runs]: Run 1: my 2018 training log, first 2,000 games. Run 2: the results table in my report, 4.0, 22.2, 58.0 and 68.2% wins per 500 games.
+<figure class="fig ladder" data-widget="ladder" data-base="The 2018 engine|34 frames/s">
+<p class="fig__k">One game, sped up change by change.</p>
+<svg viewBox="0 0 320 190" role="img" aria-label="Step chart: one game went from 34 to 2,590 frames per second in nine changes; the biggest was sending raw pixels instead of PNG files, 274 to 1,017."></svg>
+<p data-out><b>Raw pixels instead of PNG files</b> <span>274 → 1,017 frames/s, <strong>×3.7</strong></span></p>
+<script type="application/json">[{"name": "Removed the pause", "before": 34, "after": 75, "note": "Pause. It paced the game for people watching. My 2018 runs had it too."}, {"name": "Frames decoded in memory", "before": 75, "after": 136, "note": "Image files. Instead of written to disk and read back."}, {"name": "Engine sends the image it already made", "before": 136, "after": 200, "note": "Image files. Instead of saving it, reading it back and encoding it again."}, {"name": "Sprites scaled once", "before": 214, "after": 233, "note": "Other. Instead of on every draw."}, {"name": "One write per message", "before": 233, "after": 274, "note": "Other. Buffered output, sent in one go."}, {"name": "Raw pixels instead of PNG files", "before": 274, "after": 1017, "note": "Image files. No image encoded, written or read per frame. The biggest jump."}, {"name": "Raw bytes instead of text", "before": 1017, "after": 1738, "note": "Image files. The frame was sent as text inside JSON: 44% of the game server's time."}, {"name": "No sprite copies the agent never reads", "before": 2100, "after": 2400, "note": "Other. Only tree-search agents need them."}, {"name": "Drawn straight into one reused image", "before": 2400, "after": 2590, "note": "Other. Then the work moved to the training side."}]</script>
+</figure>
+
+
+[^speed]: RTX 4090, PC otherwise idle; 23 to 34 minutes with other runs sharing it. The old game alone runs at 34 frames a second on today's PC; the agent's time is a full run minus the game alone. [Benchmarks](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/IMPROVEMENTS.md)
+[^methods]: DQN with Double DQN and prioritised replay. [My report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf)
+[^bugs]: Rewards credited one move late; replay missing its correction weights. 48.2 points after fixing (one run), against 50.1 with the bugs kept (three runs). [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^improvements]: Nine of 30 changes sped up a single game. The benchmark changed partway, so the steps don't always join up. [Full list](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/IMPROVEMENTS.md)
+[^replay]: My 2018 agent as rebuilt in 2026: its first training run, Aliens level 0. [Code](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2026-revival)
+[^runs]: Run 1: my 2018 training log. Run 2: my report's results table. [Data](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2026-revival/results/2018)

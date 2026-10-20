@@ -363,7 +363,7 @@ homepage terminal window's ambient lift, nothing else.
   a log-scale bar of the multiplier; `.gain--hi` is the headline row), `.arch` / `.cube` (a network as 3D blocks sized
   by each layer's shape; a face can carry a real frame as an inline background, and `--slices` rules the depth faces into that many layers), `.flow` (a game as a row of equal decision boxes ending in the win, each shaded by its score; `.flow__b--over` hatches a score above the true value), `.player` (one bar of recording controls split by dividers: play/pause, a chevron each way for one decision, a scrubber and the position), `.tlist` / `.trow` (a timing ladder:
   one row per part, explanation beside the bar, time at the end), `.runs` (blocks on a
-  shared time axis: how long each run takes and how many fit), `.loop` (a process diagram with a dot running
+  shared time axis: how long each run takes and how many fit), `.splits` (bars cut into parts, one row each, time inside each part, one key above; `--thin` for a sliver whose time is written after the bar (`.split__after`), `--est` drawn lighter for an estimate), `.loop` (a process diagram with a dot running
   each loop; accent outlines mark the parts the post is about), and `data-grow` (`.cmp` bars grow in once
   when seen).
 - **Interactive figures** carry `data-widget` and load `src/scripts/widgets.ts`
