@@ -1,7 +1,6 @@
 ---
-title: "Beating My 2018 Agent, and Holding One Button"
-shortTitle: "Beating My 2018 Agent"
-description: "With the 2018 code running in minutes, Claude tried today's methods against it. Holding one button turned out to be the real bar."
+title: "Beating My 2018 Agent"
+subtitle: "Holding one button turned out to be the real bar."
 stat: "82% → 100%"
 figures:
   - label: "Hold shoot, no learning"

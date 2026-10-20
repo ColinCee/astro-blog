@@ -19,7 +19,7 @@ type Props = CollectionEntry<"blog">["data"] & {
 };
 const {
   title,
-  description,
+  subtitle,
   pubDate,
   updatedDate,
   minutesRead,
@@ -142,7 +142,7 @@ const last = entries[entries.length - 1];
 
 <Base
   title={`${title} · Colin Cheung`}
-  description={description}
+  description={subtitle ?? title}
   ogType="article"
 >
   <article class="post">
@@ -151,7 +151,7 @@ const last = entries[entries.length - 1];
     <header class="post__head">
       <a class="post__back" href="/blog">// writing</a>
       <h1 class="post__title">{title}</h1>
-      <p class="post__lede">{description}</p>
+      {subtitle && <p class="post__lede">{subtitle}</p>}
       {
         figures && (
           <dl class="figs">
@@ -323,7 +323,7 @@ const last = entries[entries.length - 1];
     color: var(--ink);
     text-wrap: balance;
   }
-  /* Standfirst: the post's description, so the point lands before the body. */
+  /* Standfirst: the post's subtitle, so the point lands before the body. */
   .post__lede {
     margin: 1.1rem 0 0;
     max-width: 52ch;

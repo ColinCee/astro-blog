@@ -74,8 +74,7 @@ const companies = [
 ];
 
 // Right-bottom pane — latest writing, as readable titles. Read from the blog
-// collection so publishing a post updates the homepage automatically; posts set
-// `shortTitle` when the full headline is too long for the pane.
+// collection so publishing a post updates the homepage automatically.
 const latest = (await getCollection("blog"))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
@@ -85,7 +84,7 @@ const latest = (await getCollection("blog"))
 // as a mono chip.
 const [lead, ...rest] = latest.map((p) => ({
   title: p.data.title,
-  description: p.data.description,
+  subtitle: p.data.subtitle,
   stat: p.data.stat,
   date: p.data.pubDate.toLocaleDateString("en-US", {
     month: "short",
@@ -101,7 +100,7 @@ const posts: {
   all?: boolean;
 }[] = [
   ...latest.map((p) => ({
-    title: p.data.shortTitle ?? p.data.title,
+    title: p.data.title,
     date: p.data.pubDate.toLocaleDateString("en-US", {
       month: "short",
       year: "numeric",
@@ -511,7 +510,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
                   {lead.date}
                 </span>
                 <span class="lead__title">{lead.title}</span>
-                <span class="lead__desc">{lead.description}</span>
+                {lead.subtitle && <span class="lead__desc">{lead.subtitle}</span>}
                 <span class="lead__foot">
                   {lead.stat && <span class="chip">{lead.stat}</span>}
                   <span class="feat__go">
@@ -529,7 +528,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
                     <span class="row__date">{p.date}</span>
                     <span class="row__body">
                       <span class="row__title">{p.title}</span>
-                      <span class="row__desc">{p.description}</span>
+                      {p.subtitle && <span class="row__desc">{p.subtitle}</span>}
                     </span>
                     {p.stat && <span class="chip">{p.stat}</span>}
                   </a>

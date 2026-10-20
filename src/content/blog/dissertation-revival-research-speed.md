@@ -1,7 +1,6 @@
 ---
-title: "Eleven Weeks of Research in Two Days"
-shortTitle: "Eleven Weeks in Two Days"
-description: "What it was like handing my 2018 dissertation to Claude: who did what, what it found that I never checked, and what's still unsolved."
+title: "Eleven Weeks in Two Days"
+subtitle: "Handing my 2018 dissertation to Claude: who did what, and what's still unsolved."
 stat: "241 runs in 28 h"
 figures:
   - label: "2018, coding"
