@@ -1,34 +1,17 @@
 ---
-title: "How Claude redid my 2018 dissertation in 28 hours"
-subtitle: "What handing my old dissertation to Claude was actually like."
-stat: "11 weeks → 28 h"
-statLabel: "start to finish"
-figures:
-  - label: "2018, coding"
-    value: "11 weeks"
-  - label: "2026, with Claude"
-    value: "28 h"
+title: "The least informed person on my own dissertation"
+subtitle: "Claude didn't trust my 2018 results, and it was right not to."
+stat: "6 push-backs"
+statLabel: "in 2½ hours"
 pubDate: "Oct 22 2026"
 ---
-<figure class="fig" data-grow>
-<p class="fig__k">Start to finish, 2018 against 2026</p>
-<div class="split">
-<div><p class="fig__k">2018: me, a GTX 980</p>
-<div class="cmp"><span>Time</span><i style="--w:1"></i><b>11 weeks</b></div>
-<div class="cmp"><span>Commits</span><i style="--w:0.6"></i><b>56</b></div>
-<div class="cmp"><span>Runs per idea</span><i style="--w:0.33"></i><b>1</b></div></div>
-<div><p class="fig__k">2026: me, Claude, an RTX 4090</p>
-<div class="cmp cmp--after"><span>Time</span><i style="--w:0.015"></i><b>28 h</b></div>
-<div class="cmp cmp--after"><span>Commits</span><i style="--w:1"></i><b>94</b></div>
-<div class="cmp cmp--after"><span>Runs per idea</span><i style="--w:1"></i><b>3</b></div></div>
-</div>
-</figure>
+When I handed my 2018 dissertation to Claude I expected it to update the code and maybe tidy up my results. What I didn't expect was for it to not trust them. The morning after, while I was asleep, it checked what you get by just holding the shoot button in Aliens, and it's 82%, basically the same as my agent's 81%. In 2018 I never thought to check that.[^results]
 
-In 2018 my dissertation took eleven weeks, from the first commit on 11 January to handing the report in on 28 March, and almost every idea only got one run because each run took a night. This October I handed it all to Claude and it did the lot again in about 28 hours, from a Sunday morning to Monday afternoon with the night in between. It rebuilt the code, reproduced my results, tried the main methods that came out after, and found a flaw in how I'd measured it all. I didn't write any of the code myself.[^results]
+[Part 1](/blog/dissertation-revival-speed/) covers how training got 65× faster. This one is about what the 28 hours of working with it were actually like.
 
-[Part 1](/blog/dissertation-revival-speed/) covers how it got 65× faster. This one is about what working like that was actually like.
+## What did I actually ask for?
 
-## What did the two days look like?
+On a Sunday morning I gave it my report and the old code, and then mostly let it run, stepping in at a handful of points:
 
 <figure class="fig">
 <p class="fig__k">The 28 hours: what Claude worked on, and eight turning points from me</p>
@@ -67,6 +50,16 @@ In 2018 my dissertation took eleven weeks, from the first commit on 11 January t
 7. Told it to run the reward it recommended on all four games.
 8. Asked if it was enough to stop, then asked for these posts.
 
+## Why did I keep having to tell it not to stop?
+
+Left alone it would wrap up after the obvious wins. Within a few hours it was happy with the speed and ready to move on, so I pushed back six times in about 2½ hours, starting with "You stopped too early with the optimizations". By then a run was already down from 12 hours to 34 minutes, but the rest of part 1, down to 11 minutes, only came after I pushed. When I went to bed I told it "don't stop early", and it queued runs all night.
+
+## Why didn't it trust the results?
+
+This was the bit I didn't see coming. In the first hour it compared my 2018 agent against random play, which I'd done in 2018 too. But overnight one of its new agents, PPO, played exactly the same 50 test games as just holding shoot, game for game. So the next morning it ran the simplest policies it could against every game, random moves and every button held down the whole time. Holding shoot wins 82% of Aliens games, and on two of the other games one button wins every single game.
+
+That means my 2018 agent's 81% didn't prove much on its own, and neither did most of the new results. My agent did learn something, it scores 50 points a game against the button's 36, but without that check I'd never have known which of my win rates meant anything.
+
 ## So who actually did what?
 
 <figure class="fig">
@@ -78,9 +71,7 @@ In 2018 my dissertation took eleven weeks, from the first commit on 11 January t
 </div>
 </figure>
 
-The thing I did that mattered most was probably just not letting it stop, left alone it would wrap up after the obvious wins. The first 21× in part 1 came before I pushed back, but the rest of it, and all the work on training speed, came after. On its side, it kept checking the results instead of trusting them, random play was its idea in the first hour and so was the one-button check the next morning, which is where the 82% for holding shoot came from.
-
-I also spent about an hour trying to work out why it had picked Rainbow, which is a strange position to be in on your own dissertation.
+It wrote all of the code, came up with the checks I hadn't done and planned what to run overnight. About a third of my messages were me trying to learn things like PPO and IMPALA, and I spent about an hour working out why it had picked Rainbow, which is a strange position to be in on your own dissertation.
 
 ## What's still unsolved?
 
@@ -108,15 +99,11 @@ Two of the problems need the agent to go looking for things, it can't learn abou
 <p class="fig__k">Same level and seed, the best learning agent against MCTS</p>
 <div class="vids">
 <figure class="vid"><figcaption><b>Best learning agent</b>, up to 5M ticks: won, 60 points</figcaption><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-dqn-impala.png"><source src="/blog/gvgai/aliens-dqn-impala.webm" type="video/webm"><source src="/blog/gvgai/aliens-dqn-impala.mp4" type="video/mp4"></video></figure>
-<figure class="vid vid--hi"><figcaption><b>MCTS</b>, no training, 50 simulations a move: won, 71 points</figcaption><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-mcts.png"><source src="/blog/gvgai/aliens-mcts.webm" type="video/webm"><source src="/blog/gvgai/aliens-mcts.mp4" type="video/mp4"></video></figure>
-</div>
-</figure>
 
 The next thing to try would be an exploration bonus, rewarding the agent for seeing something new, which seems to be what people normally try for this.
 
-## What if I'd had this in 2018?
+## What would I do differently?
 
-I'd have had three runs of everything instead of one, and the noise between runs is 10 to 17 percentage points of wins, so it was probably hiding what actually worked. I'd probably also have had the button baseline and known which of my win rates meant anything, and the eleven weeks wouldn't have been mostly waiting on training.
-
+Even without the speed, I'd run everything three times instead of once, since the noise between runs is 10 to 17 percentage points of wins and that was probably hiding what actually worked. And I'd check the simplest possible baseline first, holding one button, before trusting any win rate. It doesn't even need any training, and I never did it.
 
 [^results]: Numbers from [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md). Timeline and quotes from my Claude Code session log, 18 and 19 October 2026.

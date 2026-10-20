@@ -2,6 +2,7 @@
 import { type CollectionEntry, getCollection } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
 import { render } from 'astro:content';
+import { readMinutes } from '../../scripts/read-minutes';
 
 export async function getStaticPaths() {
 	const posts = (await getCollection('blog')).sort(
@@ -20,8 +21,7 @@ type Props = { post: CollectionEntry<'blog'>; newer: Adjacent; older: Adjacent }
 
 const { post, newer, older } = Astro.props;
 const { Content, headings } = await render(post);
-const words = post.body?.trim().split(/\s+/).length ?? 0;
-const minutesRead = Math.max(1, Math.round(words / 200));
+const minutesRead = readMinutes(post.body);
 ---
 
 <BlogPost
