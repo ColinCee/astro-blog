@@ -6,9 +6,9 @@ const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
-// Each index row comes from the post's frontmatter: `shortTitle` (else the
-// title), `stat` with an optional `statLabel`, and `hook` (else the
-// description). Every post gets the same row; nothing is listed here.
+// Each index row comes from the post's frontmatter: `title`, `stat` with an
+// optional `statLabel`, and `subtitle`. Every post gets the same row; nothing
+// is listed here.
 
 const readMin = (body?: string) =>
   Math.max(1, Math.round((body?.trim().split(/\s+/).length || 0) / 200));
@@ -16,8 +16,8 @@ const readMin = (body?: string) =>
 const entries = posts.map((post) => {
   return {
     href: `/blog/${post.id}/`,
-    title: post.data.shortTitle ?? post.data.title,
-    hook: post.data.hook ?? post.data.description,
+    title: post.data.title,
+    hook: post.data.subtitle,
     year: post.data.pubDate.getFullYear(),
     mon: post.data.pubDate.toLocaleDateString("en-US", { month: "short" }),
     read: readMin(post.body),

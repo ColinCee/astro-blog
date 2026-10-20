@@ -1,10 +1,8 @@
 ---
-title: "From 4.5GB to 221MB: A Story about Parquet"
-shortTitle: "A story about Parquet"
-description: "I converted a 4.5GB JSONL export to Parquet and it came out at 221MB. Same data. This is where the other 95% went."
+title: "A Story about Parquet"
+subtitle: "What columnar storage is doing under the hood."
 stat: "4.5 GB → 221 MB"
 statLabel: "95% smaller"
-hook: "What columnar storage is doing under the hood."
 pubDate: "Sep 03 2025"
 ---
 At work I pull data-lake exports down from S3 most days to debug production issues. Each one is a JSONL file of about 4.5GB, around 1.5 million records, and it takes over ten minutes to download.

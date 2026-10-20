@@ -1,9 +1,8 @@
 ---
 title: "CI Faster Than GitHub's, for Free"
-description: "Faster than GitHub's runner, no minutes used, one throwaway VM per job."
+subtitle: "Faster than GitHub's runner, with every job in a throwaway VM."
 stat: "26 s → 20 s"
 statLabel: "vs GitHub"
-hook: "Faster than GitHub's runner, with every job in a throwaway VM."
 pubDate: "Oct 16 2026"
 ---
 ## Results

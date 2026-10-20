@@ -308,8 +308,8 @@ homepage terminal window's ambient lift, nothing else.
 
 ### Writing (homepage section)
 - `// writing`: the newest post is a lead panel (same flat surface as the
-  tiles) with a filled `latest` tag, title, description and a stat
-  chip; the remaining posts are hairline rows (mono date, title, description, chip)
+  tiles) with a filled `latest` tag, title, subtitle and a stat
+  chip; the remaining posts are hairline rows (mono date, title, subtitle, chip)
   ending in an `All posts` row.
 - **Stat chip** (`.chip`): the post's `stat` frontmatter as a mono pill on a 10%
   accent tint. Posts without a `stat` show no chip.
@@ -372,7 +372,7 @@ homepage terminal window's ambient lift, nothing else.
   that adds a baseline to a chart) and `qview` (a recording with the network's
   value for each move under it; optionally `.ctl` buttons to pause and step one decision at a time and a `.peek` block showing the four frames that decision saw, cut from a sprite sheet, and the four ticks its move is held), `pick` (tap a part of a figure to open its detail), `flow` (a slider of training passes for the `.flow` row: the win's value reaching back one box per pass). Controls use `.ctl`: pill buttons and range
   inputs at least 44px tall. Numbers live in the Markdown's data- attributes.
-- **Post header:** title, then the post's `description` as a standfirst
+- **Post header:** title, then the post's `subtitle` (when set) as a standfirst
   (`.post__lede`, Body 500, `--muted`), a hairline, and the meta row: the `stat`
   chip (when set), date and read time. Header, prose, timeline and footer all share one measure, `--measure` (44rem),
   so every block on a post (text, figures, code, tables) has the same left and
@@ -401,9 +401,8 @@ homepage terminal window's ambient lift, nothing else.
   `shipped`, `writing`), a live status bar with clock/date/weather. This is the
   scarce set-piece — do not reproduce it on other pages.
 - The `writing` pane reads the **blog collection** (newest three, then "All posts"), so
-  publishing a post updates the homepage on its own. Posts may set an optional
-  `shortTitle` in frontmatter for this pane, where a full headline does not fit; it
-  falls back to `title`. Never hard-code the post list here again.
+  publishing a post updates the homepage on its own. Titles are short, so the same
+  `title` fits here. Never hard-code the post list here again.
 - The homepage centers its nav, terminal, and sections on `--w-poster` (the widest
   scale tier); the hero name sits at `--w-page` so it stays inset from the terminal.
 
