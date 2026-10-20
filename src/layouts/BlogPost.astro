@@ -2033,7 +2033,7 @@ const last = entries[entries.length - 1];
   /* Splits: bars cut into parts, one row each, the row name at the left,
      each part's time inside it, and one key above. Parts are shares of the
      same total, so rows compare to scale; a part too thin for its time
-     (--thin) has it written after the bar (.split__after). Estimates
+     (--thin) has it written after the bar (.sbar__after). Estimates
      (--est) are drawn lighter. */
   .prose .splits {
     display: grid;
@@ -2058,7 +2058,7 @@ const last = entries[entries.length - 1];
     background: var(--bar);
     vertical-align: -0.05rem;
   }
-  .prose .splits__key .split--hi::before {
+  .prose .splits__key .sbar--hi::before {
     background: var(--accent);
   }
   .prose .splits__k {
@@ -2071,12 +2071,12 @@ const last = entries[entries.length - 1];
     font-size: 0.6875rem;
     color: var(--faint);
   }
-  .prose .split {
+  .prose .sbar {
     display: flex;
     gap: 2px;
     min-width: 0;
   }
-  .prose .split i {
+  .prose .sbar i {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -2091,22 +2091,22 @@ const last = entries[entries.length - 1];
     color: var(--ink);
     white-space: nowrap;
   }
-  .prose .split i b {
+  .prose .sbar i b {
     font-weight: 700;
   }
-  .prose .split i em {
+  .prose .sbar i em {
     margin-left: auto;
     font-style: normal;
   }
-  .prose .split .split--hi {
+  .prose .sbar .sbar--hi {
     background: var(--accent);
     color: var(--bg);
   }
-  .prose .split .split--thin {
+  .prose .sbar .sbar--thin {
     min-width: 3px;
     padding: 0;
   }
-  .prose .split__after {
+  .prose .sbar__after {
     align-self: center;
     padding-left: 0.5rem;
     font-style: normal;
@@ -2114,10 +2114,10 @@ const last = entries[entries.length - 1];
     color: var(--ink);
     white-space: nowrap;
   }
-  .prose .split .split--est {
+  .prose .sbar .sbar--est {
     background: color-mix(in oklch, var(--bar) 55%, transparent);
   }
-  .prose .split .split--hi.split--est {
+  .prose .sbar .sbar--hi.sbar--est {
     background: color-mix(in oklch, var(--accent) 45%, transparent);
     color: var(--ink);
   }
