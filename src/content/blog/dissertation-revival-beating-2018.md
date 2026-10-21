@@ -1,13 +1,13 @@
 ---
-title: "Beating my 2018 agent"
-subtitle: "Holding one button wins 82% of the time, which I never checked in 2018."
-stat: "82% → 100%"
-statLabel: "button vs 5× the training"
+title: "Beating my 2018 agent, 81% to 100%"
+subtitle: "And why holding one button already wins 82%."
+stat: "81% → 100%"
+statLabel: "games won, 2018 vs 2026"
 figures:
-  - label: "Hold shoot, no learning"
-    value: "82%"
   - label: "My 2018 agent"
     value: "81%"
+  - label: "Hold shoot, no learning"
+    value: "82%"
   - label: "Best 2026"
     value: "100%"
 pubDate: "Oct 21 2026"
@@ -20,7 +20,7 @@ pubDate: "Oct 21 2026"
 </div>
 </figure>
 
-In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster. My 2018 agent was DQN with two tricks on top, Double DQN and prioritised replay, all written from the papers. With runs that cheap the next question was whether today's methods could beat what I built as an undergrad, and they can, today's DQN rewarded only for winning and given five times the training wins every game of Aliens, even on levels it never trained on. The number I keep coming back to though is 82%, which is what you get by just holding the shoot button and doing nothing else.
+In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster. My 2018 agent was DQN with two tricks on top, Double DQN and prioritised replay, all written from the papers. With runs that cheap the next question was whether today's methods could beat what I built as an undergrad. My 2018 agent won 81% of Aliens games, and today's DQN, rewarded only for winning and given five times the training, wins 100%, even on levels it never trained on. But holding the shoot button and doing nothing else wins 82%, so my 81% wasn't as good as I thought.
 
 ## Can today's methods beat it with the same budget?
 
@@ -53,7 +53,7 @@ Three edged past my 2018 agent's 81%, all within noise.[^runs3]
 
 ## What does holding one button get you?
 
-Then Claude ran the simplest policies it could against every game, random moves and every button held down for the whole game. Holding shoot wins 82% of Aliens games, and on levels it's never seen it's also 82%.
+I never checked this in 2018, and Claude didn't think to either at first. Overnight the second model it had checking its work noticed two different PPO runs got exactly the same scores, so Claude guessed they were just holding one button. The next morning it ran the simplest policies it could against every game, random moves and every button held down for the whole game. Holding shoot wins 82% of Aliens games, and on levels it's never seen it's also 82%.
 
 <figure class="fig">
 <p class="fig__k">Same level and seed, the aliens drift down into the shots</p>
@@ -174,5 +174,38 @@ The network is the part that turns the screen into a score for each move. The 20
 
 I won every game I played back in 2018 but only scored 43, so the hard part of Aliens seems to be the score rather than winning. The best learning agent now gets 62.5 points and wins 96%, which outscores both me and my 2018 agent. MCTS, which doesn't learn at all, still beats it with 78.
 
+## What did I learn?
+
+- **Check the dumbest baseline first.** Holding one button doesn't need any training and I never tried it in 2018.
+- **Run everything more than once.** My two 2018 runs of the same agent were 10 to 17 points apart, and today's DQN runs ranged from 42% to 84% wins.
+- **Claude wrote all of the code, but it liked to stop early.** Left alone it would wrap up after the obvious wins, and I pushed back six times in about 2½ hours.[^log]
+- **I was the least informed person on my own dissertation.** About a third of my messages were me learning things like PPO and IMPALA.
+
+## What's still unsolved?
+
+One thing neither of us checked: the agents see 4 stacked frames and hold each move for 4 frames, so I suspect some positions are hard or impossible to reach, and there are points you just can't get to claim. MCTS, the tree search, picks a move every frame, which might be part of why it scores 78.
+
+Two games also need the agent to go looking for things, it can't learn about the far door if it never gets there.
+
+<figure class="fig">
+<p class="fig__k">Deceptizelda: the near door for 2 points, or the far one for 10</p>
+<div class="map">
+<img src="/blog/gvgai/deceptizelda-level0.png" alt="Deceptizelda level 0: a maze with the player bottom left, a key and a door bottom right, three spiders in the corridors above, and a second door reached only through the maze" width="260" height="240">
+<svg viewBox="0 0 260 240" aria-hidden="true">
+<polyline class="ln" points="210,210 30,210 30,30 230,30 230,90 70,90 70,170 230,170" style="stroke-dasharray:5 4;stroke:var(--ink)"/>
+<polyline class="ln hi" points="30,210 210,210 230,210" style="stroke-width:3"/>
+<circle cx="230" cy="210" r="13" class="ring hi"/>
+<circle cx="230" cy="170" r="13" class="ring"/>
+</svg>
+</div>
+<ul class="legend"><li class="is-data">Key, then the near door, 2 points, which is what every agent does</li><li>Back through the spiders to the far door, 10 points, which only I did</li></ul>
+</figure>
+
+- **Deceptizelda's big exit.** Even a reward paying 1 extra point for it didn't help, the agents just never get there to find out.
+- **Chase.** No learning agent has won a single game, so a win/lose reward never even fires.
+
+The next thing to try would be an exploration bonus, rewarding the agent for seeing something new, which seems to be what people normally try for this.
+
 [^results]: All numbers from [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md), except the button on unseen levels (Aliens levels 3 and 4, 50 games), run for this post.
 [^runs3]: My 2018 agent here is the 2018 code replayed 3 times. Runs vary a lot, modern DQN's three won 42% to 84%. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^log]: Timeline and quotes from my Claude Code session log, 18 and 19 October 2026.
