@@ -915,7 +915,7 @@ const last = entries[entries.length - 1];
     color: var(--muted);
   }
   .prose .ctab .ctab__v {
-    width: 100%;
+    width: 50%;
   }
   .prose .ctab .ctab__bar {
     display: flex;
@@ -928,7 +928,7 @@ const last = entries[entries.length - 1];
     display: block;
     height: 0.7rem;
     min-width: 3px;
-    width: calc(var(--w) * (100% - 3rem));
+    width: calc(var(--w) * (100% - 6rem));
     background: var(--bar);
     border-radius: 1px;
   }
@@ -936,6 +936,11 @@ const last = entries[entries.length - 1];
     font-weight: 500;
     color: var(--ink);
     font-variant-numeric: tabular-nums;
+  }
+  /* The gain from more training, drawn on from the first value's bar. */
+  .prose .ctab .ctab__bar .ctab__more {
+    margin-left: -0.5rem;
+    background: color-mix(in oklch, var(--accent) 55%, transparent);
   }
   .prose .ctab--hi td:first-child,
   .prose .ctab--hi .ctab__bar b {
