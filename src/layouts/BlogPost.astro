@@ -1233,6 +1233,83 @@ const last = entries[entries.length - 1];
   .prose .box--fast {
     border-color: color-mix(in oklch, var(--accent) 45%, transparent);
   }
+  /* Diagram (.diag): an inline SVG of parts joined by arrows. It is drawn at its
+     viewBox width in px (--vw, as rem so it follows the root size) and never
+     scaled to the column, so its text stays at the two figure sizes. */
+  .prose .diag svg {
+    display: block;
+    width: calc(var(--vw) * 0.0625rem);
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    overflow: visible;
+  }
+  .prose .diag rect {
+    fill: var(--bg);
+    stroke: var(--line);
+    stroke-width: 1.2;
+  }
+  .prose .diag .hi rect {
+    stroke: var(--accent);
+    stroke-width: 1.6;
+  }
+  .prose .diag text {
+    font-family: var(--mono);
+    font-size: 12.8px;
+    fill: var(--ink);
+  }
+  .prose .diag text.sub {
+    font-size: 11px;
+    fill: var(--faint);
+  }
+  .prose .diag text.hi {
+    fill: var(--accent-soft);
+  }
+  .prose .diag .arr {
+    fill: none;
+    stroke: var(--faint);
+    stroke-width: 1.2;
+  }
+  .prose .diag .head {
+    fill: var(--faint);
+  }
+  .prose .diag .spine {
+    stroke: var(--line);
+    stroke-width: 2;
+  }
+  .prose .diag .fold {
+    stroke: var(--faint);
+    stroke-width: 2;
+    stroke-dasharray: 2 4;
+  }
+  .prose .diag .mk {
+    fill: var(--muted);
+  }
+  .prose .diag .mk.hi {
+    fill: var(--accent);
+  }
+  .prose .diag rect.ld {
+    fill: var(--bar);
+    stroke: none;
+  }
+  .prose .diag rect.run {
+    fill: var(--accent);
+    stroke: none;
+  }
+  .prose .diag .pulse {
+    fill: var(--accent);
+    offset-rotate: 0deg;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .prose .diag .pulse {
+      animation: loop-run 3s linear infinite;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .prose .diag .pulse {
+      display: none;
+    }
+  }
   /* Dot plot: one row per item, a dot on a shared axis. --x is the value as a
      fraction of the axis. */
   .prose .dot {

@@ -344,7 +344,11 @@ homepage terminal window's ambient lift, nothing else.
   scale; wrap the rows in `<div class="cmp-ref" style="--ref:…">` and each bar in
   `<em class="track">` for a dashed reference line), `.dot` (dot plot: one row per item on a shared axis), `.stack` + `.legend`
   (one bar split into parts), `.split` (two panels),
-  `.rows` / `.cols` (row vs column illustration), `.boxes` / `.box` (simple flow).
+  `.rows` / `.cols` (row vs column illustration), `.diag` (an inline SVG diagram:
+  parts joined by arrows, a timeline spine, blocks along time; drawn at its viewBox
+  width, `--vw`, so its text stays true size). Draw any flow, process or sequence
+  as a `.diag` with arrows; `.boxes` / `.box` (plain boxes in a row) is retired for
+  diagrams: it reads as a template, not a picture of what happens.
   Marks are neutral; only the result takes the accent. Aim for at least one figure
   per post so no screen is text alone. Explanations sit next to what they explain
   (a short title above, labels on the marks), not in a paragraph under the figure.
@@ -435,6 +439,7 @@ homepage terminal window's ambient lift, nothing else.
   `border-right` colored side-stripes on cards, list items, callouts, or alerts.
   Depth is tonal + hairlines. (The sole exception: the prose blockquote's 2px tomato
   left rule, a standard long-form convention, never a card stripe.)
+- **Don't** draw a diagram as plain boxes in a row (`.boxes`). Show the flow with arrows, a spine or a loop (`.diag`).
 - **Don't** add drop shadows on cards, inputs, or other surfaces. The only shadows are the
   tomato state glow and the homepage terminal window's ambient lift.
 - **Don't** over-round: the terminal window caps at `14px`, chips/nodes are
