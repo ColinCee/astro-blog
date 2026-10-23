@@ -939,8 +939,10 @@ const last = entries[entries.length - 1];
   }
   /* The gain from more training, drawn on from the first value's bar. */
   .prose .ctab .ctab__bar .ctab__more {
-    margin-left: -0.5rem;
     background: color-mix(in oklch, var(--accent) 55%, transparent);
+  }
+  .prose .ctab .ctab__bar i + .ctab__more {
+    margin-left: -0.5rem;
   }
   .prose .ctab--hi td:first-child,
   .prose .ctab--hi .ctab__bar b {
