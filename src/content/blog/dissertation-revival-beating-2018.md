@@ -35,34 +35,34 @@ Quick rundown of what's being compared, since they all differ in a few ways:
 - **DQN** is the method DeepMind used on Atari in 2015. It looks at the screen and learns a score for each move, then plays the best one. My 2018 agent was DQN plus two tricks from later papers, Double DQN and prioritised replay.
 - **Rainbow** is DQN with six of those later improvements combined, including both of my tricks.
 - **Network** is the part that turns the screen into scores. The standard one is the 3-layer network from the 2015 paper, the bigger one is IMPALA, 15 layers.
-- **Reward** is what it gets told is good. The usual choice is the points it scores. My 2018 reward was +1 for a win, −1 for a loss, and −0.5 on every move of a game it lost.
+- **Reward** is what it gets told is good. A points reward is the usual choice, a win reward is just +1 for a win and −1 for a loss, and my 2018 reward was that plus −0.5 on every move of a game it lost.
 - **Training** is how many frames of the game it gets to practise on. 1M frames is what my 2018 agent got, 5M is five times that, about 17 minutes a run.
 
 <figure class="fig">
 <p class="fig__k">Aliens games won, average of 3 training runs each</p>
 <div class="tlist">
-<div class="trow"><span><b>DQN</b> rewarded only for winning <small>standard network, 5M frames</small></span><i style="--w:1.000"></i><em>100%</em></div>
-<div class="trow"><span><b>DQN</b> with a bigger network <small>rewarded for points, 5M frames</small></span><i style="--w:0.960"></i><em>96%</em></div>
-<div class="trow"><span><b>DQN</b> rewarded for points <small>standard network, 5M frames</small></span><i style="--w:0.890"></i><em>89%</em></div>
-<div class="trow"><span><b>Rainbow</b> with a bigger network <small>rewarded for points, 1M frames</small></span><i style="--w:0.850"></i><em>85%</em></div>
-<div class="trow trow--wait"><span><b>Holding shoot</b> and nothing else <small>no learning at all</small></span><i style="--w:0.820"></i><em>82%</em></div>
-<div class="trow trow--hi"><span><b>My 2018 agent</b> DQN plus two tricks <small>standard network, my 2018 reward, 1M frames</small></span><i style="--w:0.810"></i><em>81%</em></div>
-<div class="trow"><span><b>DQN</b> rewarded for points <small>standard network, 1M frames</small></span><i style="--w:0.570"></i><em>57%</em></div>
+<div class="trow"><span><b>DQN</b><small>standard network, win reward, 5M frames</small></span><i style="--w:1.000"></i><em>100%</em></div>
+<div class="trow"><span><b>DQN</b><small>bigger network, points reward, 5M frames</small></span><i style="--w:0.960"></i><em>96%</em></div>
+<div class="trow"><span><b>DQN</b><small>standard network, points reward, 5M frames</small></span><i style="--w:0.890"></i><em>89%</em></div>
+<div class="trow"><span><b>Rainbow</b><small>bigger network, points reward, 1M frames</small></span><i style="--w:0.850"></i><em>85%</em></div>
+<div class="trow trow--wait"><span><b>Holding shoot</b><small>no learning</small></span><i style="--w:0.820"></i><em>82%</em></div>
+<div class="trow trow--hi"><span><b>My 2018 agent</b><small>standard network, my 2018 reward, 1M frames</small></span><i style="--w:0.810"></i><em>81%</em></div>
+<div class="trow"><span><b>DQN</b><small>standard network, points reward, 1M frames</small></span><i style="--w:0.570"></i><em>57%</em></div>
 </div>
 </figure>
 
-With the same 1M frames my 2018 agent got, none of them clearly beat the button, and runs vary a lot.[^runs] What got past it was rewarding only the win (+1 or −1 at the end of the game) and giving it five times the practice. That wins every game, even on levels it never trained on. The bigger network helps too, mostly with the score.
+With the same 1M frames my 2018 agent got, none of them clearly beat the button, and runs vary a lot.[^runs] What got past it was the win reward and five times the practice. That wins every game, even on levels it never trained on. The bigger network helps too, mostly with the score.
 
 ## Is winning even the right measure?
 
 <figure class="fig">
 <p class="fig__k">Aliens points a game</p>
 <div class="tlist">
-<div class="trow"><span><b>MCTS</b> plans moves ahead <small>in a copy of the game, no learning</small></span><i style="--w:1.000"></i><em>77.8</em></div>
-<div class="trow"><span><b>DQN</b> with a bigger network <small>rewarded for points, 5M frames</small></span><i style="--w:0.803"></i><em>62.5</em></div>
-<div class="trow trow--hi"><span><b>My 2018 agent</b> DQN plus two tricks <small>my 2018 reward, 1M frames</small></span><i style="--w:0.644"></i><em>50.1</em></div>
-<div class="trow"><span><b>Me</b> playing it myself in 2018</span><i style="--w:0.548"></i><em>42.6</em></div>
-<div class="trow trow--wait"><span><b>Holding shoot</b> and nothing else <small>no learning at all</small></span><i style="--w:0.467"></i><em>36.3</em></div>
+<div class="trow"><span><b>MCTS</b><small>no learning, searches moves ahead</small></span><i style="--w:1.000"></i><em>77.8</em></div>
+<div class="trow"><span><b>DQN</b><small>bigger network, points reward, 5M frames</small></span><i style="--w:0.803"></i><em>62.5</em></div>
+<div class="trow trow--hi"><span><b>My 2018 agent</b><small>standard network, my 2018 reward, 1M frames</small></span><i style="--w:0.644"></i><em>50.1</em></div>
+<div class="trow"><span><b>Me</b><small>playing it myself in 2018</small></span><i style="--w:0.548"></i><em>42.6</em></div>
+<div class="trow trow--wait"><span><b>Holding shoot</b><small>no learning</small></span><i style="--w:0.467"></i><em>36.3</em></div>
 </div>
 </figure>
 
