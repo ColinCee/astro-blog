@@ -169,24 +169,24 @@ const last = entries[entries.length - 1];
         <FormattedDate date={pubDate} />
         {
           minutesRead && (
-            <>
+            <Fragment>
               <span class="post__dot" aria-hidden="true">
                 ·
               </span>
               <span>{minutesRead} min read</span>
-            </>
+            </Fragment>
           )
         }
         {
           updatedDate && (
-            <>
+            <Fragment>
               <span class="post__dot" aria-hidden="true">
                 ·
               </span>
               <span>
                 updated <FormattedDate date={updatedDate} />
               </span>
-            </>
+            </Fragment>
           )
         }
       </p>

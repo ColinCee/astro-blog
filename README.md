@@ -41,7 +41,7 @@ npm run dev
 
 ## How it works
 
-Astro builds the pages in `src/pages/` and the posts in `src/content/blog/`, styled with a small custom design system, and deploys them to Cloudflare Workers through the Cloudflare adapter. [DESIGN.md](DESIGN.md) owns the visual system and [PRODUCT.md](PRODUCT.md) the audience and purpose.
+Astro builds the pages in `src/pages/` and the posts in `src/content/blog/`, styled with a small custom design system, into a fully static site. Wrangler uploads `dist/` to Cloudflare as an assets-only Worker (`wrangler.json`); there is no server code. [DESIGN.md](DESIGN.md) owns the visual system and [PRODUCT.md](PRODUCT.md) the audience and purpose.
 
 ## Project structure
 
@@ -61,14 +61,14 @@ public/             Static assets copied into the deployed build
 | `npm install` | Install dependencies |
 | `npm run dev` | Start the local dev server |
 | `npm run build` | Build the production site |
-| `npm run check` | Build, type-check, and run a Wrangler dry-run deploy |
+| `npm run check` | Type-check (`astro check`), check formatting, build, Wrangler dry run, then the tests |
+| `npm run format` | Format the code with Prettier (posts and docs are left alone) |
 | `npm run deploy` | Build and deploy to Cloudflare Workers |
-| `npm run types` | Regenerate Cloudflare Worker types |
-| `npm test` | Run Playwright layout and typography tests |
+| `npm test` | Run the Playwright layout and typography tests; they start their own dev server on `PORT` (default 4380) |
 
 ## Deployment
 
-Pushes to `main` run `.github/workflows/deploy.yml`, which installs dependencies, builds the site, runs TypeScript, validates the Wrangler bundle, and deploys with Cloudflare secrets.
+Pushes to `main` run `.github/workflows/deploy.yml`, which installs dependencies, type-checks, checks formatting, builds the site, validates the Wrangler config, runs the tests, and deploys with Cloudflare secrets. Pull requests run the same steps without the deploy.
 
 Required repository secrets:
 
@@ -76,5 +76,3 @@ Required repository secrets:
 CLOUDFLARE_ACCOUNT_ID
 CLOUDFLARE_API_TOKEN
 ```
-
-`public/.assetsignore` is intentionally kept so Wrangler does not upload Worker internals like `_worker.js` as static assets.

@@ -1,8 +1,8 @@
 # GVGAI clips
 
-Recorded with `tools/record.py` in the GVGAI-Dissertation repository (`2026-revival/`), on the CPU. Run from `2026-revival/`, with `<out>` set to this folder. With `--verify`, the tool replays each game through the agent's own evaluation loop and checks that the result is the same. Every clip below passed. For MCTS it checks every frame.
+How the clips, posters and data in `public/blog/gvgai/` were made. Recorded with `tools/record.py` in the GVGAI-Dissertation repository (`2026-revival/`), on the CPU. Run from `2026-revival/`, with `<out>` set to that folder. With `--verify`, the tool replays each game through the agent's own evaluation loop and checks that the result is the same. Every clip below passed. For MCTS it checks every frame.
 
-Only the files the posts use are kept here. `aliens-random.*`, `deceptizelda-hold-right.*` and the `features/` grids were made by the commands below but not kept; `net/` holds four maps per layer cut from the `features/` grids (the four with the most contrast).
+Only the files the posts use are kept there. `aliens-random.*`, `deceptizelda-hold-right.*` and the `features/` grids were made by the commands below but not kept; `net/` holds four maps per layer cut from the `features/` grids (the four with the most contrast).
 
 Each video shows one engine tick per frame, scaled up 2× with nearest-neighbour. The `.png` is the poster, taken from the middle of the game. Each `.json` has the result and every decision: `tick`, `action`, `score` so far, and `q` (the network's value for each action) for the learning agents. The JSON also records the speed: 30 fps here means 30 ticks/s, 0.75× the 40 ticks/s the 2018 engine ran at for human viewers.
 

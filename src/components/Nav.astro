@@ -14,19 +14,19 @@ const active = (href: string) => {
 ---
 
 <nav class="nav" aria-label="Primary">
-  <a class="nav__mark" href="/">colin<span>@</span>glasgow<b>:~$</b></a>
+  <a class="nav__mark" href="/">
+    colin<span>@</span>glasgow<b>:~$</b>
+  </a>
   <div class="nav__links">
-    {
-      links.map((l) => (
-        <a
-          href={l.href}
-          class:list={["nav__link", { "is-active": active(l.href) }]}
-          aria-current={active(l.href) ? "page" : undefined}
-        >
-          {l.label}
-        </a>
-      ))
-    }
+    {links.map((l) => (
+      <a
+        href={l.href}
+        class:list={["nav__link", { "is-active": active(l.href) }]}
+        aria-current={active(l.href) ? "page" : undefined}
+      >
+        {l.label}
+      </a>
+    ))}
   </div>
 </nav>
 

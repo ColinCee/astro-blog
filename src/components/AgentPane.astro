@@ -22,25 +22,29 @@ const post = await getEntry("blog", "dissertation-revival-beating-2018");
 const moves = ["shoot", "left", "right"];
 ---
 
-<div class:list={["ag", { "ag--compact": compact }]} data-agent data-rate={rate}>
+<div
+  class:list={["ag", { "ag--compact": compact }]}
+  data-agent
+  data-rate={rate}
+>
   <div class="ag__head">
     <div class="ag__pick" role="tablist" aria-label="Which agent plays">
-      {
-        clips.map((c, i) => (
-          <button
-            type="button"
-            role="tab"
-            class:list={["ag__tab", { "is-on": i === 0 }]}
-            aria-selected={i === 0 ? "true" : "false"}
-            data-clip={c.id}
-            data-note={c.note}
-          >
-            {c.label}
-          </button>
-        ))
-      }
+      {clips.map((c, i) => (
+        <button
+          type="button"
+          role="tab"
+          class:list={["ag__tab", { "is-on": i === 0 }]}
+          aria-selected={i === 0 ? "true" : "false"}
+          data-clip={c.id}
+          data-note={c.note}
+        >
+          {c.label}
+        </button>
+      ))}
     </div>
-    <span class="ag__note" data-ag-note>{first.note}</span>
+    <span class="ag__note" data-ag-note>
+      {first.note}
+    </span>
   </div>
   <figure class="ag__vid">
     <video
@@ -54,37 +58,46 @@ const moves = ["shoot", "left", "right"];
       <source src={`/blog/gvgai/${first.id}.webm`} type="video/webm" />
       <source src={`/blog/gvgai/${first.id}.mp4`} type="video/mp4" />
     </video>
-    <button type="button" class="ag__play" data-ag-play aria-label="Play or pause">▶</button>
+    <button
+      type="button"
+      class="ag__play"
+      data-ag-play
+      aria-label="Play or pause"
+    >
+      ▶
+    </button>
   </figure>
   <div class="ag__read">
     <div class="ag__score">
-      <span class="ag__big" data-ag-score>0</span>
-      <span class="ag__lbl">points · tick <b data-ag-tick>0</b></span>
+      <span class="ag__big" data-ag-score>
+        0
+      </span>
+      <span class="ag__lbl">
+        points · tick <b data-ag-tick>0</b>
+      </span>
     </div>
     <ul class="ag__q" aria-label="The network's value for each move">
-      {
-        moves.map((m, i) => (
-          <li class="ag__row" data-q={i}>
-            <span class="ag__move">{m}</span>
-            <span class="ag__track"><i class="ag__fill" style="--w: 0.3" /></span>
-            <span class="ag__val">–</span>
-          </li>
-        ))
-      }
+      {moves.map((m, i) => (
+        <li class="ag__row" data-q={i}>
+          <span class="ag__move">{m}</span>
+          <span class="ag__track">
+            <i class="ag__fill" style="--w: 0.3" />
+          </span>
+          <span class="ag__val">–</span>
+        </li>
+      ))}
     </ul>
     <p class="ag__cap">what the network values each move at, live</p>
   </div>
-  {
-    post && (
-      <a class="ag__post" href={`/blog/${post.id}/`}>
-        <span class="ag__chip">{post.data.stat}</span>
-        <span class="ag__postbody">
-          <span class="ag__postlabel">{post.data.statLabel}</span>
-          <span class="ag__posttitle">{post.data.title} →</span>
-        </span>
-      </a>
-    )
-  }
+  {post && (
+    <a class="ag__post" href={`/blog/${post.id}/`}>
+      <span class="ag__chip">{post.data.stat}</span>
+      <span class="ag__postbody">
+        <span class="ag__postlabel">{post.data.statLabel}</span>
+        <span class="ag__posttitle">{post.data.title} →</span>
+      </span>
+    </a>
+  )}
 </div>
 
 <style>
@@ -279,13 +292,24 @@ const moves = ["shoot", "left", "right"];
     color: var(--accent);
   }
   /* compact: the clip and the readout only */
-  .ag--compact { gap: 0.5rem; }
+  .ag--compact {
+    gap: 0.5rem;
+  }
   .ag--compact .ag__head,
   .ag--compact .ag__cap,
-  .ag--compact .ag__post { display: none; }
-  .ag--compact .ag__big { font-size: 1.6rem; }
-  .ag--compact .ag__row { font-size: 0.6875rem; grid-template-columns: 2.6rem 1fr 2.6rem; }
-  .ag--compact .ag__read { gap: 0.3rem 0.8rem; }
+  .ag--compact .ag__post {
+    display: none;
+  }
+  .ag--compact .ag__big {
+    font-size: 1.6rem;
+  }
+  .ag--compact .ag__row {
+    font-size: 0.6875rem;
+    grid-template-columns: 2.6rem 1fr 2.6rem;
+  }
+  .ag--compact .ag__read {
+    gap: 0.3rem 0.8rem;
+  }
 </style>
 
 <script>
@@ -305,7 +329,10 @@ const moves = ["shoot", "left", "right"];
     const rows = Array.from(root.querySelectorAll<HTMLElement>("[data-q]"));
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let clip: Clip | null = null;
-    let i = 0, raf = 0, visible = false, wanted = !reduce;
+    let i = 0,
+      raf = 0,
+      visible = false,
+      wanted = !reduce;
 
     const rate = Number(root.dataset.rate) || 0.5;
     video.playbackRate = rate;
@@ -313,19 +340,26 @@ const moves = ["shoot", "left", "right"];
     const show = (d: Decision) => {
       scoreEl.textContent = String(Math.round(d.score));
       tickEl.textContent = String(d.tick);
-      const max = Math.max(...d.q), min = Math.min(...d.q), span = max - min || 1;
+      const max = Math.max(...d.q),
+        min = Math.min(...d.q),
+        span = max - min || 1;
       const chosen = clip!.action_names.indexOf(d.action);
       rows.forEach((row, k) => {
         const q = d.q[k];
         const w = q === undefined ? 0 : 0.08 + 0.92 * ((q - min) / span);
-        row.querySelector<HTMLElement>(".ag__fill")!.style.setProperty("--w", w.toFixed(3));
-        row.querySelector<HTMLElement>(".ag__val")!.textContent = q === undefined ? "–" : q.toFixed(2);
+        row
+          .querySelector<HTMLElement>(".ag__fill")!
+          .style.setProperty("--w", w.toFixed(3));
+        row.querySelector<HTMLElement>(".ag__val")!.textContent =
+          q === undefined ? "–" : q.toFixed(2);
         row.classList.toggle("is-chosen", k === chosen);
       });
     };
     const sync = () => {
       if (!clip) return;
-      const tick = Math.floor(video.currentTime * clip.video.fps * clip.video.ticks_per_frame);
+      const tick = Math.floor(
+        video.currentTime * clip.video.fps * clip.video.ticks_per_frame,
+      );
       const ds = clip.decisions;
       // Walk the pointer to the last decision at or before this tick.
       if (i >= ds.length || ds[i].tick > tick) i = 0;
@@ -336,16 +370,25 @@ const moves = ["shoot", "left", "right"];
       sync();
       if (!video.paused) raf = requestAnimationFrame(loop);
     };
-    video.addEventListener("play", () => { play.textContent = "❚❚"; cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); });
-    video.addEventListener("pause", () => { play.textContent = "▶"; sync(); });
+    video.addEventListener("play", () => {
+      play.textContent = "❚❚";
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(loop);
+    });
+    video.addEventListener("pause", () => {
+      play.textContent = "▶";
+      sync();
+    });
     video.addEventListener("seeked", sync);
     play.addEventListener("click", () => {
       wanted = video.paused;
-      if (video.paused) video.play().catch(() => {}); else video.pause();
+      if (video.paused) video.play().catch(() => {});
+      else video.pause();
     });
 
     const load = async (id: string) => {
-      clip = null; i = 0;
+      clip = null;
+      i = 0;
       video.pause();
       video.poster = `/blog/gvgai/${id}.png`;
       const [webm, mp4] = Array.from(video.querySelectorAll("source"));
@@ -369,12 +412,17 @@ const moves = ["shoot", "left", "right"];
       });
     });
 
-    new IntersectionObserver(([e]) => {
-      visible = e.isIntersecting;
-      if (visible && wanted) video.play().catch(() => {});
-      else if (!visible) video.pause();
-    }, { threshold: 0.2 }).observe(root);
+    new IntersectionObserver(
+      ([e]) => {
+        visible = e.isIntersecting;
+        if (visible && wanted) video.play().catch(() => {});
+        else if (!visible) video.pause();
+      },
+      { threshold: 0.2 },
+    ).observe(root);
 
-    load(root.querySelector<HTMLButtonElement>("[data-clip].is-on")!.dataset.clip!);
+    load(
+      root.querySelector<HTMLButtonElement>("[data-clip].is-on")!.dataset.clip!,
+    );
   });
 </script>

@@ -4,7 +4,6 @@ import "../styles/terminal.css";
 import AgentPane from "../components/AgentPane.astro";
 import RadarPane from "../components/RadarPane.astro";
 import ankiCards from "../components/anki-cards.json";
-import { execSync } from "node:child_process";
 
 // Terminal-native homepage for colincheung.dev. Colours come from the tokens
 // in terminal.css and follow the system light/dark setting.
@@ -176,14 +175,8 @@ const homelabStacks = [
 ];
 
 // The commit this page was built from, for the status bar, the footer and the
-// site's own tile. Empty where git is not available at build time.
-let build = { hash: "", when: "", subject: "" };
-try {
-  const [hash, when, ...rest] = execSync("git log -1 --format=%h%x09%cI%x09%s", { encoding: "utf8" })
-    .trim()
-    .split("\t");
-  build = { hash, when, subject: rest.join("\t") };
-} catch {}
+// site's own tile (see astro.config.mjs).
+const build = __BUILD__;
 
 // Left-pane hero: core skills as a live `top` process list. TIME+ = years of
 // experience (now − since) — a real, honest number, no invented scores.
@@ -648,9 +641,9 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         <span>COLIN CHEUNG</span>
         <span>
           © 2026 · BUILT IN GLASGOW{build.hash && (
-            <>
+            <Fragment>
               {" "}· <a class="t-foot__build" href={`https://github.com/ColinCee/astro-blog/commit/${build.hash}`} title={build.subject}>LAST DEPLOY {build.hash}</a>
-            </>
+            </Fragment>
           )}
         </span>
       </footer>

@@ -89,8 +89,8 @@ components:
 > grey page at ~90% lightness with raised surfaces one step lighter, chosen so
 > large areas do not glare. **Dark** is the original warm near-black. The accent
 > moved from cyan to tomato (see
-> "Colour" below). Token values in `terminal.css` are authoritative; where
-> prose below still quotes the old dark ramp's figures, read it as the role.
+> "Colour" below). Token values in `terminal.css` are authoritative; values
+> below are given as light / dark.
 
 ### Colour
 One accent hue, tomato (`--accent`, `--accent-soft`), on a warm neutral ramp. The
@@ -136,31 +136,34 @@ big.
 ## 2. Colors
 
 A warm-neutral greyscale carrying a single tomato signal. Strategy: **Restrained** —
-one accent used on well under 10% of any screen, against a warm dark ramp.
+one accent used on well under 10% of any screen, against a warm neutral ramp.
 
 ### Primary
-- **Signal Tomato** (`--accent`, `oklch(0.82 0.15 205)`): The only chromatic color.
+- **Signal Tomato** (`--accent`, `oklch(0.55 0.19 32)` / `oklch(0.75 0.17 38)`): The only chromatic color.
   Reserved for the single most important thing in a view — the metric in a line,
   the current timeline node, the active/hover link border, the terminal `@` and
   prompt. If two things are tomato in one glance, one is wrong.
-- **Soft Tomato** (`--accent-soft`, `oklch(0.8 0.08 205)`): The desaturated tomato for
+- **Soft Tomato** (`--accent-soft`, `oklch(0.49 0.17 32)` / `oklch(0.79 0.11 38)`): The desaturated tomato for
   runs of accented *text* (metric highlights, `//` kickers, inline links) where
   full-chroma tomato would vibrate. Reads as "important" without shouting.
-- **Accent Ink** (`--accent-ink`, `oklch(0.18 0.05 220)`): Dark text/ink for the
-  rare filled-tomato surface.
+- **Accent Ink** (`--accent-ink`, `oklch(0.98 0.01 60)` / `oklch(0.2 0.04 40)`): Text on
+  the rare filled-tomato surface.
 
 ### Neutral (the warm ramp, hue 80–95)
-- **Ink** (`--ink`, `oklch(0.95 0.01 95)`): Primary text — display headings, names,
-  titles on hover. ~16.7:1 on `--bg`.
-- **Muted** (`--muted`, `oklch(0.72 0.02 95)`): Body copy, bullet text, resting
-  titles, positions. ~7.8:1 on `--bg`.
-- **Faint** (`--faint`, `oklch(0.63 0.02 95)`): Small mono metadata — dates, stacks,
-  end-caps. ~5.5:1 on `--bg` (still AA, even at 10–12px).
-- **Background** (`--bg`, `oklch(0.165 0.012 80)`): The warm near-black body.
-- **Panel / Pane** (`--panel` `0.205`, `--pane` `0.185`): Slightly raised warm
-  surfaces for terminal panes; used sparingly.
-- **Line** (`--line`, `oklch(0.31 0.018 80)`): All hairlines, borders, timeline
-  spines, tag outlines, section rules.
+- **Ink** (`--ink`, `oklch(0.22 0.012 85)` / `oklch(0.95 0.01 95)`): Primary text —
+  display headings, names, titles on hover.
+- **Muted** (`--muted`, `oklch(0.42 0.013 85)` / `oklch(0.72 0.02 95)`): Body copy,
+  bullet text, resting titles, positions.
+- **Faint** (`--faint`, `oklch(0.49 0.013 85)` / `oklch(0.63 0.02 95)`): Small mono
+  metadata — dates, stacks, end-caps. Still AA at 11px.
+- **Prose ink** (`--prose-ink`, `oklch(0.27 0.012 85)` / `oklch(0.87 0.012 95)`): Post
+  body text, a notch softer than `--ink` for sustained reading.
+- **Background** (`--bg`, `oklch(0.905 0.008 85)` / `oklch(0.165 0.012 80)`): Stone /
+  the warm near-black body.
+- **Panel / Pane** (`--panel` `0.92` / `0.205`, `--pane` `0.935` / `0.185`): Slightly
+  raised warm surfaces for terminal panes and figures; used sparingly.
+- **Line** (`--line`, `oklch(0.82 0.011 85)` / `oklch(0.31 0.018 80)`): All hairlines,
+  borders, timeline spines, tag outlines, section rules.
 
 ### Print
 The CV re-declares the tokens inside `@media print` to flip the terminal palette to
@@ -168,7 +171,7 @@ ink-on-white for a clean PDF: `--bg`/`--panel`/`--pane` become `#ffffff`, `--ink
 `#111111`, `--muted` `#333333`, `--faint` `#5a5a5a`, `--line` `#d5d5d5`, and both
 tomatos become `#0e7490` (a print-safe teal). Site chrome (nav and footer) is hidden
 and entries use `break-inside: avoid`. This is the only place the palette
-legitimately leaves the dark ramp.
+legitimately leaves the two themes.
 
 ### Named Rules
 **The One Signal Rule.** Tomato is the only hue on the page and marks the single most
@@ -224,10 +227,10 @@ lift** (the one floating set-piece on the homepage).
 ### Glow / Shadow Vocabulary
 - **Accent focus ring** — the **`--ring`** token (`0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent)`):
   the current timeline node and hovered/focused interactive nodes.
-- **Ambient hero wash** — the **`--wash`** token (a faint `var(--accent) 12%` radial bloom),
+- **Ambient hero wash** — the **`--wash`** token (a faint `var(--accent) 8%` radial bloom),
   applied on `.shell` and the homepage `.t`. Atmosphere, not a card shadow.
-- **Terminal window lift** (`box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.7)` on
-  `.term`): The only dark drop shadow in the system. It floats the tmux window over
+- **Terminal window lift** — the **`--lift`** token on `.term` (a soft warm shadow in
+  light, `0 40px 80px -40px rgba(0, 0, 0, 0.7)` in dark): The only drop shadow in the system. It floats the tmux window over
   the page as the homepage's one physical object. Never reuse it on cards, inputs,
   or other surfaces.
 
@@ -327,8 +330,11 @@ homepage terminal window's ambient lift, nothing else.
   JS; visible without it).
 - A faint dot grid sits behind the hero and terminal and fades out down the page.
   Over it, contour lines drawn on a canvas: still until the mouse moves across the
-  hero, then they drift for a moment and dip under the cursor. Nothing on the
-  page moves on a timer after the terminal has booted.
+  hero, then they drift for a moment and dip under the cursor.
+- Things that move on their own: the one-liner under the name rotates every few
+  seconds, the status-bar clock ticks, the companies strip scrolls (with a pause
+  button), and the project tiles run once they scroll into view. Reduced motion
+  stops all of them and shows each at rest.
 - The status bar and footer carry the commit the page was built from (`built 2h
   ago · abc1234`), so the page says when it was last deployed.
 - The lead post's headline figure is outlined behind its panel in the writing
@@ -340,10 +346,9 @@ homepage terminal window's ambient lift, nothing else.
 
 ### Blog Post (long-form reading)
 - Posts render on the shared `Base` shell via `BlogPost.astro`. Below `64rem` it is a
-  single `42rem` column. At `64rem` and up it becomes a two-column grid on
-  `--w-page` — `11rem` article rail, `3.25rem` gap, then the article — so the rail
-  occupies the left margin and the whole block still starts its left edge on the nav
-  mark. Content carries a `// writing` back-kicker, a Bricolage display title
+  single `--w-prose` column. At `64rem` and up the post sits on `--w-page`, inset by
+  `--rail` (`9rem`) plus `--rail-gap` (`3.5rem`), so timeline dates sit in the left
+  margin and plain and timeline posts share one left edge. Content carries a `// writing` back-kicker, a Bricolage display title
   (`clamp(2rem, 5.5vw, 3.1rem)`, weight 800), and a mono meta line (date · N min read).
 - **Figures ledger:** optional `figures` frontmatter (label + value pairs) renders
   under the standfirst as a hairline-ruled row of large numbers; the last one is the
@@ -394,25 +399,26 @@ homepage terminal window's ambient lift, nothing else.
 - **Reading progress:** a 2px accent bar fixed to the top of the viewport.
 - **Post footer:** `older` / `newer` links by publish date, then `all writing`.
 - **Sections:** each `##` gets a hairline above it so long posts scan as sections.
-- **`.prose`** styles the slotted Markdown: body ink `oklch(0.87 0.012 95)` (a notch
-  brighter than `--muted` for sustained reading), line-height `1.72`, measure `58ch`.
-  Headings are Bricolage `--ink`; links are `--accent-soft` with a tomato bottom-border;
-  list markers and the blockquote rule are tomato.
-- **A wide screen grows the type, never the measure.** `.prose` font-size is fluid —
-  `clamp(1.06rem, 0.95rem + 0.25vw, 1.19rem)`. `58ch` lands at roughly 75 rendered
-  characters, which is the top of the comfortable band, so the answer to a cramped
-  big monitor is bigger text and a filled margin, not a longer line.
+- **`.prose`** styles the slotted Markdown: `--prose-ink`, `--prose-size`, line-height
+  `1.65`, measure `--measure` (`44rem`). Headings are Bricolage `--ink`; links are
+  `--accent-soft` with a tomato bottom-border; list markers and the blockquote rule
+  are tomato.
+- **A wide screen grows the type, never the measure.** The measure is in rem, so it
+  grows only with the root size on large monitors (see "Large screens"); the answer
+  to a cramped big monitor is a filled margin, not a longer line.
 - **Tables** are hairline data rails, not boxes: no outer border, a single
-  `--line` rule under a mono uppercase `--faint` header row, and `--line-soft`
-  between rows. Column alignment in the Markdown drives the styling — a `---:`
+  `--line` rule under a mono `--faint` header row, and `--line` at 55% between
+  rows. Column alignment in the Markdown drives the styling — a `---:`
   column renders mono, `tabular-nums` and `nowrap` so figures align on the decimal.
   Below `40rem` the table scrolls horizontally in its own overflow container.
-- **Code:** fenced blocks are rendered by Expressive Code (`github-dark`); inline code
+- **Code:** fenced blocks are rendered by Expressive Code (`github-light` /
+  `github-dark`, following the system setting); inline code
   is a mono chip on a faint `--ink` 10% wash. Never hand-restyle Expressive Code blocks.
 
 ### Terminal Session (homepage only)
 - The `.term` tmux mock: title bar with traffic-light dots, panes (`whoami`,
-  `shipped`, `writing`), a live status bar with clock/date/weather. This is the
+  `shipped`, `writing`), and a status bar with the build, date and a live clock.
+  Glasgow's live weather is a `$ weather` command in the `whoami` pane. This is the
   scarce set-piece — do not reproduce it on other pages.
 - The `writing` pane reads the **blog collection** (newest three, then "All posts"), so
   publishing a post updates the homepage on its own. Titles are short, so the same
