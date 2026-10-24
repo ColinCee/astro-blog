@@ -302,9 +302,16 @@ homepage terminal window's ambient lift, nothing else.
   array in `index.astro`. Bars grow in once after the panes rise.
 
 ### Projects (homepage section)
-- `// projects` sits below the companies strip as four flat neutral tiles (`--pane`,
-  `--line` border, 10px radius). At rest the only colour is a small accent dot;
-  hover lifts the tile and turns the border and arrow accent. 1, 2 or 4 columns.
+- `// projects` sits below the companies strip as five flat neutral tiles (`--pane`,
+  `--line` border, 10px radius), each with a live piece of the project under its
+  header: the dissertation agent playing with the network's value for each move
+  (`AgentPane`), a simulated radar of the London airspace (`RadarPane`, no network
+  calls), the homelab's Compose stacks, one real card from the Anki deck that flips
+  on hover or tap, and this site's own commit → build → live line from the commit it
+  was built from. At rest the only colour is a small accent dot; hover turns the
+  border and arrow accent and swaps the `~/projects/…` path for where the project
+  really lives. 1, 2 or 3 columns; the dissertation tile spans two. The live parts
+  boot in once, a beat apart, when the section scrolls into view.
 
 ### Writing (homepage section)
 - `// writing`: the newest post is a lead panel (same flat surface as the
@@ -319,6 +326,13 @@ homepage terminal window's ambient lift, nothing else.
 - Sections below the terminal carry `data-reveal` and rise in on scroll (armed by
   JS; visible without it).
 - A faint dot grid sits behind the hero and terminal and fades out down the page.
+  Over it, contour lines drawn on a canvas: still until the mouse moves across the
+  hero, then they drift for a moment and dip under the cursor. Nothing on the
+  page moves on a timer after the terminal has booted.
+- The status bar and footer carry the commit the page was built from (`built 2h
+  ago · abc1234`), so the page says when it was last deployed.
+- The lead post's headline figure is outlined behind its panel in the writing
+  section, in the display face.
 
 ### Metric Highlight (signature)
 - `.hl` — inline `<b>` in `--accent-soft`, weight 600, `tabular-nums`. Wraps the
