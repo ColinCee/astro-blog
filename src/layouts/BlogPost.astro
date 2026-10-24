@@ -915,6 +915,33 @@ const last = entries[entries.length - 1];
     font-weight: 500;
     color: var(--ink);
   }
+  /* Changes so far, as a row of dots before the name: filled ones carried over,
+     the orange one the change this row makes. */
+  .prose .pts__k--dots {
+    position: relative;
+    padding-left: 2.6rem;
+  }
+  .prose .pts__dots {
+    position: absolute;
+    left: 0;
+    top: 0.45rem;
+    display: flex;
+    gap: 3px;
+  }
+  .prose .pts__dots i {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px var(--faint);
+  }
+  .prose .pts__dots i.on {
+    background: var(--muted);
+    box-shadow: none;
+  }
+  .prose .pts__dots i.new {
+    background: var(--accent);
+    box-shadow: none;
+  }
   .prose .pts__k small {
     display: block;
     font-size: 0.6875rem;
