@@ -10,15 +10,18 @@ const clips = [
 interface Props {
   // compact: just the clip and the readout, for a project tile
   compact?: boolean;
+  // rate: playback speed. The posts run at 0.5 (a 30-tick second takes two);
+  // the homepage tile runs slower still, so a glance can follow the moves.
+  rate?: number;
 }
-const { compact = false } = Astro.props;
+const { compact = false, rate = 0.5 } = Astro.props;
 const first = clips[0];
 // The headline result comes from the post's own frontmatter, so it has one home.
 const post = await getEntry("blog", "dissertation-revival-beating-2018");
 const moves = ["shoot", "left", "right"];
 ---
 
-<div class:list={["ag", { "ag--compact": compact }]} data-agent>
+<div class:list={["ag", { "ag--compact": compact }]} data-agent data-rate={rate}>
   <div class="ag__head">
     <div class="ag__pick" role="tablist" aria-label="Which agent plays">
       {
@@ -303,8 +306,8 @@ const moves = ["shoot", "left", "right"];
     let clip: Clip | null = null;
     let i = 0, raf = 0, visible = false, wanted = !reduce;
 
-    // Same pace as the posts: half speed, so a 30-tick second takes two.
-    video.playbackRate = 0.5;
+    const rate = Number(root.dataset.rate) || 0.5;
+    video.playbackRate = rate;
 
     const show = (d: Decision) => {
       scoreEl.textContent = String(Math.round(d.score));
@@ -348,7 +351,7 @@ const moves = ["shoot", "left", "right"];
       webm.src = `/blog/gvgai/${id}.webm`;
       mp4.src = `/blog/gvgai/${id}.mp4`;
       video.load();
-      video.playbackRate = 0.5;
+      video.playbackRate = rate;
       clip = (await (await fetch(`/blog/gvgai/${id}.json`)).json()) as Clip;
       show(clip.decisions[0]);
       if (wanted && visible) video.play().catch(() => {});
