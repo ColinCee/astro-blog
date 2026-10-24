@@ -1,0 +1,40 @@
+/* A route over a game screen. Used only by the unpublished dissertation posts (Parts 2 and 3, on the
+   dissertation-revival branch), which are written as HTML; nothing published
+   uses it. Keep until they publish. */
+/* A game screen with a route drawn over it (same viewBox as the image). */
+.prose .map {
+  position: relative;
+  max-width: 26rem;
+  width: 100%;
+  margin: 0 auto;
+}
+.prose .map img {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  border-radius: 4px;
+}
+.prose .map svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.prose .map .ln {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.prose .map .ln.hi {
+  stroke: var(--accent);
+}
+.prose .map .ring {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+.prose .map .ring.hi {
+  stroke: var(--accent);
+}

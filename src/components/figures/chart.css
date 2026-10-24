@@ -1,0 +1,86 @@
+/* Charts drawn as SVG (LineChart, Ladder). */
+/* Charts drawn as inline SVG. Marks are neutral; .hi takes the accent. Text
+   in SVG is sized in the viewBox (640 wide), so charts keep that width and
+   scroll sideways on phones rather than shrink labels below 11px. */
+.prose .chart {
+  overflow-x: auto;
+}
+.prose .chart svg {
+  display: block;
+  width: 100%;
+  min-width: 40rem;
+  height: auto;
+  overflow: visible;
+}
+/* Chart text in screen pixels, whatever the drawing's scale (--k is set
+   by the layout script): ticks and notes at the figure's small size, labels
+   on the marks at its body size, the same as the HTML figures. */
+.prose .chart text,
+.prose .ladder text {
+  font-family: var(--mono);
+  font-size: calc(0.6875rem * var(--k, 1));
+  fill: var(--faint);
+}
+.prose .chart text.ink,
+.prose .chart text.hi {
+  font-size: calc(0.8rem * var(--k, 1));
+}
+/* Narrow charts fit a phone without scrolling: their 12px text still
+   renders at 11px or more down to a ~300px column. */
+.prose .chart--narrow svg {
+  min-width: 0;
+  max-width: 24rem;
+  margin: 0 auto;
+}
+.prose .chart .ax {
+  stroke: var(--line);
+  stroke-width: 1;
+  fill: none;
+}
+.prose .chart .ref {
+  stroke: var(--faint);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  fill: none;
+}
+/* Charts drawn in code at the figure's own width: full width, 1:1 pixels. */
+.prose .chart--fluid svg {
+  min-width: 0;
+}
+.prose .chart .band--runs {
+  fill: color-mix(in oklch, var(--muted) 45%, transparent);
+}
+.prose .chart .band {
+  fill: color-mix(in oklch, var(--bar) 45%, transparent);
+}
+.prose .chart .mk {
+  fill: var(--muted);
+  stroke: none;
+}
+.prose .chart .ln {
+  stroke: var(--muted);
+  stroke-width: 2;
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.prose .chart .bar {
+  fill: var(--bar);
+}
+.prose .chart .hi {
+  fill: var(--accent);
+}
+.prose .chart .ln--dash {
+  stroke-dasharray: 5 4;
+}
+.prose .chart .ln.hi {
+  fill: none;
+  stroke: var(--accent);
+}
+.prose .chart text.hi {
+  fill: var(--accent-soft);
+  font-weight: 700;
+}
+.prose .chart text.ink {
+  fill: var(--ink);
+}

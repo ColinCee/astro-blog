@@ -1,6 +1,7 @@
 ---
 // Blog post reading layout, inside the shared Base shell. The rendered
-// Markdown is styled by styles/prose.css; fenced code by Expressive Code.
+// Markdown is styled by styles/prose.css, its figures by
+// components/figures/*.css, and fenced code by Expressive Code.
 //
 // Posts whose H2s are dated ("16 December: they move the flight") render as a
 // timeline: each dated section becomes an entry with its date set in a left
@@ -10,6 +11,7 @@ import type { MarkdownHeading } from "astro";
 import Base from "./Base.astro";
 import FormattedDate from "../components/site/FormattedDate.astro";
 import "../styles/prose.css";
+import "../components/figures/figures.css";
 
 type Props = CollectionEntry<"blog">["data"] & {
   minutesRead?: number;

@@ -2,6 +2,7 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import expressiveCode from "astro-expressive-code";
+import mdx from "@astrojs/mdx";
 import { execSync } from "node:child_process";
 
 // The commit the site is built from, for the homepage status bar, footer and
@@ -50,6 +51,8 @@ export default defineConfig({
         },
       },
     }),
+    // After Expressive Code, so code blocks in MDX posts get it too.
+    mdx(),
     sitemap(),
   ],
 });

@@ -1,0 +1,28 @@
+/* Game recordings (Clip). */
+/* Game recordings: one or more tiles side by side, pixel art kept crisp.
+   Tiles stack on phones. */
+.prose .vids {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 0.9rem;
+}
+.prose .vid {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+}
+.prose .vid video,
+.prose .vid img {
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  border-radius: 4px;
+  background: var(--panel);
+}
+.prose .vid b {
+  font-weight: 500;
+  color: var(--ink);
+}
+.prose .vid--hi b {
+  color: var(--accent-soft);
+}

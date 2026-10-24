@@ -7,17 +7,28 @@ pubDate: "Oct 16 2026"
 ---
 ## Results
 
-<figure class="fig">
-<div class="split">
-<div><p class="fig__k">Run start to done</p>
-<div class="cmp" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>GitHub</span><i style="--w:1"></i><b>26 s</b></div>
-<div class="cmp cmp--after" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>Mini PC</span><i style="--w:0.769"></i><b>20 s</b></div></div>
-<div><p class="fig__k">Minutes used per job</p>
-<div class="cmp" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>GitHub</span><i style="--w:1"></i><b>1 min</b></div>
-<div class="cmp cmp--after" style="grid-template-columns:4.5rem minmax(0,1fr) 3.5rem"><span>Mini PC</span><i style="--w:0"></i><b>0</b></div></div>
-</div>
-<figcaption>From GitHub starting the run to done: about 1.3× faster, and no minutes. The same commit on both, 5 runs each, in one session.</figcaption>
-</figure>
+<Fig caption="From GitHub starting the run to done: about 1.3× faster, and no minutes. The same commit on both, 5 runs each, in one session.">
+  <Split>
+    <Panel title="Run start to done">
+      <Cmp
+        cols={["4.5rem", "3.5rem"]}
+        rows={[
+          { label: "GitHub", value: 26, text: "26 s" },
+          { label: "Mini PC", value: 20, text: "20 s", after: true },
+        ]}
+      />
+    </Panel>
+    <Panel title="Minutes used per job">
+      <Cmp
+        cols={["4.5rem", "3.5rem"]}
+        rows={[
+          { label: "GitHub", value: 1, text: "1 min" },
+          { label: "Mini PC", value: 0, text: "0", after: true },
+        ]}
+      />
+    </Panel>
+  </Split>
+</Fig>
 
 That's an Intel N100 mini PC running CI for cortex, a private Python/TypeScript project.[^perf] GitHub bills every job as at least a minute.[^rounding]
 
@@ -29,20 +40,32 @@ On GitHub's Free plan, private repos get 2,000 free minutes a month,[^minutes] a
 
 The rule was that a job doesn't share the host's kernel, which is what Firecracker is built for.[^firecracker] Escape a container and you're on the box with Home Assistant; escape a VM and you still have to get past the hypervisor and Firecracker's jailer. That ruled out six of the eight sandboxes I tried, Docker included.
 
-<figure class="fig">
-<p class="fig__k">Own kernel</p>
-<div class="dot"><span>QEMU VM</span><i style="--x:0.988"></i><b>39.5 s</b></div>
-<div class="dot dot--after"><span>Firecracker</span><i style="--x:0.357"></i><b>14.3 s</b></div>
-<p class="fig__k">Shares the host's kernel, so ruled out</p>
-<div class="dot"><span>firejail</span><i style="--x:0.258"></i><b>10.3 s</b></div>
-<div class="dot"><span>systemd-nspawn</span><i style="--x:0.260"></i><b>10.4 s</b></div>
-<div class="dot"><span>systemd hardening</span><i style="--x:0.265"></i><b>10.6 s</b></div>
-<div class="dot"><span>None (baseline)</span><i style="--x:0.268"></i><b>10.7 s</b></div>
-<div class="dot"><span>Rootless Podman</span><i style="--x:0.268"></i><b>10.7 s</b></div>
-<div class="dot"><span>Docker</span><i style="--x:0.282"></i><b>11.3 s</b></div>
-<div class="dot"><span>Incus container</span><i style="--x:0.475"></i><b>19 s</b></div>
-<figcaption>A separate test: the same cortex check, offline with warm caches, under each sandbox, on one axis from 0 to 40 s.</figcaption>
-</figure>
+<Fig caption="A separate test: the same cortex check, offline with warm caches, under each sandbox, on one axis from 0 to 40 s.">
+  <Dots
+    max={40}
+    groups={[
+      {
+        title: "Own kernel",
+        rows: [
+          { label: "QEMU VM", value: 39.52, text: "39.5 s" },
+          { label: "Firecracker", value: 14.28, text: "14.3 s", after: true },
+        ],
+      },
+      {
+        title: "Shares the host's kernel, so ruled out",
+        rows: [
+          { label: "firejail", value: 10.32, text: "10.3 s" },
+          { label: "systemd-nspawn", value: 10.4, text: "10.4 s" },
+          { label: "systemd hardening", value: 10.6, text: "10.6 s" },
+          { label: "None (baseline)", value: 10.72, text: "10.7 s" },
+          { label: "Rootless Podman", value: 10.72, text: "10.7 s" },
+          { label: "Docker", value: 11.28, text: "11.3 s" },
+          { label: "Incus container", value: 19, text: "19 s" },
+        ],
+      },
+    ]}
+  />
+</Fig>
 
 Of the two left, QEMU was nearly three times slower, mostly boot and disk. Firecracker costs about 4 seconds against no sandbox, 0.8 of it booting. It also means jobs can have `sudo`, which is fine in a VM you throw away.
 
@@ -56,32 +79,41 @@ Of the two left, QEMU was nearly three times slower, mostly boot and disk. Firec
 
 The full design is in the runbook.[^runbook]
 
-<figure class="fig">
-<p class="fig__k">Where the 6 seconds go</p>
-<div class="cmp"><span>GitHub</span><i style="--w:1"></i><b>26 s</b></div>
-<div class="cmp"><span>Pickup</span><i style="--w:0.038;margin-left:96.2%;background:var(--muted)"></i><b>&minus;1 s</b></div>
-<div class="cmp"><span>Set up, checkout</span><i style="--w:0.038;margin-left:92.3%;background:var(--muted)"></i><b>&minus;1 s</b></div>
-<div class="cmp"><span>Tools, installs</span><i style="--w:0.192;margin-left:73.1%;background:var(--muted)"></i><b>&minus;5 s</b></div>
-<div class="cmp"><span>Tests</span><i style="--w:0.038;margin-left:73.1%;background:var(--muted)"></i><b>+1 s</b></div>
-<div class="cmp cmp--after"><span>Mini PC</span><i style="--w:0.769"></i><b>20 s</b></div>
-<figcaption>The same runs as above, medians, drawn to scale. The rest, GitHub's own bookkeeping between steps, takes the same on both; the tests' extra second is noise.</figcaption>
-</figure>
+<Fig
+  title="Where the 6 seconds go"
+  caption="The same runs as above, medians, drawn to scale. The rest, GitHub's own bookkeeping between steps, takes the same on both; the tests' extra second is noise."
+>
+  <Cmp
+    rows={[
+      { label: "GitHub", value: 26, text: "26 s" },
+      { label: "Pickup", from: 26, value: 25, text: "−1 s" },
+      { label: "Set up, checkout", from: 25, value: 24, text: "−1 s" },
+      { label: "Tools, installs", from: 24, value: 19, text: "−5 s" },
+      { label: "Tests", from: 19, value: 20, text: "+1 s" },
+      { label: "Mini PC", value: 20, text: "20 s", after: true },
+    ]}
+  />
+</Fig>
 
 Almost all of it is tool setup and installs: 7 s on GitHub, 2 s from the cache disk. Pickup is a second quicker too; a VM is already booted and waiting.
 
 ## From 51 seconds to 20
 
-<figure class="fig">
-<p class="fig__k">Run start to done, each stage on today's commit</p>
-<div class="cmp-ref" style="--ref:0.510">
-<div class="cmp"><span>First version</span><em class="track"><i style="--w:1.000"></i></em><b>51 s</b></div>
-<div class="cmp"><span>+ tools in the image</span><em class="track"><i style="--w:0.941"></i></em><b>48 s</b></div>
-<div class="cmp"><span>+ one VM waiting</span><em class="track"><i style="--w:0.725"></i></em><b>37 s</b></div>
-<div class="cmp"><span>+ cache disk</span><em class="track"><i style="--w:0.549"></i></em><b>28 s</b></div>
-<div class="cmp cmp--after"><span>+ front-load the rest</span><em class="track"><i style="--w:0.392"></i></em><b>20 s</b></div>
-</div>
-<figcaption>The dashed line is GitHub's 26 s. Every stage was rebuilt and run in one session alongside GitHub, 5 runs each, with identical isolation; only the speed changes differ.</figcaption>
-</figure>
+<Fig
+  title="Run start to done, each stage on today's commit"
+  caption="The dashed line is GitHub's 26 s. Every stage was rebuilt and run in one session alongside GitHub, 5 runs each, with identical isolation; only the speed changes differ."
+>
+  <Cmp
+    ref={26}
+    rows={[
+      { label: "First version", value: 51, text: "51 s" },
+      { label: "+ tools in the image", value: 48, text: "48 s" },
+      { label: "+ one VM waiting", value: 37, text: "37 s" },
+      { label: "+ cache disk", value: 28, text: "28 s" },
+      { label: "+ front-load the rest", value: 20, text: "20 s", after: true },
+    ]}
+  />
+</Fig>
 
 - Node, uv and Python baked into the VM image, so the tools stop downloading per job: 3 s.
 - One VM kept booted and waiting, for 450 MB of RAM: 11 s, the biggest single step.

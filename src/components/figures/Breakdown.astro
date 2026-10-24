@@ -1,0 +1,32 @@
+---
+// Where a total goes: one row per part, its explanation beside a bar scaled
+// to the largest part, then its time and share of the total. `wait` marks
+// time spent waiting, `hi` the part that matters. Styles: breakdown.css.
+interface Row {
+  name: string;
+  note: string;
+  value: number;
+  text: string;
+  kind?: "wait" | "hi";
+}
+interface Props {
+  rows: Row[];
+}
+const { rows } = Astro.props;
+const max = Math.max(...rows.map((r) => r.value));
+const total = rows.reduce((s, r) => s + r.value, 0);
+const share = (v: number) => `${Math.round((v / total) * 100)}%`;
+---
+
+<div class="tlist">
+  {rows.map((r) => (
+    <div class:list={["trow", r.kind && `trow--${r.kind}`]}>
+      <span>
+        <b>{r.name}</b> {r.note}
+      </span>
+      <i style={`--w:${(r.value / max).toFixed(3)}`} />
+      {/* No space between the time and its share: they share one line. */}
+      <em set:html={`${r.text}<small>${share(r.value)}</small>`} />
+    </div>
+  ))}
+</div>

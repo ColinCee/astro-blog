@@ -1,0 +1,25 @@
+/* The reveal widget. Used only by the unpublished dissertation posts (Parts 2 and 3, on the
+   dissertation-revival branch), which are written as HTML; nothing published
+   uses it. Keep until they publish. */
+/* A hidden layer a button reveals (widget "reveal"); visible without JS. */
+.prose [data-widget="reveal"].is-armed:not(.is-revealed) .reveal {
+  opacity: 0;
+}
+.prose [data-widget="reveal"].is-revealed .hide-on-reveal {
+  opacity: 0;
+}
+.prose [data-widget="reveal"].is-armed:not(.is-revealed) .reveal-ref::after,
+.prose
+  [data-widget="reveal"].is-armed:not(.is-revealed)
+  .reveal-ref
+  .track::after {
+  opacity: 0;
+}
+.prose .reveal-ref::after,
+.prose .reveal-ref .track::after {
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+.prose [data-widget="reveal"] .reveal,
+.prose [data-widget="reveal"] .hide-on-reveal {
+  transition: opacity var(--dur-slow) var(--ease-out);
+}

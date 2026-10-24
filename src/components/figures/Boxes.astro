@@ -1,0 +1,17 @@
+---
+// A row of boxes: steps or jobs, each a name with a note under it. `slow`
+// boxes are shaded, `fast` ones outlined in the accent. Styles: split.css.
+interface Props {
+  boxes: { name: string; note: string; kind?: "slow" | "fast" }[];
+}
+const { boxes } = Astro.props;
+---
+
+<div class="boxes">
+  {boxes.map((b) => (
+    <div class:list={["box", b.kind && `box--${b.kind}`]}>
+      {b.name}
+      <small>{b.note}</small>
+    </div>
+  ))}
+</div>

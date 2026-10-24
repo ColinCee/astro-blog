@@ -360,12 +360,23 @@ homepage terminal window's ambient lift, nothing else.
   takeaways: hairline-separated rows with mono accent numerals.
 - **Body size:** `--prose-size`, 16-17px (`clamp(1rem, 0.96rem + 0.18vw, 1.0625rem)`),
   line-height 1.65. Larger sizes read as heavy in Bricolage; do not raise it.
-- **Figures** (`<figure class="fig">` written as HTML in the Markdown): one raised
-  panel with mono labels and a caption. Building blocks: `.cmp` (before/after bars to
-  scale; wrap the rows in `<div class="cmp-ref" style="--ref:…">` and each bar in
-  `<em class="track">` for a dashed reference line), `.dot` (dot plot: one row per item on a shared axis), `.stack` + `.legend`
-  (one bar split into parts), `.split` (two panels),
-  `.rows` / `.cols` (row vs column illustration), `.boxes` / `.box` (simple flow).
+- **Figures** are components in `src/components/figures/`, used by name in a
+  post's MDX (no import needed): give them the raw numbers and they compute the
+  bars, positions and shares. Each one's styles sit beside it as a `.css` file,
+  global and under `.prose`, all loaded for every post through `figures.css` in
+  the order they apply. `<Fig title caption grow>` is the frame: one raised panel,
+  a short title above, a caption below; `grow` animates its bars in once when seen.
+  Inside it: `<Cmp>` (before/after bars to scale; `from` makes a step of a
+  waterfall, `ref` a dashed reference line, `cols` the column widths), `<Dots>` (a
+  dot plot on one axis, in titled groups), `<Stack>` (one bar split into shares,
+  with a legend), `<Split>` + `<Panel title>` (panels side by side),
+  `<RowsVsColumns>` (records as JSON lines against columns), `<Boxes>` (a row of
+  jobs or steps), `<Runs>` (blocks on a shared time axis: how long each run takes
+  and how many fit), `<Splits>` (bars cut into parts with a key above; a part with
+  no text is a sliver whose time goes after the bar; `est` rows are estimates,
+  drawn lighter) and `<Breakdown>` (one row per part of a total: explanation,
+  bar, time and share). Recordings are `<Clip src label rate>` (pixelated, playing
+  only while on screen and never on their own under reduced motion).
   Marks are neutral; only the result takes the accent. Aim for at least one figure
   per post so no screen is text alone. Explanations sit next to what they explain
   (a short title above, labels on the marks), not in a paragraph under the figure.
@@ -373,29 +384,29 @@ homepage terminal window's ambient lift, nothing else.
   sizes only, at any screen width: 11px for titles, ticks and notes, 12.8px for labels
   on the marks and values. SVG charts get there through `--k` (set by the layout
   script), so their text never scales with the drawing.
-- **More figure blocks** (added with the dissertation series, Oct 2026):
-  `.vids` / `.vid` (game recordings side by side, pixelated, stacking on phones;
-  videos play only while on screen and never on their own under reduced motion),
-  `.chart` (inline SVG on a 640-wide viewBox with `.ax`, `.ref`, `.band`, `.mk`,
-  `.ln`, `.bar` and `.hi` marks; it keeps that width and scrolls sideways on phones
-  so labels stay at 11px), `.net` / `.slab` / `.deck` (a network's layers as tilted
-  stacks of real activation maps that face the reader on hover or focus), `.map`
-  (an SVG route drawn over a game screen), `.gains` / `.gain` (before → after with
-  a log-scale bar of the multiplier; `.gain--hi` is the headline row), `.arch` / `.cube` (a network as 3D blocks sized
-  by each layer's shape; a face can carry a real frame as an inline background, and `--slices` rules the depth faces into that many layers), `.flow` (a game as a row of equal decision boxes ending in the win, each shaded by its score; `.flow__b--over` hatches a score above the true value), `.player` (one bar of recording controls split by dividers: play/pause, a chevron each way for one decision, a scrubber and the position), `.tlist` / `.trow` (a timing ladder:
-  one row per part, explanation beside the bar, time at the end), `.runs` (blocks on a
-  shared time axis: how long each run takes and how many fit), `.splits` (bars cut into parts, one row each, time inside each part, one key above; `--thin` for a sliver whose time is written after the bar (`.sbar__after`), `--est` drawn lighter for an estimate), `.loop` (a process diagram with a dot running
-  each loop; accent outlines mark the parts the post is about), and `data-grow` (`.cmp` bars grow in once
-  when seen).
-- **Interactive figures** carry `data-widget` and load `src/scripts/widgets.ts`
-  only on posts that use one: `ladder` (a step chart of a sequence of speed changes, x axis the change number; tap a step for its detail), `lines` (a line chart from JSON data: axes, an optional band, a line and labels), both drawn at the figure's real width in pixels and redrawn on resize, so they run full width with text at true size,
-  `chain` (a toy of a reward travelling back through a game), `reveal` (a button
-  that adds a baseline to a chart) and `qview` (a recording with the network's
-  value for each move under it; optionally `.ctl` buttons to pause and step one decision at a time and a `.peek` block showing the four frames that decision saw, cut from a sprite sheet, and the four ticks its move is held), `pick` (tap a part of a figure to open its detail), `flow` (a slider of training passes for the `.flow` row: the win's value reaching back one box per pass). Controls use `.ctl`: pill buttons and range
-  inputs at least 44px tall. Numbers live in the Markdown's data- attributes.
+- **Interactive figures** are components too, and load `src/scripts/widgets.ts`
+  only on posts that use one: `<LineChart>` (a line chart from data: axes, an
+  optional band, a line, dots and a legend; one function in
+  `src/scripts/line-chart.ts` draws it at build time as the no-script fallback and
+  in the browser at the figure's real width), `<Ladder>` (a step chart of a
+  sequence of speed changes, x axis the change number; tap or drag across a step
+  for its detail) and `<QView>` (a recording with the network's value for each
+  move under it, a `.player` bar to pause and step one decision at a time, and a
+  `.peek` block showing the four frames that decision saw, cut from a sprite
+  sheet). Charts drawn in code run full width with text at true size.
+- **Figure types only the unpublished dissertation posts use** (Parts 2 and 3, on
+  the `dissertation-revival` branch, still written as HTML): `.ctl` (pill buttons
+  and range inputs at least 44px tall), `.net` / `.slab` / `.deck` (a network's
+  layers as tilted stacks of real activation maps), `.map` (a route over a game
+  screen), `.gains` / `.gain` (before → after with a log-scale bar of the
+  multiplier), `.loop` (a process diagram with a dot running each loop), `.arch` /
+  `.cube` (a network as 3D blocks sized by each layer's shape), `details.more`,
+  `.flow` (a game as a row of decision boxes shaded by score) and the `chain`,
+  `reveal`, `pick` and `flow` widgets. Their styles are kept, marked, in
+  `src/components/figures/`; turn each into a component when its post moves to MDX.
 - **Post header:** title, then the post's `subtitle` (when set) as a standfirst
   (`.post__lede`, Body 500, `--muted`), a hairline, and the meta row: the `stat`
-  chip (when set), date and read time. Header, prose, timeline and footer all share one measure, `--measure` (44rem),
+  chip (when set), date and read time (prose words only, at 200 a minute; figures do not count). Header, prose, timeline and footer all share one measure, `--measure` (44rem),
   so every block on a post (text, figures, code, tables) has the same left and
   right edge. Wider "breakout" figures and code were tried and rejected (Oct 2026).
 - **Reading progress:** a 2px accent bar fixed to the top of the viewport.
