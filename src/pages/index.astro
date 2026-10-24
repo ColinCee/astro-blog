@@ -120,7 +120,6 @@ const github = "https://github.com/ColinCee";
 const flightDemo = "https://flight-tracker-at-home.pages.dev";
 const linkedin = "https://www.linkedin.com/in/colin-cheung/";
 
-// Brand accent: tomato.
 
 // Shipped — before/after improvements, newest first. Bars are drawn to scale
 // (after ÷ before); `rel` rows have no absolute figures, only a ratio.
@@ -505,7 +504,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
               <span class="proj__name">dissertation</span>
               <span class="proj__desc">game-playing agents, trained in 2018 and again in 2026</span>
             </a>
-            <div class="tile__live"><AgentPane compact /></div>
+            <div class="tile__live"><AgentPane compact rate={0.3} /></div>
           </li>
           <li class="tile" style="--i: 1">
             <a class="tile__head" href={flightDemo}>
@@ -1111,7 +1110,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0 }).observe(bg);
         document.addEventListener("visibilitychange", () => setVisible(!document.hidden));
       }
-    </script>    </script>
+    </script>
 
     <style is:global>
       * {
@@ -2176,9 +2175,6 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         display: grid;
         gap: 0.3rem;
       }
-      .tile .proj__path {
-        margin-bottom: 0.4rem;
-      }
       .tile:hover .proj__go {
         color: var(--accent);
         transform: translate(3px, -3px);
@@ -2440,7 +2436,7 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         font-size: 0.6875rem;
         letter-spacing: 0.04em;
         color: var(--faint);
-        margin-bottom: clamp(1.2rem, 3vw, 2.2rem);
+        margin-bottom: 0.4rem;
       }
       .proj__path i {
         width: 0.5rem;
@@ -2456,10 +2452,6 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
           transform var(--dur-fast) var(--ease),
           color var(--dur-fast) var(--ease);
       }
-      .proj:hover .proj__go {
-        color: var(--accent);
-        transform: translate(3px, -3px);
-      }
       .proj__name {
         font-weight: 700;
         font-size: clamp(1.3rem, 2vw, 1.7rem);
@@ -2467,7 +2459,6 @@ const lastLogin = `${_lgDays[_lg.getDay()]} ${_lgMonths[_lg.getMonth()]} ${_lg.g
         line-height: 1.1;
         color: var(--ink);
         overflow-wrap: anywhere;
-        transition: color var(--dur-fast) var(--ease);
       }
       .proj__desc {
         color: var(--muted);
