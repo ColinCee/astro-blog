@@ -957,10 +957,11 @@ const last = entries[entries.length - 1];
     min-width: 1px;
     height: 0.55rem;
     transform: translateY(-50%);
+    z-index: 2;
     border: solid var(--ink);
-    border-width: 0 1px;
-    background: linear-gradient(var(--ink), var(--ink)) no-repeat 0 50% / 100% 1px;
-    opacity: 0.7;
+    border-width: 0 1.5px;
+    background: linear-gradient(var(--ink), var(--ink)) no-repeat 0 50% / 100% 1.5px;
+    filter: drop-shadow(0 0 1px var(--bg)) drop-shadow(0 0 1px var(--bg));
   }
   .prose .pts em {
     font-style: normal;
@@ -985,17 +986,50 @@ const last = entries[entries.length - 1];
   .prose .pts__r--hi .pts__k b {
     font-weight: 700;
   }
-  .prose .pts__axis {
+  .prose .pts__axis,
+  .prose .pts__refs {
     position: relative;
-    height: 1rem;
+    align-self: stretch;
+    min-height: 1.2rem;
   }
-  .prose .pts__axis span {
+  .prose .pts__axis {
+    border-top: 1px solid var(--line);
+  }
+  .prose .pts__axis span,
+  .prose .pts__refs span {
     position: absolute;
     left: calc(var(--x) * 100%);
     transform: translateX(-50%);
     font-size: 0.6875rem;
     color: var(--faint);
     white-space: nowrap;
+  }
+  .prose .pts__axis span {
+    top: 0.25rem;
+  }
+  .prose .pts__axis span::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -0.3rem;
+    height: 0.2rem;
+    border-left: 1px solid var(--line);
+  }
+  .prose .pts__axis span:first-child {
+    transform: none;
+  }
+  .prose .pts__axis span:first-child::before {
+    left: 0;
+  }
+  .prose .pts__axis span:last-child {
+    transform: translateX(-100%);
+  }
+  .prose .pts__axis span:last-child::before {
+    left: auto;
+    right: 0;
+  }
+  .prose .pts__refs span {
+    bottom: 0.15rem;
   }
   @media (max-width: 34rem) {
     .prose .pts {

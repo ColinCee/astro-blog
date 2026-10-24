@@ -24,17 +24,19 @@ My 2018 agent wins 81% of Aliens games and scores 50 points a game. The best age
 
 ## How did we beat it?
 
+Each row adds one change to the row above it: five times the practice, a reward for winning (+1 for a win, −1 for a loss, plus a tenth of the points), a bigger network called IMPALA, and a move every 2 frames instead of every 4. On a computer, hover over a row for its exact numbers.
+
 <figure class="fig">
-<p class="fig__k">How we beat my 2018 agent: each step adds one change. Average of 3 runs, the line is their spread</p>
+<p class="fig__k">How we beat my 2018 agent, one change at a time. Average of 3 runs, the line is their range</p>
 <div class="pts" style="--r1:0.820;">
-<span class="pts__h"></span><span class="pts__h"></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
-<div class="pts__r pts__r--base"><span class="pts__k"><b>My 2018 agent</b><small>1M frames, my 2018 reward</small></span><span class="pts__t" style="--a:0.813;--b:0.813;--lo:0.660;--hi:0.920"><i></i><s></s></span><em>81%</em><em class="pts__w">50.1</em></div>
-<div class="pts__r"><span class="pts__k"><b>Today's DQN</b><small>same 1M frames, points reward</small></span><span class="pts__t" style="--a:0.567;--b:0.567;--lo:0.420;--hi:0.840"><i></i><s></s></span><em>57%<small class="pts__minus">−25</small></em><em class="pts__w">39.5<small class="pts__minus">−11</small></em></div>
-<div class="pts__r"><span class="pts__k"><b>+ more practice</b><small>5M frames</small></span><span class="pts__t" style="--a:0.567;--b:0.887;--lo:0.840;--hi:0.940"><i></i><i class="pts__more"></i><s></s></span><em>89%<small>+32</small></em><em class="pts__w">58.6<small>+19</small></em></div>
-<div class="pts__r"><span class="pts__k"><b>+ win + points reward</b><small>reward</small></span><span class="pts__t" style="--a:0.887;--b:0.987;--lo:0.980;--hi:1.000"><i></i><i class="pts__more"></i><s></s></span><em>98.7%<small>+10</small></em><em class="pts__w">59.0<small class="pts__same">±0</small></em></div>
-<div class="pts__r"><span class="pts__k"><b>+ bigger network</b><small>network</small></span><span class="pts__t" style="--a:0.987;--b:1.000;--lo:1.000;--hi:1.000"><i></i><i class="pts__more"></i><s></s></span><em>100%<small>+1</small></em><em class="pts__w">62.9<small>+4</small></em></div>
-<div class="pts__r pts__r--hi"><span class="pts__k"><b>+ a move every 2 frames</b><small>how often it moves</small></span><span class="pts__t" style="--a:0.997;--b:0.997;--lo:0.990;--hi:1.000"><i></i><s></s></span><em>99.7%<small class="pts__same">±0</small></em><em class="pts__w">82.6<small>+20</small></em></div>
-<span></span><span class="pts__axis"><span style="--x:0.820">holding shoot: 82%</span></span><span></span><span></span>
+<span class="pts__h"></span><span class="pts__h pts__refs"><span style="--x:0.820">holding shoot 82%</span></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
+<div class="pts__r pts__r--base" title="81% won, 50.1 points. 3 runs: 66–92% won"><span class="pts__k"><b>My 2018 agent</b><small>1M frames</small></span><span class="pts__t" style="--a:0.813;--b:0.813;--lo:0.660;--hi:0.920"><i></i><s></s></span><em>81%</em><em class="pts__w">50.1</em></div>
+<div class="pts__r" title="57% won, 39.5 points. 3 runs: 42–84% won"><span class="pts__k"><b>Today's DQN</b><small>same 1M frames</small></span><span class="pts__t" style="--a:0.567;--b:0.567;--lo:0.420;--hi:0.840"><i></i><s></s></span><em>57%<small class="pts__minus">−25</small></em><em class="pts__w">39.5<small class="pts__minus">−11</small></em></div>
+<div class="pts__r" title="89% won, 58.6 points. 3 runs: 84–94% won"><span class="pts__k"><b>+ 5M frames</b></span><span class="pts__t" style="--a:0.567;--b:0.887;--lo:0.840;--hi:0.940"><i></i><i class="pts__more"></i><s></s></span><em>89%<small>+32</small></em><em class="pts__w">58.6<small>+19</small></em></div>
+<div class="pts__r" title="98.7% won, 59.0 points. 3 runs: 98–100% won"><span class="pts__k"><b>+ rewarded for winning</b></span><span class="pts__t" style="--a:0.887;--b:0.987;--lo:0.980;--hi:1.000"><i></i><i class="pts__more"></i><s></s></span><em>98.7%<small>+10</small></em><em class="pts__w">59.0<small class="pts__same">±0</small></em></div>
+<div class="pts__r" title="100% won, 62.9 points. 3 runs: 100–100% won"><span class="pts__k"><b>+ IMPALA network</b></span><span class="pts__t" style="--a:0.987;--b:1.000;--lo:1.000;--hi:1.000"><i></i><i class="pts__more"></i><s></s></span><em>100%<small>+1</small></em><em class="pts__w">62.9<small>+4</small></em></div>
+<div class="pts__r pts__r--hi" title="99.7% won, 82.6 points. 3 runs: 99–100% won"><span class="pts__k"><b>+ a move every 2 frames</b></span><span class="pts__t" style="--a:0.997;--b:0.997;--lo:0.990;--hi:1.000"><i></i><s></s></span><em>99.7%<small class="pts__same">±0</small></em><em class="pts__w">82.6<small>+20</small></em></div>
+<span></span><span class="pts__axis"><span style="--x:0.0">0</span><span style="--x:0.25">25</span><span style="--x:0.5">50</span><span style="--x:0.75">75</span><span style="--x:1.0">100%</span></span><span></span><span></span>
 </div>
 </figure>
 
@@ -49,12 +51,12 @@ My 2018 agent is [DQN](https://www.nature.com/articles/nature14236), the method 
 <figure class="fig">
 <p class="fig__k">Which method? All 1M frames, points reward</p>
 <div class="pts" style="--r1:0.820;">
-<span class="pts__h"></span><span class="pts__h"></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
-<div class="pts__r"><span class="pts__k"><b>PPO</b><small>a different kind of learner</small></span><span class="pts__t" style="--a:0.820;--b:0.820;--lo:0.780;--hi:0.860"><i></i><s></s></span><em>82%</em><em class="pts__w">37.6</em></div>
-<div class="pts__r pts__r--base"><span class="pts__k"><b>My 2018 agent</b><small>DQN + 2 tricks, my 2018 reward</small></span><span class="pts__t" style="--a:0.813;--b:0.813;--lo:0.660;--hi:0.920"><i></i><s></s></span><em>81%</em><em class="pts__w">50.1</em></div>
-<div class="pts__r"><span class="pts__k"><b>Rainbow</b><small>DQN + 6 tricks</small></span><span class="pts__t" style="--a:0.660;--b:0.660;--lo:0.620;--hi:0.720"><i></i><s></s></span><em>66%</em><em class="pts__w">43.2</em></div>
-<div class="pts__r"><span class="pts__k"><b>DQN</b><small>today's version</small></span><span class="pts__t" style="--a:0.567;--b:0.567;--lo:0.420;--hi:0.840"><i></i><s></s></span><em>57%</em><em class="pts__w">39.5</em></div>
-<span></span><span class="pts__axis"><span style="--x:0.820">holding shoot: 82%</span></span><span></span><span></span>
+<span class="pts__h"></span><span class="pts__h pts__refs"><span style="--x:0.820">holding shoot 82%</span></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
+<div class="pts__r" title="82% won, 37.6 points. 3 runs: 78–86% won"><span class="pts__k"><b>PPO</b><small>a different kind of learner</small></span><span class="pts__t" style="--a:0.820;--b:0.820;--lo:0.780;--hi:0.860"><i></i><s></s></span><em>82%</em><em class="pts__w">37.6</em></div>
+<div class="pts__r pts__r--base" title="81% won, 50.1 points. 3 runs: 66–92% won"><span class="pts__k"><b>My 2018 agent</b><small>DQN + 2 tricks, my 2018 reward</small></span><span class="pts__t" style="--a:0.813;--b:0.813;--lo:0.660;--hi:0.920"><i></i><s></s></span><em>81%</em><em class="pts__w">50.1</em></div>
+<div class="pts__r" title="66% won, 43.2 points. 3 runs: 62–72% won"><span class="pts__k"><b>Rainbow</b><small>DQN + 6 tricks</small></span><span class="pts__t" style="--a:0.660;--b:0.660;--lo:0.620;--hi:0.720"><i></i><s></s></span><em>66%</em><em class="pts__w">43.2</em></div>
+<div class="pts__r" title="57% won, 39.5 points. 3 runs: 42–84% won"><span class="pts__k"><b>DQN</b><small>today's version</small></span><span class="pts__t" style="--a:0.567;--b:0.567;--lo:0.420;--hi:0.840"><i></i><s></s></span><em>57%</em><em class="pts__w">39.5</em></div>
+<span></span><span class="pts__axis"><span style="--x:0.0">0</span><span style="--x:0.25">25</span><span style="--x:0.5">50</span><span style="--x:0.75">75</span><span style="--x:1.0">100%</span></span><span></span><span></span>
 </div>
 </figure>
 
@@ -81,11 +83,11 @@ My agent did learn something though. It gets 50 points a game against the button
 <figure class="fig">
 <p class="fig__k">How much practice? 1M frames, then 5M. Points reward</p>
 <div class="pts" style="--r1:0.820;">
-<span class="pts__h"></span><span class="pts__h"></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
-<div class="pts__r"><span class="pts__k"><b>Rainbow</b><small>1M → 5M frames</small></span><span class="pts__t" style="--a:0.660;--b:0.927;--lo:0.900;--hi:0.980"><i></i><i class="pts__more"></i><s></s></span><em>93%<small>+27</small></em><em class="pts__w">57.0<small>+14</small></em></div>
-<div class="pts__r"><span class="pts__k"><b>DQN</b><small>1M → 5M frames</small></span><span class="pts__t" style="--a:0.567;--b:0.887;--lo:0.840;--hi:0.940"><i></i><i class="pts__more"></i><s></s></span><em>89%<small>+32</small></em><em class="pts__w">58.6<small>+19</small></em></div>
-<div class="pts__r"><span class="pts__k"><b>PPO</b><small>1M → 5M frames</small></span><span class="pts__t" style="--a:0.827;--b:0.827;--lo:0.760;--hi:0.920"><i></i><s></s></span><em>83%<small class="pts__same">±0</small></em><em class="pts__w">45.9<small>+8</small></em></div>
-<span></span><span class="pts__axis"><span style="--x:0.820">holding shoot: 82%</span></span><span></span><span></span>
+<span class="pts__h"></span><span class="pts__h pts__refs"><span style="--x:0.820">holding shoot 82%</span></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
+<div class="pts__r" title="93% won, 57.0 points. 3 runs: 90–98% won"><span class="pts__k"><b>Rainbow</b><small>1M → 5M frames</small></span><span class="pts__t" style="--a:0.660;--b:0.927;--lo:0.900;--hi:0.980"><i></i><i class="pts__more"></i><s></s></span><em>93%<small>+27</small></em><em class="pts__w">57.0<small>+14</small></em></div>
+<div class="pts__r" title="89% won, 58.6 points. 3 runs: 84–94% won"><span class="pts__k"><b>DQN</b><small>1M → 5M frames</small></span><span class="pts__t" style="--a:0.567;--b:0.887;--lo:0.840;--hi:0.940"><i></i><i class="pts__more"></i><s></s></span><em>89%<small>+32</small></em><em class="pts__w">58.6<small>+19</small></em></div>
+<div class="pts__r" title="83% won, 45.9 points. 3 runs: 76–92% won"><span class="pts__k"><b>PPO</b><small>1M → 5M frames</small></span><span class="pts__t" style="--a:0.827;--b:0.827;--lo:0.760;--hi:0.920"><i></i><s></s></span><em>83%<small class="pts__same">±0</small></em><em class="pts__w">45.9<small>+8</small></em></div>
+<span></span><span class="pts__axis"><span style="--x:0.0">0</span><span style="--x:0.25">25</span><span style="--x:0.5">50</span><span style="--x:0.75">75</span><span style="--x:1.0">100%</span></span><span></span><span></span>
 </div>
 </figure>
 
@@ -98,18 +100,18 @@ The reward is what the agent gets told is good. Points is just the game score. W
 <figure class="fig">
 <p class="fig__k">Which reward? All DQN, 5M frames</p>
 <div class="pts" style="--r1:0.820;">
-<span class="pts__h"></span><span class="pts__h"></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
-<div class="pts__r"><span class="pts__k"><b>win + points ÷ 20</b></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">56.5</em></div>
-<div class="pts__r"><span class="pts__k"><b>win</b></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">44.5</em></div>
-<div class="pts__r pts__r--hi"><span class="pts__k"><b>win + points ÷ 10</b></span><span class="pts__t" style="--a:0.987;--b:0.987;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>98.7%</em><em class="pts__w">59.0</em></div>
-<div class="pts__r"><span class="pts__k"><b>win, points only on a win</b></span><span class="pts__t" style="--a:0.993;--b:0.993;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>99.3%</em><em class="pts__w">43.5</em></div>
-<div class="pts__r"><span class="pts__k"><b>win + points ÷ 5</b></span><span class="pts__t" style="--a:0.977;--b:0.977;--lo:0.950;--hi:1.000"><i></i><s></s></span><em>97.7%</em><em class="pts__w">59.6</em></div>
-<div class="pts__r"><span class="pts__k"><b>points + win</b></span><span class="pts__t" style="--a:0.920;--b:0.920;--lo:0.900;--hi:0.940"><i></i><s></s></span><em>92%</em><em class="pts__w">57.9</em></div>
-<div class="pts__r pts__r--base"><span class="pts__k"><b>2018 (mine)</b></span><span class="pts__t" style="--a:0.907;--b:0.907;--lo:0.860;--hi:0.940"><i></i><s></s></span><em>91%</em><em class="pts__w">48.2</em></div>
-<div class="pts__r"><span class="pts__k"><b>points</b><small>the usual</small></span><span class="pts__t" style="--a:0.887;--b:0.887;--lo:0.840;--hi:0.940"><i></i><s></s></span><em>89%</em><em class="pts__w">58.6</em></div>
-<div class="pts__r"><span class="pts__k"><b>win + points ÷ 10, 20-step</b><small>learns 20 moves ahead at once</small></span><span class="pts__t" style="--a:0.857;--b:0.857;--lo:0.770;--hi:0.910"><i></i><s></s></span><em>86%</em><em class="pts__w">42.8</em></div>
-<div class="pts__r"><span class="pts__k"><b>win + points ÷ 10, 10-step</b><small>learns 10 moves ahead at once</small></span><span class="pts__t" style="--a:0.830;--b:0.830;--lo:0.820;--hi:0.850"><i></i><s></s></span><em>83%</em><em class="pts__w">45.6</em></div>
-<span></span><span class="pts__axis"><span style="--x:0.820">holding shoot: 82%</span></span><span></span><span></span>
+<span class="pts__h"></span><span class="pts__h pts__refs"><span style="--x:0.820">holding shoot 82%</span></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
+<div class="pts__r" title="100% won, 56.5 points. 3 runs: 100–100% won"><span class="pts__k"><b>win + points ÷ 20</b></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">56.5</em></div>
+<div class="pts__r" title="100% won, 44.5 points. 3 runs: 100–100% won"><span class="pts__k"><b>win</b></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">44.5</em></div>
+<div class="pts__r pts__r--hi" title="98.7% won, 59.0 points. 3 runs: 98–100% won"><span class="pts__k"><b>win + points ÷ 10</b></span><span class="pts__t" style="--a:0.987;--b:0.987;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>98.7%</em><em class="pts__w">59.0</em></div>
+<div class="pts__r" title="99.3% won, 43.5 points. 3 runs: 98–100% won"><span class="pts__k"><b>win, points only on a win</b></span><span class="pts__t" style="--a:0.993;--b:0.993;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>99.3%</em><em class="pts__w">43.5</em></div>
+<div class="pts__r" title="97.7% won, 59.6 points. 3 runs: 95–100% won"><span class="pts__k"><b>win + points ÷ 5</b></span><span class="pts__t" style="--a:0.977;--b:0.977;--lo:0.950;--hi:1.000"><i></i><s></s></span><em>97.7%</em><em class="pts__w">59.6</em></div>
+<div class="pts__r" title="92% won, 57.9 points. 3 runs: 90–94% won"><span class="pts__k"><b>points + win</b></span><span class="pts__t" style="--a:0.920;--b:0.920;--lo:0.900;--hi:0.940"><i></i><s></s></span><em>92%</em><em class="pts__w">57.9</em></div>
+<div class="pts__r pts__r--base" title="91% won, 48.2 points. 3 runs: 86–94% won"><span class="pts__k"><b>2018 (mine)</b></span><span class="pts__t" style="--a:0.907;--b:0.907;--lo:0.860;--hi:0.940"><i></i><s></s></span><em>91%</em><em class="pts__w">48.2</em></div>
+<div class="pts__r" title="89% won, 58.6 points. 3 runs: 84–94% won"><span class="pts__k"><b>points</b><small>the usual</small></span><span class="pts__t" style="--a:0.887;--b:0.887;--lo:0.840;--hi:0.940"><i></i><s></s></span><em>89%</em><em class="pts__w">58.6</em></div>
+<div class="pts__r" title="86% won, 42.8 points. 3 runs: 77–91% won"><span class="pts__k"><b>win + points ÷ 10, 20-step</b><small>learns 20 moves ahead at once</small></span><span class="pts__t" style="--a:0.857;--b:0.857;--lo:0.770;--hi:0.910"><i></i><s></s></span><em>86%</em><em class="pts__w">42.8</em></div>
+<div class="pts__r" title="83% won, 45.6 points. 3 runs: 82–85% won"><span class="pts__k"><b>win + points ÷ 10, 10-step</b><small>learns 10 moves ahead at once</small></span><span class="pts__t" style="--a:0.830;--b:0.830;--lo:0.820;--hi:0.850"><i></i><s></s></span><em>83%</em><em class="pts__w">45.6</em></div>
+<span></span><span class="pts__axis"><span style="--x:0.0">0</span><span style="--x:0.25">25</span><span style="--x:0.5">50</span><span style="--x:0.75">75</span><span style="--x:1.0">100%</span></span><span></span><span></span>
 </div>
 </figure>
 
@@ -122,10 +124,10 @@ The network is the part that turns the screen into a score for each move. The bi
 <figure class="fig">
 <p class="fig__k">Does a bigger network help? DQN, 5M frames, win + points reward</p>
 <div class="pts" style="--r1:0.820;">
-<span class="pts__h"></span><span class="pts__h"></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
-<div class="pts__r"><span class="pts__k"><b>Standard</b><small>3 layers, from 2015</small></span><span class="pts__t" style="--a:0.987;--b:0.987;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>98.7%</em><em class="pts__w">59.0</em></div>
-<div class="pts__r"><span class="pts__k"><b>Bigger (IMPALA)</b><small>15 layers</small></span><span class="pts__t" style="--a:0.987;--b:1.000;--lo:1.000;--hi:1.000"><i></i><i class="pts__more"></i><s></s></span><em>100%<small>+1</small></em><em class="pts__w">62.9<small>+4</small></em></div>
-<span></span><span class="pts__axis"><span style="--x:0.820">holding shoot: 82%</span></span><span></span><span></span>
+<span class="pts__h"></span><span class="pts__h pts__refs"><span style="--x:0.820">holding shoot 82%</span></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
+<div class="pts__r" title="98.7% won, 59.0 points. 3 runs: 98–100% won"><span class="pts__k"><b>Standard</b><small>3 layers, from 2015</small></span><span class="pts__t" style="--a:0.987;--b:0.987;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>98.7%</em><em class="pts__w">59.0</em></div>
+<div class="pts__r" title="100% won, 62.9 points. 3 runs: 100–100% won"><span class="pts__k"><b>Bigger (IMPALA)</b><small>15 layers</small></span><span class="pts__t" style="--a:0.987;--b:1.000;--lo:1.000;--hi:1.000"><i></i><i class="pts__more"></i><s></s></span><em>100%<small>+1</small></em><em class="pts__w">62.9<small>+4</small></em></div>
+<span></span><span class="pts__axis"><span style="--x:0.0">0</span><span style="--x:0.25">25</span><span style="--x:0.5">50</span><span style="--x:0.75">75</span><span style="--x:1.0">100%</span></span><span></span><span></span>
 </div>
 </figure>
 
@@ -138,13 +140,13 @@ This is the one I never thought about in 2018. The agent holds each move for 4 f
 <figure class="fig">
 <p class="fig__k">How often should it move? DQN, 5M frames, win + points reward</p>
 <div class="pts" style="--r1:0.820;">
-<span class="pts__h"></span><span class="pts__h"></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
-<div class="pts__r"><span class="pts__k"><b>Every 4 frames</b><small>standard network</small></span><span class="pts__t" style="--a:0.987;--b:0.987;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>98.7%</em><em class="pts__w">59.0</em></div>
-<div class="pts__r"><span class="pts__k"><b>Every 2 frames</b><small>standard network</small></span><span class="pts__t" style="--a:0.957;--b:0.957;--lo:0.930;--hi:0.990"><i></i><s></s></span><em>95.7%<small class="pts__minus">−3</small></em><em class="pts__w">76.4<small>+17</small></em></div>
-<div class="pts__r"><span class="pts__k"><b>Every frame</b><small>standard network</small></span><span class="pts__t" style="--a:0.987;--b:0.997;--lo:0.990;--hi:1.000"><i></i><i class="pts__more"></i><s></s></span><em>99.7%<small>+1</small></em><em class="pts__w">78.7<small>+20</small></em></div>
-<div class="pts__r"><span class="pts__k"><b>Every 4 frames</b><small>bigger network</small></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">62.9</em></div>
-<div class="pts__r pts__r--hi"><span class="pts__k"><b>Every 2 frames</b><small>bigger network</small></span><span class="pts__t" style="--a:0.997;--b:0.997;--lo:0.990;--hi:1.000"><i></i><s></s></span><em>99.7%<small class="pts__same">±0</small></em><em class="pts__w">82.6<small>+20</small></em></div>
-<span></span><span class="pts__axis"><span style="--x:0.820">holding shoot: 82%</span></span><span></span><span></span>
+<span class="pts__h"></span><span class="pts__h pts__refs"><span style="--x:0.820">holding shoot 82%</span></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
+<div class="pts__r" title="98.7% won, 59.0 points. 3 runs: 98–100% won"><span class="pts__k"><b>Every 4 frames</b><small>standard network</small></span><span class="pts__t" style="--a:0.987;--b:0.987;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>98.7%</em><em class="pts__w">59.0</em></div>
+<div class="pts__r" title="95.7% won, 76.4 points. 3 runs: 93–99% won"><span class="pts__k"><b>Every 2 frames</b><small>standard network</small></span><span class="pts__t" style="--a:0.957;--b:0.957;--lo:0.930;--hi:0.990"><i></i><s></s></span><em>95.7%<small class="pts__minus">−3</small></em><em class="pts__w">76.4<small>+17</small></em></div>
+<div class="pts__r" title="99.7% won, 78.7 points. 3 runs: 99–100% won"><span class="pts__k"><b>Every frame</b><small>standard network</small></span><span class="pts__t" style="--a:0.987;--b:0.997;--lo:0.990;--hi:1.000"><i></i><i class="pts__more"></i><s></s></span><em>99.7%<small>+1</small></em><em class="pts__w">78.7<small>+20</small></em></div>
+<div class="pts__r" title="100% won, 62.9 points. 3 runs: 100–100% won"><span class="pts__k"><b>Every 4 frames</b><small>bigger network</small></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">62.9</em></div>
+<div class="pts__r pts__r--hi" title="99.7% won, 82.6 points. 3 runs: 99–100% won"><span class="pts__k"><b>Every 2 frames</b><small>bigger network</small></span><span class="pts__t" style="--a:0.997;--b:0.997;--lo:0.990;--hi:1.000"><i></i><s></s></span><em>99.7%<small class="pts__same">±0</small></em><em class="pts__w">82.6<small>+20</small></em></div>
+<span></span><span class="pts__axis"><span style="--x:0.0">0</span><span style="--x:0.25">25</span><span style="--x:0.5">50</span><span style="--x:0.75">75</span><span style="--x:1.0">100%</span></span><span></span><span></span>
 </div>
 </figure>
 
