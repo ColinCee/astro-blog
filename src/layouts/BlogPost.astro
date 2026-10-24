@@ -986,6 +986,10 @@ const last = entries[entries.length - 1];
   .prose .pts__r--hi .pts__k b {
     font-weight: 700;
   }
+  /* My 2018 version, the baseline: striped, the same in every chart. */
+  .prose .pts__r--base .pts__t i:first-child {
+    background: repeating-linear-gradient(135deg, var(--muted) 0 2px, var(--bar) 2px 5px);
+  }
   /* Hover or tap a row and the others fade, to read one row across. */
   .prose .pts__k {
     cursor: default;

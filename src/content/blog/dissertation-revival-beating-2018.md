@@ -43,26 +43,30 @@ Each row adds one change to the row above it: an extra 4M frames of training, 5M
 
 Winning comes first, and points only break ties between agents that win. As far as I know, that's how the GVGAI competition ranks them too. So the bars are games won, and points sit next to them.
 
-More practice did most of the work on wins, and the new reward took it to almost every game. After that, moving more often didn't change wins, but it added 20 points. Each chart below changes one thing at a time and keeps the rest the same. Grey is where the step before got to, and orange is what a change added. The dashed line is the same in every chart: what you win by just holding the shoot button.
+More practice did most of the work on wins, and the new reward took it to almost every game. After that, moving more often didn't change wins, but it added 20 points. Each chart below changes one thing at a time and keeps the rest the same. Striped is my 2018 version, grey is where the step before got to, and orange is what a change added. The dashed line is the same in every chart: what you win by just holding the shoot button.
 
-## Which method?
+## Do newer methods beat it?
 
-My 2018 agent is [DQN](https://www.nature.com/articles/nature14236), the method DeepMind used on Atari in 2015. It learns a score for each move from the screen, then plays the best one. I added two tricks from later papers. [Rainbow](https://arxiv.org/abs/1710.02298) is DQN with six of those tricks combined.[^rainbow] [PPO](https://arxiv.org/abs/1707.06347) is a different kind of learner that picks moves directly.
+I tried three, each with the same 1M frames my agent got:
+
+- **[DQN](https://www.nature.com/articles/nature14236):** DeepMind's 2015 Atari method. It scores each move from the screen and plays the best one. My agent is DQN plus 2 tricks.
+- **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.[^rainbow]
+- **[PPO](https://arxiv.org/abs/1707.06347):** a different kind of learner that picks moves directly.
 
 <figure class="fig">
-<p class="fig__k">Which method? All 1M frames, points reward</p>
+<p class="fig__k">Newer methods against my 2018 agent, all with 1M frames</p>
 <div class="pts" style="--r1:0.820;">
 <span class="pts__h"></span><span class="pts__h pts__refs"><span style="--x:0.820">holding shoot 82%</span></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
-<div class="pts__r"><span class="pts__k" tabindex="0"><b>PPO</b><small>a different kind of learner</small></span><span class="pts__t" style="--a:0.820;--b:0.820;--lo:0.780;--hi:0.860"><i></i><s></s></span><em>82%</em><em class="pts__w">37.6</em></div>
-<div class="pts__r pts__r--base"><span class="pts__k" tabindex="0"><b>My 2018 agent</b><small>DQN + 2 tricks, my 2018 reward</small></span><span class="pts__t" style="--a:0.813;--b:0.813;--lo:0.660;--hi:0.920"><i></i><s></s></span><em>81%</em><em class="pts__w">50.1</em></div>
-<div class="pts__r"><span class="pts__k" tabindex="0"><b>Rainbow</b><small>DQN + 6 tricks</small></span><span class="pts__t" style="--a:0.660;--b:0.660;--lo:0.620;--hi:0.720"><i></i><s></s></span><em>66%</em><em class="pts__w">43.2</em></div>
-<div class="pts__r"><span class="pts__k" tabindex="0"><b>DQN</b><small>today's version</small></span><span class="pts__t" style="--a:0.567;--b:0.567;--lo:0.420;--hi:0.840"><i></i><s></s></span><em>57%</em><em class="pts__w">39.5</em></div>
+<div class="pts__r pts__r--base"><span class="pts__k" tabindex="0"><b>My 2018 agent</b><small>DQN + 2 tricks</small></span><span class="pts__t" style="--a:0.813;--b:0.813;--lo:0.660;--hi:0.920"><i></i><s></s></span><em>81%</em><em class="pts__w">50.1</em></div>
+<div class="pts__r"><span class="pts__k" tabindex="0"><b>PPO</b><small>picks moves directly</small></span><span class="pts__t" style="--a:0.820;--b:0.820;--lo:0.780;--hi:0.860"><i></i><s></s></span><em>82%<small class="pts__same">±0</small></em><em class="pts__w">37.6<small class="pts__minus">−12</small></em></div>
+<div class="pts__r"><span class="pts__k" tabindex="0"><b>Rainbow</b><small>DQN + 6 tricks</small></span><span class="pts__t" style="--a:0.660;--b:0.660;--lo:0.620;--hi:0.720"><i></i><s></s></span><em>66%<small class="pts__minus">−15</small></em><em class="pts__w">43.2<small class="pts__minus">−7</small></em></div>
+<div class="pts__r"><span class="pts__k" tabindex="0"><b>DQN</b><small>today's version</small></span><span class="pts__t" style="--a:0.567;--b:0.567;--lo:0.420;--hi:0.840"><i></i><s></s></span><em>57%<small class="pts__minus">−25</small></em><em class="pts__w">39.5<small class="pts__minus">−11</small></em></div>
 <span class="pts__sp"></span><span class="pts__axis"><span style="--x:0.0">0</span><span style="--x:0.25">25</span><span style="--x:0.5">50</span><span style="--x:0.75">75</span><span style="--x:1.0">100%</span></span><span></span><span></span>
 <span class="pts__sp"></span><span class="pts__h pts__xt">games won</span><span></span><span></span>
 </div>
 </figure>
 
-With the same 1M frames of practice my agent got, none of them clearly beat it, and the runs vary a lot.[^runs] PPO wins about as often as my agent while scoring the least, which looked odd.
+None of them clearly beat it, and the runs vary a lot.[^runs] PPO wins about as often as my agent but scores the least, which looked odd.
 
 ## Was 81% even good?
 
@@ -104,13 +108,13 @@ The reward is what the agent gets told is good. Points is just the game score. W
 <p class="fig__k">Which reward? All DQN, 5M frames</p>
 <div class="pts" style="--r1:0.820;">
 <span class="pts__h"></span><span class="pts__h pts__refs"><span style="--x:0.820">holding shoot 82%</span></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
+<div class="pts__r pts__r--base"><span class="pts__k" tabindex="0"><b>2018 (mine)</b></span><span class="pts__t" style="--a:0.907;--b:0.907;--lo:0.860;--hi:0.940"><i></i><s></s></span><em>91%</em><em class="pts__w">48.2</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>win + points ÷ 20</b></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">56.5</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>win</b></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">44.5</em></div>
 <div class="pts__r pts__r--hi"><span class="pts__k" tabindex="0"><b>win + points ÷ 10</b></span><span class="pts__t" style="--a:0.987;--b:0.987;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>98.7%</em><em class="pts__w">59.0</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>win, points only on a win</b></span><span class="pts__t" style="--a:0.993;--b:0.993;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>99.3%</em><em class="pts__w">43.5</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>win + points ÷ 5</b></span><span class="pts__t" style="--a:0.977;--b:0.977;--lo:0.950;--hi:1.000"><i></i><s></s></span><em>97.7%</em><em class="pts__w">59.6</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>points + win</b></span><span class="pts__t" style="--a:0.920;--b:0.920;--lo:0.900;--hi:0.940"><i></i><s></s></span><em>92%</em><em class="pts__w">57.9</em></div>
-<div class="pts__r pts__r--base"><span class="pts__k" tabindex="0"><b>2018 (mine)</b></span><span class="pts__t" style="--a:0.907;--b:0.907;--lo:0.860;--hi:0.940"><i></i><s></s></span><em>91%</em><em class="pts__w">48.2</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>points</b><small>the usual</small></span><span class="pts__t" style="--a:0.887;--b:0.887;--lo:0.840;--hi:0.940"><i></i><s></s></span><em>89%</em><em class="pts__w">58.6</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>win + points ÷ 10, 20-step</b><small>learns 20 moves ahead at once</small></span><span class="pts__t" style="--a:0.857;--b:0.857;--lo:0.770;--hi:0.910"><i></i><s></s></span><em>86%</em><em class="pts__w">42.8</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>win + points ÷ 10, 10-step</b><small>learns 10 moves ahead at once</small></span><span class="pts__t" style="--a:0.830;--b:0.830;--lo:0.820;--hi:0.850"><i></i><s></s></span><em>83%</em><em class="pts__w">45.6</em></div>
