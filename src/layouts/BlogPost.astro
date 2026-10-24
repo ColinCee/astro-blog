@@ -886,6 +886,131 @@ const last = entries[entries.length - 1];
     font-variant-numeric: tabular-nums;
   }
 
+  /* Points chart (.pts): rows of name + tag, a bar on a shared 0-90 axis with the
+     spread of runs (s), the value and the win rate. --a/--b: the bar, --a the
+     previous step's value when a row adds to it (.pts__more is the gain).
+     --r1, --r2 draw the same reference lines in every chart, labelled under it. */
+  .prose .pts {
+    display: grid;
+    grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) 3.4rem 3.2rem;
+    align-items: center;
+    gap: 0.35rem 0.8rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+  }
+  .prose .pts__r {
+    display: contents;
+  }
+  .prose .pts__h {
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .prose .pts__wh {
+    text-align: right;
+  }
+  .prose .pts__k b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .prose .pts__k small {
+    display: block;
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .prose .pts__t {
+    position: relative;
+    align-self: stretch;
+    min-height: 1.4rem;
+    background:
+      linear-gradient(var(--line), var(--line)) no-repeat calc(var(--r1) * 100%) 0 / 1px 100%,
+      linear-gradient(var(--line), var(--line)) no-repeat calc(var(--r2) * 100%) 0 / 1px 100%;
+  }
+  .prose .pts__t i {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: calc(var(--a) * 100%);
+    height: 0.7rem;
+    transform: translateY(-50%);
+    background: var(--bar);
+    border-radius: 1px;
+  }
+  .prose .pts__t .pts__more {
+    left: calc(var(--a) * 100%);
+    width: calc((var(--b) - var(--a)) * 100%);
+    background: var(--accent);
+  }
+  .prose .pts__t s {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--lo) * 100%);
+    width: calc((var(--hi) - var(--lo)) * 100%);
+    min-width: 1px;
+    height: 0.55rem;
+    transform: translateY(-50%);
+    border: solid var(--ink);
+    border-width: 0 1px;
+    background: linear-gradient(var(--ink), var(--ink)) no-repeat 0 50% / 100% 1px;
+    opacity: 0.7;
+  }
+  .prose .pts em {
+    font-style: normal;
+    color: var(--ink);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .prose .pts em small {
+    margin-left: 0.3rem;
+    color: var(--accent-soft);
+  }
+  .prose .pts .pts__w {
+    color: var(--muted);
+  }
+  .prose .pts__r--base .pts__t i {
+    background: var(--accent-soft);
+    opacity: 0.6;
+  }
+  .prose .pts__r--hi .pts__k b,
+  .prose .pts__r--hi em {
+    color: var(--accent-soft);
+  }
+  .prose .pts__r--hi .pts__t i:not(.pts__more) {
+    background: color-mix(in oklch, var(--accent) 45%, var(--bar));
+  }
+  .prose .pts__r--hi .pts__t i:only-of-type {
+    background: var(--accent);
+  }
+  .prose .pts__axis {
+    position: relative;
+    height: 1rem;
+  }
+  .prose .pts__axis span {
+    position: absolute;
+    left: calc(var(--x) * 100%);
+    transform: translateX(-50%);
+    font-size: 0.6875rem;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+  @media (max-width: 34rem) {
+    .prose .pts {
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 0.15rem 0.6rem;
+    }
+    .prose .pts__k,
+    .prose .pts > .pts__h:first-child {
+      grid-column: 1 / -1;
+      margin-top: 0.35rem;
+    }
+    .prose .pts > .pts__h:first-child,
+    .prose .pts > span:nth-last-child(4) {
+      display: none;
+    }
+    .prose .pts__axis span {
+      font-size: 0.625rem;
+    }
+  }
   /* Comparison table (.ctab): every row described in the same columns, the
      last column a bar drawn to scale with its value. --hi marks the post's
      subject, --none a no-learning baseline (hatched). Mono and compact so five
