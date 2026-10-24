@@ -1,0 +1,376 @@
+---
+import { getEntry } from "astro:content";
+// My dissertation agent playing Aliens, with what the network thinks of each
+// move as it plays. The clips and their per-decision JSON (tick, action,
+// score, Q per action) are the ones the dissertation posts use.
+const clips = [
+  { id: "aliens-dqn-2026-best", label: "2026 agent", note: "won · 85 pts" },
+  { id: "aliens-2018-agent", label: "2018 agent", note: "won · 57 pts" },
+];
+interface Props {
+  // compact: just the clip and the readout, for a project tile
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+const first = clips[0];
+// The headline result comes from the post's own frontmatter, so it has one home.
+const post = await getEntry("blog", "dissertation-revival-beating-2018");
+const moves = ["shoot", "left", "right"];
+---
+
+<div class:list={["ag", { "ag--compact": compact }]} data-agent>
+  <div class="ag__head">
+    <div class="ag__pick" role="tablist" aria-label="Which agent plays">
+      {
+        clips.map((c, i) => (
+          <button
+            type="button"
+            role="tab"
+            class:list={["ag__tab", { "is-on": i === 0 }]}
+            aria-selected={i === 0 ? "true" : "false"}
+            data-clip={c.id}
+            data-note={c.note}
+          >
+            {c.label}
+          </button>
+        ))
+      }
+    </div>
+    <span class="ag__note" data-ag-note>{first.note}</span>
+  </div>
+  <figure class="ag__vid">
+    <video
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      poster={`/blog/gvgai/${first.id}.png`}
+      aria-label="My dissertation agent playing Aliens"
+    >
+      <source src={`/blog/gvgai/${first.id}.webm`} type="video/webm" />
+      <source src={`/blog/gvgai/${first.id}.mp4`} type="video/mp4" />
+    </video>
+    <button type="button" class="ag__play" data-ag-play aria-label="Play or pause">▶</button>
+  </figure>
+  <div class="ag__read">
+    <div class="ag__score">
+      <span class="ag__big" data-ag-score>0</span>
+      <span class="ag__lbl">points · tick <b data-ag-tick>0</b></span>
+    </div>
+    <ul class="ag__q" aria-label="The network's value for each move">
+      {
+        moves.map((m, i) => (
+          <li class="ag__row" data-q={i}>
+            <span class="ag__move">{m}</span>
+            <span class="ag__track"><i class="ag__fill" style="--w: 0.3" /></span>
+            <span class="ag__val">–</span>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="ag__cap">what the network values each move at, live</p>
+  </div>
+  {
+    post && (
+      <a class="ag__post" href={`/blog/${post.id}/`}>
+        <span class="ag__chip">{post.data.stat}</span>
+        <span class="ag__postbody">
+          <span class="ag__postlabel">{post.data.statLabel}</span>
+          <span class="ag__posttitle">{post.data.title} →</span>
+        </span>
+      </a>
+    )
+  }
+</div>
+
+<style>
+  .ag {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    height: 100%;
+    font-family: var(--mono);
+  }
+  .ag__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .ag__pick {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 2px;
+    gap: 2px;
+  }
+  .ag__tab {
+    font: inherit;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .ag__tab.is-on {
+    background: color-mix(in oklch, var(--accent) 18%, transparent);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .ag__note {
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .ag__vid {
+    position: relative;
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    overflow: hidden;
+    background: #000;
+    aspect-ratio: 600 / 220;
+  }
+  .ag__vid video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+  }
+  .ag__play {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    width: 1.8rem;
+    height: 1.8rem;
+    border: 1px solid color-mix(in oklch, #fff 30%, transparent);
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 0.7rem;
+    cursor: pointer;
+    opacity: 0.6;
+  }
+  .ag__play:hover,
+  .ag__play:focus-visible {
+    opacity: 1;
+  }
+  .ag__read {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem 1.2rem;
+    align-items: center;
+  }
+  .ag__score {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .ag__big {
+    font-family: var(--grotesk);
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .ag__lbl {
+    font-size: 0.6875rem;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+  .ag__lbl b {
+    color: var(--muted);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .ag__q {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .ag__row {
+    display: grid;
+    grid-template-columns: 3.2rem 1fr 3.4rem;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .ag__row.is-chosen {
+    color: var(--ink);
+  }
+  .ag__row.is-chosen .ag__move {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .ag__track {
+    height: 6px;
+    border-radius: 3px;
+    background: color-mix(in oklch, var(--ink) 10%, transparent);
+    overflow: hidden;
+  }
+  .ag__fill {
+    display: block;
+    height: 100%;
+    width: calc(var(--w) * 100%);
+    background: var(--muted);
+    opacity: 0.55;
+    transition: width 0.12s linear;
+  }
+  .ag__row.is-chosen .ag__fill {
+    background: var(--accent);
+    opacity: 1;
+  }
+  .ag__val {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .ag__cap {
+    grid-column: 1 / -1;
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .ag__post {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .ag__post:hover {
+    border-color: var(--accent);
+  }
+  .ag__chip {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    background: color-mix(in oklch, var(--accent) 18%, transparent);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .ag__postbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+  .ag__postlabel {
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .ag__posttitle {
+    font-family: var(--grotesk);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .ag__post:hover .ag__posttitle {
+    color: var(--accent);
+  }
+  /* compact: the clip and the readout only */
+  .ag--compact { gap: 0.5rem; }
+  .ag--compact .ag__head,
+  .ag--compact .ag__cap,
+  .ag--compact .ag__post { display: none; }
+  .ag--compact .ag__big { font-size: 1.6rem; }
+  .ag--compact .ag__row { font-size: 0.6875rem; grid-template-columns: 2.6rem 1fr 2.6rem; }
+  .ag--compact .ag__read { gap: 0.3rem 0.8rem; }
+</style>
+
+<script>
+  type Decision = { tick: number; action: string; score: number; q: number[] };
+  type Clip = {
+    action_names: string[];
+    decisions: Decision[];
+    video: { fps: number; ticks_per_frame: number };
+  };
+
+  document.querySelectorAll<HTMLElement>("[data-agent]").forEach((root) => {
+    const video = root.querySelector<HTMLVideoElement>("video")!;
+    const play = root.querySelector<HTMLButtonElement>("[data-ag-play]")!;
+    const scoreEl = root.querySelector<HTMLElement>("[data-ag-score]")!;
+    const tickEl = root.querySelector<HTMLElement>("[data-ag-tick]")!;
+    const noteEl = root.querySelector<HTMLElement>("[data-ag-note]")!;
+    const rows = Array.from(root.querySelectorAll<HTMLElement>("[data-q]"));
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let clip: Clip | null = null;
+    let i = 0, raf = 0, visible = false, wanted = !reduce;
+
+    // Same pace as the posts: half speed, so a 30-tick second takes two.
+    video.playbackRate = 0.5;
+
+    const show = (d: Decision) => {
+      scoreEl.textContent = String(Math.round(d.score));
+      tickEl.textContent = String(d.tick);
+      const max = Math.max(...d.q), min = Math.min(...d.q), span = max - min || 1;
+      const chosen = clip!.action_names.indexOf(d.action);
+      rows.forEach((row, k) => {
+        const q = d.q[k];
+        const w = q === undefined ? 0 : 0.08 + 0.92 * ((q - min) / span);
+        row.querySelector<HTMLElement>(".ag__fill")!.style.setProperty("--w", w.toFixed(3));
+        row.querySelector<HTMLElement>(".ag__val")!.textContent = q === undefined ? "–" : q.toFixed(2);
+        row.classList.toggle("is-chosen", k === chosen);
+      });
+    };
+    const sync = () => {
+      if (!clip) return;
+      const tick = Math.floor(video.currentTime * clip.video.fps * clip.video.ticks_per_frame);
+      const ds = clip.decisions;
+      // Walk the pointer to the last decision at or before this tick.
+      if (i >= ds.length || ds[i].tick > tick) i = 0;
+      while (i + 1 < ds.length && ds[i + 1].tick <= tick) i++;
+      show(ds[i]);
+    };
+    const loop = () => {
+      sync();
+      if (!video.paused) raf = requestAnimationFrame(loop);
+    };
+    video.addEventListener("play", () => { play.textContent = "❚❚"; cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); });
+    video.addEventListener("pause", () => { play.textContent = "▶"; sync(); });
+    video.addEventListener("seeked", sync);
+    play.addEventListener("click", () => {
+      wanted = video.paused;
+      if (video.paused) video.play().catch(() => {}); else video.pause();
+    });
+
+    const load = async (id: string) => {
+      clip = null; i = 0;
+      video.pause();
+      video.poster = `/blog/gvgai/${id}.png`;
+      const [webm, mp4] = Array.from(video.querySelectorAll("source"));
+      webm.src = `/blog/gvgai/${id}.webm`;
+      mp4.src = `/blog/gvgai/${id}.mp4`;
+      video.load();
+      video.playbackRate = 0.5;
+      clip = (await (await fetch(`/blog/gvgai/${id}.json`)).json()) as Clip;
+      show(clip.decisions[0]);
+      if (wanted && visible) video.play().catch(() => {});
+    };
+
+    root.querySelectorAll<HTMLButtonElement>("[data-clip]").forEach((b) => {
+      b.addEventListener("click", () => {
+        root.querySelectorAll("[data-clip]").forEach((o) => {
+          o.classList.toggle("is-on", o === b);
+          o.setAttribute("aria-selected", o === b ? "true" : "false");
+        });
+        noteEl.textContent = b.dataset.note || "";
+        load(b.dataset.clip!);
+      });
+    });
+
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && wanted) video.play().catch(() => {});
+      else if (!visible) video.pause();
+    }, { threshold: 0.2 }).observe(root);
+
+    load(root.querySelector<HTMLButtonElement>("[data-clip].is-on")!.dataset.clip!);
+  });
+</script>
