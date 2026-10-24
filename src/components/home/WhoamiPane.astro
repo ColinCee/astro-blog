@@ -35,10 +35,10 @@ const lastLogin = `${days[at.getDay()]} ${months[at.getMonth()]} ${at.getDate()}
 <Pane idx={0} name="whoami" area="who">
   <div class="who__session" aria-label="Colin, as a terminal session">
     <p class="who__login">Last login: {lastLogin} on ttys001</p>
+    <!-- prettier-ignore -->
     <p class="term-cmd">
       <span class="who__prompt">$</span>
-      <span class="who__typed js-cmd">whoami</span>
-      <span class="who__caret"></span>
+      <span class="who__typed js-cmd">whoami</span><span class="who__caret"></span>
     </p>
     <div class="term-out js-out">
       <p class="who__name">
@@ -50,10 +50,10 @@ const lastLogin = `${days[at.getDay()]} ${months[at.getMonth()]} ${at.getDate()}
       <p class="who__sub">{whoLine}</p>
     </div>
 
+    <!-- prettier-ignore -->
     <p class="term-cmd">
       <span class="who__prompt">$</span>
-      <span class="who__typed js-cmd">top -u colin</span>
-      <span class="who__caret"></span>
+      <span class="who__typed js-cmd">top -u colin</span><span class="who__caret"></span>
     </p>
     <div class="term-out js-out who__mon">
       <div class="who__cols">
@@ -70,19 +70,19 @@ const lastLogin = `${days[at.getDay()]} ${months[at.getMonth()]} ${at.getDate()}
       ))}
     </div>
 
+    <!-- prettier-ignore -->
     <p class="term-cmd">
       <span class="who__prompt">$</span>
-      <span class="who__typed js-cmd">cat now.md</span>
-      <span class="who__caret"></span>
+      <span class="who__typed js-cmd">cat now.md</span><span class="who__caret"></span>
     </p>
     <div class="term-out js-out">
       <p class="who__now">{nowLine}</p>
     </div>
 
+    <!-- prettier-ignore -->
     <p class="term-cmd">
       <span class="who__prompt">$</span>
-      <span class="who__typed js-cmd">weather</span>
-      <span class="who__caret"></span>
+      <span class="who__typed js-cmd">weather</span><span class="who__caret"></span>
     </p>
     <div class="term-out js-out">
       <p class="who__wx" data-weather>
@@ -90,10 +90,10 @@ const lastLogin = `${days[at.getDay()]} ${months[at.getMonth()]} ${at.getDate()}
       </p>
     </div>
 
+    <!-- prettier-ignore -->
     <p class="term-cmd">
       <span class="who__prompt">$</span>
-      <span class="who__typed js-cmd">ls ~/contact</span>
-      <span class="who__caret"></span>
+      <span class="who__typed js-cmd">ls ~/contact</span><span class="who__caret"></span>
     </p>
     <div class="term-out js-out who__links">
       <a href={links.github}>
