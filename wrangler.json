@@ -2,17 +2,8 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "astro-blog",
   "compatibility_date": "2024-11-01",
-  "compatibility_flags": ["nodejs_compat"],
-  "main": "./dist/_worker.js/index.js",
   "assets": {
-    "directory": "./dist",
-    "binding": "ASSETS"
+    "directory": "./dist"
   },
-  "observability": {
-    "enabled": true
-  },
-  "upload_source_maps": true,
-  "routes": [
-    { "pattern": "colincheung.dev/*", "zone_name": "colincheung.dev" }
-  ]
+  "routes": [{ "pattern": "colincheung.dev/*", "zone_name": "colincheung.dev" }]
 }
