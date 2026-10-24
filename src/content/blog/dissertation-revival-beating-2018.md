@@ -128,10 +128,8 @@ The reward is what the agent gets told is good. I tried mixes of three:
 <div class="pts" style="--r1:0.820;">
 <span class="pts__h"></span><span class="pts__h pts__refs"><span style="--x:0.820">holding shoot 82%</span></span><span class="pts__h pts__wh">won</span><span class="pts__h pts__wh">points</span>
 <div class="pts__r pts__r--base"><span class="pts__k" tabindex="0"><b>2018 (mine)</b></span><span class="pts__t" style="--a:0.907;--b:0.907;--lo:0.860;--hi:0.940"><i></i><s></s></span><em>91%</em><em class="pts__w">48.2</em></div>
-<div class="pts__r"><span class="pts__k" tabindex="0"><b>win + points ÷ 20</b></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">56.5</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>win</b></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">44.5</em></div>
 <div class="pts__r pts__r--hi"><span class="pts__k" tabindex="0"><b>win + points ÷ 10</b></span><span class="pts__t" style="--a:0.987;--b:0.987;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>98.7%</em><em class="pts__w">59.0</em></div>
-<div class="pts__r"><span class="pts__k" tabindex="0"><b>win + points ÷ 5</b></span><span class="pts__t" style="--a:0.977;--b:0.977;--lo:0.950;--hi:1.000"><i></i><s></s></span><em>97.7%</em><em class="pts__w">59.6</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>points</b><small>the usual</small></span><span class="pts__t" style="--a:0.887;--b:0.887;--lo:0.840;--hi:0.940"><i></i><s></s></span><em>89%</em><em class="pts__w">58.6</em></div>
 <span class="pts__sp"></span><span class="pts__axis"><span style="--x:0.0">0</span><span style="--x:0.25">25</span><span style="--x:0.5">50</span><span style="--x:0.75">75</span><span style="--x:1.0">100%</span></span><span></span><span></span>
 <span class="pts__sp"></span><span class="pts__h pts__xt">games won</span><span></span><span></span>
@@ -139,9 +137,8 @@ The reward is what the agent gets told is good. I tried mixes of three:
 </figure>
 
 - **Win** wins every game, but it doesn't care about points.
-- **Win + points ÷ 20** wins every game too, and scores 57.
-- **Win + points ÷ 10** loses 4 games in 300, but scores 59. I went with this one for the rest of the post.
-- **Win + points ÷ 5** scores about the same, and loses more often.
+- **Win + points ÷ 10** wins almost every game and scores 59. It's the one I kept.
+- **Other weights**, like points ÷ 5 and ÷ 20, came out the same as ÷ 10 within the noise between runs.
 - **My 2018 reward** did its job back then, but with more practice it falls behind.
 
 ## Does a bigger network help?
