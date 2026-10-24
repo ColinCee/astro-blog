@@ -24,7 +24,12 @@ My 2018 agent wins 81% of Aliens games and scores 50 points a game. The best age
 
 ## How did we beat it?
 
-Each row adds one change to the row above it: an extra 4M frames of training, 5M in total, a reward for winning (+1 for a win, −1 for a loss, plus a tenth of the points), a bigger network called IMPALA, and a move every 2 frames instead of every 4.
+Each row adds one change to the row above it:
+
+- **An extra 4M frames** of training, 5M in total.
+- **A reward for winning:** +1 for a win, −1 for a loss, plus a tenth of the points.
+- **The IMPALA network**, a bigger one.
+- **A move every 2 frames** instead of every 4.
 
 <figure class="fig">
 <p class="fig__k">How we beat my 2018 agent, one change at a time. Average of 3 runs, the line is their range</p>
@@ -43,7 +48,14 @@ Each row adds one change to the row above it: an extra 4M frames of training, 5M
 
 Winning comes first, and points only break ties between agents that win. As far as I know, that's how the GVGAI competition ranks them too. So the bars are games won, and points sit next to them.
 
-More practice did most of the work on wins, and the new reward took it to almost every game. After that, moving more often didn't change wins, but it added 20 points. Each chart below changes one thing at a time and keeps the rest the same. Striped is my 2018 version, grey is where the step before got to, and orange is what a change added. The dashed line is the same in every chart: what you win by just holding the shoot button.
+More practice did most of the work on wins, and the new reward took it to almost every game. After that, moving more often didn't change wins, but it added 20 points.
+
+Each chart below changes one thing at a time and keeps the rest the same:
+
+- **Striped** is my 2018 version.
+- **Grey** is where the step before got to.
+- **Orange** is what a change added.
+- **The dashed line** is what you win by just holding the shoot button. More on that below.
 
 ## Do newer methods beat it?
 
@@ -66,11 +78,11 @@ I tried three, each with the same 1M frames my agent got:
 </div>
 </figure>
 
-None of them clearly beat it, and the runs vary a lot.[^runs] PPO wins about as often as my agent but scores the least, which looked odd.
+None of them clearly beat it, and the runs vary a lot.[^runs] PPO was the odd one. It wins about as often as my agent but scores the least. So what was it doing?
 
-## Was 81% even good?
+## What was PPO doing?
 
-Not really. Holding the shoot button, and nothing else, wins 82% of Aliens games. That's exactly what PPO had learned.
+Holding the shoot button, and nothing else. That wins 82% of Aliens games, which is more than my agent's 81%.
 
 <figure class="fig">
 <p class="fig__k">Same level and seed, half speed: holding shoot against my 2018 agent</p>
@@ -82,7 +94,10 @@ Not really. Holding the shoot button, and nothing else, wins 82% of Aliens games
 
 I never checked that in 2018. To be honest, Claude didn't think to at first either. Overnight, the second model it had checking its work spotted two PPO runs with exactly the same scores. Claude guessed they were just holding one button, so it checked.[^results]
 
-My agent did learn something though. It gets 50 points a game against the button's 36, because it also shoots the bases in front of the aliens. So the button is the bar to beat on wins, and points show who actually learned to play.
+My agent did learn something though. It gets 50 points a game against the button's 36, because it also shoots the bases in front of the aliens. So from here on:
+
+- **Wins:** the button's 82% is the bar to beat.
+- **Points:** show who actually learned to play.
 
 ## How much does practice help?
 
@@ -102,7 +117,11 @@ A lot. With 5M frames, DQN and Rainbow both win more often than my agent, and sc
 
 ## Which reward works best?
 
-The reward is what the agent gets told is good. Points is just the game score. Win is +1 for a win and −1 for a loss. My 2018 reward was the win reward plus −0.5 on every move of a lost game.
+The reward is what the agent gets told is good. I tried mixes of three:
+
+- **Points:** the game score.
+- **Win:** +1 for a win, −1 for a loss.
+- **2018 (mine):** win, plus −0.5 on every move of a lost game.
 
 <figure class="fig">
 <p class="fig__k">Which reward? All DQN, 5M frames</p>
@@ -123,7 +142,11 @@ The reward is what the agent gets told is good. Points is just the game score. W
 </div>
 </figure>
 
-Win alone wins every game, but it doesn't care about points. The best mix was the win reward plus a tenth of the points, which still wins almost every game and scores 59. A fifth scores about the same but loses more often. My 2018 reward did its job back then, but with more practice it falls behind. Learning several moves ahead at once made it worse, and so did paying points only on a win.
+- **Win alone** wins every game, but it doesn't care about points.
+- **Win + points ÷ 10** was the best mix. It still wins almost every game and scores 59.
+- **Win + points ÷ 5** scores about the same but loses more often.
+- **My 2018 reward** did its job back then, but with more practice it falls behind.
+- **Learning several moves ahead** at once made it worse, and so did paying points only on a win.
 
 ## Does a bigger network help?
 
@@ -166,7 +189,11 @@ Wins hardly move, since they were already near the top. Points are where it show
 
 I replayed the lost games. As far as I can tell, every loss is the same thing: a bomb lands on the ship while it sits still and shoots.
 
-I think the reward is to blame. Each point is worth +0.1, and a game has about 40 kills, so that's roughly +4 in points. A death only costs −1, so a risk for more points is nearly free. The more weight the reward puts on points, the more it dies. With a move every 4 frames, that's 0 deaths in 300 games at points ÷ 20, 4 at points ÷ 10 and 7 at points ÷ 5.
+I think the reward is to blame:
+
+- **Points add up.** Each one is worth +0.1, and a game has about 40 kills. That's roughly +4.
+- **A death only costs −1.** So a risk for more points is nearly free.
+- **More weight on points, more deaths.** With a move every 4 frames, that's 0 deaths in 300 games at points ÷ 20, 4 at ÷ 10 and 7 at ÷ 5.
 
 The fix should be a loss that costs more than the points can earn, like ±10 for the result. That's a follow-up for another day.
 
