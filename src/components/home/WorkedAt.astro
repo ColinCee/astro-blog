@@ -1,0 +1,176 @@
+---
+// "Worked at": the companies, oldest first, scrolling past on a strip that
+// can be paused. Data: src/data/companies.json.
+import { getCollection } from "astro:content";
+
+const companies = (await getCollection("companies")).map((c) => c.data);
+---
+
+<section class="strip" aria-label="Companies I have worked at">
+  <span class="strip__label">// worked at</span>
+  <div class="strip__view" aria-hidden="true">
+    <div class="strip__track">
+      {[...companies, ...companies, ...companies].map((c) => (
+        <span class="strip__item">
+          <b class="strip__yr">{c.year}</b>
+          {c.name}
+          <i>/</i>
+        </span>
+      ))}
+    </div>
+  </div>
+  <button
+    class="strip__toggle"
+    type="button"
+    aria-pressed="false"
+    data-strip-toggle
+    hidden
+  >
+    pause
+  </button>
+  <ul class="sr-only">
+    {companies.map((c) => (
+      <li>
+        {c.name}, {c.year}
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .strip {
+    max-width: var(--w-poster);
+    margin: 1.6rem auto 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-block: 1px solid var(--line);
+    padding: 0.7rem 0;
+  }
+  .strip__label {
+    flex: none;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+  .strip__view {
+    flex: 1;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 6%,
+      #000 94%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 6%,
+      #000 94%,
+      transparent
+    );
+  }
+  .strip__track {
+    display: flex;
+    width: max-content;
+    animation: slide 42s linear infinite;
+  }
+  .strip:hover .strip__track,
+  .strip:focus-within .strip__track,
+  .strip.is-paused .strip__track {
+    animation-play-state: paused;
+  }
+  @keyframes slide {
+    to {
+      transform: translateX(-33.3333%);
+    }
+  }
+  /* WCAG 2.2.2: the strip moves on its own, so it can be stopped by keyboard and touch too. */
+  .strip__toggle {
+    flex: none;
+    min-width: 3.4rem;
+    min-height: 1.75rem;
+    padding: 0 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    cursor: pointer;
+    transition:
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
+  }
+  .strip__toggle:hover {
+    color: var(--ink);
+    border-color: var(--accent);
+  }
+  .strip__item {
+    display: inline-flex;
+    align-items: baseline;
+    font-family: var(--grotesk);
+    font-weight: 700;
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .strip__yr {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+    margin-right: 0.55rem;
+  }
+  .strip__item i {
+    color: color-mix(in oklch, var(--accent) 55%, transparent);
+    padding: 0 2rem;
+    font-style: normal;
+    font-weight: 400;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  /* Under reduced motion the strip stands still and wraps. */
+  @media (prefers-reduced-motion: reduce) {
+    .strip__view {
+      overflow: visible;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .strip__track {
+      flex-wrap: wrap;
+      width: auto;
+      gap: 0.2rem 0;
+    }
+  }
+</style>
+
+<script>
+  // The strip scrolls by itself; this stops and restarts it. Under reduced
+  // motion the strip stands still, so the button stays hidden.
+  const toggle = document.querySelector<HTMLButtonElement>(
+    "[data-strip-toggle]",
+  );
+  if (toggle && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    toggle.hidden = false;
+    toggle.addEventListener("click", () => {
+      const paused = toggle.closest(".strip")!.classList.toggle("is-paused");
+      toggle.setAttribute("aria-pressed", String(paused));
+      toggle.textContent = paused ? "play" : "pause";
+    });
+  }
+</script>

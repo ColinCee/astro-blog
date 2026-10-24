@@ -1,0 +1,746 @@
+---
+// Blog post reading layout, inside the shared Base shell. The rendered
+// Markdown is styled by styles/prose.css; fenced code by Expressive Code.
+//
+// Posts whose H2s are dated ("16 December: they move the flight") render as a
+// timeline: each dated section becomes an entry with its date set in a left
+// column beside a spine. Everything else renders as plain prose.
+import type { CollectionEntry } from "astro:content";
+import type { MarkdownHeading } from "astro";
+import Base from "./Base.astro";
+import FormattedDate from "../components/site/FormattedDate.astro";
+import "../styles/prose.css";
+
+type Props = CollectionEntry<"blog">["data"] & {
+  minutesRead?: number;
+  headings?: MarkdownHeading[];
+  newer?: { title: string; href: string };
+  older?: { title: string; href: string };
+};
+const {
+  title,
+  subtitle,
+  pubDate,
+  updatedDate,
+  minutesRead,
+  headings = [],
+  stat,
+  figures,
+  newer,
+  older,
+} = Astro.props;
+
+// Parse the date prefix of each H2. Headings carry no year, so anchor the last
+// dated one to the post's publication year and walk backwards, stepping back a
+// year each time the month jumps forward as we move up the page.
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const parsed = headings
+  .filter((h) => h.depth === 2)
+  .map((h) => {
+    const colon = h.text.indexOf(":");
+    const head = colon > -1 ? h.text.slice(0, colon) : h.text;
+    // "16 December", "Late April", "8 June" — day and qualifier both optional.
+    const m = head.match(
+      /^(?:(\d{1,2})\s+)?(?:(?:Late|Early|Mid)\s+)?([A-Z][a-z]+)$/,
+    );
+    const month = m ? MONTHS.indexOf(m[2]) + 1 : 0;
+    const rest = colon > -1 ? h.text.slice(colon + 1).trim() : h.text;
+    return {
+      slug: h.slug,
+      month,
+      day: m?.[1] ? Number(m[1]) : 0,
+      year: 0,
+      // The heading without its date, sentence-cased.
+      what: rest.charAt(0).toUpperCase() + rest.slice(1),
+    };
+  });
+
+let year = pubDate.getFullYear();
+let laterMonth = 0;
+for (let i = parsed.length - 1; i >= 0; i--) {
+  const p = parsed[i];
+  if (!p.month) continue;
+  if (laterMonth && p.month > laterMonth) year -= 1;
+  p.year = year;
+  laterMonth = p.month;
+}
+
+// Split the rendered Markdown at its H2s: intro, then one chunk per section.
+const html = (await Astro.slots.render("default")) ?? "";
+const h2 = /<h2 id="([^"]+)">[\s\S]*?<\/h2>/g;
+const marks = [...html.matchAll(h2)].map((m) => ({
+  slug: m[1],
+  start: m.index ?? 0,
+  end: (m.index ?? 0) + m[0].length,
+  heading: m[0],
+}));
+const chunks = marks.map((mk, i) => ({
+  ...mk,
+  body: html.slice(mk.end, marks[i + 1]?.start ?? html.length),
+  meta: parsed.find((p) => p.slug === mk.slug),
+}));
+
+// Timeline = the leading run of dated sections, when there are at least three.
+const firstUndated = chunks.findIndex((c) => !c.meta?.month);
+const run = firstUndated === -1 ? chunks.length : firstUndated;
+const isTimeline = run >= 3;
+const intro = isTimeline ? html.slice(0, marks[0].start) : html;
+const dated = isTimeline ? chunks.slice(0, run) : [];
+const after = isTimeline ? html.slice(chunks[run]?.start ?? html.length) : "";
+
+const toDate = (p: { year: number; month: number; day: number }) =>
+  Date.UTC(p.year, p.month - 1, p.day || 1);
+const DAY = 86_400_000;
+// "+3 days", "+8 weeks", "+3 months": the wait since the previous entry.
+const gap = (days: number) =>
+  days === 1
+    ? "next day"
+    : days < 21
+      ? `+${days} days`
+      : days < 60
+        ? `+${Math.round(days / 7)} weeks`
+        : `+${Math.round(days / 30.4)} months`;
+
+const entries = dated.map((c, i) => {
+  const m = c.meta!;
+  const prev = dated[i - 1]?.meta;
+  const days = prev ? Math.round((toDate(m) - toDate(prev)) / DAY) : 0;
+  return {
+    slug: c.slug,
+    what: m.what,
+    body: c.body,
+    day: m.day || "",
+    mon: MONTHS[m.month - 1].slice(0, 3),
+    year: m.year,
+    iso: `${m.year}-${String(m.month).padStart(2, "0")}${m.day ? `-${String(m.day).padStart(2, "0")}` : ""}`,
+    since: prev && m.day && prev.day ? gap(days) : "",
+  };
+});
+const span =
+  entries.length > 1
+    ? Math.round(
+        (toDate(dated[dated.length - 1].meta!) - toDate(dated[0].meta!)) / DAY,
+      )
+    : 0;
+const first = entries[0];
+const last = entries[entries.length - 1];
+---
+
+<Base
+  title={`${title} · Colin Cheung`}
+  description={subtitle ?? title}
+  ogType="article"
+>
+  <article class="post">
+    <div class="read-bar" aria-hidden="true" data-readbar></div>
+
+    <header class="post__head">
+      <a class="post__back" href="/blog">
+        // writing
+      </a>
+      <h1 class="post__title">{title}</h1>
+      {subtitle && <p class="post__lede">{subtitle}</p>}
+      {figures && (
+        <dl class="figs">
+          {figures.map((f) => (
+            <div class="figs__item">
+              <dt>{f.label}</dt>
+              <dd>{f.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+      <p class="post__meta">
+        {stat && !figures && <span class="post__stat">{stat}</span>}
+        <FormattedDate date={pubDate} />
+        {minutesRead && (
+          <Fragment>
+            <span class="post__dot" aria-hidden="true">
+              ·
+            </span>
+            <span>{minutesRead} min read</span>
+          </Fragment>
+        )}
+        {updatedDate && (
+          <Fragment>
+            <span class="post__dot" aria-hidden="true">
+              ·
+            </span>
+            <span>
+              updated <FormattedDate date={updatedDate} />
+            </span>
+          </Fragment>
+        )}
+      </p>
+    </header>
+
+    <div class="prose" set:html={intro} />
+
+    {isTimeline && (
+      <section class="tl" aria-label="Timeline">
+        <p class="tl__span">
+          <span class="tl__k">// timeline</span>
+          <span class="tl__range">
+            {first.day} {first.mon} {first.year} → {last.day} {last.mon}{" "}
+            {last.year}
+          </span>
+          <b>{span} days</b>
+        </p>
+        <ol class="tl__list">
+          {entries.map((e) => (
+            <li class="tl__item" data-entry>
+              <div class="tl__when">
+                <time datetime={e.iso}>
+                  <span class="tl__day">{e.day}</span>
+                  <span class="tl__mon">{e.mon}</span>
+                  <span class="tl__yr">{e.year}</span>
+                </time>
+                {e.since && <span class="tl__since">{e.since}</span>}
+              </div>
+              <span class="tl__node" aria-hidden="true" />
+              <div class="tl__body prose">
+                <h2 id={e.slug}>{e.what}</h2>
+                <Fragment set:html={e.body} />
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    {after && <div class="prose prose--after" set:html={after} />}
+
+    <footer class="post__foot">
+      {(older || newer) && (
+        <nav class="post__nav" aria-label="More posts">
+          {older && (
+            <a class="post__adj" href={older.href}>
+              <span class="post__adj-k">
+                <span aria-hidden="true">←</span> older
+              </span>
+              <span class="post__adj-t">{older.title}</span>
+            </a>
+          )}
+          {newer && (
+            <a class="post__adj post__adj--newer" href={newer.href}>
+              <span class="post__adj-k">
+                newer <span aria-hidden="true">→</span>
+              </span>
+              <span class="post__adj-t">{newer.title}</span>
+            </a>
+          )}
+        </nav>
+      )}
+      <a class="post__more" href="/blog">
+        all writing
+      </a>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  /* One reading column. At 64rem+ it is inset by --rail (the timeline's date
+     column plus gap), so plain posts and timeline posts share a left edge and
+     the dates sit in the margin. */
+  .post {
+    /* Body size for long-form: 16-17px. Larger read as heavy at this weight. */
+    --prose-size: clamp(1rem, 0.96rem + 0.18vw, 1.0625rem);
+    /* One reading measure for the header, prose, timeline and footer, in rem
+       so it does not change with each block's font size. */
+    --measure: 44rem;
+    --rail: 9rem;
+    --rail-gap: 3.5rem;
+    max-width: var(--w-prose);
+    margin: 0 auto;
+  }
+  @media (min-width: 64rem) {
+    .post {
+      max-width: var(--w-page);
+      padding-left: calc(var(--rail) + var(--rail-gap));
+    }
+  }
+
+  .read-bar {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 10;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(var(--read, 0));
+    transform-origin: left;
+  }
+
+  /* Header and footer share the prose measure, so their hairlines end where
+     the text does. */
+  .post__head,
+  .post__foot {
+    max-width: var(--measure, 44rem);
+    font-size: var(--prose-size);
+  }
+  .post__head {
+    margin-bottom: clamp(2rem, 5vw, 3rem);
+  }
+  .post__back {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--accent-soft);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .post__back:hover {
+    color: var(--accent);
+  }
+  .post__title {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 800;
+    font-size: clamp(1.9rem, 5vw, 2.7rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+  /* Standfirst: the post's subtitle, so the point lands before the body. */
+  .post__lede {
+    margin: 1.1rem 0 0;
+    max-width: 52ch;
+    font-size: clamp(1.08rem, 1rem + 0.3vw, 1.22rem);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: var(--muted);
+    text-wrap: balance;
+  }
+
+  /* Headline figures (frontmatter `figures`): the post's numbers as a ledger.
+     The last figure is the result, so it takes the accent. */
+  .figs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 0;
+    margin: 1.8rem 0 0;
+    border-block: 1px solid var(--line);
+  }
+  .figs__item {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1rem 1rem 1.1rem 0;
+  }
+  .figs__item + .figs__item {
+    padding-left: 1rem;
+    border-left: 1px solid var(--line);
+  }
+  .figs dt {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .figs dd {
+    margin: 0;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .figs__item:last-child dd {
+    color: var(--accent);
+  }
+  @media (max-width: 30rem) {
+    .figs {
+      grid-template-columns: 1fr;
+    }
+    .figs__item,
+    .figs__item + .figs__item {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 0.7rem 0;
+      border-left: 0;
+    }
+    .figs__item + .figs__item {
+      border-top: 1px solid var(--line);
+    }
+  }
+
+  .post__stat {
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-soft);
+    background: color-mix(in oklch, var(--accent) 10%, transparent);
+    border: 1px solid color-mix(in oklch, var(--accent) 22%, transparent);
+    border-radius: 999px;
+    padding: 0.12rem 0.65rem;
+    margin-right: 0.2rem;
+  }
+  .post__meta {
+    margin: 1.3rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.7rem;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+  }
+  .post__lede + .post__meta {
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
+  .post__dot {
+    color: var(--line);
+  }
+
+  /* ---------------- timeline ---------------- */
+  .tl {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+  /* Shares the reading measure; children set the small mono size. */
+  .tl__span {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 1rem;
+    margin: 0 0 1.6rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--line);
+    max-width: var(--measure, 44rem);
+    font-size: var(--prose-size);
+  }
+  .tl__span > * {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+  .tl__k {
+    color: var(--accent-soft);
+  }
+  .tl__range {
+    color: var(--faint);
+  }
+  .tl__span b {
+    margin-left: auto;
+    font-weight: 700;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .tl__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  /* Narrow: spine down the left, date inline above each heading. */
+  .tl__item {
+    position: relative;
+    padding: 0 0 clamp(2rem, 5vw, 3rem) 1.6rem;
+  }
+  .tl__item::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 0.5rem;
+    bottom: -0.5rem;
+    width: 1px;
+    background: var(--line);
+  }
+  .tl__item:last-child::before {
+    display: none;
+  }
+  .tl__node {
+    position: absolute;
+    left: 0;
+    top: 0.3rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--faint);
+    transition:
+      border-color var(--dur-fast) var(--ease),
+      box-shadow var(--dur-fast) var(--ease),
+      background-color var(--dur-fast) var(--ease);
+  }
+  .tl__item.is-past .tl__node {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+  .tl__item.is-current .tl__node {
+    border-color: var(--accent);
+    box-shadow: var(--ring);
+  }
+  .tl__when {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.2rem 0.9rem;
+    margin-bottom: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .tl__when time {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5ch;
+  }
+  .tl__day,
+  .tl__mon {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .tl__since {
+    text-transform: none;
+    letter-spacing: 0.02em;
+  }
+  .tl__body :global(h2) {
+    margin: 0 0 0.85rem;
+    padding: 0;
+    border: 0;
+  }
+
+  /* Wide: dates move into the left margin as a sticky column, with the spine
+     running down the gap between the dates and the text. */
+  @media (min-width: 64rem) {
+    .tl__list {
+      margin-left: calc(-1 * (var(--rail) + var(--rail-gap)));
+    }
+    .tl__item {
+      display: grid;
+      grid-template-columns: var(--rail) minmax(0, 1fr);
+      column-gap: var(--rail-gap);
+      padding-left: 0;
+    }
+    .tl__item::before {
+      left: calc(var(--rail) + var(--rail-gap) / 2);
+      top: 1.2rem;
+      bottom: -1.2rem;
+    }
+    .tl__node {
+      left: calc(var(--rail) + var(--rail-gap) / 2 - 4px);
+      top: 0.55rem;
+    }
+    .tl__when {
+      position: sticky;
+      top: 1.5rem;
+      align-self: start;
+      display: grid;
+      justify-items: end;
+      gap: 0.35rem;
+      margin: 0;
+      text-align: right;
+    }
+    .tl__when time {
+      display: grid;
+      grid-template-columns: auto auto;
+      align-items: baseline;
+      justify-content: end;
+      column-gap: 0.4rem;
+    }
+    .tl__day {
+      font-family: var(--grotesk);
+      font-weight: 800;
+      font-size: 1.7rem;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+    .tl__yr {
+      grid-column: 1 / -1;
+      justify-self: end;
+      font-size: 0.6875rem;
+    }
+  }
+
+  .post__foot {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+  .post__nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: 1rem 2rem;
+    margin-bottom: 1.8rem;
+  }
+  .post__adj {
+    display: grid;
+    gap: 0.25rem;
+    align-content: start;
+  }
+  .post__adj--newer {
+    text-align: right;
+  }
+  .post__adj-k {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .post__adj-t {
+    font-weight: 600;
+    font-size: 1.1rem;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .post__adj:hover .post__adj-t {
+    color: var(--accent-soft);
+  }
+  .post__more {
+    position: relative;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: var(--accent-soft);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .post__more:hover {
+    color: var(--accent);
+  }
+  /* Small mono links get a tap area of at least 32px without moving anything. */
+  .post__back::before,
+  .post__more::before {
+    content: "";
+    position: absolute;
+    inset: -0.5rem -0.25rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .post__head,
+    .post > .prose,
+    .tl {
+      animation: rise var(--dur-slow) var(--ease-out) both;
+    }
+    .post > .prose {
+      animation-delay: 0.05s;
+    }
+    .tl {
+      animation-delay: 0.1s;
+    }
+  }
+</style>
+
+<script>
+  // Reading progress bar: fraction of the page scrolled, as --read.
+  const readBar = document.querySelector<HTMLElement>("[data-readbar]");
+  if (readBar) {
+    const update = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const read = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+      readBar.style.setProperty("--read", read.toFixed(4));
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+  }
+
+  // Charts: SVG text scales with the drawing, so each chart sets --k (viewBox
+  // units per screen pixel) and its text is sized in screen pixels through it.
+  // Every chart's text then matches the figure text around it at any width.
+  const charts = document.querySelectorAll<SVGSVGElement>(
+    ".prose .chart svg, .prose .ladder svg",
+  );
+  if (charts.length) {
+    const fit = new ResizeObserver((entries) => {
+      for (const e of entries) {
+        const svg = e.target as SVGSVGElement;
+        if (svg.dataset.px !== undefined) continue; // drawn in pixels already
+        const w = svg.viewBox.baseVal.width;
+        if (w && e.contentRect.width)
+          svg.style.setProperty("--k", (w / e.contentRect.width).toFixed(4));
+      }
+    });
+    charts.forEach((svg) => fit.observe(svg));
+  }
+
+  // Figures: recordings play only while on screen (and never on their own
+  // under reduced motion); [data-grow] figures animate once when seen.
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const seen = new IntersectionObserver(
+    (items) => {
+      for (const it of items) {
+        const el = it.target as HTMLElement;
+        if (el instanceof HTMLVideoElement) {
+          el.playbackRate = Number(el.dataset.rate ?? 1);
+          // A video inside a qview waits for its data (data-ready) so the
+          // scores under it start with it; the widget starts it then.
+          const waits =
+            el.closest("[data-widget='qview']") && !el.dataset.ready;
+          if (it.isIntersecting && !still && !el.dataset.hold && !waits)
+            el.play().catch(() => {});
+          else el.pause();
+        } else if (it.isIntersecting) {
+          el.classList.add("is-in");
+          seen.unobserve(el);
+        }
+      }
+    },
+    { threshold: 0.35 },
+  );
+  document.querySelectorAll<HTMLVideoElement>(".prose video").forEach((v) => {
+    if (still) v.controls = true;
+    seen.observe(v);
+  });
+  document
+    .querySelectorAll<HTMLElement>(".prose [data-grow]")
+    .forEach((f) => seen.observe(f));
+
+  // Interactive figures load their code only on posts that use them.
+  if (document.querySelector("[data-widget]")) import("../scripts/widgets");
+
+  // Timeline scroll-spy: the entry crossing a line 40% down the viewport is
+  // current; entries above it are past. Their nodes fill in as you read.
+  const entries = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-entry]"),
+  );
+  if (entries.length) {
+    let ticking = false;
+    const mark = () => {
+      ticking = false;
+      const line = window.innerHeight * 0.4;
+      let current = -1;
+      entries.forEach((el, i) => {
+        if (el.getBoundingClientRect().top <= line) current = i;
+      });
+      entries.forEach((el, i) => {
+        el.classList.toggle("is-past", i < current);
+        el.classList.toggle("is-current", i === current);
+      });
+    };
+    mark();
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(mark);
+        }
+      },
+      { passive: true },
+    );
+  }
+</script>

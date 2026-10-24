@@ -8,6 +8,3 @@ package-lock.json
 *.mdx
 # Untouched so the dissertation-revival branch, which edits it, still merges.
 src/scripts/widgets.ts
-# Rewritten in the next restructure step; formatted then.
-src/layouts/BlogPost.astro
-src/pages/index.astro

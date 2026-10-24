@@ -1,6 +1,6 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
-import BlogPost from "../../layouts/BlogPost.astro";
+import Post from "../../layouts/Post.astro";
 import { render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -28,7 +28,7 @@ const words = post.body?.trim().split(/\s+/).length ?? 0;
 const minutesRead = Math.max(1, Math.round(words / 200));
 ---
 
-<BlogPost
+<Post
   {...post.data}
   minutesRead={minutesRead}
   headings={headings}
@@ -36,4 +36,4 @@ const minutesRead = Math.max(1, Math.round(words / 200));
   older={older}
 >
   <Content />
-</BlogPost>
+</Post>

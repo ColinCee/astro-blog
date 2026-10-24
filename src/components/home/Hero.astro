@@ -1,0 +1,622 @@
+---
+// The homepage hero: name, a rotating one-liner and the social links, over
+// an ambient backdrop (a faint dot grid and contour lines that move only
+// under the mouse) drawn behind the top of the whole page.
+import BrandIcon from "./BrandIcon.astro";
+import links from "../../data/links.json";
+
+// Rotating dry one-liners under the name. Each is a line of trusted HTML: plain
+// text with the punchline in <b>, and for some a small inline drawing (classes
+// prefixed q-, styled below). Behaviours are opt-in data attributes:
+//   data-flip="7,0"  the counter shows 7, then flips to 0 while on screen
+//   data-odo="N"     a counter that keeps ticking up from N
+// The markup here is the resting state (what no-JS and reduced motion show).
+const quips = [
+  `<span class="q-ctr" data-flip="7,0">0</span> days since the last prod incident`,
+  `still waiting to reverse a <b>linked list</b> at work <svg class="q-svg" width="54" height="14" viewBox="0 0 54 14" aria-hidden="true"><path class="q-line q-arrow" d="M12 7 H20 M17.5 4.5 L20 7 L17.5 9.5"/><path class="q-line q-arrow q-arrow--2" d="M32 7 H40 M37.5 4.5 L40 7 L37.5 9.5"/><rect class="q-node q-node--head" x="1" y="2" width="10" height="10" rx="2"/><rect class="q-node" x="21" y="2" width="10" height="10" rx="2"/><rect class="q-node q-node--tail" x="41" y="2" width="10" height="10" rx="2"/></svg>`,
+  `<b>LGTM</b> (didn’t read)`,
+  `still on <b>16GB</b> of RAM in 2026`,
+  `coffee <span class="q-meter q-meter--drain" aria-hidden="true"><i></i></span> into <b>code</b> <span class="q-meter q-meter--fill" aria-hidden="true"><i></i></span>`,
+  `never seen a <b>linear</b> burndown chart in my life <svg class="q-svg" width="64" height="18" viewBox="0 0 64 18" aria-hidden="true"><path class="q-line" stroke-dasharray="3 3" d="M1 2 L63 16"/><path class="q-line q-line--hot" d="M1 2 L12 3 L22 3 L30 6 L40 5 L50 9 L63 7"/></svg>`,
+  `<b>0</b> tests failing (0 tests)`,
+  `<b>claude</b> implement this, make no mistakes.`,
+  `homelab <span class="q-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i class="is-down"></i><i></i><i></i><i></i></span> <b>1</b> powercut from downtime`,
+  `TODO: fix this <b>later</b> (2019)`,
+  `today <span class="q-split" aria-hidden="true"><i style="--w:7"></i><i class="is-hot" style="--w:1"></i></span> meetings / <b>code</b>`,
+  `another meeting that could've been an <b>email</b>`,
+  `infinite RAM, if you count <b>swap</b>`,
+  `git blame <svg class="q-svg" width="52" height="18" viewBox="0 0 52 18" aria-hidden="true"><path class="q-line" d="M3 9 H49 M14 9 C20 9 20 3 26 3 H34 C40 3 40 9 46 9"/><circle class="q-fill" cx="3" cy="9" r="2.5"/><circle class="q-fill" cx="26" cy="3" r="2.5"/><circle class="q-fill q-fill--hot" cx="46" cy="9" r="3.2"/></svg> says it was <b>me</b>`,
+  `reads the docs as a <b>last resort</b>`,
+  `<b data-odo="2000000000">2,000,000,000</b> tokens burned today`,
+  `learning Mandarin one <b>Anki card</b> at a time`,
+  `testing in <b>production…</b>`,
+];
+---
+
+<!-- Drawn by JS; without it (or with reduced motion) only the still dot grid
+     shows. Both sit behind the whole shell, from the top of the page. -->
+<div class="backdrop backdrop--dots" aria-hidden="true"></div>
+<canvas class="backdrop" aria-hidden="true" data-contours></canvas>
+
+<section class="kin" aria-label="Colin Cheung, Senior Software Engineer">
+  <p class="kin__eyebrow">Senior Software Engineer</p>
+  <h1 class="kin__name">
+    <span class="kin__word">
+      <span>COLIN</span>
+    </span>
+    <span class="kin__word">
+      <span>CHEUNG</span>
+    </span>
+  </h1>
+  <p class="kin__rot">
+    <span data-quip data-quips={JSON.stringify(quips)} set:html={quips[0]} />
+  </p>
+  <div class="kin__social">
+    <a class="kin__ico" href={links.github} aria-label="GitHub">
+      <BrandIcon name="github" />
+    </a>
+    <a class="kin__ico" href={links.linkedin} aria-label="LinkedIn">
+      <BrandIcon name="linkedin" />
+    </a>
+  </div>
+</section>
+
+<style>
+  /* The backdrop shares one box and fade: the top 64rem of the page. */
+  .backdrop {
+    position: absolute;
+    inset: 0 0 auto;
+    width: 100%;
+    height: min(64rem, 100%);
+    z-index: -1;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(#000 30%, transparent 92%);
+    mask-image: linear-gradient(#000 30%, transparent 92%);
+  }
+  .backdrop--dots {
+    background-image: radial-gradient(
+      circle,
+      color-mix(in oklch, var(--ink) 16%, transparent) 1px,
+      transparent 1.5px
+    );
+    background-size: 24px 24px;
+  }
+
+  .kin {
+    position: relative;
+    max-width: var(--w-page);
+    margin: 0 auto;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: clamp(1.1rem, 2.8vw, 1.9rem);
+    padding: clamp(1rem, 4vw, 3rem) 0 clamp(2rem, 5vw, 3.2rem);
+  }
+  .kin__eyebrow {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0;
+  }
+  .kin__name {
+    font-family: var(--grotesk);
+    font-weight: 800;
+    font-size: clamp(2.6rem, 11vw, 7.5rem);
+    line-height: 0.86;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    margin: 0;
+    text-wrap: balance;
+  }
+  /* Each word rises out of its own mask on load. */
+  .kin__word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    padding: 0.07em 0.02em;
+    margin: -0.07em -0.02em;
+  }
+  .kin__word > span {
+    display: inline-block;
+    animation: word-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .kin__word + .kin__word > span {
+    animation-delay: 0.09s;
+  }
+  @keyframes word-up {
+    from {
+      transform: translateY(108%);
+    }
+  }
+  .kin__rot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: clamp(0.82rem, 1.4vw, 0.95rem);
+    letter-spacing: 0.01em;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: 0;
+    max-width: 52ch;
+    min-height: 1.5em;
+  }
+  .kin__rot [data-quip] {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem 0.55ch;
+    transition: opacity 0.38s ease;
+  }
+  .kin__social {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0;
+  }
+  .kin__ico {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    color: var(--muted);
+    transition:
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease),
+      background var(--dur-fast) var(--ease),
+      transform var(--dur-fast) var(--ease);
+  }
+  .kin__ico :global(svg) {
+    width: 1.2rem;
+    height: 1.2rem;
+    fill: currentColor;
+  }
+  .kin__ico:hover {
+    color: var(--accent);
+    border-color: var(--line);
+    background: color-mix(in oklch, var(--panel) 60%, transparent);
+    transform: translateY(-2px);
+  }
+  .kin__ico:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  @media (max-width: 560px) {
+    /* reserve 2 lines so a wrapped one-liner doesn't shift the page */
+    .kin__rot {
+      min-height: 4.5em;
+    }
+  }
+</style>
+
+<!-- Global: the one-liners arrive as HTML (set:html, then innerHTML), which
+     scoped styles do not reach. -->
+<style is:global>
+  /* Inline drawings for the one-liners. Neutral marks in --bar, the
+     punchline in --accent, all one line tall. */
+  .q-svg {
+    display: block;
+    overflow: visible;
+  }
+  .q-line {
+    fill: none;
+    stroke: var(--bar);
+    stroke-width: 1.5;
+  }
+  .q-line--hot {
+    stroke: var(--accent);
+    stroke-width: 2;
+  }
+  .q-fill {
+    fill: var(--bar);
+  }
+  .q-fill--hot {
+    fill: var(--accent);
+  }
+  /* Linked list: the arrows flip one after the other, then the highlight
+     moves from the old tail to the new head. Plays once per appearance. */
+  .q-arrow {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: q-reverse 0.45s ease-in-out 0.9s forwards;
+  }
+  .q-arrow--2 {
+    animation-delay: 1.4s;
+  }
+  .q-node {
+    fill: var(--bar);
+  }
+  .q-node--tail {
+    fill: var(--accent);
+    animation: q-cool 0.3s ease 2s forwards;
+  }
+  .q-node--head {
+    animation: q-hot 0.3s ease 2s forwards;
+  }
+  @keyframes q-reverse {
+    to {
+      transform: rotate(180deg);
+    }
+  }
+  @keyframes q-hot {
+    to {
+      fill: var(--accent);
+    }
+  }
+  @keyframes q-cool {
+    to {
+      fill: var(--bar);
+    }
+  }
+  .q-ctr {
+    display: inline-block;
+    min-width: 1.6ch;
+    padding: 0 0.4ch;
+    border-radius: 3px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .q-ctr.is-flipping {
+    animation: q-flip 0.32s ease-in-out;
+  }
+  @keyframes q-flip {
+    50% {
+      transform: rotateX(90deg);
+    }
+  }
+  /* Coffee drains while code fills, once, each time the line appears. */
+  .q-meter {
+    display: inline-block;
+    width: 3rem;
+    height: 0.6rem;
+    background: var(--bar);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .q-meter i {
+    display: block;
+    height: 100%;
+  }
+  .q-meter--drain i {
+    width: 12%;
+    background: var(--faint);
+    animation: q-drain 2.6s 0.3s ease-in-out backwards;
+  }
+  .q-meter--fill i {
+    width: 100%;
+    background: var(--accent);
+    animation: q-fill 2.6s 0.3s ease-in-out backwards;
+  }
+  @keyframes q-drain {
+    from {
+      width: 100%;
+    }
+  }
+  @keyframes q-fill {
+    from {
+      width: 8%;
+    }
+  }
+  .q-dots,
+  .q-split {
+    display: inline-flex;
+    align-items: center;
+  }
+  .q-dots {
+    gap: 3px;
+  }
+  .q-dots i {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--bar);
+  }
+  .q-dots .is-down {
+    background: var(--accent);
+  }
+  .q-split {
+    width: 6.5rem;
+    height: 0.6rem;
+    gap: 2px;
+  }
+  .q-split i {
+    flex: var(--w) 0 0;
+    height: 100%;
+    background: var(--bar);
+    border-radius: 1px;
+  }
+  .q-split .is-hot {
+    background: var(--accent);
+  }
+  .kin__rot b {
+    color: var(--accent);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+
+<script>
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Rotating dry one-liners (reduced motion shows the first, at rest).
+  document.querySelectorAll<HTMLElement>("[data-quip]").forEach((quipEl) => {
+    if (reduce) return;
+    const quipList = JSON.parse(quipEl.dataset.quips || "[]") as string[];
+    if (quipList.length < 2) return;
+    let timers: number[] = [];
+    // Start the opt-in behaviours of whichever quip is now showing.
+    const animate = () => {
+      timers.forEach((t) => window.clearTimeout(t));
+      timers = [];
+      const flip = quipEl.querySelector<HTMLElement>("[data-flip]");
+      if (flip) {
+        const [from, to] = (flip.dataset.flip || "").split(",");
+        flip.textContent = from;
+        timers.push(
+          window.setTimeout(() => {
+            flip.classList.add("is-flipping");
+            timers.push(window.setTimeout(() => (flip.textContent = to), 160));
+          }, 1300),
+        );
+      }
+      const odo = quipEl.querySelector<HTMLElement>("[data-odo]");
+      if (odo) {
+        let n = Number(odo.dataset.odo);
+        const tick = () => {
+          n += 10_000 + Math.floor(Math.random() * 90_000);
+          odo.textContent = n.toLocaleString("en-GB");
+          timers.push(window.setTimeout(tick, 120));
+        };
+        tick();
+      }
+    };
+    animate();
+    let qi = 0;
+    setInterval(() => {
+      qi = (qi + 1) % quipList.length;
+      quipEl.style.opacity = "0";
+      window.setTimeout(() => {
+        quipEl.innerHTML = quipList[qi];
+        quipEl.style.opacity = "1";
+        animate();
+      }, 380);
+    }, 3600);
+  });
+
+  // Ambient background: contour lines behind the hero. Still until the mouse
+  // moves over the hero; then the field drifts for a moment and the cursor
+  // presses a dip into it. Off under reduced motion (still grid).
+  const bg = document.querySelector<HTMLCanvasElement>("[data-contours]");
+  const page = bg?.closest<HTMLElement>(".shell");
+  if (bg && page && !reduce) {
+    const ctx = bg.getContext("2d")!;
+    let W = 0,
+      H = 0,
+      ink = "#000",
+      accent = "#c33";
+    let visible = true,
+      running = false,
+      raf = 0,
+      prev = 0;
+    let vt = 0,
+      awake = 0,
+      press = 0,
+      mx = -1e4,
+      my = -1e4,
+      drawn = false;
+    const ga = (v: number) => (ctx.globalAlpha = Math.min(1, v));
+
+    const colors = () => {
+      const cs = getComputedStyle(page);
+      ink = cs.getPropertyValue("--ink").trim() || ink;
+      accent = cs.getPropertyValue("--accent").trim() || accent;
+    };
+    const resize = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      W = bg.clientWidth;
+      H = bg.clientHeight;
+      bg.width = Math.round(W * dpr);
+      bg.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawn = false;
+    };
+    const dip = (x: number, y: number) => {
+      if (press < 0.002) return 0;
+      const dx = x - mx,
+        dy = y - my;
+      return -0.2 * press * Math.exp(-(dx * dx + dy * dy) / 26000);
+    };
+
+    // --- value noise (for the contours) ---
+    const hash = (i: number, j: number, k: number) => {
+      let h =
+        Math.imul(i, 374761393) ^
+        Math.imul(j, 668265263) ^
+        Math.imul(k, 1013904223);
+      h = Math.imul(h ^ (h >>> 13), 1274126177);
+      return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+    };
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+    const noise = (x: number, y: number, z: number) => {
+      const xi = Math.floor(x),
+        yi = Math.floor(y),
+        zi = Math.floor(z);
+      let fx = x - xi,
+        fy = y - yi,
+        fz = z - zi;
+      fx = fx * fx * (3 - 2 * fx);
+      fy = fy * fy * (3 - 2 * fy);
+      fz = fz * fz * (3 - 2 * fz);
+      const c = (dz: number) =>
+        lerp(
+          lerp(hash(xi, yi, zi + dz), hash(xi + 1, yi, zi + dz), fx),
+          lerp(hash(xi, yi + 1, zi + dz), hash(xi + 1, yi + 1, zi + dz), fx),
+          fy,
+        );
+      return lerp(c(0), c(1), fz);
+    };
+    const fbm = (x: number, y: number, z: number) =>
+      0.65 * noise(x, y, z) + 0.35 * noise(x * 2.1 + 7, y * 2.1 + 3, z * 1.4);
+
+    // --- contour lines from a field (marching squares) ---
+    const drawContours = (t: number) => {
+      const S = 12,
+        cols = Math.ceil(W / S) + 1,
+        rows = Math.ceil(H / S) + 1;
+      const f = new Float32Array(cols * rows);
+      for (let j = 0; j < rows; j++)
+        for (let i = 0; i < cols; i++)
+          f[j * cols + i] =
+            fbm(i * S * 0.0035, j * S * 0.0035, t * 0.05) + dip(i * S, j * S);
+      const levels = [0.36, 0.42, 0.48, 0.54, 0.6, 0.66];
+      ctx.lineWidth = 1;
+      levels.forEach((lv, L) => {
+        const hot = L === 3;
+        ctx.strokeStyle = hot ? accent : ink;
+        ga(hot ? 0.45 : 0.12);
+        ctx.beginPath();
+        for (let j = 0; j < rows - 1; j++)
+          for (let i = 0; i < cols - 1; i++) {
+            const a = f[j * cols + i],
+              b = f[j * cols + i + 1];
+            const c = f[(j + 1) * cols + i + 1],
+              d = f[(j + 1) * cols + i];
+            const idx =
+              +(a > lv) |
+              (+(b > lv) << 1) |
+              (+(c > lv) << 2) |
+              (+(d > lv) << 3);
+            if (idx === 0 || idx === 15) continue;
+            const x = i * S,
+              y = j * S;
+            const top = [x + (S * (lv - a)) / (b - a), y];
+            const right = [x + S, y + (S * (lv - b)) / (c - b)];
+            const bot = [x + (S * (lv - d)) / (c - d), y + S];
+            const left = [x, y + (S * (lv - a)) / (d - a)];
+            const seg = (p: number[], q: number[]) => {
+              ctx.moveTo(p[0], p[1]);
+              ctx.lineTo(q[0], q[1]);
+            };
+            switch (idx) {
+              case 1:
+              case 14:
+                seg(left, top);
+                break;
+              case 2:
+              case 13:
+                seg(top, right);
+                break;
+              case 3:
+              case 12:
+                seg(left, right);
+                break;
+              case 4:
+              case 11:
+                seg(right, bot);
+                break;
+              case 5:
+                seg(left, top);
+                seg(right, bot);
+                break;
+              case 6:
+              case 9:
+                seg(top, bot);
+                break;
+              case 7:
+              case 8:
+                seg(left, bot);
+                break;
+              case 10:
+                seg(top, right);
+                seg(left, bot);
+                break;
+            }
+          }
+        ctx.stroke();
+      });
+    };
+
+    // One frame: advance the clock only while awake, draw only if something
+    // changed, and stop scheduling frames once the field is still again.
+    const loop = (ms: number) => {
+      running = true;
+      const t = ms / 1000,
+        dt = Math.min(0.05, prev ? t - prev : 0.016);
+      prev = t;
+      const want = mx > -1e3 ? 1 : 0;
+      press += (want - press) * Math.min(1, dt * 4);
+      awake = Math.max(0, awake - dt / 1.6);
+      vt += dt * awake * 3;
+      const still = awake <= 0 && Math.abs(want - press) < 0.002;
+      if (still && drawn) {
+        running = false;
+        return;
+      }
+      drawn = true;
+      ctx.clearRect(0, 0, W, H);
+      drawContours(vt);
+      ctx.globalAlpha = 1;
+      if (visible) raf = requestAnimationFrame(loop);
+      else running = false;
+    };
+    const kick = () => {
+      if (!visible || running) return;
+      prev = 0;
+      raf = requestAnimationFrame(loop);
+    };
+    page.addEventListener("pointermove", (e) => {
+      const r = bg.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+      if (my > H) {
+        mx = -1e4;
+        return;
+      }
+      awake = 1;
+      kick();
+    });
+    page.addEventListener("pointerleave", () => {
+      mx = -1e4;
+      kick();
+    });
+
+    colors();
+    resize();
+    new ResizeObserver(() => {
+      resize();
+      kick();
+    }).observe(bg);
+    matchMedia("(prefers-color-scheme: dark)").addEventListener(
+      "change",
+      () => {
+        colors();
+        drawn = false;
+        kick();
+      },
+    );
+    // Only draw while the hero is on screen and the tab is visible.
+    const setVisible = (v: boolean) => {
+      visible = v && !document.hidden;
+      if (!visible) {
+        cancelAnimationFrame(raf);
+        running = false;
+      } else kick();
+    };
+    new IntersectionObserver(([e]) => setVisible(e.isIntersecting), {
+      threshold: 0,
+    }).observe(bg);
+    document.addEventListener("visibilitychange", () =>
+      setVisible(!document.hidden),
+    );
+  }
+</script>
