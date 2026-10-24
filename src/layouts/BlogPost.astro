@@ -888,15 +888,18 @@ const last = entries[entries.length - 1];
 
   /* Points chart (.pts): rows of name + tag, a bar on a shared 0-90 axis with the
      spread of runs (s), the value and the win rate. --a/--b: the bar, --a the
-     previous step's value when a row adds to it (.pts__more is the gain).
+     previous step's value when a row changes it (.pts__more a gain, .pts__less a loss).
      --r1, --r2 draw the same reference lines in every chart, labelled under it. */
   .prose .pts {
     display: grid;
     grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) 3.4rem 3.2rem;
     align-items: center;
-    gap: 0.35rem 0.8rem;
+    gap: 0 0.8rem;
     font-family: var(--mono);
     font-size: 0.75rem;
+  }
+  .prose .pts__r > * {
+    padding: 0.2rem 0;
   }
   .prose .pts__r {
     display: contents;
@@ -920,10 +923,10 @@ const last = entries[entries.length - 1];
   .prose .pts__t {
     position: relative;
     align-self: stretch;
-    min-height: 1.4rem;
+    min-height: 1.8rem;
     background:
-      linear-gradient(var(--line), var(--line)) no-repeat calc(var(--r1) * 100%) 0 / 1px 100%,
-      linear-gradient(var(--line), var(--line)) no-repeat calc(var(--r2) * 100%) 0 / 1px 100%;
+      linear-gradient(var(--faint), var(--faint)) no-repeat calc(var(--r1) * 100%) 0 / 1px 100%,
+      linear-gradient(var(--faint), var(--faint)) no-repeat calc(var(--r2) * 100%) 0 / 1px 100%;
   }
   .prose .pts__t i {
     position: absolute;
@@ -939,6 +942,12 @@ const last = entries[entries.length - 1];
     left: calc(var(--a) * 100%);
     width: calc((var(--b) - var(--a)) * 100%);
     background: var(--accent);
+  }
+  .prose .pts__t .pts__less {
+    left: calc(var(--a) * 100%);
+    width: calc((var(--b) - var(--a)) * 100%);
+    background: none;
+    box-shadow: inset 0 0 0 1px var(--faint);
   }
   .prose .pts__t s {
     position: absolute;
@@ -964,22 +973,14 @@ const last = entries[entries.length - 1];
     margin-left: 0.3rem;
     color: var(--accent-soft);
   }
+  .prose .pts em small.pts__minus {
+    color: var(--faint);
+  }
   .prose .pts .pts__w {
     color: var(--muted);
   }
-  .prose .pts__r--base .pts__t i {
-    background: var(--accent-soft);
-    opacity: 0.6;
-  }
-  .prose .pts__r--hi .pts__k b,
-  .prose .pts__r--hi em {
-    color: var(--accent-soft);
-  }
-  .prose .pts__r--hi .pts__t i:not(.pts__more) {
-    background: color-mix(in oklch, var(--accent) 45%, var(--bar));
-  }
-  .prose .pts__r--hi .pts__t i:only-of-type {
-    background: var(--accent);
+  .prose .pts__r--hi .pts__k b {
+    font-weight: 700;
   }
   .prose .pts__axis {
     position: relative;
