@@ -1,0 +1,52 @@
+/* Controls inside interactive figures. Used only by the unpublished dissertation posts (Parts 2 and 3, on the
+   dissertation-revival branch), which are written as HTML; nothing published
+   uses it. Keep until they publish. */
+/* Controls inside interactive figures. */
+.prose .ctl {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+}
+.prose .ctl input[type="range"] {
+  flex: 1 1 10rem;
+  accent-color: var(--accent);
+  min-height: 2.75rem;
+}
+.prose .ctl button {
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.5rem 0.95rem;
+  min-height: 2.75rem;
+  cursor: pointer;
+}
+.prose .ctl button[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent-soft);
+}
+.prose .ctl button:hover {
+  border-color: var(--accent-line);
+}
+.prose .ctl button:disabled,
+.prose .ctl button:disabled:hover {
+  color: var(--faint);
+  border-color: var(--line);
+  cursor: default;
+}
+.prose .ctl button:focus-visible,
+.prose .ctl input:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+.prose .ctl output {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.prose .ctl output[data-at] {
+  flex: 1 1 12rem;
+  font-size: 0.6875rem;
+  color: var(--faint);
+}

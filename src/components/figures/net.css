@@ -1,0 +1,86 @@
+/* A network drawn as its layers. Used only by the unpublished dissertation posts (Parts 2 and 3, on the
+   dissertation-revival branch), which are written as HTML; nothing published
+   uses it. Keep until they publish. */
+/* A network drawn as its layers: each layer's real activation maps on a
+   panel turned into the page; hover or focus turns it to face the reader. */
+.prose .net {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.9rem;
+  overflow-x: auto;
+  padding: 0.4rem 0 0.2rem;
+}
+.prose .slab {
+  margin: 0;
+  flex: 0 0 auto;
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  perspective: 40rem;
+  outline: none;
+}
+.prose .deck {
+  width: var(--dw);
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateY(-28deg) rotateX(6deg);
+  margin: 0.6rem 0.9rem 0.4rem 0.3rem;
+}
+.prose .deck img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  transform: translate3d(
+    calc(var(--i) * 0.45rem),
+    calc(var(--i) * -0.45rem),
+    calc(var(--i) * -0.8rem)
+  );
+}
+@media (max-width: 40rem) {
+  .prose .deck {
+    width: calc(var(--dw) * 0.55);
+    margin: 0.4rem 0.45rem 0.3rem 0.1rem;
+  }
+  .prose .slab--out span {
+    padding: 0.35rem 0.4rem;
+  }
+  .prose .net {
+    gap: 0.6rem 0.3rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+.prose .slab:hover .deck,
+.prose .slab:focus-visible .deck {
+  transform: none;
+}
+.prose .slab:focus-visible .deck img:first-child {
+  box-shadow: var(--ring);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .prose .deck {
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+}
+.prose .slab figcaption {
+  display: grid;
+  justify-items: center;
+  font-size: 0.6875rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.prose .slab small {
+  color: var(--faint);
+  font-size: 0.6875rem;
+}
+.prose .slab--out span {
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  color: var(--accent-soft);
+  white-space: nowrap;
+}

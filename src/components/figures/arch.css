@@ -1,0 +1,125 @@
+/* A network as 3D blocks. Used only by the unpublished dissertation posts (Parts 2 and 3, on the
+   dissertation-revival branch), which are written as HTML; nothing published
+   uses it. Keep until they publish. */
+/* Architecture: each layer a 3D block sized by its shape (--w, --h: the
+   picture; --d: how many maps). Neutral blocks; the output takes the accent. */
+.prose .arch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: center;
+  gap: 1rem 0.25rem; /* tight enough for six blocks on one row at the post measure with 11px labels */
+  padding: 0.6rem 0;
+}
+.prose .arch__l {
+  margin: 0;
+  display: grid;
+  grid-template-rows: 1fr 3.4rem;
+  justify-items: center;
+  align-items: center;
+  gap: 0.9rem;
+  perspective: 30rem;
+}
+.prose .arch__to {
+  display: grid;
+  justify-items: center;
+  gap: 0.2rem;
+  color: var(--faint);
+  align-self: center;
+  margin-bottom: 2.5rem;
+}
+.prose .arch__to small {
+  font-size: 0.6875rem;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+}
+.prose .cube {
+  position: relative;
+  width: var(--w);
+  height: var(--h);
+  margin: calc(var(--d) * 0.35) calc(var(--d) * 0.3);
+  transform-style: preserve-3d;
+  transform: rotateX(-16deg) rotateY(-32deg);
+}
+.prose .cube i {
+  position: absolute;
+  border: 1px solid color-mix(in oklch, var(--ink) 35%, transparent);
+  background-repeat: no-repeat;
+  image-rendering: pixelated; /* a face may carry a real game frame (inline background-image) */
+}
+/* The window the next layer slides over this block: a square on the front
+   face, its side as a fraction of the block's width (--kw). */
+.prose .cube s {
+  position: absolute;
+  top: 12%;
+  left: 10%;
+  width: calc(var(--kw) * var(--w));
+  aspect-ratio: 1;
+  min-width: 5px;
+  border: 1.5px solid var(--ink);
+  transform: translateZ(calc(var(--d) / 2 + 1px));
+}
+/* --slices on a cube rules its depth faces into that many layers (the
+   screen block: one per frame it sees). */
+.prose .cube[style*="--slices"] i:nth-child(2) {
+  background-image: repeating-linear-gradient(
+    0deg,
+    color-mix(in oklch, var(--ink) 30%, transparent) 0 1px,
+    transparent 1px calc(var(--d) / var(--slices))
+  );
+}
+.prose .cube[style*="--slices"] i:nth-child(3) {
+  background-image: repeating-linear-gradient(
+    90deg,
+    color-mix(in oklch, var(--ink) 30%, transparent) 0 1px,
+    transparent 1px calc(var(--d) / var(--slices))
+  );
+}
+.prose .cube i:nth-child(1) {
+  inset: 0;
+  background: color-mix(in oklch, var(--bar) 85%, var(--pane));
+  transform: translateZ(calc(var(--d) / 2));
+}
+.prose .cube i:nth-child(2) {
+  left: 0;
+  width: var(--w);
+  height: var(--d);
+  top: calc((var(--h) - var(--d)) / 2);
+  background: color-mix(in oklch, var(--bar) 55%, var(--pane));
+  transform: rotateX(90deg) translateZ(calc(var(--h) / 2));
+}
+.prose .cube i:nth-child(3) {
+  top: 0;
+  height: var(--h);
+  width: var(--d);
+  left: calc((var(--w) - var(--d)) / 2);
+  background: var(--bar);
+  transform: rotateY(90deg) translateZ(calc(var(--w) / 2));
+}
+.prose .cube--hi i:nth-child(1) {
+  background: var(--accent);
+}
+.prose .cube--hi i:nth-child(2) {
+  background: color-mix(in oklch, var(--accent) 70%, var(--pane));
+}
+.prose .cube--hi i:nth-child(3) {
+  background: color-mix(in oklch, var(--accent) 80%, var(--ink));
+}
+.prose .arch figcaption {
+  display: grid;
+  align-self: start;
+  justify-items: center;
+  text-align: center;
+  font-size: 0.6875rem;
+  color: var(--faint);
+  white-space: nowrap;
+}
+.prose .arch figcaption b {
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+.prose .arch figcaption small {
+  font-size: inherit; /* the browser's <small> would drop below the 11px floor */
+}

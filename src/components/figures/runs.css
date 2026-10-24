@@ -1,0 +1,79 @@
+/* Runs on a shared time axis (Runs). */
+/* Runs: a shared time axis, one block per run, so the row shows both how
+   long a run takes and how many fit. */
+.prose .runs {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr) 5.5rem;
+  align-items: center;
+  gap: 0.8rem;
+}
+.prose .runs span {
+  display: grid;
+  color: var(--ink);
+}
+.prose .runs small {
+  color: var(--faint);
+  font-size: 0.6875rem;
+}
+.prose .runs > div {
+  display: flex;
+  gap: 1px;
+  height: 1.6rem;
+}
+.prose .runs i {
+  flex: 0 1 auto;
+  min-width: 1px;
+  background: var(--muted);
+  border-radius: 2px;
+}
+.prose .runs b {
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+.prose .runs--hi i {
+  background: var(--accent);
+}
+.prose .runs--hi b {
+  color: var(--accent-soft);
+}
+.prose .runs--axis > div {
+  height: auto;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  padding-top: 0.3rem;
+}
+.prose .runs--axis em {
+  font-style: normal;
+  color: var(--faint);
+  font-size: 0.6875rem;
+}
+@media (max-width: 34rem) {
+  .prose .runs {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .prose .runs > div {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .prose .runs--axis span,
+  .prose .runs--axis b {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .prose .fig[data-grow] .runs i {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s var(--ease-out);
+    transition-delay: calc(var(--n, 0) * 20ms);
+  }
+  .prose .fig[data-grow] .runs:not(.runs--hi) i {
+    transition-duration: 1.6s;
+  }
+  .prose .fig[data-grow].is-in .runs i {
+    transform: none;
+  }
+}

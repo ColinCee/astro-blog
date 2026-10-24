@@ -22,13 +22,21 @@ There is a catch though. Jest isn't type-checking your code any more, and becaus
 
 So you'll want type-checking as its own step in CI:
 
-<figure class="fig">
-<div class="split">
-<div><p class="fig__k">Before: one job</p><div class="boxes"><div class="box box--slow">jest<small>type-check + run tests</small></div></div></div>
-<div><p class="fig__k">After: two jobs</p><div class="boxes"><div class="box box--fast">jest<small>run tests</small></div><div class="box box--fast">tsc --noEmit<small>type-check</small></div></div></div>
-</div>
-<figcaption>The type-check moves out of the test run into its own CI job.</figcaption>
-</figure>
+<Fig caption="The type-check moves out of the test run into its own CI job.">
+  <Split>
+    <Panel title="Before: one job">
+      <Boxes boxes={[{ name: "jest", note: "type-check + run tests", kind: "slow" }]} />
+    </Panel>
+    <Panel title="After: two jobs">
+      <Boxes
+        boxes={[
+          { name: "jest", note: "run tests", kind: "fast" },
+          { name: "tsc --noEmit", note: "type-check", kind: "fast" },
+        ]}
+      />
+    </Panel>
+  </Split>
+</Fig>
 
 ```bash
 tsc --noEmit

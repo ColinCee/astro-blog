@@ -1,0 +1,26 @@
+---
+// A game recording: `src` is the clip's path without an extension, with a
+// .webm, an .mp4 and a .png poster beside it. It plays muted on a loop only
+// while on screen (layouts/Post.astro), at `rate`. Styles: clip.css.
+interface Props {
+  src: string;
+  label: string;
+  rate?: number;
+}
+const { src, label, rate } = Astro.props;
+---
+
+<figure class="vid">
+  <video
+    data-rate={rate}
+    muted
+    loop
+    playsinline
+    preload="none"
+    poster={`${src}.png`}
+    aria-label={label}
+  >
+    <source src={`${src}.webm`} type="video/webm" />
+    <source src={`${src}.mp4`} type="video/mp4" />
+  </video>
+</figure>

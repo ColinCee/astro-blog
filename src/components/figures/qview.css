@@ -1,0 +1,160 @@
+/* A recording with the network's values under it, its player and peek (QView). */
+/* Q-value bars under a recording (widget "qview"). */
+.prose .qbars {
+  display: grid;
+  gap: 0.35rem;
+}
+.prose .qbars i {
+  transition: width 0.12s linear;
+}
+/* Player: one bar of controls for a recording, segments split by dividers:
+   play/pause, step back, step forward, a scrubber, and where it is. */
+.prose .player {
+  display: flex;
+  align-items: stretch;
+  height: 2.75rem;
+  margin-top: 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.prose .player > * + * {
+  border-left: 1px solid var(--line);
+}
+.prose .player button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 2.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.prose .player button + button {
+  border-left: 1px solid var(--line);
+}
+.prose .player button:hover {
+  color: var(--ink);
+  background: var(--pane);
+}
+.prose .player button:focus-visible,
+.prose .player input[type="range"]:focus-visible {
+  color: var(--ink);
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+  border-radius: 6px;
+}
+.prose .player svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  fill: currentColor;
+}
+/* Step buttons: a single chevron each, drawn as a stroke. */
+.prose .player [data-step] svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.prose .player [data-play] .i-pause,
+.prose .player [data-play][aria-pressed="true"] .i-play {
+  display: none;
+}
+.prose .player [data-play][aria-pressed="true"] .i-pause {
+  display: inline;
+}
+/* The scrubber sits in its own segment, padded on both sides so its thumb
+   never meets a divider. */
+.prose .player__track {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 1rem;
+}
+.prose .player input[type="range"] {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  margin: 0;
+  accent-color: var(--accent);
+  background: none;
+}
+.prose .player output {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  padding: 0 0.85rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Peek (qview): what one decision saw. .peek__seen shows four frames cut
+   from a sprite sheet (--sheet on the figure; one row per decision, --n rows,
+   --k the current row); tapping one shows it large in .peek__zoom. */
+.prose .peek {
+  display: grid;
+  gap: 0.4rem;
+}
+.prose .peek .fig__k {
+  margin: 0;
+}
+.prose .peek .fig__k b {
+  color: var(--accent-soft);
+  font-weight: 700;
+}
+.prose .peek__seen {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 3px;
+}
+.prose .peek__seen i,
+.prose .peek__zoom i {
+  display: block;
+  aspect-ratio: 150 / 55;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background-color: var(--panel);
+  background-image: var(--sheet);
+  background-repeat: no-repeat;
+  background-size: 400% calc(var(--n, 1) * 100%);
+  background-position: calc(var(--i) * 100% / 3)
+    calc(var(--k, 0) * 100% / max(1, var(--n, 1) - 1));
+  image-rendering: pixelated;
+}
+.prose .peek__seen i {
+  cursor: zoom-in;
+  outline: none;
+}
+.prose .peek__seen i.is-on,
+.prose .peek__seen i:focus-visible {
+  border-color: var(--accent);
+}
+.prose .peek__seen i:nth-child(1) {
+  --i: 0;
+}
+.prose .peek__seen i:nth-child(2) {
+  --i: 1;
+}
+.prose .peek__seen i:nth-child(3) {
+  --i: 2;
+}
+.prose .peek__seen i:nth-child(4) {
+  --i: 3;
+}
+.prose .peek__zoom {
+  display: grid;
+  gap: 0.25rem;
+}
+.prose .peek__zoom[hidden] {
+  display: none;
+}
+.prose .peek__zoom small {
+  color: var(--faint);
+  font-size: 0.6875rem;
+}

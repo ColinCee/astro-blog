@@ -1,0 +1,42 @@
+---
+// A step chart of speed changes, one step per change, from `base` (where it
+// started) through each step's before → after. The ladder widget draws it
+// and fills the panel under it with the step picked; without script the
+// panel shows the biggest step. Styles: chart.css, ladder.css.
+import Fig from "./Fig.astro";
+
+interface Step {
+  name: string;
+  before: number;
+  after: number;
+  note?: string;
+}
+interface Props {
+  title: string;
+  label: string;
+  base: { name: string; note: string };
+  steps: Step[];
+}
+const { title, label, base, steps } = Astro.props;
+const fmt = new Intl.NumberFormat("en-GB");
+const top = steps.reduce((a, s) =>
+  s.after / s.before > a.after / a.before ? s : a,
+);
+---
+
+<Fig
+  title={title}
+  class="ladder"
+  data-widget="ladder"
+  data-base={`${base.name}|${base.note}`}
+>
+  <svg viewBox="0 0 320 190" role="img" aria-label={label}></svg>
+  <p data-out>
+    <b>{top.name}</b>
+    <span>
+      {fmt.format(top.before)} → {fmt.format(top.after)} frames/s,{" "}
+      <strong>×{(top.after / top.before).toFixed(1)}</strong>
+    </span>
+  </p>
+  <script type="application/json" set:html={JSON.stringify(steps)} />
+</Fig>

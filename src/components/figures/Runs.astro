@@ -1,0 +1,30 @@
+---
+// Runs on one time axis from 0 to `max`: one row per run, its block as long
+// as the run, so a row shows both how long a run takes and how many fit.
+// The `hi` row takes the accent. `ticks` label the axis. Styles: runs.css.
+interface Props {
+  max: number;
+  rows: { label: string; value: number; text: string; hi?: boolean }[];
+  ticks: string[];
+}
+const { max, rows, ticks } = Astro.props;
+---
+
+{rows.map((r) => (
+  <div class:list={["runs", { "runs--hi": r.hi }]}>
+    <span>{r.label}</span>
+    <div>
+      <i style={`flex-basis:${Number(((r.value / max) * 100).toFixed(2))}%`} />
+    </div>
+    <b>{r.text}</b>
+  </div>
+))}
+<div class="runs runs--axis">
+  <span></span>
+  <div>
+    {ticks.map((t) => (
+      <em>{t}</em>
+    ))}
+  </div>
+  <b></b>
+</div>

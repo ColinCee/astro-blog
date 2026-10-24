@@ -16,7 +16,7 @@
 ## What it does
 
 - Terminal-inspired homepage with a dark terminal window
-- Technical blog written as Markdown content collections, with Expressive Code blocks
+- Technical blog written in MDX, with figure components and Expressive Code blocks
 - Printable CV page that prints clean to ink-on-white
 - Light and dark themes that follow the system setting
 - Sitemap generated at build time
@@ -26,7 +26,7 @@
 | Area | Tooling |
 | --- | --- |
 | Framework | Astro |
-| Content | Markdown content collections |
+| Content | MDX content collections; figures as Astro components |
 | Code blocks | Astro Expressive Code |
 | Styling | Custom CSS tokens in `src/styles/tokens.css`; scoped styles beside each component |
 | Hosting | Cloudflare Workers |
@@ -50,7 +50,8 @@ src/pages/             Routes: index.astro composes the homepage; blog/, cv.astr
 src/layouts/           Base (the shell: head, nav, footer) and Post (a post, inside Base)
 src/components/site/   Head, Nav, Footer: the parts every page shares
 src/components/home/   The homepage's sections: Hero, Terminal and its panes, WorkedAt, Projects, Writing, Reach
-src/content/blog/      The posts, one Markdown file each
+src/components/figures/ The posts' figures (Fig, Cmp, Dots, LineChart, Ladder, QView, …), each with its CSS beside it
+src/content/blog/      The posts, one MDX file each
 src/data/              The homepage's data as JSON: projects, companies, shipped, skills, homelab stacks
 src/content.config.ts  The collections and their schemas: blog, plus one per data file
 src/styles/            tokens.css (colours, type, widths) and prose.css (post text)

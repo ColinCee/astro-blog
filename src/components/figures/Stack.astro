@@ -1,0 +1,28 @@
+---
+// One bar split into parts, each as wide as its share, with a legend under
+// it. The `data` part is the one that matters and takes the accent.
+// Styles: stack.css.
+interface Part {
+  share: number;
+  value: string;
+  label: string;
+  data?: boolean;
+}
+interface Props {
+  parts: Part[];
+}
+const { parts } = Astro.props;
+---
+
+<div class="stack">
+  {parts.map((p) => (
+    <span class:list={{ "is-data": p.data }} style={`--w:${p.share}`} />
+  ))}
+</div>
+<ul class="legend">
+  {parts.map((p) => (
+    <li class:list={{ "is-data": p.data }}>
+      <b>{p.value}</b> {p.label}
+    </li>
+  ))}
+</ul>
