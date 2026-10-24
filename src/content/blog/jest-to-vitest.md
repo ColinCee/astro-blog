@@ -1,0 +1,175 @@
+---
+title: "Jest took 7 minutes. Vitest takes 23 seconds."
+subtitle: "The cost was growing with every test file we added. One setting makes it flat."
+stat: "428 s → 23 s"
+statLabel: "1,370 simulations"
+figures:
+  - label: "Jest"
+    value: "428 s"
+  - label: "Vitest"
+    value: "23 s"
+  - label: "CI jobs"
+    value: "16 → 1"
+pubDate: "Oct 24 2026"
+---
+## Results
+
+<figure class="fig">
+<p class="fig__k">Full suite, 1,370 sims</p>
+<div class="cmp" style="grid-template-columns:4rem minmax(0,1fr) 3.5rem"><span>Jest</span><i style="--w:1"></i><b>428 s</b></div>
+<div class="cmp cmp--after" style="grid-template-columns:4rem minmax(0,1fr) 3.5rem"><span>Vitest</span><i style="--w:0.053"></i><b>23 s</b></div>
+</figure>
+
+That's our simulation suite at work, 7 minutes on Jest and 23 seconds after moving to Vitest, and CI went from 16 jobs to one.[^how]
+
+Contrary to popular belief, Vitest isn't purely quicker. The speed came from something else, it was a single config option to do with isolation. Jest doesn't have it but Vitest does, but it comes with caveats.
+
+## What are sim tests?
+
+At work we have this concept of sim tests. Given some input for an account, we play it through our rules engine and it produces a snapshot of what the events would be per day. These are events that actually get emitted into EventBridge, and other services ingest them from there.
+
+<figure class="fig diag">
+<p class="fig__k">Once a day, every account</p>
+<svg viewBox="0 0 300 184" style="--vw:300" role="img" aria-label="An account goes into the engine, which runs it through hundreds of rule files and produces that day's events: a reminder, a wait, a hand-over. The next day the events have changed the account and it goes round again."><defs><marker id="dg-eng" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker></defs><g><rect x="40" y="4" width="180" height="28" rx="4"/><text x="52" y="23">an account</text></g><path class="arr" d="M130,32 V53" marker-end="url(#dg-eng)"/><g class="hi"><rect x="40" y="56" width="180" height="42" rx="4"/><text x="52" y="74">the rules engine</text><text class="sub" x="52" y="90">hundreds of rule files</text></g><path class="arr" d="M130,98 V119" marker-end="url(#dg-eng)"/><g><rect x="40" y="122" width="180" height="56" rx="4"/><text x="52" y="140">the day's events</text><text class="sub" x="52" y="156">a reminder, a wait,</text><text class="sub" x="52" y="170">a hand-over</text></g><path class="arr" d="M220,150 H262 V18 H223" marker-end="url(#dg-eng)"/><text class="sub" x="268" y="84">next</text><text class="sub" x="268" y="98">day</text></svg>
+</figure>
+
+A sim's snapshot is just the events per day, so a six-day one looks something like this, trimmed down:
+
+```json title="one sim's snapshot"
+{
+  "steps": {
+    "0": { "events": [
+      { "type": "EVENT_A" },
+      { "type": "EVENT_B" }
+    ] },
+    "1-4": { "events": [] },
+    "5": { "events": [
+      { "type": "EVENT_C" }
+    ] }
+  }
+}
+```
+
+Days with nothing in them collapse into one entry, like the `"1-4"` there. So fundamentally it's a state machine simulator, from a start date to an end date. There's over 1,000 of them and each one is a test file that imports the engine. That's the whole story really.
+
+## Why did it take 7 minutes?
+
+Originally the sims ran in a JavaScript script that kind of duplicated what Jest already does, but in a janky homemade solution that loops over all the sim files and runs them. So we moved them onto Jest because it's the standard runner and to be honest it should've been that way from the start. Then a full run took 7 minutes and CI got split into 16 jobs to hide it.
+
+So I profiled a run and it turns out only about 20% of the CPU was actually running the sims.
+
+<figure class="fig">
+<p class="fig__k">CPU time under Jest</p>
+<div class="stack"><span style="--w:80"></span><span class="is-data" style="--w:20"></span></div>
+<ul class="legend"><li><b>~80%</b> loading the engine, again, for each test file</li><li class="is-data"><b>~20%</b> running the simulations</li></ul>
+</figure>
+
+The rest was loading the engine, and it was doing that 1,370 times, once per test file.
+
+What I didn't realise is Jest gives every test file its own copy of every module it imports, so nothing one test does can leak into the next one. Which is sensible, but our engine is hundreds of modules and they all build their rules when they load, so every file pays for that again, and there's no option in Jest to share it.[^jest] Ironically the janky script was loading it once by accident, because that's just what a for loop does.
+
+## The config option
+
+Vitest has the same isolation by default, the difference is it lets you turn it off.
+
+```ts title="vitest.simulations.config.ts"
+export default defineConfig({
+  test: {
+    // engine loads once per worker, not once per file
+    isolate: false,
+    // fail any file that depends on another's leftovers
+    sequence: { shuffle: true },
+  },
+});
+```
+
+What this does is a worker keeps its modules between files, so the engine loads once per worker instead of once per file. On a 10-core laptop that's roughly 10 loads instead of 1,370, and that's basically where all the speed came from.
+
+## Does it scale?
+
+I wanted to see the shape of this so I ran the real suite in slices on my desktop, 98, 275, 457 files and then the full 1,371, with the same 15 workers each time.[^how]
+
+<figure class="fig">
+<p class="fig__k">Time vs test files</p>
+<div class="chart chart--fluid">
+<svg viewBox="-18 0 338 222" role="img" aria-label="Full-suite time against the number of test files, 98 to 1,371. Jest climbs with every file to 3.4 minutes; plain Vitest climbs faster still, to 11 minutes; Vitest with isolate: false stays almost flat, 11 seconds to 25.">
+<text x="-8" y="95" text-anchor="middle" transform="rotate(-90 -8 95)">minutes</text>
+<line class="ax" x1="34" x2="312" y1="180" y2="180"/><text x="29" y="184" text-anchor="end">0</text>
+<line class="ax" x1="34" x2="312" y1="138" y2="138"/><text x="29" y="142" text-anchor="end">3</text>
+<line class="ax" x1="34" x2="312" y1="95" y2="95"/><text x="29" y="99" text-anchor="end">6</text>
+<line class="ax" x1="34" x2="312" y1="52" y2="52"/><text x="29" y="56" text-anchor="end">9</text>
+<line class="ax" x1="34" x2="312" y1="10" y2="10"/><text x="29" y="14" text-anchor="end">12</text>
+<text x="54" y="194" text-anchor="middle">98</text>
+<text x="90" y="194" text-anchor="middle">275</text>
+<text x="127" y="194" text-anchor="middle">457</text>
+<text x="312" y="194" text-anchor="end">1,371</text>
+<polyline class="ln" style="stroke:var(--faint);stroke-width:1.5" points="53.9,166.5 89.8,148.4 126.7,130.2 312.0,27.0"/>
+<circle class="mk" style="fill:var(--bg);stroke:var(--faint);stroke-width:1.5" cx="53.9" cy="166.5" r="3"/>
+<circle class="mk" style="fill:var(--bg);stroke:var(--faint);stroke-width:1.5" cx="89.8" cy="148.4" r="3"/>
+<circle class="mk" style="fill:var(--bg);stroke:var(--faint);stroke-width:1.5" cx="126.7" cy="130.2" r="3"/>
+<circle class="mk" style="fill:var(--bg);stroke:var(--faint);stroke-width:1.5" cx="312.0" cy="27.0" r="3"/>
+<polyline class="ln" style="stroke:var(--ink);stroke-width:1.5" points="53.9,175.9 89.8,170.9 126.7,164.7 312.0,132.3"/>
+<circle class="mk" style="fill:var(--ink)" cx="53.9" cy="175.9" r="3"/>
+<circle class="mk" style="fill:var(--ink)" cx="89.8" cy="170.9" r="3"/>
+<circle class="mk" style="fill:var(--ink)" cx="126.7" cy="164.7" r="3"/>
+<circle class="mk" style="fill:var(--ink)" cx="312.0" cy="132.3" r="3"/>
+<polyline class="ln hi" style="stroke-width:1.5" points="53.9,177.3 89.8,176.7 126.7,175.2 312.0,174.2"/>
+<circle class="mk hi" cx="53.9" cy="177.3" r="3"/>
+<circle class="mk hi" cx="89.8" cy="176.7" r="3"/>
+<circle class="mk hi" cx="126.7" cy="175.2" r="3"/>
+<circle class="mk hi" cx="312.0" cy="174.2" r="3"/>
+<text class="ink" x="308" y="20" text-anchor="end">11 min</text>
+<text class="ink" x="308" y="125" text-anchor="end">3.4 min</text>
+<text class="hi" x="308" y="167" text-anchor="end">25 s</text>
+<line class="ln" style="stroke:var(--faint);stroke-width:1.5" x1="44" x2="66" y1="10" y2="10"/>
+<circle class="mk" style="fill:var(--bg);stroke:var(--faint);stroke-width:1.5" cx="55" cy="10" r="3"/>
+<text class="" x="72" y="14" text-anchor="start">Vitest</text>
+<line class="ln" style="stroke:var(--ink);stroke-width:1.5" x1="44" x2="66" y1="28" y2="28"/>
+<circle class="mk" style="fill:var(--ink)" cx="55" cy="28" r="3"/>
+<text class="" x="72" y="32" text-anchor="start">Jest</text>
+<line class="ln hi" style="stroke-width:1.5" x1="44" x2="66" y1="46" y2="46"/>
+<circle class="mk hi" cx="55" cy="46" r="3"/>
+<text class="hi" style="font-size:calc(0.6875rem * var(--k, 1))" x="72" y="50" text-anchor="start">Vitest + isolate: false</text>
+<text x="173" y="218" text-anchor="middle">test files →</text></svg>
+</div>
+</figure>
+
+Jest and plain Vitest both go up with every file because every file loads the engine again, and plain Vitest is actually worse, it spins up a new process per file and on Windows that's slow. 11 minutes for the full suite. The `isolate: false` line is basically flat, going from 98 files to 1,371 only added 14 seconds.
+
+So it was never Vitest being quicker, it was how many times the engine got loaded.
+
+## What's the catch?
+
+This is the thing Jest was protecting us from in the first place. If a test mutates something it imported, that mutation is now there for every file after it in the same worker, and whether it bites depends on the order the files ran in.
+
+<figure class="fig diag">
+<p class="fig__k">One shared engine, the threshold</p>
+<svg viewBox="0 0 300 282" style="--vw:300" role="img" aria-label="Two orders for the same two files on one shared engine. Sim 2 first: the threshold goes from 0 to 9999, then sim 4 expects 0 and fails. Sim 4 first: sim 4 expects 0 and passes, then sim 2 sets 9999 and no one checks again. Under Jest every file gets a fresh 0, so sim 4 always passes."><defs><marker id="dg-tl" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker></defs><text x="10" y="14">sim 2 first</text><g><rect x="10" y="24" width="120" height="26" rx="4"/><text x="70" y="41" text-anchor="middle">0</text></g><path class="arr" d="M70,56 V68" marker-end="url(#dg-tl)"/><text class="sub" x="70" y="84" text-anchor="middle">sim 2 sets 9999</text><path class="arr" d="M70,90 V102" marker-end="url(#dg-tl)"/><g class="hi"><rect x="10" y="106" width="120" height="26" rx="4"/><text x="70" y="123" text-anchor="middle">9999</text></g><path class="arr" d="M70,138 V150" marker-end="url(#dg-tl)"/><text class="sub" x="70" y="166" text-anchor="middle">sim 4 expects 0</text><path class="arr" d="M70,172 V184" marker-end="url(#dg-tl)"/><g class="hi"><rect x="10" y="188" width="120" height="26" rx="4"/><text x="70" y="205" text-anchor="middle">fails</text></g><text x="170" y="14">sim 4 first</text><g><rect x="170" y="24" width="120" height="26" rx="4"/><text x="230" y="41" text-anchor="middle">0</text></g><path class="arr" d="M230,56 V68" marker-end="url(#dg-tl)"/><text class="sub" x="230" y="84" text-anchor="middle">sim 4 expects 0</text><path class="arr" d="M230,90 V102" marker-end="url(#dg-tl)"/><g><rect x="170" y="106" width="120" height="26" rx="4"/><text x="230" y="123" text-anchor="middle">passes</text></g><path class="arr" d="M230,138 V150" marker-end="url(#dg-tl)"/><text class="sub" x="230" y="166" text-anchor="middle">sim 2 sets 9999</text><path class="arr" d="M230,172 V184" marker-end="url(#dg-tl)"/><g><rect x="170" y="188" width="120" height="26" rx="4"/><text x="230" y="205" text-anchor="middle">9999</text></g><text class="sub" x="230" y="232" text-anchor="middle">no one checks again</text><text class="sub" x="10" y="260">Jest: a fresh 0 per file,</text><text class="sub" x="10" y="274">so sim 4 always passes</text></svg>
+</figure>
+
+That's what the shuffle is for. The files run in a random order every time so a leaky test fails sooner or later, and Vitest prints the seed so you can replay the exact order that broke. For us it's fine, sims only read the config and anything they mutate they create themselves.
+
+## What I'd tell you
+
+1. **Check where the time's going first.** Vitest prints the split after every run, if `import` dwarfs `tests` this is you.
+2. **Only turn isolation off where you need it.** Our unit tests stayed on Jest.
+3. **Shuffle the files.** Otherwise a leak can sit there for months.
+4. **Don't credit the runner.** Plain Vitest was slower than Jest at every size.
+
+Two smaller fixes went in with it as well, the engine config gets built once per worker instead of once per sim (62 ms a go), and a lookup that was throwing and catching an error on every call got fixed. So the 428 to 23 is all three together, but with those fixes on the Jest side too Jest still took 3.4 minutes vs Vitest's 25 seconds, so the gap is the module loading.
+
+<details class="more">
+<summary>If you want the internals</summary>
+
+**Jest.** Each test file runs in its own Node `vm` context, which is basically a separate JavaScript realm with its own globals and its own `Array` and `Object`. Jest's runtime provides the `require` inside it and keeps a module table per context, which is why mocks can't leak between files, and also why `x instanceof Array` is sometimes false under Jest, [that one's been open since 2017](https://github.com/jestjs/jest/issues/2549). `--runInBand` gets rid of the worker processes but each file still gets its own context and reloads everything.
+
+**Vitest.** Vite strips the types without checking them, same trade as `isolatedModules`. Then the files go to a pool of workers, the default is `forks` which is a child process per file, `threads` is a worker thread per file, and the `vm*` pools behave like Jest and can't turn isolation off. With `isolate: false` on `forks` or `threads` the worker stays alive and keeps its module cache.
+
+**Windows.** Starting a process costs a lot more on Windows than on Linux or a Mac, and as far as I can tell that's where plain Vitest's 11 minutes went. It should look better on a Mac.
+
+**Caches.** Every number above was a warm run, so both runners were warm. Node 22 can also cache compiled bytecode across processes with `NODE_COMPILE_CACHE`.
+
+</details>
+
+[^jest]: Someone [asked for a middle ground](https://github.com/jestjs/jest/issues/12147) in 2021. Nobody from Jest replied, and a bot closed it in 2024.
+[^how]: The headline numbers are from a 10-core laptop, hyperfine, 5 runs. The slices are from my desktop, a Ryzen 7 7800X3D on Windows 11, Node 22, two runs each, one for plain Vitest. Jest in the slices has the same two small fixes as the Vitest run, so the only difference left is the isolation.
