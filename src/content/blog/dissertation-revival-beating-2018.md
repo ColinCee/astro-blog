@@ -1,36 +1,30 @@
 ---
-title: "One button beat my dissertation AI"
-subtitle: "My 2018 agent won 81% of games. Holding shoot wins 82%."
-stat: "81% → 99.7%"
-statLabel: "games won, 2018 vs 2026"
+title: "Beating my 2018 dissertation AI"
+subtitle: "From 50 points a game to 83, and from 81% wins to 99.7%."
+stat: "50 → 83"
+statLabel: "points a game, 2018 vs 2026"
 figures:
   - label: "My 2018 agent"
-    value: "81%"
-  - label: "Holding shoot"
-    value: "82%"
-  - label: "Best 2026"
-    value: "99.7%"
+    value: "50 pts, 81%"
+  - label: "Best 2026 agent"
+    value: "83 pts, 99.7%"
 pubDate: "Oct 21 2026"
 ---
 <figure class="fig">
 <p class="fig__k">Same level and seed, half speed</p>
 <div class="vids">
-<figure class="vid"><figcaption><b>Holding shoot</b>, no learning: won, 42 points</figcaption><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-hold-shoot.png"><source src="/blog/gvgai/aliens-hold-shoot.webm" type="video/webm"><source src="/blog/gvgai/aliens-hold-shoot.mp4" type="video/mp4"></video></figure>
-<figure class="vid vid--hi"><figcaption><b>My 2018 agent</b>: won, 57 points</figcaption><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
+<figure class="vid"><figcaption><b>My 2018 agent</b>: won, 57 points</figcaption><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png" aria-label="My 2018 agent playing Aliens, winning with 57 points"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
+<figure class="vid vid--hi"><figcaption><b>Best 2026 agent</b>: won, 85 points</figcaption><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-dqn-2026-best.png" aria-label="The best 2026 agent playing the same game, winning with 85 points"><source src="/blog/gvgai/aliens-dqn-2026-best.webm" type="video/webm"><source src="/blog/gvgai/aliens-dqn-2026-best.mp4" type="video/mp4"></video></figure>
 </div>
 </figure>
 
 In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster. With runs that cheap, I wanted to see if today's methods could beat what I built as an undergrad.
 
-My agent won 81% of Aliens games, and I was pretty happy with that back then. Then we found that holding the shoot button, and nothing else, wins 82%.
+My 2018 agent scores 50 points a game and wins 81% of Aliens games. The best agent we got to scores 83 and wins 299 games out of 300. It even beats a tree search that plans every move, and no learning agent came close to that before.
 
-I never checked that in 2018. To be honest, Claude didn't think to at first either. Overnight, the second model it had checking its work spotted something odd. Two runs of a new agent called PPO got exactly the same scores. Claude guessed they were just holding one button, so it checked. On two of my other three games, one button wins every single game.[^results]
+It took a few goes to get there, and the biggest jump came from somewhere I didn't expect.
 
-## Did my 2018 agent learn anything then?
-
-I think so, and the score is how you can tell. It gets 50 points a game against the button's 36. It also shoots the bases in front of the aliens, instead of waiting for the aliens to drift into its shots.
-
-## What beats the button?
+## What did we try first?
 
 Quick rundown of the terms in the tables:
 
@@ -54,7 +48,25 @@ Each table changes one thing and keeps the rest the same.
 </tbody></table>
 </figure>
 
-With 1M frames, none of them clearly beat the button, and the runs vary a lot.[^runs] With 5M frames, they all get past it.
+With the same 1M frames my agent got, none of today's methods clearly beat it, and the runs vary a lot.[^runs] With 5M frames, they all get past it on wins.
+
+## Was 81% even good?
+
+Not really. Holding the shoot button, and nothing else, wins 82% of Aliens games.
+
+<figure class="fig">
+<p class="fig__k">Same level and seed, half speed: holding shoot against my 2018 agent</p>
+<div class="vids">
+<figure class="vid"><figcaption><b>Holding shoot</b>, no learning: won, 42 points</figcaption><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-hold-shoot.png"><source src="/blog/gvgai/aliens-hold-shoot.webm" type="video/webm"><source src="/blog/gvgai/aliens-hold-shoot.mp4" type="video/mp4"></video></figure>
+<figure class="vid vid--hi"><figcaption><b>My 2018 agent</b>: won, 57 points</figcaption><video data-rate="0.5" muted loop playsinline preload="none" poster="/blog/gvgai/aliens-2018-agent.png"><source src="/blog/gvgai/aliens-2018-agent.webm" type="video/webm"><source src="/blog/gvgai/aliens-2018-agent.mp4" type="video/mp4"></video></figure>
+</div>
+</figure>
+
+I never checked that in 2018. To be honest, Claude didn't think to at first either. Overnight, the second model it had checking its work spotted two runs of a new agent called PPO with exactly the same scores. Claude guessed they were just holding one button, so it checked.[^results]
+
+My agent did learn something though. It gets 50 points a game against the button's 36, because it also shoots the bases in front of the aliens. So from here on, I look at points as well as wins.
+
+## Which reward works best?
 
 <figure class="fig">
 <p class="fig__k">Which reward? Games won, all DQN with the standard network, average of 3 runs</p>
@@ -68,7 +80,7 @@ With 1M frames, none of them clearly beat the button, and the runs vary a lot.[^
 </tbody></table>
 </figure>
 
-My 2018 reward was the best at 1M frames, so I guess it did its job back then. But it mostly taught the agent not to lose. With 5M frames, the plain win reward wins every game, even on levels it never trained on. I didn't run the win-only rewards at 1M.
+My 2018 reward was the best at 1M frames, so I guess it did its job back then. But it mostly taught the agent not to lose. With 5M frames, the plain win reward wins every game, even on levels it never trained on. For points as well as wins, the best mix was the win reward plus a tenth of the points.
 
 ## So what made the biggest difference?
 
@@ -100,13 +112,13 @@ The fix should be a loss that costs more than the points can earn, like ±10 for
 
 ## What did I learn?
 
+- **Question the settings you copied.** Holding each move for 4 frames came from Atari, and here it cost about 20 points.
 - **Check the dumbest baseline first.** Holding one button doesn't need any training, and I never tried it.
 - **Run everything more than once.** My two 2018 runs of the same agent were 10 to 17 points apart.
-- **Question the settings you copied.** Holding each move for 4 frames came from Atari, and here it cost about 20 points.
 - **Claude wrote all of the code, but it liked to stop early.** I pushed back six times in about 2½ hours.[^log]
 - **I was the least informed person on my own dissertation.** About a third of my messages were me learning things like PPO and IMPALA.
 
-[^results]: Deceptizelda (hold right) and Wafer Thin Mints (any direction). All numbers from [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^runs]: Modern DQN's three runs won 42% to 84%. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^moves]: 3 runs of 100 test games each, 1 loss in 300 games on the training levels for each of the two best setups. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^results]: On two of my other three games, one button wins every game: Deceptizelda (hold right) and Wafer Thin Mints (any direction). [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^moves]: 3 runs of 100 test games each. 1 loss in 300 games on the training levels for each of the two best setups. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^log]: From my Claude Code session log, 18 and 19 October 2026.
