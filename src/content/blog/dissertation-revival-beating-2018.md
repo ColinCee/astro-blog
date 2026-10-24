@@ -1,15 +1,15 @@
 ---
 title: "One button beat my dissertation AI"
 subtitle: "My 2018 agent won 81% of games. Holding shoot wins 82%."
-stat: "81% vs 82%"
-statLabel: "my agent vs one button"
+stat: "81% → 99.7%"
+statLabel: "games won, 2018 vs 2026"
 figures:
   - label: "My 2018 agent"
     value: "81%"
   - label: "Holding shoot"
     value: "82%"
   - label: "Best 2026"
-    value: "100%"
+    value: "99.7%"
 pubDate: "Oct 21 2026"
 ---
 <figure class="fig">
@@ -20,25 +20,27 @@ pubDate: "Oct 21 2026"
 </div>
 </figure>
 
-In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster. With runs that cheap I wanted to see if today's methods could beat what I built as an undergrad. My agent won 81% of Aliens games, which I was pretty happy with back then, until it turned out holding the shoot button and doing nothing else wins 82%.
+In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster. With runs that cheap, I wanted to see if today's methods could beat what I built as an undergrad.
 
-I never checked that in 2018, and Claude didn't think to at first either. Overnight the second model it had checking its work noticed two runs of one of its new agents (PPO, a different kind of learner) got exactly the same scores, so Claude guessed they were just holding one button and checked. On two of the other three games I used, one button wins every single game.[^results]
+My agent won 81% of Aliens games, and I was pretty happy with that back then. Then we found that holding the shoot button, and nothing else, wins 82%.
 
-## Did my 2018 agent learn anything?
+I never checked that in 2018. To be honest, Claude didn't think to at first either. Overnight, the second model it had checking its work spotted something odd. Two runs of a new agent called PPO got exactly the same scores. Claude guessed they were just holding one button, so it checked. On two of my other three games, one button wins every single game.[^results]
 
-Yes, and the score is how you can tell. It gets 50 points a game against the button's 36, because it also shoots the protective bases in front of the aliens instead of just waiting for them to drift into the shots.
+## Did my 2018 agent learn anything then?
 
-## What actually beats the button?
+I think so, and the score is how you can tell. It gets 50 points a game against the button's 36. It also shoots the bases in front of the aliens, instead of waiting for the aliens to drift into its shots.
+
+## What beats the button?
 
 Quick rundown of the terms in the tables:
 
-- **DQN** is the method DeepMind used on Atari in 2015, it learns a score for each move from the screen and plays the best one. My 2018 agent was DQN plus two tricks from later papers, Double DQN and prioritised replay.
-- **Rainbow** is DQN with six of those later improvements combined, including both of mine.
-- **Network** is the part that turns the screen into scores. Standard is the 3-layer one from the 2015 paper, bigger is IMPALA with 15 layers.
-- **Reward** is what it's told is good. Points is the score, win is just +1 for a win and −1 for a loss, and 2018 is my reward, that plus −0.5 on every move of a lost game.
-- **Frames** is how many frames of the game it practised on. 1M is what my 2018 agent got, 5M is five times that, about 17 minutes a run.
+- **DQN** is the method DeepMind used on Atari in 2015. It learns a score for each move from the screen, then plays the best one. My 2018 agent was DQN plus two tricks from later papers.
+- **Rainbow** is DQN with six of those later tricks combined, including both of mine.
+- **Network** is the part that turns the screen into scores. Standard is the 3-layer one from 2015. Bigger is IMPALA, with 15 layers.
+- **Reward** is what it's told is good. Points is the game score. Win is +1 for a win and −1 for a loss. 2018 is my reward, which is the win reward plus −0.5 on every move of a lost game.
+- **Frames** is how much of the game it practised on. 1M is what my 2018 agent got, and 5M is five times that.
 
-Each table changes one thing and keeps the rest the same, first with the 1M frames my 2018 agent got, then with five times that.
+Each table changes one thing and keeps the rest the same.
 
 <figure class="fig">
 <p class="fig__k">Which method? Games won, all rewarded for points, average of 3 runs</p>
@@ -52,7 +54,7 @@ Each table changes one thing and keeps the rest the same, first with the 1M fram
 </tbody></table>
 </figure>
 
-With 1M frames none of them clearly beat the button, and runs vary a lot.[^runs] With 5M they all get past it, and the bigger network helps DQN the most.
+With 1M frames, none of them clearly beat the button, and the runs vary a lot.[^runs] With 5M frames, they all get past it.
 
 <figure class="fig">
 <p class="fig__k">Which reward? Games won, all DQN with the standard network, average of 3 runs</p>
@@ -66,31 +68,45 @@ With 1M frames none of them clearly beat the button, and runs vary a lot.[^runs]
 </tbody></table>
 </figure>
 
-My 2018 reward was the best at 1M frames, which is why it helped back then, but it mostly taught "don't lose". With 5M frames the plain win reward wins every game, even on levels it never trained on. I didn't run the win-only rewards at 1M.
+My 2018 reward was the best at 1M frames, so I guess it did its job back then. But it mostly taught the agent not to lose. With 5M frames, the plain win reward wins every game, even on levels it never trained on. I didn't run the win-only rewards at 1M.
 
-## Is winning even the right measure?
+## So what made the biggest difference?
+
+It was something I never thought about in 2018. The agent holds each move for 4 frames, which is DeepMind's Atari setup. I suspected that makes some shots and positions impossible to reach. A tree search called MCTS picks a move every frame, and it scored 78 with no training at all. So Claude tried moving every frame, and every 2 frames.
 
 <figure class="fig">
-<p class="fig__k">Aliens, points scored a game</p>
-<table class="ctab"><thead><tr><th>Who</th><th class="ctab__v">Points a game</th></tr></thead><tbody>
-<tr><td>MCTS, no learning</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:1.000"></i><b>77.8</b></span></td></tr>
-<tr><td>Best DQN, bigger network, 5M</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:0.803"></i><b>62.5</b></span></td></tr>
-<tr class="ctab--hi"><td>My 2018 agent</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:0.644"></i><b>50.1</b></span></td></tr>
-<tr><td>Me, playing in 2018</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:0.548"></i><b>42.6</b></span></td></tr>
-<tr class="ctab--none"><td>Hold shoot</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:0.467"></i><b>36.3</b></span></td></tr>
+<p class="fig__k">Points a game, win + points reward, 5M frames, average of 3 runs</p>
+<table class="ctab"><thead><tr><th>Agent</th><th>Network</th><th>Moves every</th><th class="ctab__v">Points</th></tr></thead><tbody>
+<tr><td>DQN</td><td>bigger</td><td>2 frames</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:1.000"></i><b>82.6</b></span></td></tr>
+<tr><td>DQN</td><td>standard</td><td>1 frame</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:0.953"></i><b>78.7</b></span></td></tr>
+<tr class="ctab--none"><td>MCTS</td><td>–</td><td>1 frame</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:0.942"></i><b>77.8</b></span></td></tr>
+<tr><td>DQN</td><td>standard</td><td>2 frames</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:0.925"></i><b>76.4</b></span></td></tr>
+<tr><td>DQN</td><td>bigger</td><td>4 frames</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:0.762"></i><b>62.9</b></span></td></tr>
+<tr><td>DQN</td><td>standard</td><td>4 frames</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:0.714"></i><b>59.0</b></span></td></tr>
+<tr class="ctab--hi"><td>My 2018 agent</td><td>standard</td><td>4 frames</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:0.607"></i><b>50.1</b></span></td></tr>
+<tr><td>Me, 2018</td><td>–</td><td>–</td><td class="ctab__v"><span class="ctab__bar"><i style="--w:0.516"></i><b>42.6</b></span></td></tr>
 </tbody></table>
 </figure>
 
-Not really. I won every game I played back in 2018 but only scored 43, so the hard part of Aliens is the score. The best learning agent now gets 62.5, and a tree search (MCTS) that just simulates moves ahead with no training at all gets 78.
+Moving every frame took it from 59 points to 79, about the same as MCTS. Moving every 2 frames with the bigger network got 83, and it won 299 of 300 games.[^moves] For reference, I won every game I played in 2018 but only scored 43. It does take longer to train, about 53 minutes a run instead of 14.
+
+## Why does it still lose 1 game in 300?
+
+I replayed the lost games. As far as I can tell, every loss is the same thing: a bomb lands on the ship while it sits still and shoots.
+
+I think the reward is to blame. Each point is worth +0.1, and a game has about 40 kills, so that's roughly +4 in points. A death only costs −1, so a risk for more points is nearly free. The more weight the reward puts on points, the more it dies. With the standard setup, that's 0 deaths in 300 games at 0.05 per point, 4 at 0.1 and 7 at 0.2.
+
+The fix should be a loss that costs more than the points can earn, like ±10 for the result. That's a follow-up for another day.
 
 ## What did I learn?
 
-- **Check the dumbest baseline first.** Holding one button doesn't need any training and I never tried it.
+- **Check the dumbest baseline first.** Holding one button doesn't need any training, and I never tried it.
 - **Run everything more than once.** My two 2018 runs of the same agent were 10 to 17 points apart.
+- **Question the settings you copied.** Holding each move for 4 frames came from Atari, and here it cost about 20 points.
 - **Claude wrote all of the code, but it liked to stop early.** I pushed back six times in about 2½ hours.[^log]
 - **I was the least informed person on my own dissertation.** About a third of my messages were me learning things like PPO and IMPALA.
-- **There's still stuff to check.** The agents see 4 stacked frames and hold each move for 4, so I suspect some positions just can't be reached. MCTS picks a move every frame, which might be part of why it scores so much more.
 
 [^results]: Deceptizelda (hold right) and Wafer Thin Mints (any direction). All numbers from [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^runs]: Modern DQN's three runs won 42% to 84%. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^moves]: 3 runs of 100 test games each, 1 loss in 300 games on the training levels for each of the two best setups. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^log]: From my Claude Code session log, 18 and 19 October 2026.
