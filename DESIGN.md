@@ -76,7 +76,7 @@ components:
 # Design System: colincheung.dev
 
 > Single source of truth for the visual system. Tokens live in
-> [`src/styles/terminal.css`](src/styles/terminal.css); this file explains how to
+> [`src/styles/tokens.css`](src/styles/tokens.css); this file explains how to
 > apply them so new pages stay on-brand. When you build a new surface, read this
 > first, reuse the tokens, and follow the named rules below.
 
@@ -89,7 +89,7 @@ components:
 > grey page at ~90% lightness with raised surfaces one step lighter, chosen so
 > large areas do not glare. **Dark** is the original warm near-black. The accent
 > moved from cyan to tomato (see
-> "Colour" below). Token values in `terminal.css` are authoritative; values
+> "Colour" below). Token values in `tokens.css` are authoritative; values
 > below are given as light / dark.
 
 ### Colour
@@ -192,7 +192,7 @@ rest and shift to `--ink` only on hover. The eye should land on the result first
 monospace — contrast on a real axis (proportional vs. fixed, warm vs. technical),
 never two similar sans-serifs. Bricolage carries voice and scale; JetBrains Mono
 is the machine chrome (labels, dates, code, terminal). Loaded via Google Fonts
-`@import` in `terminal.css`.
+`@import` in `tokens.css`.
 
 ### Hierarchy
 - **Display** (Bricolage 800, `clamp(2.4rem, 8vw, 7.5rem)`, lh 0.86–0.9, tracking −0.03em):
@@ -228,7 +228,7 @@ lift** (the one floating set-piece on the homepage).
 - **Accent focus ring** — the **`--ring`** token (`0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent)`):
   the current timeline node and hovered/focused interactive nodes.
 - **Ambient hero wash** — the **`--wash`** token (a faint `var(--accent) 8%` radial bloom),
-  applied on `.shell` and the homepage `.t`. Atmosphere, not a card shadow.
+  applied on `.shell`, the frame every page sits in. Atmosphere, not a card shadow.
 - **Terminal window lift** — the **`--lift`** token on `.term` (a soft warm shadow in
   light, `0 40px 80px -40px rgba(0, 0, 0, 0.7)` in dark): The only drop shadow in the system. It floats the tmux window over
   the page as the homepage's one physical object. Never reuse it on cards, inputs,
@@ -242,18 +242,20 @@ homepage terminal window's ambient lift, nothing else.
 ## 5. Components
 
 ### Navigation
-- Shared `Nav.astro` (content pages) mirrors the homepage `.t-nav`. A mono mark
+- One `components/site/Nav.astro` on every page. A mono mark
   `colin@glasgow:~$` (the `@` is tomato, `:~$` faint) on the left; mono links
   (`0.72rem`, tracking 0.1em, `--muted`) on the right.
 - **Hover/active:** color shifts to `--ink` with a tomato `border-bottom`.
 - Links: **BLOG**, **CV**. (No About; contact lives on the homepage.)
 - Centered on `--w-page`, so the mark lines up with the content's left edge and
-  the links line up with its right edge (and with the footer).
+  the links line up with its right edge (and with the footer). On the homepage it
+  spans `--w-poster` and hides its links below 560px.
 
 ### Footer
-- Shared `SiteFooter.astro`: `COLIN CHEUNG` (mono, `--muted`) + `© {year} · BUILT
-  IN GLASGOW` (`--faint`), centered on `--w-page`, `1px` top rule. Same width as
-  the nav.
+- One `components/site/Footer.astro`: `COLIN CHEUNG` (mono, `--muted`) + `© {year}
+  · BUILT IN GLASGOW` (`--faint`), centered on `--w-page`, `1px` top rule. Same width
+  as the nav. On the homepage it spans `--w-poster`, its meta is `--muted`, and it
+  ends with `LAST DEPLOY <commit>`.
 
 ### Kicker
 - The `//` mono section label. `--accent-soft` (or `--muted`), `0.75rem`, tracking
@@ -280,7 +282,7 @@ homepage terminal window's ambient lift, nothing else.
   end date on top (`now` in `--accent` for the current role, else month + year) and
   the start date below, dialed down to `--muted`/`--faint` so it does not compete. On
   mobile (≤640px) the rail collapses to one left spine with the dates inline.
-- **Article timeline (`BlogPost.astro`):** the third use of the spine, and it is
+- **Article timeline (`layouts/Post.astro`):** the third use of the spine, and it is
   in the flow of the article, not a sidebar. When a post opens with three or more
   dated `##` headings (`16 December: they move the flight`), the layout splits the
   rendered Markdown at those headings and renders each section as a timeline entry.
@@ -301,8 +303,8 @@ homepage terminal window's ambient lift, nothing else.
 ### Shipped pane (homepage terminal)
 - The terminal's right-top, active pane (`1:shipped`). Each row is one improvement
   with a `before` bar (`--bar`) and an `after` bar (`--accent`) drawn to scale
-  (after ÷ before), plus a mono `WHERE · WHEN` meta. Data lives in the `shipped`
-  array in `index.astro`. Bars grow in once after the panes rise.
+  (after ÷ before), plus a mono `WHERE · WHEN` meta. Data lives in
+  `src/data/shipped.json`. Bars grow in once after the panes rise.
 
 ### Projects (homepage section)
 - `// projects` sits below the companies strip as five flat neutral tiles (`--pane`,
@@ -345,7 +347,7 @@ homepage terminal window's ambient lift, nothing else.
   one number/outcome in a sentence. This is the visual thesis of the whole site.
 
 ### Blog Post (long-form reading)
-- Posts render on the shared `Base` shell via `BlogPost.astro`. Below `64rem` it is a
+- Posts render on the shared `Base` shell via `layouts/Post.astro`; the prose styles are `styles/prose.css`. Below `64rem` it is a
   single `--w-prose` column. At `64rem` and up the post sits on `--w-page`, inset by
   `--rail` (`9rem`) plus `--rail-gap` (`3.5rem`), so timeline dates sit in the left
   margin and plain and timeline posts share one left edge. Content carries a `// writing` back-kicker, a Bricolage display title

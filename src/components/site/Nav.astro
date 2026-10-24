@@ -1,6 +1,11 @@
 ---
-// Site navigation — the terminal shell's top bar. Shared across content pages.
-// Mirrors the homepage mark so the whole site reads as one machine.
+// Site navigation — the terminal shell's top bar, on every page. On the
+// homepage (`home`) it spans the wider poster frame and hides its links on
+// phones; the page itself links to the blog and the CV.
+interface Props {
+  home?: boolean;
+}
+const { home = false } = Astro.props;
 const path = Astro.url.pathname;
 const links = [
   { href: "/blog", label: "BLOG" },
@@ -13,7 +18,7 @@ const active = (href: string) => {
 };
 ---
 
-<nav class="nav" aria-label="Primary">
+<nav class:list={["nav", { "nav--home": home }]} aria-label="Primary">
   <a class="nav__mark" href="/">
     colin<span>@</span>glasgow<b>:~$</b>
   </a>
@@ -89,6 +94,14 @@ const active = (href: string) => {
   @media (max-width: 480px) {
     .nav__links {
       gap: 1rem;
+    }
+  }
+  .nav--home {
+    max-width: var(--w-poster);
+  }
+  @media (max-width: 560px) {
+    .nav--home .nav__links {
+      display: none;
     }
   }
 </style>

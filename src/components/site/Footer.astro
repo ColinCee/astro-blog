@@ -1,0 +1,62 @@
+---
+// Site footer — the shell's bottom bar: name and copyright, at the nav's
+// width. On the homepage (`home`) it spans the poster frame, its meta is a
+// step brighter, and it links the commit the site was last deployed from.
+interface Props {
+  home?: boolean;
+}
+const { home = false } = Astro.props;
+const year = new Date().getFullYear();
+const build = __BUILD__;
+---
+
+<footer class:list={["foot", { "foot--home": home }]}>
+  <span class="foot__name">COLIN CHEUNG</span>
+  <span class="foot__meta">
+    © {year} · BUILT IN GLASGOW
+    {home && build.hash && (
+      <Fragment>
+        {" "}
+        ·{" "}
+        <a
+          class="foot__build"
+          href={`https://github.com/ColinCee/astro-blog/commit/${build.hash}`}
+          title={build.subject}
+        >
+          LAST DEPLOY {build.hash}
+        </a>
+      </Fragment>
+    )}
+  </span>
+</footer>
+
+<style>
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+    width: 100%;
+    max-width: var(--w-page);
+    margin: clamp(2.5rem, 6vw, 4rem) auto 0;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+  .foot__meta {
+    color: var(--faint);
+  }
+  .foot--home {
+    max-width: var(--w-poster);
+  }
+  .foot--home .foot__meta {
+    color: var(--muted);
+  }
+  .foot__build:hover {
+    color: var(--accent);
+  }
+</style>

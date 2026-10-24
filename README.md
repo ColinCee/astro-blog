@@ -28,7 +28,7 @@
 | Framework | Astro |
 | Content | Markdown content collections |
 | Code blocks | Astro Expressive Code |
-| Styling | Custom CSS tokens in `src/styles/terminal.css` |
+| Styling | Custom CSS tokens in `src/styles/tokens.css`; scoped styles beside each component |
 | Hosting | Cloudflare Workers |
 | Deploys | GitHub Actions + Wrangler |
 
@@ -46,12 +46,16 @@ Astro builds the pages in `src/pages/` and the posts in `src/content/blog/`, sty
 ## Project structure
 
 ```text
-src/pages/          Route pages: home, CV, blog index, blog posts
-src/content/blog/   Markdown blog posts
-src/layouts/        Shared page and post shells
-src/components/     Shared navigation, footer, date formatting
-src/styles/         Global design tokens and base styles
-public/             Static assets copied into the deployed build
+src/pages/             Routes: index.astro composes the homepage; blog/, cv.astro, cortex/
+src/layouts/           Base (the shell: head, nav, footer) and Post (a post, inside Base)
+src/components/site/   Head, Nav, Footer: the parts every page shares
+src/components/home/   The homepage's sections: Hero, Terminal and its panes, WorkedAt, Projects, Writing, Reach
+src/content/blog/      The posts, one Markdown file each
+src/data/              The homepage's data as JSON: projects, companies, shipped, skills, homelab stacks
+src/content.config.ts  The collections and their schemas: blog, plus one per data file
+src/styles/            tokens.css (colours, type, widths) and prose.css (post text)
+src/scripts/           Browser scripts shared between components, and the post figures' widgets
+public/                Static files copied into the build as they are
 ```
 
 ## Commands

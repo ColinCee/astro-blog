@@ -1,0 +1,81 @@
+---
+// One tmux pane of the homepage terminal: a numbered title bar over a body.
+// `area` places it in the terminal's grid; the active pane is outlined.
+interface Props {
+  idx: number;
+  name: string;
+  area: "who" | "ship" | "writing";
+  active?: boolean;
+}
+const { idx, name, area, active = false } = Astro.props;
+---
+
+<article class:list={["pane", `pane--${area}`, { "is-active": active }]}>
+  <h2 class="pane__bar">
+    <span class="pane__idx">{idx}</span>
+    {name}
+  </h2>
+  <div class="pane__body">
+    <slot />
+  </div>
+</article>
+
+<style>
+  .pane {
+    background: var(--pane);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    animation: rise var(--dur-slow) var(--ease-out) both;
+  }
+  .pane--who {
+    grid-area: who;
+    animation-delay: 0.12s;
+  }
+  .pane--ship {
+    grid-area: hl;
+    animation-delay: 0.2s;
+  }
+  .pane--writing {
+    grid-area: writing;
+    animation-delay: 0.28s;
+  }
+  .pane.is-active {
+    box-shadow: inset 0 0 0 1.5px
+      color-mix(in oklch, var(--accent) 55%, transparent);
+  }
+  .pane__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.6rem 0.95rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in oklch, var(--panel) 60%, transparent);
+  }
+  .pane.is-active .pane__bar {
+    color: var(--accent);
+  }
+  .pane__idx {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.15rem;
+    height: 1.15rem;
+    padding: 0 0.25rem;
+    border-radius: 5px;
+    background: color-mix(in oklch, var(--accent) 18%, transparent);
+    color: var(--accent);
+    font-size: 0.6875rem;
+  }
+  .pane__body {
+    padding: 1.05rem 1.1rem 1.2rem;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.55;
+    flex: 1;
+  }
+</style>

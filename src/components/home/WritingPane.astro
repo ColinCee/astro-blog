@@ -1,0 +1,81 @@
+---
+// The terminal's writing pane: the three newest posts by title, then a link
+// to all of them. Read from the blog collection, so a new post shows here.
+import { getCollection } from "astro:content";
+import Pane from "./Pane.astro";
+
+const latest = (await getCollection("blog"))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+const posts: { title: string; date: string; href: string; all?: boolean }[] = [
+  ...latest.map((p) => ({
+    title: p.data.title,
+    date: p.data.pubDate.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    }),
+    href: `/blog/${p.id}/`,
+  })),
+  { title: "All posts", date: "", href: "/blog", all: true },
+];
+---
+
+<Pane idx={2} name="writing" area="writing">
+  <ul class="posts">
+    {posts.map((p) => (
+      <li>
+        <a class:list={["post", { "post--all": p.all }]} href={p.href}>
+          <span class="post__title">{p.title}</span>
+          {p.date && <span class="post__date">{p.date}</span>}
+          <span class="post__go" aria-hidden="true">
+            →
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Pane>
+
+<style>
+  .posts {
+    display: grid;
+    gap: 0.2rem;
+  }
+  .post {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 0.5rem 0.85rem;
+    align-items: baseline;
+    padding: 0.4rem 0.45rem;
+    margin: 0 -0.45rem;
+    border-radius: 7px;
+    color: var(--ink);
+    transition:
+      background-color var(--dur-fast) var(--ease),
+      transform var(--dur-fast) var(--ease);
+  }
+  .post:hover {
+    background: color-mix(in oklch, var(--accent) 12%, transparent);
+    transform: translateX(3px);
+  }
+  .post__title {
+    color: var(--ink);
+  }
+  .post:hover .post__title,
+  .post--all .post__title {
+    color: var(--accent);
+  }
+  .post__date {
+    color: var(--muted);
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+  .post__go {
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease);
+  }
+  .post:hover .post__go {
+    opacity: 1;
+  }
+</style>

@@ -1,0 +1,7 @@
+[
+  { "id": "typescript", "since": 2018 },
+  { "id": "react", "since": 2017 },
+  { "id": "aws", "since": 2019 },
+  { "id": "distributed-sys", "since": 2020 },
+  { "id": "ai-development", "since": 2024 }
+]

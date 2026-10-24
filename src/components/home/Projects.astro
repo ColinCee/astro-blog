@@ -1,0 +1,537 @@
+---
+// Side projects as quiet tiles, each with a live piece of the project under
+// its header: the dissertation agent playing, a simulated radar, the
+// homelab's stacks, a card from the deck and this site's last deploy.
+// Tile headers: src/data/projects.json.
+import { getCollection } from "astro:content";
+import AgentPane from "./AgentPane.astro";
+import RadarPane from "./RadarPane.astro";
+import ankiCards from "../../data/anki-cards.json";
+
+const projects = await getCollection("projects");
+const stacks = await getCollection("homelabStacks");
+const build = __BUILD__;
+---
+
+<section class="work" aria-label="Side projects" data-reveal>
+  <p class="work__tag">// projects</p>
+  <ul class="work__list" data-live-tiles>
+    {projects.map(({ id, data: p }, i) => (
+      <li class:list={["tile", { "tile--wide": p.wide }]} style={`--i: ${i}`}>
+        <a class="tile__head" href={p.href}>
+          <span class="proj__path tile__path">
+            <i aria-hidden="true" />
+            <span class="tile__home">~/projects/{id}</span>
+            <span class="tile__repo">{p.repo}</span>
+            <span class="proj__go" aria-hidden="true">
+              ↗
+            </span>
+          </span>
+          <span class="proj__name">{id}</span>
+          <span class="proj__desc">{p.desc}</span>
+        </a>
+        <div class="tile__live">
+          {id === "dissertation" && <AgentPane compact rate={0.3} />}
+          {id === "flight-tracker" && <RadarPane />}
+          {id === "home-lab" && (
+            <Fragment>
+              <p class="stack__cmd">
+                <span class="stack__prompt">$</span> docker compose ls
+              </p>
+              <ul class="stack">
+                {stacks.map((s, r) => (
+                  <li style={`--r: ${r}`}>
+                    <b>{s.id}</b>
+                    <span>{s.data.services}</span>
+                  </li>
+                ))}
+              </ul>
+            </Fragment>
+          )}
+          {id === "anki-chinese" && (
+            <button
+              type="button"
+              class="card"
+              data-anki
+              data-cards={JSON.stringify(ankiCards)}
+              aria-label="Flip the flashcard; flip again for another"
+            >
+              <span class="card__inner">
+                <span class="card__face card__front">
+                  <span class="card__hanzi" lang="zh-Hans" data-anki-hanzi>
+                    {ankiCards[0].hanzi}
+                  </span>
+                  <span class="card__hint">flip</span>
+                </span>
+                <span class="card__face card__back">
+                  <span class="card__py" data-anki-py>
+                    {ankiCards[0].pinyin}
+                  </span>
+                  <span class="card__jp">
+                    <span data-anki-jp>{ankiCards[0].jyutping}</span> ·
+                    Cantonese
+                  </span>
+                  <span class="card__mean" data-anki-mean>
+                    {ankiCards[0].meaning}
+                  </span>
+                  <span class="card__hint">tap · next card</span>
+                </span>
+              </span>
+            </button>
+          )}
+          {id === "colincheung.dev" &&
+            (build.hash ? (
+              <div class="site" data-build={build.when}>
+                <ol
+                  class="pipe"
+                  aria-label="The deploy this page is running from"
+                >
+                  <li class="is-done">
+                    <b>commit</b>
+                    <a
+                      href={`https://github.com/ColinCee/astro-blog/commit/${build.hash}`}
+                    >
+                      {build.hash}
+                    </a>
+                  </li>
+                  <li class="is-done">
+                    <b>build</b>
+                    <span>astro + wrangler</span>
+                  </li>
+                  <li class="is-now">
+                    <b>live</b>
+                    <span data-build-rel>{build.when.slice(0, 10)}</span>
+                  </li>
+                </ol>
+                <p class="site__msg" title={build.subject}>
+                  “{build.subject}”
+                </p>
+              </div>
+            ) : (
+              <p class="site__none">built outside git</p>
+            ))}
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .work {
+    max-width: var(--w-poster);
+    margin: 0 auto;
+    padding: clamp(2.5rem, 5vw, 4rem) 0 0;
+  }
+  .work__tag {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    margin: 0 0 clamp(0.9rem, 2vw, 1.3rem);
+  }
+  /* Five tiles: 1, 2 or 3 columns; the first spans two. */
+  .work__list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(0.7rem, 1.4vw, 1rem);
+  }
+  @media (min-width: 640px) {
+    .work__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .tile--wide {
+      grid-column: span 2;
+    }
+  }
+  @media (min-width: 1100px) {
+    .work__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  /* Flat neutral tile: a header that links out, then the live part. At rest
+     the only colour is the small accent dot; hover turns the border and
+     arrow accent and swaps the home path for where the project really lives. */
+  .tile {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 0.9rem;
+    padding: 1rem 1.1rem 1.1rem;
+    background: var(--pane);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .tile:hover {
+    border-color: var(--accent);
+  }
+  .tile__head {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .proj__path {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: var(--faint);
+    margin-bottom: 0.4rem;
+  }
+  .proj__path i {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .proj__go {
+    margin-left: auto;
+    font-size: 0.95rem;
+    color: var(--faint);
+    transition:
+      transform var(--dur-fast) var(--ease),
+      color var(--dur-fast) var(--ease);
+  }
+  .tile:hover .proj__go {
+    color: var(--accent);
+    transform: translate(3px, -3px);
+  }
+  .proj__name {
+    font-weight: 700;
+    font-size: clamp(1.3rem, 2vw, 1.7rem);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .proj__desc {
+    color: var(--muted);
+  }
+  .tile__path {
+    position: relative;
+  }
+  .tile__home,
+  .tile__repo {
+    transition: opacity var(--dur-fast) var(--ease);
+  }
+  .tile__repo {
+    position: absolute;
+    left: 1rem;
+    max-width: calc(100% - 2.6rem);
+    opacity: 0;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tile:hover .tile__home {
+    opacity: 0;
+  }
+  .tile:hover .tile__repo {
+    opacity: 1;
+  }
+  .tile__live {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  /* The live part fills the tile; AgentPane and RadarPane are their own
+     components, hence :global. */
+  .tile__live > :global(:last-child) {
+    flex: 1;
+  }
+  /* The live parts boot in once, a beat apart, when the section arrives. */
+  .work__list.is-armed .tile__live {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 0.5s ease-out calc(var(--i) * 90ms + 120ms),
+      transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1)
+        calc(var(--i) * 90ms + 120ms);
+  }
+  .work__list.is-armed .stack li {
+    opacity: 0;
+    transform: translateX(-4px);
+    transition:
+      opacity 0.35s ease-out calc(var(--i) * 90ms + 320ms + var(--r) * 70ms),
+      transform 0.35s ease-out calc(var(--i) * 90ms + 320ms + var(--r) * 70ms);
+  }
+  .work__list.is-armed .pipe li {
+    opacity: 0;
+    transition: opacity 0.35s ease-out
+      calc(var(--i) * 90ms + 320ms + var(--r, 0) * 160ms);
+  }
+  .work__list.is-armed .pipe li:nth-child(2) {
+    --r: 1;
+  }
+  .work__list.is-armed .pipe li:nth-child(3) {
+    --r: 2;
+  }
+  .work__list.is-armed.is-live .tile__live,
+  .work__list.is-armed.is-live .stack li,
+  .work__list.is-armed.is-live .pipe li {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* home-lab: the stacks, as a compose listing */
+  .stack__cmd {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .stack__prompt {
+    color: var(--accent);
+    margin-right: 0.5ch;
+  }
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+  }
+  .stack li {
+    display: grid;
+    grid-template-columns: 7.2rem 1fr;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+  .stack b {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .stack span {
+    color: var(--faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* anki: one real card; hover or tap flips it, flipping back deals the next */
+  .card {
+    display: block;
+    width: 100%;
+    min-height: 9.5rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    perspective: 900px;
+    text-align: center;
+    font: inherit;
+    color: inherit;
+  }
+  .card__inner {
+    position: relative;
+    display: block;
+    height: 100%;
+    min-height: 9.5rem;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .card:hover .card__inner,
+  .card:focus-visible .card__inner,
+  .card.is-flipped .card__inner {
+    transform: rotateY(180deg);
+  }
+  .card__face {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    gap: 0.3rem;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--panel);
+    backface-visibility: hidden;
+  }
+  .card:hover .card__face {
+    border-color: color-mix(in oklch, var(--accent) 50%, var(--line));
+  }
+  .card__back {
+    transform: rotateY(180deg);
+  }
+  .card__hanzi {
+    font-family: var(--cjk);
+    font-size: 3.4rem;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .card__hint {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    color: var(--faint);
+  }
+  .card__back .card__hint {
+    margin-top: 0.3rem;
+  }
+  .card__py {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .card__jp {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .card__mean {
+    color: var(--muted);
+    font-size: 0.9rem;
+    padding: 0 0.8rem;
+  }
+
+  /* this site: commit → build → live, in the site's node style */
+  .site {
+    display: grid;
+    align-content: start;
+    gap: 0.2rem;
+  }
+  .site__none {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--faint);
+  }
+  .pipe {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    position: relative;
+    margin: 0.3rem 0 0.9rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+  }
+  .pipe::before {
+    content: "";
+    position: absolute;
+    left: 0.3rem;
+    right: 0.3rem;
+    top: 0.3rem;
+    height: 1px;
+    background: var(--line);
+  }
+  .pipe li {
+    position: relative;
+    display: grid;
+    gap: 0.25rem;
+    padding-top: 0.9rem;
+    min-width: 0;
+  }
+  .pipe li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--pane);
+    border: 2px solid var(--faint);
+    box-sizing: content-box;
+    transform: translate(-1px, -2px);
+  }
+  .pipe li.is-done::before {
+    background: var(--faint);
+  }
+  .pipe li.is-now::before {
+    border-color: var(--accent);
+    background: var(--accent);
+    box-shadow: var(--ring);
+  }
+  .pipe b {
+    color: var(--faint);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .pipe span,
+  .pipe a {
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pipe a {
+    color: var(--accent);
+  }
+  .pipe li.is-now span {
+    font-weight: 600;
+  }
+  .site__msg {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card__inner {
+      transition: none;
+    }
+    .work__list.is-armed .tile__live,
+    .work__list.is-armed .stack li,
+    .work__list.is-armed .pipe li {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import "../../scripts/build-age";
+
+  // The tiles' live parts boot in once, a beat apart, as the section arrives.
+  const tiles = document.querySelector<HTMLElement>("[data-live-tiles]");
+  if (
+    tiles &&
+    !matchMedia("(prefers-reduced-motion: reduce)").matches &&
+    "IntersectionObserver" in window
+  ) {
+    tiles.classList.add("is-armed");
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        tiles.classList.add("is-live");
+      },
+      { threshold: 0.15 },
+    );
+    io.observe(tiles);
+  }
+
+  // A random real card from the deck. Flip to read it, flip again for another.
+  document.querySelectorAll<HTMLElement>("[data-anki]").forEach((card) => {
+    const cards = JSON.parse(card.dataset.cards || "[]") as {
+      hanzi: string;
+      pinyin: string;
+      jyutping: string;
+      meaning: string;
+    }[];
+    let at = Math.floor(Math.random() * cards.length);
+    const show = () => {
+      const c = cards[at];
+      if (!c) return;
+      card.querySelector("[data-anki-hanzi]")!.textContent = c.hanzi;
+      card.querySelector("[data-anki-py]")!.textContent = c.pinyin;
+      card.querySelector("[data-anki-jp]")!.textContent = c.jyutping;
+      card.querySelector("[data-anki-mean]")!.textContent = c.meaning;
+    };
+    show();
+    card.addEventListener("click", () => {
+      const flipped = card.classList.toggle("is-flipped");
+      if (!flipped)
+        setTimeout(() => {
+          at = (at + 1) % cards.length;
+          show();
+        }, 300);
+    });
+    card.addEventListener("mouseleave", () =>
+      card.classList.remove("is-flipped"),
+    );
+  });
+</script>
