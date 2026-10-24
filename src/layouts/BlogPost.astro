@@ -986,6 +986,45 @@ const last = entries[entries.length - 1];
   .prose .pts__r--hi .pts__k b {
     font-weight: 700;
   }
+  /* Hover or tap a row: the others dim, its runs show as dots, and its grey
+     line becomes each run's numbers. */
+  .prose .pts__t u {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--x) * 100%);
+    z-index: 3;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--ink);
+    box-shadow: 0 0 0 1.5px var(--bg);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .prose .pts__info {
+    display: none !important;
+  }
+  .prose .pts__k {
+    cursor: default;
+    outline: none;
+  }
+  .prose .pts__r > * {
+    transition: opacity 0.15s;
+  }
+  .prose .pts:has(.pts__r:hover, .pts__r:focus-within) .pts__r:not(:hover, :focus-within) > * {
+    opacity: 0.3;
+  }
+  .prose .pts__r:is(:hover, :focus-within) .pts__t u {
+    opacity: 1;
+  }
+  .prose .pts__r:is(:hover, :focus-within) .pts__info {
+    display: block !important;
+    color: var(--ink);
+  }
+  .prose .pts__r:is(:hover, :focus-within) .pts__k small:not(.pts__info) {
+    display: none;
+  }
   .prose .pts__axis,
   .prose .pts__refs {
     position: relative;
