@@ -27,7 +27,7 @@ My 2018 agent wins 81% of Aliens games and scores 50 points a game. The best age
 Each row adds one change to the row above it:
 
 - **An extra 4M frames** of training, 5M in total.
-- **A reward for winning:** +1 for a win, −1 for a loss, plus a tenth of the points.
+- **Win + points ÷ 10**, a new reward: +1 for a win, −1 for a loss, plus a tenth of the points.
 - **The IMPALA network**, a bigger one.
 - **A move every 2 frames** instead of every 4.
 
@@ -38,7 +38,7 @@ Each row adds one change to the row above it:
 <div class="pts__r pts__r--base"><span class="pts__k" tabindex="0"><b>My 2018 agent</b><small>1M frames</small></span><span class="pts__t" style="--a:0.813;--b:0.813;--lo:0.660;--hi:0.920"><i></i><s></s></span><em>81%</em><em class="pts__w">50.1</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>Today's DQN</b><small>same 1M frames</small></span><span class="pts__t" style="--a:0.567;--b:0.567;--lo:0.420;--hi:0.840"><i></i><s></s></span><em>57%<small class="pts__minus">−25</small></em><em class="pts__w">39.5<small class="pts__minus">−11</small></em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>+ an extra 4M frames</b></span><span class="pts__t" style="--a:0.567;--b:0.887;--lo:0.840;--hi:0.940"><i></i><i class="pts__more"></i><s></s></span><em>89%<small>+32</small></em><em class="pts__w">58.6<small>+19</small></em></div>
-<div class="pts__r"><span class="pts__k" tabindex="0"><b>+ a reward for winning</b></span><span class="pts__t" style="--a:0.887;--b:0.987;--lo:0.980;--hi:1.000"><i></i><i class="pts__more"></i><s></s></span><em>98.7%<small>+10</small></em><em class="pts__w">59.0<small class="pts__same">±0</small></em></div>
+<div class="pts__r"><span class="pts__k" tabindex="0"><b>+ win + points ÷ 10</b><small>a new reward</small></span><span class="pts__t" style="--a:0.887;--b:0.987;--lo:0.980;--hi:1.000"><i></i><i class="pts__more"></i><s></s></span><em>98.7%<small>+10</small></em><em class="pts__w">59.0<small class="pts__same">±0</small></em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>+ the IMPALA network</b></span><span class="pts__t" style="--a:0.987;--b:1.000;--lo:1.000;--hi:1.000"><i></i><i class="pts__more"></i><s></s></span><em>100%<small>+1</small></em><em class="pts__w">62.9<small>+4</small></em></div>
 <div class="pts__r pts__r--hi"><span class="pts__k" tabindex="0"><b>+ a move every 2 frames</b></span><span class="pts__t" style="--a:0.997;--b:0.997;--lo:0.990;--hi:1.000"><i></i><s></s></span><em>99.7%<small class="pts__same">±0</small></em><em class="pts__w">82.6<small>+20</small></em></div>
 <span class="pts__sp"></span><span class="pts__axis"><span style="--x:0.0">0</span><span style="--x:0.25">25</span><span style="--x:0.5">50</span><span style="--x:0.75">75</span><span style="--x:1.0">100%</span></span><span></span><span></span>
@@ -131,22 +131,18 @@ The reward is what the agent gets told is good. I tried mixes of three:
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>win + points ÷ 20</b></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">56.5</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>win</b></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">44.5</em></div>
 <div class="pts__r pts__r--hi"><span class="pts__k" tabindex="0"><b>win + points ÷ 10</b></span><span class="pts__t" style="--a:0.987;--b:0.987;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>98.7%</em><em class="pts__w">59.0</em></div>
-<div class="pts__r"><span class="pts__k" tabindex="0"><b>win, points only on a win</b></span><span class="pts__t" style="--a:0.993;--b:0.993;--lo:0.980;--hi:1.000"><i></i><s></s></span><em>99.3%</em><em class="pts__w">43.5</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>win + points ÷ 5</b></span><span class="pts__t" style="--a:0.977;--b:0.977;--lo:0.950;--hi:1.000"><i></i><s></s></span><em>97.7%</em><em class="pts__w">59.6</em></div>
-<div class="pts__r"><span class="pts__k" tabindex="0"><b>points + win</b></span><span class="pts__t" style="--a:0.920;--b:0.920;--lo:0.900;--hi:0.940"><i></i><s></s></span><em>92%</em><em class="pts__w">57.9</em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>points</b><small>the usual</small></span><span class="pts__t" style="--a:0.887;--b:0.887;--lo:0.840;--hi:0.940"><i></i><s></s></span><em>89%</em><em class="pts__w">58.6</em></div>
-<div class="pts__r"><span class="pts__k" tabindex="0"><b>win + points ÷ 10, 20-step</b><small>learns 20 moves ahead at once</small></span><span class="pts__t" style="--a:0.857;--b:0.857;--lo:0.770;--hi:0.910"><i></i><s></s></span><em>86%</em><em class="pts__w">42.8</em></div>
-<div class="pts__r"><span class="pts__k" tabindex="0"><b>win + points ÷ 10, 10-step</b><small>learns 10 moves ahead at once</small></span><span class="pts__t" style="--a:0.830;--b:0.830;--lo:0.820;--hi:0.850"><i></i><s></s></span><em>83%</em><em class="pts__w">45.6</em></div>
 <span class="pts__sp"></span><span class="pts__axis"><span style="--x:0.0">0</span><span style="--x:0.25">25</span><span style="--x:0.5">50</span><span style="--x:0.75">75</span><span style="--x:1.0">100%</span></span><span></span><span></span>
 <span class="pts__sp"></span><span class="pts__h pts__xt">games won</span><span></span><span></span>
 </div>
 </figure>
 
-- **Win alone** wins every game, but it doesn't care about points.
-- **Win + points ÷ 10** was the best mix. It still wins almost every game and scores 59.
-- **Win + points ÷ 5** scores about the same but loses more often.
+- **Win** wins every game, but it doesn't care about points.
+- **Win + points ÷ 20** wins every game too, and scores 57.
+- **Win + points ÷ 10** loses 4 games in 300, but scores 59. I went with this one for the rest of the post.
+- **Win + points ÷ 5** scores about the same, and loses more often.
 - **My 2018 reward** did its job back then, but with more practice it falls behind.
-- **Learning several moves ahead** at once made it worse, and so did paying points only on a win.
 
 ## Does a bigger network help?
 
