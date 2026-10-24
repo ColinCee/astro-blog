@@ -889,7 +889,7 @@ const last = entries[entries.length - 1];
   /* Points chart (.pts): rows of name + tag, a bar on a shared 0-90 axis with the
      spread of runs (s), the value and the win rate. --a/--b: the bar, --a the
      previous step's value when a row adds to it (.pts__more is the gain).
-     --r1..3 draw the same reference lines (above the bars) in every chart, labelled under it. */
+     --r1, --r2 draw the same dashed reference lines (above the bars) in every chart, labelled under it. */
   .prose .pts {
     display: grid;
     grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) 3.4rem 3.2rem;
@@ -932,9 +932,8 @@ const last = entries[entries.length - 1];
     z-index: 1;
     pointer-events: none;
     background:
-      linear-gradient(var(--muted), var(--muted)) no-repeat calc(var(--r1) * 100%) 0 / 1px 100%,
-      linear-gradient(var(--muted), var(--muted)) no-repeat calc(var(--r2) * 100%) 0 / 1px 100%,
-      linear-gradient(var(--muted), var(--muted)) no-repeat calc(var(--r3) * 100%) 0 / 1px 100%;
+      repeating-linear-gradient(var(--faint) 0 3px, transparent 3px 6px) no-repeat calc(var(--r1) * 100%) 0 / 1px 100%,
+      repeating-linear-gradient(var(--faint) 0 3px, transparent 3px 6px) no-repeat calc(var(--r2) * 100%) 0 / 1px 100%;
   }
   .prose .pts__t i {
     position: absolute;
@@ -976,7 +975,7 @@ const last = entries[entries.length - 1];
     color: var(--accent-soft);
   }
   .prose .pts em small.pts__minus {
-    color: var(--faint);
+    color: var(--loss);
   }
   .prose .pts .pts__w {
     color: var(--muted);
@@ -986,10 +985,7 @@ const last = entries[entries.length - 1];
   }
   .prose .pts__axis {
     position: relative;
-    height: 2rem;
-  }
-  .prose .pts__axis span:nth-child(even) {
-    top: 1rem;
+    height: 1rem;
   }
   .prose .pts__axis span {
     position: absolute;
