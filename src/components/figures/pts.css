@@ -116,14 +116,26 @@
     var(--bar) 2px 5px
   );
 }
-/* What the line and change colours mean, under the number columns, left-aligned
-   so the footnote number on the last line doesn't push it out of line. */
+/* What the line and change colours mean: its own row under a rule, right-aligned,
+   with the footnote number hanging past the edge so the lines stay flush. */
 .prose .pts__key {
-  grid-column: 3 / -1;
+  grid-column: 1 / -1;
   display: grid;
-  margin: 0.5rem 0 0;
+  justify-items: end;
+  margin: 0.6rem 0 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
   font-size: 0.625rem;
   color: var(--muted);
+}
+.prose .pts__key span {
+  position: relative;
+}
+.prose .pts__key sup {
+  position: absolute;
+  left: 100%;
+  top: -0.2rem;
+  padding-left: 0.15rem;
 }
 .prose .pts__dash {
   display: inline-block;
@@ -142,6 +154,15 @@
 .prose .pts__k {
   cursor: default;
   outline: none;
+}
+/* every row two lines tall, tag or not, so the bars sit evenly apart */
+@media (min-width: 34.01rem) {
+  .prose .pts__k {
+    min-height: 2.4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 .prose .pts__r > * {
   transition: opacity 0.15s;
@@ -212,8 +233,5 @@
   }
   .prose .pts__axis span {
     font-size: 0.625rem;
-  }
-  .prose .pts__key {
-    grid-column: 2 / -1;
   }
 }
