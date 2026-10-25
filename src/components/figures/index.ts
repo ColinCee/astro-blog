@@ -4,6 +4,7 @@ export { default as Boxes } from "./Boxes.astro";
 export { default as Breakdown } from "./Breakdown.astro";
 export { default as Clip } from "./Clip.astro";
 export { default as Cmp } from "./Cmp.astro";
+export { default as Days } from "./Days.astro";
 export { default as Dots } from "./Dots.astro";
 export { default as Fig } from "./Fig.astro";
 export { default as Ladder } from "./Ladder.astro";
