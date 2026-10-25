@@ -130,7 +130,9 @@ if (!still) {
   const fps = 60;
   let best = { i: diff.length - 1, d: -1 };
   diff.forEach((d, i) => {
-    const still = (m) => (m[i - 1] ?? 0) < 0.3 && (m[i] ?? 0) < 0.3;
+    // Still for about 150 ms either side, so it isn't a flick's first frame.
+    const still = (m) =>
+      m.slice(Math.max(0, i - 9), i + 10).every((x) => x < 0.3);
     if (i / fps >= 0.5 && still(moveA) && still(moveB) && d > best.d)
       best = { i, d };
   });

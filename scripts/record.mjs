@@ -79,8 +79,10 @@ for (const s of shots) {
   // Only the date is fixed, not the clock: Playwright's clock would also fake
   // performance.timeOrigin and performance.now, which the timetable and the
   // trimming below rely on.
-  await ctx.addInitScript(() => {
-    const fixed = Date.UTC(2026, 0, 1, 12);
+  // One minute to midnight today (UTC): after the builds being compared, and
+  // the same for both runs when they are recorded on the same day.
+  const today = new Date().setUTCHours(23, 59, 0, 0);
+  await ctx.addInitScript((fixed) => {
     const Real = Date;
     globalThis.Date = class extends Real {
       constructor(...a) {
@@ -97,7 +99,7 @@ for (const s of shots) {
       t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
-  });
+  }, today);
   await ctx.route("**/*", async (route) => {
     const req = route.request();
     if (!req.url().startsWith(origin)) {
