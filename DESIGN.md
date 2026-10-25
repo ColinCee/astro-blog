@@ -380,7 +380,9 @@ homepage terminal window's ambient lift, nothing else.
   `--loss` red; `base` stripes the 2018 baseline; one dashed line for holding
   shoot). Recordings are `<Clip src label rate hi>` (pixelated, playing only while
   on screen and never on their own under reduced motion); anything inside a Clip
-  is its caption, and several sit side by side in a `<div class="vids">`.
+  is its caption, and several sit side by side in a `<div class="vids">`. A post told as numbered steps can carry `<Recipe steps until>`: a
+  sticky strip of the steps, the passed ones in ink and the current one in the
+  accent, gone once the `until` heading is reached.
   Marks are neutral; only the result takes the accent. Aim for at least one figure
   per post so no screen is text alone. Explanations sit next to what they explain
   (a short title above, labels on the marks), not in a paragraph under the figure.

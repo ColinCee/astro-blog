@@ -11,6 +11,7 @@ export { default as LineChart } from "./LineChart.astro";
 export { default as Panel } from "./Panel.astro";
 export { default as Pts } from "./Pts.astro";
 export { default as QView } from "./QView.astro";
+export { default as Recipe } from "./Recipe.astro";
 export { default as RowsVsColumns } from "./RowsVsColumns.astro";
 export { default as Runs } from "./Runs.astro";
 export { default as Split } from "./Split.astro";

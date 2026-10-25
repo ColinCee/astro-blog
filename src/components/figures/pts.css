@@ -189,4 +189,8 @@
   .prose .pts__axis span {
     font-size: 0.625rem;
   }
+  /* the reference label ends at its line, clear of the column headers */
+  .prose .pts__refs span {
+    transform: translateX(calc(-100% + 0.5rem));
+  }
 }
