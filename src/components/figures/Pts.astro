@@ -17,7 +17,8 @@ interface Row {
   points: number;
   prev?: { won: number; points: number };
   real?: { won: boolean; points: boolean };
-  before?: { won: number; label: string };
+  // the earlier value and what changed, e.g. { label: "at 1M frames", change: "5M frames" }
+  before?: { won: number; label: string; change: string };
   kind?: "base" | "hi";
 }
 interface Props {
@@ -38,16 +39,17 @@ const delta = (d: number, real = true) =>
         text: d > 0 ? `+${d.toFixed(0)}` : `−${Math.abs(d).toFixed(0)}`,
       };
 const ticks = [0, 25, 50, 75, 100];
-const beforeLabel = rows.find((r) => r.before)?.before?.label;
+const before = rows.find((r) => r.before)?.before;
+const beforeLabel = before?.label;
 const legend = [
   rows.some((r) => r.kind === "base") && { cls: "base", text: "my 2018 agent" },
   rows.some((r) => r.kind === "hi") && { cls: "hi", text: "kept" },
   !beforeLabel && rows.some((r) => !r.kind) && { cls: "other", text: "tried" },
   beforeLabel && { cls: "before", text: beforeLabel },
-  beforeLabel && { cls: "add", text: "added after" },
+  before && { cls: "add", text: `gained with ${before.change}` },
   rows.some((r) => r.before && r.won < r.before.won) && {
     cls: "lost",
-    text: "lost after",
+    text: `lost with ${before?.change}`,
   },
   { cls: "ref", text: "holding shoot" },
 ].filter(Boolean) as { cls: string; text: string }[];
