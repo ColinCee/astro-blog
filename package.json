@@ -25,7 +25,8 @@
     "preview": "astro build && wrangler dev",
     "deploy": "astro build && wrangler deploy",
     "og": "node scripts/og/render.mjs",
-    "record": "node scripts/record.mjs"
+    "record": "node scripts/record.mjs",
+    "compare": "node scripts/compare.mjs"
   },
   "type": "module",
   "volta": {
