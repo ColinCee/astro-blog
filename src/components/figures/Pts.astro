@@ -1,5 +1,5 @@
 ---
-// Wins and points, one row per setup: the bar is games won (0-100%) with the
+// Win rate and average points, one row per setup: the bar is win rate (0-100%) with the
 // spread of runs as a whisker, then wins and points with their change from
 // `prev` (the step before, or the baseline). A row that wins more than its
 // `prev` draws the gain in the accent. `base` stripes the baseline (my 2018
@@ -39,8 +39,8 @@ const ticks = [0, 25, 50, 75, 100];
   <span class="pts__h pts__refs"
     ><span style={`--x:${f(ref.at)}`}>{ref.label}</span></span
   >
-  <span class="pts__h pts__wh">won</span>
-  <span class="pts__h pts__wh">points</span>
+  <span class="pts__h pts__wh">win rate</span>
+  <span class="pts__h pts__wh">avg points</span>
   {rows.map((r) => {
     const gain = r.prev !== undefined && r.won - r.prev.won >= 1;
     const a = gain && r.prev ? r.prev.won : r.won;
@@ -73,17 +73,12 @@ const ticks = [0, 25, 50, 75, 100];
   })}
   <span class="pts__sp"></span>
   <span class="pts__axis">
-    {ticks.map((t) => (
-      <span style={`--x:${t / 100}`}>
-        {t}
-        {t === 100 ? "%" : ""}
-      </span>
-    ))}
+    {ticks.map((t) => <span style={`--x:${t / 100}`}>{t}</span>)}
   </span>
   <span></span>
   <span></span>
   <span class="pts__sp"></span>
-  <span class="pts__h pts__xt">games won</span>
+  <span class="pts__h pts__xt">win rate (%)</span>
   <span></span>
   <span></span>
 </div>

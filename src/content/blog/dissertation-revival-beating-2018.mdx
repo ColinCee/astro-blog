@@ -30,7 +30,7 @@ Each row adds one change to the row above it, starting from today's DQN, which a
 - **The IMPALA network**, a bigger one.
 - **A move every 2 frames** instead of every 4.
 
-<Fig title="How we beat my 2018 agent, one change at a time. Average of 5 runs, the line is their range">
+<Fig title="How we beat my 2018 agent, one change at a time">
   <Pts rows={[
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
     {"name": "Today's DQN", "tag": "same 1M frames", "won": 51.2, "lo": 30.0, "hi": 78.0, "points": 39.88, "prev": {"won": 72.8, "points": 46.89}},
@@ -41,7 +41,7 @@ Each row adds one change to the row above it, starting from today's DQN, which a
   ]} />
 </Fig>
 
-Winning comes first, and points only break ties between agents that win, so the bars are games won and points sit next to them.
+Winning comes first, and points only break ties between agents that win, so each bar is a win rate and the average points sit next to it.
 
 More practice did most of the work on wins, and the new reward took it to almost every game. After that, moving more often didn't change wins, but it added 20 points.
 
@@ -49,9 +49,10 @@ At each step I kept whatever won, wins first and then points, but only when a si
 
 Each chart below starts from what the step before kept and changes one thing:
 
+- **Each bar** is the average win rate of 5 runs, and the thin line across it is their range.
 - **Striped** is my 2018 agent, or my 2018 reward.
 - **Grey** is where the step before got to, or the whole bar when a row dropped.
-- **Orange** is what a change added, and **red** numbers are drops.
+- **Orange** is what a change added, and **red** numbers are drops. Changes in win rate are percentage points.
 - **Bold** is the one I kept for the next step.
 - **The dashed line** is what you win by just holding the shoot button.[^button] More on that below.
 
