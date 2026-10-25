@@ -17,11 +17,10 @@ That part is yours, per PR: which page and path, which interaction, and which vi
 
 ## Make the files
 
-The commands do the mechanics. Options and the recipe for building each version in its own worktree are at the top of `scripts/record.mjs`.
+The commands do the mechanics. Options and the recipe for building each version in its own worktree are at the top of `scripts/capture.mjs`.
 
 1. Build and serve each version as it ships (`pnpm astro build`, `pnpm astro preview --port <n>`), each on its own port.
-2. Record each version: `pnpm record <url> <dir> [path]` with what the change needs:
-   - `--still` for screenshots (PNG) instead of video (MP4).
+2. Capture each version: `pnpm screenshot <url> <dir> [path]` for PNGs, or `pnpm record` with the same arguments for MP4s, plus what the change needs:
    - `--views phone,tablet,desktop,WxH` for the sizes that changed, `--dark` for dark mode.
    - `--steps <file.mjs>` (exports `async (page) => {}`) to hover, click, open a menu or fill a form first.
    - `--scroll [selector]` to scroll down to it; `--element <selector>` to crop a still to one component.

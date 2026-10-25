@@ -1,9 +1,10 @@
-// Records a page for a pull request, once per view: a video (MP4) by
-// default, or a screenshot (PNG) with --still. Needs ffmpeg on PATH for video.
+// Captures a page for a pull request, once per view. Two names, one script,
+// since nearly everything is shared:
 //
-//   pnpm record <base-url> <out-dir> [path] [options]
+//   pnpm screenshot <base-url> <out-dir> [path] [options]   a PNG per view
+//   pnpm record <base-url> <out-dir> [path] [options]       an MP4 per view
+//                                                           (needs ffmpeg)
 //
-//   --still               a PNG per view instead of an MP4
 //   --views <list>        phone (390x844), tablet (768x1024), desktop
 //                         (1280x800) or WxH, comma-separated; default
 //                         phone,desktop. Files are named after them.
@@ -12,7 +13,7 @@
 //                         and before capture: hover, click, fill a form, wait
 //   --scroll [selector]   scroll down until the selector's bottom is on
 //                         screen (default: two and a half screens)
-//   --element <selector>  with --still, crop to that element
+//   --element <selector>  screenshot only: crop to that element
 //   --wait <ms>           how long to keep recording, or to wait before a
 //                         still, after the rest (default 4500 video, 1000
 //                         still, 1500 after a scroll)
@@ -88,7 +89,7 @@ const cache = flag("--cache") ?? join(tmpdir(), "record-cache");
 const [base, out, path = "/"] = args;
 if (!base || !out) {
   console.error(
-    "usage: pnpm record <base-url> <out-dir> [path] [--still] [--views phone,desktop] [--dark] [--steps file.mjs] [--scroll [selector]] [--element selector] [--wait ms] [--cache dir]",
+    "usage: pnpm screenshot|record <base-url> <out-dir> [path] [--views phone,desktop] [--dark] [--steps file.mjs] [--scroll [selector]] [--element selector] [--wait ms] [--cache dir]",
   );
   process.exit(1);
 }
@@ -99,7 +100,7 @@ if (!path.startsWith("/")) {
   process.exit(1);
 }
 if (element && !still) {
-  console.error("--element needs --still");
+  console.error("--element is for screenshots: use pnpm screenshot");
   process.exit(1);
 }
 const named = {
