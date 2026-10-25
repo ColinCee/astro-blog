@@ -19,7 +19,7 @@ pubDate: "Oct 21 2026"
 
 In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster, so I wanted to see if today's methods could beat what I built as an undergrad.
 
-My dissertation says my agent won 82.6% of Aliens games, but that was one run, measured while it was still training.[^2018] Retrained 5 times and tested properly, it wins 73% and scores 47 a game. The best agent we got to won 495 of its 500 test games and scores 83, which even beats a tree search that plans every move.
+My dissertation says my agent won 82.6% of Aliens games, but that was one run, measured while it was still training.[^2018] Retrained and tested properly, it won 73% of 500 games, scoring 47 points a game on average. The best agent Claude trained won 99% of games, scoring 83 points on average.
 
 ## How did we beat it?
 
@@ -33,21 +33,21 @@ My dissertation says my agent won 82.6% of Aliens games, but that was one run, m
   ]} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-Each row adds one change, and I only kept it if a significance test over 5 runs said the gap was real, otherwise the simpler option stays.[^test] More practice did most of the work on wins, the new reward got it to almost every game, and moving more often added 21 points.
+Each row adds one change, and I only kept it if a significance test[^test] over 5 runs said the gap was real, otherwise the simpler option stays.
 
-Each bar is the average win rate over 5 runs, and the thin line is their range. Orange is what I kept and striped is my 2018 agent. Changes are against the row each one builds on.
+Each bar is the average win rate over 5 runs, and each row builds on the one above. Orange is what I kept, and striped is my 2018 agent.
 
-<Recipe steps={["DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="What did I learn" />
+<Recipe steps={["DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="Where did it end up" />
 
-## Step 1: which method, and how much practice?
+## Step 1: which algorithm is best with more practice?
 
-I tried three methods, each with 5 times the practice my agent got:
+I tried three algorithms, each with 5 times the practice my agent got:
 
 - **[DQN](https://www.nature.com/articles/nature14236):** DeepMind's 2015 Atari method, and my agent is this plus 2 tricks.
 - **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.
-- **[PPO](https://arxiv.org/abs/1707.06347):** a different kind of learner.
+- **[PPO](https://arxiv.org/abs/1707.06347):** learns which move to make directly, instead of scoring each one.
 
-<Fig title="Which method, 5M frames?">
+<Fig title="Which algorithm, 5M frames?">
   <Pts rows={[
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
     {"name": "DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
@@ -58,7 +58,8 @@ I tried three methods, each with 5 times the practice my agent got:
 
 DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster DQN. That's 17 minutes a run now, which would've been 2 or 3 days in 2018.
 
-With the same 1M frames as my agent, none of them beat it on both. PPO came closest, winning 82%, but it was just holding the shoot button, which wins 82% on its own, about what my dissertation said my agent won.
+### PPO is actually better at 1M frames
+With the same 1M frames as my agent, PPO wins 82% of the time, which is about what my dissertation said my agent won. However, it turns out it was just spamming the shoot button.
 
 <Fig>
   <div class="vids">
@@ -67,11 +68,9 @@ With the same 1M frames as my agent, none of them beat it on both. PPO came clos
   </div>
 </Fig>
 
-I never checked that in 2018, and to be honest Claude didn't either until its overnight reviewer spotted two PPO runs with the same scores. My agent did learn something though, it scores 47 against the button's 37 because it also shoots the bases, so the button's 82% is the bar for wins and my 47 is the bar for points.
-
 ## Step 2: which reward works best?
 
-So far it's just been the game's points.[^clip] I tried:
+So far it's just been the game's points, which can mislead, since some GVGAI games are [built so the score tricks agents](https://arxiv.org/abs/1802.00048).[^clip] I tried:
 
 - **Win only:** +1 for a win, −1 for a loss.
 - **Win + points ÷ 10:** the same, plus a bit for scoring.
@@ -87,7 +86,7 @@ So far it's just been the game's points.[^clip] I tried:
   ]} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-Win only and win + points ÷ 10 tie on wins, so points decide it, 59 against 44. My 2018 reward did its job back then, but it falls behind with more practice.
+Wins matter most, then points. Win + points ÷ 10 wins more than points alone. Win only and win + points ÷ 10 both win almost every game, a tie, so points decide it, 59 against 44.
 
 ## Step 3: does a bigger network help?
 
@@ -101,11 +100,11 @@ Win only and win + points ÷ 10 tie on wins, so points decide it, 59 against 44.
   ]} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-Wins tie, but it scores 3 more, so I kept it even though it's twice as slow to train.
+The gap in wins could be luck, but the gap in points is real, so I kept IMPALA, even though it's twice as slow to train.
 
 ## Step 4: how often should it move?
 
-I actually wrote in 2018 that holding each move for 4 frames meant my agent could never reach some states, but at 12 hours a run I couldn't afford to test it. A tree search called MCTS moves every frame and scores 78 with no training at all.[^mcts]
+In 2018 I wrote that holding each move for 4 frames meant my agent could never reach some states, but at 12 hours a run I couldn't afford to test it. A tree search called MCTS moves every frame and scores 78 with no training at all.[^mcts]
 
 <Fig title="How often to move?">
   <Pts rows={[
@@ -116,14 +115,27 @@ I actually wrote in 2018 that holding each move for 4 frames meant my agent coul
   ]} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-Every 2 frames added 21 points, and every frame scored the same but took 2 hours a run instead of 45 minutes, so every 2 frames it is. It still loses about 1 game in 100, and the losses I replayed were all a bomb landing on it while it sat still and shot, which might just be reaction time.
+Every 2 frames added 21 points. Every frame won all 500 of its games and scored the same, but that 1 game in 100 could be luck, and it took 2 hours a run instead of 45 minutes, so every 2 frames it is. It still loses about 1 game in 100, and the 2 losses I replayed were both a bomb landing on it while it sat still and shot, which might just be reaction time.
+
+## Where did it end up?
+
+<Fig title="Final results">
+  <Pts rows={[
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "MCTS", "tag": "plans every move, no training", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 77.82},
+    {"name": "Every 2 frames", "tag": "the final agent", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
+    {"name": "Every frame", "tag": "2 hours a run", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 82.48, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
+  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
+</Fig>
+
+The final agent wins 99% of games to my 2018 agent's 73%, and scores 83, more than MCTS, which plans every move with no training.
 
 ## What did I learn?
 
 - **Question the settings you copied.** Holding each move for 4 frames came from Atari and cost about 20 points here.
 - **Check the dumbest baseline first.** Holding one button needs no training, and I never tried it.
 - **Run everything more than once.** My three 2018 runs ended up to 14 points apart on win rate.
-- **Claude wrote all the code, but liked to stop early.** I pushed back six times in about 2½ hours.
+- **Beating MCTS.** Back when I wrote my dissertation, my agent didn't come close to MCTS, which can look ahead. Now my best agent scores more.
 
 [^test]: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) on the 5 runs: a gap counts as real when p < 0.05, so luck alone would give one that big less than 1 time in 20. Every p-value is in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^mcts]: One run of 51 games, since it doesn't learn.
