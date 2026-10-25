@@ -2,7 +2,8 @@
 // Win rate and average points, one row per setup: the bar is win rate (0-100%)
 // with the spread of runs as a whisker, then win rate and points with their
 // change from `prev` (what the row builds on): green when a significance test
-// calls it a real gain (`real`), red a real drop, faint a tie. `base` stripes
+// calls it a real gain (`real`), red a real drop, faint
+// when the test can't tell it from luck. `base` stripes
 // the baseline (my 2018 agent), `hi` marks the option kept, in the accent.
 // `ref` is the dashed line (holding shoot). A legend above names only what the
 // chart uses. Hover or tap a row and the others fade. Styles: pts.css.
@@ -50,7 +51,7 @@ const legend = [
     ))}
     <span class="pts__key pts__key--deltas">
       change: <b class="pts__plus">gain</b> <b class="pts__minus">drop</b>{" "}
-      <b class="pts__same">tie</b>
+      <b class="pts__same">could be luck</b>
     </span>
   </p>
   <span class="pts__h"></span>
