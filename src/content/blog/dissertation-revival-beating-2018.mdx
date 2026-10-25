@@ -59,7 +59,7 @@ I tried three algorithms, each with 5 times the practice my agent got:
 DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster DQN. That's 17 minutes a run now, which would've been 2 or 3 days in 2018.
 
 ### PPO is actually better at 1M frames
-With the same 1M frames as my agent, PPO wins 82% of the time, which is about what my dissertation said my agent won. However, it turns out it was just spamming the shoot button.
+With the same 1M frames as my agent, PPO wins 82% of the time, which is about what my dissertation said my agent won. However, it turns out it was just spamming the shoot button, which is why every chart has a dashed line at 82%: anything below it is worse than holding one button.
 
 <Fig>
   <div class="vids">
@@ -134,7 +134,7 @@ The final agent wins 99% of games to my 2018 agent's 73%, and scores 83, more th
 
 - **Question the settings you copied.** Holding each move for 4 frames came from Atari and cost about 20 points here.
 - **Check the dumbest baseline first.** Holding one button needs no training, and I never tried it.
-- **Run everything more than once.** My three 2018 runs ended up to 14 points apart on win rate.
+- **Run everything more than once.** My three 2018 runs ended up to 14 percentage points apart on win rate.
 - **Beating MCTS.** Back when I wrote my dissertation, my agent didn't come close to MCTS, which can look ahead. Now my best agent scores more.
 
 [^test]: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) on the 5 runs: a gap counts as real when p < 0.05, so luck alone would give one that big less than 1 time in 20. Every p-value is in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
