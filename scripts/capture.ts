@@ -66,7 +66,14 @@ declare global {
 const args = process.argv.slice(2);
 const flag = (name: string): string | null => {
   const at = args.indexOf(name);
-  return at >= 0 ? args.splice(at, 2)[1] : null;
+  if (at < 0) return null;
+  const value = args[at + 1];
+  if (value === undefined || value.startsWith("--")) {
+    console.error(`${name} needs a value`);
+    process.exit(1);
+  }
+  args.splice(at, 2);
+  return value;
 };
 const toggle = (name: string): boolean => {
   const at = args.indexOf(name);
@@ -143,15 +150,18 @@ for (const s of sizes) {
   // the same for both runs when they are recorded on the same day.
   const today = new Date().setUTCHours(23, 59, 0, 0);
   await ctx.addInitScript((fixed) => {
+    // A function, not a class, so Date() without `new` still works (it
+    // returns a string, as the real one does).
     const Real = Date;
-    globalThis.Date = class extends Real {
-      constructor(...a: unknown[]) {
-        super(...((a.length ? a : [fixed]) as [number]));
-      }
-      static now() {
-        return fixed;
-      }
-    } as unknown as DateConstructor;
+    function Fixed(this: unknown, ...a: unknown[]) {
+      const at = a.length ? (a as [number]) : ([fixed] as [number]);
+      return new.target ? new Real(...at) : new Real(fixed).toString();
+    }
+    Fixed.prototype = Real.prototype;
+    Fixed.parse = Real.parse;
+    Fixed.UTC = Real.UTC;
+    Fixed.now = () => fixed;
+    globalThis.Date = Fixed as unknown as DateConstructor;
     let seed = 42;
     Math.random = () => {
       seed = (seed + 0x6d2b79f5) | 0;
@@ -162,7 +172,7 @@ for (const s of sizes) {
   }, today);
   await ctx.route("**/*", async (route) => {
     const req = route.request();
-    if (req.url().startsWith(origin)) return route.continue();
+    if (new URL(req.url()).origin === origin) return route.continue();
     const key = join(cache, createHash("sha1").update(req.url()).digest("hex"));
     if (!existsSync(`${key}.json`)) {
       const res = await route.fetch();

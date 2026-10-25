@@ -18,7 +18,14 @@ import { dirname } from "node:path";
 const args = process.argv.slice(2);
 const flag = (name: string): string | null => {
   const at = args.indexOf(name);
-  return at >= 0 ? args.splice(at, 2)[1] : null;
+  if (at < 0) return null;
+  const value = args[at + 1];
+  if (value === undefined || value.startsWith("--")) {
+    console.error(`${name} needs a value`);
+    process.exit(1);
+  }
+  args.splice(at, 2);
+  return value;
 };
 const toggle = (name: string): boolean => {
   const at = args.indexOf(name);
@@ -28,6 +35,10 @@ const toggle = (name: string): boolean => {
 const noStill = toggle("--no-still");
 const isNew = toggle("--new");
 let still = flag("--still");
+if (still !== null && !Number.isFinite(Number(still))) {
+  console.error(`--still takes seconds, got ${still}`);
+  process.exit(1);
+}
 const [before, after, out] = isNew ? [null, ...args] : args;
 if (!after || !out) {
   console.error(
@@ -170,7 +181,8 @@ if (!still) {
 still = String(
   Math.min(Number(still), Math.max(0, Math.min(...lengths) - 0.05)),
 );
-const png = out.replace(/\.mp4$/, "-still.png");
+// Next to the output whatever its extension, so it never overwrites it.
+const png = `${out.replace(/\.[^./\\]+$/, "")}-still.png`;
 ffmpeg(
   "-ss",
   still,

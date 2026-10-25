@@ -38,4 +38,5 @@ The commands do the mechanics. Options and the recipe for building each version 
 ## Limits
 
 - Scroll position matches between runs to the pixel, but when an animation starts can vary by about 0.3s, so don't read fine timing differences from the clips.
+- Text set at build time (a build hash, "last login") differs between the two builds; the freeze can't fix it, and the automatic still can pick it as the biggest difference.
 - The scroll goes by position, so if the content above moved between versions, the two sides show different content at the same moment.
