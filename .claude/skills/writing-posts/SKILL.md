@@ -14,7 +14,10 @@ Colin is a visual reader who skims. A post is one story, results first, in his o
 - **One baseline, used everywhere.** It's the first row of every chart, and every number agrees across text, charts, the card and the frontmatter. Jumping between baselines loses his trust faster than anything.
 - **Apples to apples.** Change one thing at a time against the same baseline, on the same test set. Leave out anything both sides share.
 - **Gauge depth.** Ask what he already knows about the domain (a few options) before deciding how much background to give. Define jargon on first use, as a link or a one-line list item.
+- **Title short and catchy, and it says the result** ("CI faster than GitHub's"). The subtitle is one optional line, not a paragraph. Use the same words on the card, the index and the embed.
+- **Limitations get a line at the end** when the comparison isn't fully like for like, not a section.
 - **Draft the content high level first**, then the figures, then the wording.
+- **When he asks for versions, make them distinct** in opening, structure, figures and depth, on the same facts.
 
 ## 2. His voice
 
@@ -22,13 +25,14 @@ Write how he talks in chat: casual, conversational British English, first person
 
 - **Hedge where he would.** Use phrases like "I kind of assumed", "to be honest", "as far as I can tell". No absolutes, and no invented consensus ("everyone says", "the common take").
 - **Sentences run on the way he talks.** Comma run-ons are fine. Never write clipped fragments ("Not once. 1,370 times.") or punchy one-liners. No semicolons, no em dashes, active voice.
-- **About three sentences a paragraph, each a new fact.** Cut what the previous sentence or a figure already says, and end on a nudge to the next part.
+- **About three sentences a paragraph, each a new fact.** Cut what the previous sentence or a figure already says, never explain what a later section covers, and end on a nudge to the next part.
 - **Headings are questions or dates**, never "Background" or "Results".
 - **Keep his words.** When he's written a passage, fix only facts and grammar, and tell him what changed. Never "tidy" it into your prose.
-- **Less is more.** No bold lead-ins on every bullet, no restating the chart, no detail a curious reader can follow a link to.
+- **Less is more, formatted for scanning.** Lists and tables are for things with real structure, not decoration. No bold lead-ins on every bullet, no restating the chart, no detail a curious reader can follow a link to.
 
 ## 3. Numbers and claims
 
+- **One way to say each number** (1.4×, not also "31% less time"), the same everywhere.
 - **Measured data only.** No estimates or demo data when the real thing can be run. Get his OK before any GPU run.
 - **Comparisons get a significance test** (e.g. Welch's t-test over 5 runs, p < 0.05). Fix the decision rule before looking: a tie keeps the simpler or cheaper option. Never pick or headline the better-looking number after the fact.
 - **Don't overclaim.** Untested gaps say "could be luck", a single run says so, and a caveat goes in a one-line footnote.
@@ -58,6 +62,7 @@ Show, don't ask: build the change or two or three distinct variations, put them 
 
 1. Branch, and show him a local preview link (the dev server on his Tailscale name works from his phone).
 2. Before merging:
+   - He has read the draft and said publish.
    - `pubDate` is the publish day.
    - Series posts link to each other.
    - Work posts name nothing private.
