@@ -5,7 +5,7 @@
    the bars) in every chart, labelled over it. */
 .prose .pts {
   display: grid;
-  grid-template-columns: minmax(0, 12rem) minmax(0, 1fr) 5.2rem 4.6rem;
+  grid-template-columns: minmax(0, 12rem) minmax(0, 1fr) 5.2rem 6rem;
   align-items: center;
   gap: 0 0.8rem;
   font-family: var(--mono);
@@ -23,6 +23,7 @@
 }
 .prose .pts__wh {
   text-align: right;
+  padding-right: calc(3ch + 0.3rem);
 }
 .prose .pts__k b {
   font-weight: 500;
@@ -74,6 +75,11 @@
   filter: drop-shadow(0 0 1px var(--bg)) drop-shadow(0 0 1px var(--bg));
 }
 .prose .pts em {
+  /* value right-aligned, change in its own slot, so both line up down a column */
+  display: grid;
+  grid-template-columns: 1fr 3ch;
+  column-gap: 0.3rem;
+  align-items: baseline;
   font-style: normal;
   color: var(--ink);
   text-align: right;
@@ -81,7 +87,8 @@
   white-space: nowrap;
 }
 .prose .pts em small {
-  margin-left: 0.3rem;
+  grid-column: 2;
+  text-align: left;
   color: var(--ink);
 }
 .prose .pts em small.pts__same {
@@ -90,7 +97,7 @@
 .prose .pts .pts__plus {
   color: var(--gain);
 }
-.prose .pts em small.pts__minus {
+.prose .pts .pts__minus {
   color: var(--loss);
 }
 .prose .pts .pts__w {
@@ -109,6 +116,21 @@
     var(--muted) 0 2px,
     var(--bar) 2px 5px
   );
+}
+/* What the change colours mean, under the chart on the right. */
+.prose .pts__key {
+  grid-column: 3 / -1;
+  display: grid;
+  margin: 0.5rem 0 0;
+  font-size: 0.625rem;
+  text-align: right;
+  color: var(--muted);
+}
+.prose .pts__key b {
+  font-weight: 500;
+}
+.prose .pts__key .pts__same {
+  color: var(--faint);
 }
 /* Hover or tap a row and the others fade, to read one row across. */
 .prose .pts__k {
@@ -189,6 +211,9 @@
   }
   .prose .pts__axis span {
     font-size: 0.625rem;
+  }
+  .prose .pts__key {
+    grid-column: 2 / -1;
   }
   /* the reference label ends at its line, clear of the column headers */
   .prose .pts__refs span {

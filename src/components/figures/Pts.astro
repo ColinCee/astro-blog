@@ -2,11 +2,12 @@
 // Win rate and average points, one row per setup: the bar is win rate (0-100%)
 // with the spread of runs as a whisker, then win rate and points with their
 // change from `prev` (what the row builds on): green when a significance test
-// calls it a real gain (`real`), red a real drop, faint
-// when the test can't tell it from luck. `base` stripes
-// the baseline (my 2018 agent), `hi` marks the option kept, in the accent.
-// `ref` is the dashed line (holding shoot). No legend: the post explains the
-// marks once. Hover or tap a row and the others fade. Styles: pts.css.
+// calls it a real gain (`real`), red a real drop, faint when the test can't
+// tell it from luck. `base` stripes the baseline (my 2018 agent), `hi` marks
+// the option kept, in the accent. `ref` is the dashed line (holding shoot).
+// A key under the chart says what the change colours mean, linking `note`
+// (the post's footnote on the test). Hover or tap a row and the others fade.
+// Styles: pts.css.
 interface Row {
   name: string;
   tag?: string;
@@ -21,8 +22,13 @@ interface Row {
 interface Props {
   rows: Row[];
   ref?: { at: number; label: string };
+  note?: string;
 }
-const { rows, ref = { at: 82, label: "holding shoot 82%" } } = Astro.props;
+const {
+  rows,
+  ref = { at: 82, label: "holding shoot 82%" },
+  note,
+} = Astro.props;
 const f = (v: number) => (v / 100).toFixed(3);
 const pct = (w: number) =>
   Math.abs(w - Math.round(w)) < 0.05 || w < 95
@@ -81,6 +87,13 @@ const ticks = [0, 25, 50, 75, 100];
   <span></span>
   <span class="pts__sp"></span>
   <span class="pts__h pts__xt">win rate (%)</span>
-  <span></span>
-  <span></span>
+  <p class="pts__key">
+    <span>
+      <b class="pts__plus">green</b>
+      / <b class="pts__minus">red</b>: a{" "}
+      {note ? <a href={note}>real</a> : "real"}
+      change
+    </span>
+    <span> <b class="pts__same">grey</b>: could be luck </span>
+  </p>
 </div>

@@ -30,12 +30,12 @@ My dissertation says my agent won 82.6% of Aliens games, but that was one run, m
     {"name": "2. + win + points ÷ 10", "tag": "a new reward", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": false}},
     {"name": "3. + the IMPALA network", "tag": "a bigger network", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "real": {"won": false, "points": true}},
     {"name": "4. + a move every 2 frames", "tag": "instead of every 4", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}, "kind": "hi"},
-  ]} />
+  ]} note="#user-content-fn-test" />
 </Fig>
 
 Each row adds one change, and I only kept it if a significance test over 5 runs said the gap was real, otherwise the simpler option stays.[^test] More practice did most of the work on wins, the new reward got it to almost every game, and moving more often added 21 points.
 
-Each bar is the average win rate over 5 runs, and the thin line is their range. Orange is what I kept and striped is my 2018 agent. Changes are against the row each one builds on: green is a real gain, red a real drop, and grey could just be luck.
+Each bar is the average win rate over 5 runs, and the thin line is their range. Orange is what I kept and striped is my 2018 agent. Changes are against the row each one builds on.
 
 <Recipe steps={["DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="What did I learn" />
 
@@ -53,7 +53,7 @@ I tried three methods, each with 5 times the practice my agent got:
     {"name": "DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
     {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
     {"name": "PPO", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": false}},
-  ]} />
+  ]} note="#user-content-fn-test" />
 </Fig>
 
 DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster DQN.[^practice] That's 17 minutes a run now, which would've been 2 or 3 days in 2018.
@@ -84,7 +84,7 @@ So far it's just been the game's points.[^clip] I tried:
     {"name": "win + points ÷ 10", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": false}, "kind": "hi"},
     {"name": "win only", "won": 99.6, "lo": 99.0, "hi": 100.0, "points": 44.05, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
     {"name": "my 2018 reward", "won": 95.8, "lo": 94.0, "hi": 98.0, "points": 48.99, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
-  ]} />
+  ]} note="#user-content-fn-test" />
 </Fig>
 
 Win only and win + points ÷ 10 tie on wins, so points decide it, 59 against 44.[^reward] My 2018 reward did its job back then, but it falls behind with more practice.
@@ -98,7 +98,7 @@ Win only and win + points ÷ 10 tie on wins, so points decide it, 59 against 44.
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
     {"name": "Standard", "tag": "kept so far, the 2015 one", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93},
     {"name": "IMPALA", "tag": "15 layers", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "real": {"won": false, "points": true}, "kind": "hi"},
-  ]} />
+  ]} note="#user-content-fn-test" />
 </Fig>
 
 Wins tie, but it scores 3 more, so I kept it even though it's twice as slow to train.[^network]
@@ -113,7 +113,7 @@ I actually wrote in 2018 that holding each move for 4 frames meant my agent coul
     {"name": "Every 4 frames", "tag": "kept so far", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96},
     {"name": "Every 2 frames", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}, "kind": "hi"},
     {"name": "Every frame", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 82.48, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}},
-  ]} />
+  ]} note="#user-content-fn-test" />
 </Fig>
 
 Every 2 frames added 21 points, and every frame scored the same but took 2 hours a run instead of 45 minutes, so every 2 frames it is.[^moves] It still loses about 1 game in 100, and the losses I replayed were all a bomb landing on it while it sat still and shot, which might just be reaction time.[^deaths]
@@ -125,7 +125,7 @@ Every 2 frames added 21 points, and every frame scored the same but took 2 hours
 - **Run everything more than once.** My three 2018 runs ended up to 14 points apart on win rate.
 - **Claude wrote all the code, but liked to stop early.** I pushed back six times in about 2½ hours.[^log]
 
-[^test]: Welch's t-test over the 5 runs, each tested on 100 games: a gap counts when p < 0.05. Each step's footnote has its numbers, and the four steps I kept still pass a Holm correction across those four. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^test]: Welch's t-test over the 5 runs, each tested on 100 games: a gap counts when p < 0.05, which means a gap that big would come up by luck less than 1 time in 20. In the charts, green and red changes pass it and grey ones don't. Each step's footnote has its numbers, and the four steps I kept still pass a Holm correction across those four. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^rainbow]: Double DQN and prioritised replay (my 2018 agent's two), plus dueling networks, multi-step returns, distributional values and noisy networks. [The Rainbow paper](https://arxiv.org/abs/1710.02298)
 [^runs]: At 1M frames, DQN's five runs won 30% to 78%. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^button]: On the same 500 test games as today's agents: 82.4% wins and 37 points. PPO at 1M frames matched it game for game.
