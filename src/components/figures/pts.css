@@ -116,13 +116,13 @@
     var(--bar) 2px 5px
   );
 }
-/* What the change colours mean, under the chart on the right. */
+/* What the line and change colours mean, under the number columns, left-aligned
+   so the footnote number on the last line doesn't push it out of line. */
 .prose .pts__key {
   grid-column: 3 / -1;
   display: grid;
   margin: 0.5rem 0 0;
   font-size: 0.625rem;
-  text-align: right;
   color: var(--muted);
 }
 .prose .pts__dash {
