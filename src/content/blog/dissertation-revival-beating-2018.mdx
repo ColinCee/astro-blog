@@ -50,9 +50,9 @@ I tried three methods, first with the same 1M frames as my agent, then with 5 ti
 <Fig title="1M → 5M frames">
   <Pts rows={[
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
-    {"name": "DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 51.2, "points": 39.88}, "real": {"won": true, "points": true}, "kind": "hi", "before": {"won": 51.2, "label": "at 1M frames", "change": "5M frames"}},
-    {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 64.2, "points": 42.73}, "real": {"won": true, "points": true}, "before": {"won": 64.2, "label": "at 1M frames", "change": "5M frames"}},
-    {"name": "PPO", "tag": "at 1M: holding shoot", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 82.4, "points": 37.35}, "real": {"won": false, "points": true}, "before": {"won": 82.4, "label": "at 1M frames", "change": "5M frames"}},
+    {"name": "DQN", "tag": "from 51% at 1M", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 51.2, "points": 39.88}, "real": {"won": true, "points": true}, "kind": "hi"},
+    {"name": "Rainbow", "tag": "from 64% at 1M", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 64.2, "points": 42.73}, "real": {"won": true, "points": true}},
+    {"name": "PPO", "tag": "from 82% at 1M, = holding shoot", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 82.4, "points": 37.35}, "real": {"won": false, "points": true}},
   ]} />
 </Fig>
 
