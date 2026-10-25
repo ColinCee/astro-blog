@@ -19,7 +19,7 @@ pubDate: "Oct 21 2026"
 
 In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster. With runs that cheap, I wanted to see if today's methods could beat what I built as an undergrad.
 
-My 2018 agent wins 73% of Aliens games and scores 47 points a game. The best agent we got to won 495 of its 500 test games and scores 83. It even outscores a tree search that plans every move, and none of my learning agents had come close to that. All the code and results are in [my dissertation repo](https://github.com/ColinCee/GVGAI-Dissertation).
+In my dissertation my agent won 82.6% of Aliens games, but that was one run, counted over its last 500 training games while it still made 1 in 10 moves at random. Retrained five times on today's code and tested on 100 games each, it wins 73% and scores 47 points a game.[^2018] The best agent we got to won 495 of its 500 test games and scores 83. It even outscores a tree search that plans every move, and none of my learning agents had come close to that. All the code and results are in [my dissertation repo](https://github.com/ColinCee/GVGAI-Dissertation).
 
 ## How did we beat it?
 
@@ -45,7 +45,7 @@ How to read the charts:
 
 ## Do today's methods beat it with the same practice?
 
-I tried three, each with the same 1M frames my agent got:
+I tried three, each with the same 1M frames (2,000 games) my report's results came from:
 
 - **[DQN](https://www.nature.com/articles/nature14236):** DeepMind's 2015 Atari method. It scores each move from the screen and plays the best one. My agent is DQN plus 2 tricks.
 - **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.[^rainbow]
@@ -60,7 +60,7 @@ I tried three, each with the same 1M frames my agent got:
   ]} />
 </Fig>
 
-No, DQN and Rainbow don't, and the runs vary a lot.[^runs] PPO wins more often than my agent but scores the least, and it turns out it's just holding the shoot button, which wins 82% of games on its own.[^button]
+No, DQN and Rainbow don't, and the runs vary a lot.[^runs] PPO wins more often than my agent but scores the least, and it turns out it's just holding the shoot button, which wins 82% of games on its own, about what my dissertation said my agent won.[^button]
 
 <Fig>
   <div class="vids">
@@ -88,11 +88,11 @@ A lot, with 5M frames DQN and Rainbow both beat my agent on wins and points, whi
 
 ## Step 2: which reward works best?
 
-The reward is what the agent gets told is good, and so far it was just the game's points. I tried:
+The reward is what the agent gets told is good, and so far it was just the game's points, one for every move that scores.[^clip] I tried:
 
 - **Win:** +1 for a win, −1 for a loss.
-- **Win + points ÷ 10:** the same, plus a tenth of the points.
-- **My 2018 reward:** win, plus −0.5 on every move of a lost game.
+- **Win + points ÷ 10:** the same, plus 0.1 for every move that scores.
+- **My 2018 reward:** points and win, plus −0.5 on every move of a lost game.
 
 <Fig title="Step 2: which reward? DQN, 5M frames">
   <Pts rows={[
@@ -122,7 +122,7 @@ It won every test game, a tie on wins, but it scored 3 more points, a real gain,
 
 ## Step 4: how often should it move?
 
-This is the one I never thought about in 2018. The agent holds each move for 4 frames, DeepMind's Atari setup, and I suspected that makes some shots and positions impossible to reach. A tree search called MCTS picks a move every frame, and it scores 78 with no training at all.
+I did think about this one in 2018, I even wrote that holding each move for 4 frames, DeepMind's Atari setup, meant my agent could never reach some states, but at 12 hours a run I couldn't afford to test it. A tree search called MCTS picks a move every frame, and it scores 78 with no training at all.[^mcts]
 
 <Fig title="Step 4: how often should it move?">
   <Pts rows={[
@@ -139,7 +139,7 @@ Moving every 2 frames added 21 points, and moving every frame scored the same bu
 
 - **Question the settings you copied.** Holding each move for 4 frames came from Atari, and here it cost about 20 points.
 - **Check the dumbest baseline first.** Holding one button doesn't need any training, and I never tried it.
-- **Run everything more than once.** My two 2018 runs of the same agent were 10 to 17 percentage points apart on win rate.
+- **Run everything more than once.** My three 2018 runs of the same agent ended up to 14 percentage points apart on win rate.
 - **Claude wrote all of the code, but it liked to stop early.** I pushed back six times in about 2½ hours.[^log]
 
 [^test]: Welch's t-test over the 5 runs, each tested on 100 games: a gap counts when p < 0.05. Each step's footnote has its numbers, and the four steps I kept still pass a Holm correction across those four. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
@@ -148,8 +148,11 @@ Moving every 2 frames added 21 points, and moving every frame scored the same bu
 [^button]: On the same 500 test games as today's agents: 82.4% wins and 37 points. PPO at 1M frames matched it game for game. My 2018 agent's code tests on other games from the same levels.
 [^results]: On two of my other three games, one button wins every game: Deceptizelda (hold right) and Wafer Thin Mints (any direction). [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^practice]: DQN, 1M to 5M frames: wins p = 0.013. DQN against Rainbow at 5M: wins p = 0.71, points p = 0.51.
-[^reward]: Against points: win + points ÷ 10 wins p = 0.002. Win against win + points ÷ 10: wins p = 0.19, points p < 0.001. I also tried points ÷ 5 and ÷ 20: ÷ 5 scored 2 more (p = 0.047), but picking the best of several options makes a lucky gap more likely, and a Holm correction across the two needs p under 0.025, so it's a tie.
+[^reward]: Against points: win + points ÷ 10 wins p = 0.0015. Win against win + points ÷ 10: wins p = 0.19, points p < 0.001. I also tried points ÷ 5 and ÷ 20: ÷ 5 scored 1.6 more (p = 0.047), but picking the best of several options makes a lucky gap more likely, and a Holm correction across the two needs p under 0.025, so it's a tie.
 [^network]: Wins p = 0.07, points p = 0.025.
-[^moves]: Every 4 to every 2 frames: points p < 0.001. Every 2 against every frame: wins p = 0.19, points p = 0.24.
+[^moves]: Every 4 to every 2 frames: points p < 0.001. Every 2 against every frame: wins p = 0.19, points p = 0.24. Three of the five every-frame runs ran on an earlier version of the code with the same learning.
+[^mcts]: One run of 51 games: MCTS doesn't learn, so its games only vary with the level.
+[^clip]: As in DeepMind's Atari setup, the reward counts each scoring move as one, so a base and an alien count the same.
+[^2018]: The report's Table 6.1 also gives 56.3 points, which I can't trace back to a log. My 2018 code tests on other games from the same levels as today's agents, and its 2,000 games come to about 1M frames.
 [^deaths]: The 2 losses a replay brought back. Changing the points weight didn't clearly change how often it loses (3, 6 and 6 in 500 at ÷ 20, ÷ 10 and ÷ 5), and every frame lost none of its 500.
 [^log]: From my Claude Code session log, 18 and 19 October 2026.
