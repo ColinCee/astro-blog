@@ -1,21 +1,52 @@
 ---
 // The <head> every page shares: charset, colour scheme, icon, title,
-// description, canonical URL and the social card.
+// description, canonical URL, the social card, and structured data for
+// search engines: a BlogPosting on posts (`article`), the person on the
+// homepage (`person`).
+import links from "../../data/links.json";
+
 interface Props {
   title: string;
   description: string;
   // The social card's line, when it should differ from the description.
   ogDescription?: string;
   ogType?: string;
+  article?: { headline: string; published: Date; modified?: Date };
+  person?: boolean;
 }
 const {
   title,
   description,
   ogDescription = description,
   ogType = "website",
+  article,
+  person,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL("/og.png", Astro.site);
+
+const author = {
+  "@type": "Person",
+  name: "Colin Cheung",
+  url: new URL("/", Astro.site).href,
+  jobTitle: "Senior Software Engineer",
+  sameAs: [links.github, links.linkedin],
+};
+const schema = article
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: article.headline,
+      description,
+      datePublished: article.published.toISOString(),
+      dateModified: (article.modified ?? article.published).toISOString(),
+      author,
+      image: ogImage.href,
+      mainEntityOfPage: canonical.href,
+    }
+  : person
+    ? { "@context": "https://schema.org", ...author }
+    : undefined;
 ---
 
 <meta charset="utf-8">
@@ -33,5 +64,20 @@ const ogImage = new URL("/og.png", Astro.site);
 <meta property="og:title" content={title}>
 <meta property="og:description" content={ogDescription}>
 <meta property="og:image" content={ogImage}>
+{article && (
+  <meta
+    property="article:published_time"
+    content={article.published.toISOString()}
+  />
+)}
+{article?.modified && (
+  <meta
+    property="article:modified_time"
+    content={article.modified.toISOString()}
+  />
+)}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content={ogImage}>
+{schema && (
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+)}

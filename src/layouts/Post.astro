@@ -146,12 +146,13 @@ const last = entries[entries.length - 1];
   title={`${title} · Colin Cheung`}
   description={subtitle ?? title}
   ogType="article"
+  article={{ headline: title, published: pubDate, modified: updatedDate }}
 >
   <article class="post">
     <div class="read-bar" aria-hidden="true" data-readbar></div>
 
     <header class="post__head">
-      <a class="post__back" href="/blog">{"// writing"}</a>
+      <a class="post__back" href="/blog/">{"// writing"}</a>
       <h1 class="post__title">{title}</h1>
       {subtitle && <p class="post__lede">{subtitle}</p>}
       {figures && (
@@ -245,7 +246,7 @@ const last = entries[entries.length - 1];
           )}
         </nav>
       )}
-      <a class="post__more" href="/blog"> all writing </a>
+      <a class="post__more" href="/blog/"> all writing </a>
     </footer>
   </article>
 </Base>

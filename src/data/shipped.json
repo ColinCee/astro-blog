@@ -19,7 +19,7 @@
     "what": "Build + test cycle",
     "where": "EDF Energy",
     "when": "2023 – now",
-    "href": "/cv",
+    "href": "/cv/",
     "before": "30 min",
     "after": "5 min",
     "scale": {
@@ -33,7 +33,7 @@
     "what": "CI-log debugging time",
     "where": "BBC",
     "when": "2022 – 2023",
-    "href": "/cv",
+    "href": "/cv/",
     "before": "baseline",
     "after": "up to −90%",
     "scale": {
@@ -47,7 +47,7 @@
     "what": "HRMS → Active Directory sync",
     "where": "Skyscanner",
     "when": "2020 – 2021",
-    "href": "/cv",
+    "href": "/cv/",
     "before": "8 hours",
     "after": "2 min",
     "scale": {

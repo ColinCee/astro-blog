@@ -19,7 +19,7 @@
 - Technical blog written in MDX, with figure components and Expressive Code blocks
 - Printable CV page that prints clean to ink-on-white
 - Light and dark themes that follow the system setting
-- Sitemap generated at build time
+- Built for search: a sitemap with each post's last change, robots.txt, schema.org data (BlogPosting on posts, Person on the homepage) and a real 404 page
 
 ## Stack
 
