@@ -123,7 +123,7 @@ The reward is what the agent gets told is good. I tried mixes of three:
 
 - **Win** wins almost every game, but it doesn't care about points.
 - **Win + points ÷ 10** wins almost every game and scores 59. It's the one I kept.
-- **Other weights**: ÷ 20 tied with ÷ 10, and ÷ 5 scored about 2 more points, right on the line at p = 0.047, so that's a loose end I've left for now.
+- **Other weights**: ÷ 20 tied with ÷ 10, and ÷ 5 scored about 2 more points (p = 0.047), but I tried several weights, and corrected for that it's a tie, so ÷ 10 stays.[^holm]
 - **My 2018 reward** did its job back then, but with more practice it falls behind.
 
 ## Does a bigger network help?
@@ -179,4 +179,5 @@ Moving every frame with the bigger network lost none of its 500 though, so maybe
 [^moves]: 5 runs of 100 test games each. Points 82.4 to 83.2 against 82.2 to 82.9, wins p = 0.19 and points p = 0.24. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^runs3]: Every chart is 5 runs of the same code, each tested on 100 games. A gap counts when Welch's t-test gives p < 0.05: 0.013 and 0.002 on wins for more practice and the new reward, 0.025 and under 0.001 on points for the bigger network and moving every 2 frames, where wins tied. DQN against Rainbow (0.7) and every 2 frames against every frame (0.24) are ties. The four steps I kept still pass a Holm correction across those four. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^log]: From my Claude Code session log, 18 and 19 October 2026.
+[^holm]: Picking the best of several options makes a lucky gap more likely, so the bar goes up: with ÷ 5 and ÷ 20 both tested against ÷ 10, a Holm correction needs the smaller p under 0.025.
 [^deaths]: 5 runs each, all with a move every 4 frames and the standard network.
