@@ -1,6 +1,7 @@
 // Puts a before and an after side by side, labelled, for a pull request.
 //
 //   pnpm compare <before> <after> <out> [--still <seconds> | --no-still]
+//   pnpm compare --new <after> <out>     a new page or view, labelled NEW
 //
 // Side by side, or one above the other when they're wider than tall (a
 // desktop side by side shrinks to a third in a PR). Two images (.png, .jpg,
@@ -19,13 +20,18 @@ const flag = (name) => {
   const at = args.indexOf(name);
   return at >= 0 ? args.splice(at, 2)[1] : null;
 };
-const noStill = args.includes("--no-still");
-if (noStill) args.splice(args.indexOf("--no-still"), 1);
+const toggle = (name) => {
+  const at = args.indexOf(name);
+  if (at >= 0) args.splice(at, 1);
+  return at >= 0;
+};
+const noStill = toggle("--no-still");
+const isNew = toggle("--new");
 let still = flag("--still");
-const [before, after, out] = args;
-if (!before || !after || !out) {
+const [before, after, out] = isNew ? [null, ...args] : args;
+if (!after || !out) {
   console.error(
-    "usage: pnpm compare <before> <after> <out> [--still <seconds> | --no-still]",
+    "usage: pnpm compare <before> <after> <out> [--still <seconds> | --no-still]\n       pnpm compare --new <after> <out>",
   );
   process.exit(1);
 }
@@ -52,6 +58,30 @@ const ffmpeg = (...a) =>
   });
 
 const isImage = (f) => /\.(png|jpe?g|webp)$/i.test(f);
+const font =
+  process.platform === "win32"
+    ? "fontfile='C\\:/Windows/Fonts/consola.ttf':"
+    : "font=monospace:";
+const tag = (text) =>
+  `drawtext=${font}text=${text}:x=16:y=16:fontsize=32:fontcolor=white:box=1:boxcolor=black@0.7:boxborderw=10`;
+
+// Nothing to compare against: the one version, labelled.
+if (isNew) {
+  const video = isImage(after)
+    ? []
+    : ["-c:v", "libx264", "-crf", "20", "-pix_fmt", "yuv420p"];
+  ffmpeg(
+    "-i",
+    after,
+    "-vf",
+    `${tag("NEW")},scale=trunc(iw/2)*2:trunc(ih/2)*2`,
+    ...video,
+    out,
+  );
+  console.log(out);
+  process.exit(0);
+}
+
 const dims = (f) => probe(f, "stream=width,height").split(",").map(Number);
 const [[w0, h0], [w1, h1]] = [dims(before), dims(after)];
 const wide = Math.max(w0, w1);
@@ -62,16 +92,11 @@ const lengths = isImage(before)
   : [before, after].map((f) => Number(probe(f, "format=duration")));
 const length = Math.max(...lengths);
 
-const font =
-  process.platform === "win32"
-    ? "fontfile='C\\:/Windows/Fonts/consola.ttf':"
-    : "font=monospace:";
 // The shorter clip holds its last frame, so both end together; a smaller
 // image is padded at the bottom and right, so both start level.
 const label = (text) =>
   (length ? `tpad=stop_mode=clone:stop_duration=${length},` : "") +
-  `pad=${wide}:${tall}:0:0:white,` +
-  `drawtext=${font}text=${text}:x=16:y=16:fontsize=32:fontcolor=white:box=1:boxcolor=black@0.7:boxborderw=10`;
+  `pad=${wide}:${tall}:0:0:white,${tag(text)}`;
 const sideBySide = stacked
   ? `[0]${label("BEFORE")},pad=iw:ih+16:0:0:white[a];[1]${label("AFTER")}[b];[a][b]vstack=inputs=2`
   : `[0]${label("BEFORE")},pad=iw+16:ih:0:0:white[a];[1]${label("AFTER")}[b];[a][b]hstack=inputs=2`;

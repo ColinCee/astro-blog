@@ -17,12 +17,17 @@ That part is yours, per PR: which page and path, which interaction, and which vi
 
 ## Make the files
 
-The commands do the mechanics; the recipe, including building each version in its own worktree, is at the top of `scripts/record.mjs`.
+The commands do the mechanics. Options and the recipe for building each version in its own worktree are at the top of `scripts/record.mjs`.
 
 1. Build and serve each version as it ships (`pnpm astro build`, `pnpm astro preview --port <n>`), each on its own port.
-2. `pnpm record <url> <dir> [path] [--until <selector>] [--hold <selector>]` for each version. It writes `phone.mp4` and `desktop.mp4`, with live content frozen so only the code differs.
-3. `pnpm compare <before> <after> <out>`. Two images make one PNG. Two videos make one MP4 plus `<out>-still.png`, taken at the moment they differ most while nothing moves. Pass `--still <s>` to choose the moment, or `--no-still` when no single frame shows the change.
-4. Look at each still before using it. If it doesn't show the change, pick the moment yourself or leave the still out.
+2. Record each version: `pnpm record <url> <dir> [path]` with what the change needs:
+   - `--still` for screenshots (PNG) instead of video (MP4).
+   - `--views phone,tablet,desktop,WxH` for the sizes that changed, `--dark` for dark mode.
+   - `--steps <file.mjs>` (exports `async (page) => {}`) to hover, click, open a menu or fill a form first.
+   - `--scroll [selector]` to scroll down to it; `--element <selector>` to crop a still to one component.
+   - Live content is frozen, so only the code differs between versions.
+3. `pnpm compare <before> <after> <out>`. Two images make one PNG; two videos make one MP4 plus `<out>-still.png` at the moment they differ most while nothing moves (`--still <s>` to choose, `--no-still` for none). A new page has no before: `pnpm compare --new <after> <out>`.
+4. Look at every file before using it. A still taken mid-animation or a crop that misses the change is worse than none: fix the options, or leave it out.
 
 ## Put them in the PR
 
