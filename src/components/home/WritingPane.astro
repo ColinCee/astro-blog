@@ -43,7 +43,9 @@ const posts: { title: string; date: string; href: string; all?: boolean }[] = [
     gap: 0.2rem;
   }
   .posts li {
-    animation: print 0.4s var(--ease-out) calc(0.45s + var(--i) * 0.09s) both;
+    /* On a desktop, after the last shipped bar starts to grow. */
+    animation: print 0.4s var(--ease-out)
+      calc(1.15s + var(--ship-rows, 0) * 0.25s + var(--i) * 0.09s) both;
   }
   @media (max-width: 900px) {
     .posts li {

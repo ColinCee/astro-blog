@@ -11,8 +11,8 @@ const shipped = (await getCollection("shipped")).sort(
 
 <Pane idx={1} name="shipped" area="ship" active>
   <ul class="ships">
-    {shipped.map(({ data: s }) => (
-      <li>
+    {shipped.map(({ data: s }, i) => (
+      <li style={`--i: ${i}`}>
         <a class="ship" href={s.href} data-scroll-in>
           <span class="ship__head">
             <span class="ship__what">{s.what}</span>
@@ -97,7 +97,9 @@ const shipped = (await getCollection("shipped")).sort(
     background: var(--bar);
     border-radius: 1px;
     transform-origin: left;
-    animation: grow 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.7s both;
+    /* One row after another, so the pane fills in top to bottom. */
+    animation: grow 0.8s cubic-bezier(0.2, 0.7, 0.2, 1)
+      calc(0.7s + var(--i) * 0.25s) both;
   }
   .ship__track b {
     font-weight: 500;
@@ -108,7 +110,7 @@ const shipped = (await getCollection("shipped")).sort(
   }
   .ship__bar--after .ship__fill {
     background: var(--accent);
-    animation-delay: 1.05s;
+    animation-delay: calc(0.95s + var(--i) * 0.25s);
   }
   /* On a phone each row grows as it scrolls in, so it needn't wait for the
      pane's load-time entrance. */
