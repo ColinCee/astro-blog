@@ -1,0 +1,372 @@
+// Captures a page for a pull request, once per view. Two names, one script,
+// since nearly everything is shared:
+//
+//   pnpm screenshot <base-url> <out-dir> [path] [options]   a PNG per view
+//   pnpm record <base-url> <out-dir> [path] [options]       an MP4 per view
+//                                                           (needs ffmpeg)
+//
+//   --views <list>        phone (390x844), tablet (768x1024), desktop
+//                         (1280x800) or WxH, comma-separated; default
+//                         phone,desktop. Files are named after them.
+//   --dark                prefers-color-scheme: dark
+//   --steps <file.ts>    runs `export default async (page) => {}` after load
+//                         and before capture: hover, click, fill a form, wait
+//   --scroll [selector]   scroll down until the selector's bottom is on
+//                         screen (default: two and a half screens)
+//   --element <selector>  screenshot only: crop to that element
+//   --wait <ms>           how long to keep recording, or to wait before a
+//                         still, after the rest (default 4500 video, 1000
+//                         still, 1500 after a scroll)
+//   --cache <dir>         where other-origin responses are kept (below)
+//
+// Before and after, as shipped, each on its own port:
+//   git worktree add --detach ../before <ref>     (then in ../before:)
+//   pnpm install --frozen-lockfile && pnpm astro build && pnpm astro preview --port 4401
+//   pnpm record http://localhost:4401 <tmp>/before / --scroll .term   (same for after)
+//   pnpm compare <tmp>/before/phone.mp4 <tmp>/after/phone.mp4 <tmp>/phone.mp4
+//   then stop the servers and `git worktree remove` the copies.
+//
+// A video scrolls in flicks with a pause after each, like a reader, on a
+// timetable that runs inside the page from the start of navigation, so
+// recordings of two versions line up. Steps run from here, so they can drift
+// a little between runs; use them to set up state, not to time motion.
+// Frames come from Chrome's screencast (a sharp JPEG on every repaint), not
+// Playwright's video, which is low bitrate and blurs text.
+//
+// So the two versions differ only where the code does: the date is fixed,
+// Math.random is seeded, and anything from another origin (an API, fonts) is
+// answered from --cache, shared by both runs (default: a folder in the temp
+// directory; delete it to refresh). The scroll goes by position, so a version
+// whose content above moved shows different content at the same moment.
+// Scroll position matches between runs to the pixel, but when an animation
+// starts can still vary by about 0.3s from run to run, so don't read fine
+// timing differences from the clips.
+
+import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+import { chromium, type Page } from "@playwright/test";
+
+declare global {
+  interface Window {
+    __scrolled?: boolean;
+  }
+}
+
+const args = process.argv.slice(2);
+const flag = (name: string): string | null => {
+  const at = args.indexOf(name);
+  if (at < 0) return null;
+  const value = args[at + 1];
+  if (value === undefined || value.startsWith("--")) {
+    console.error(`${name} needs a value`);
+    process.exit(1);
+  }
+  args.splice(at, 2);
+  return value;
+};
+const toggle = (name: string): boolean => {
+  const at = args.indexOf(name);
+  if (at >= 0) args.splice(at, 1);
+  return at >= 0;
+};
+// --scroll takes an optional selector: the next word, unless it's another
+// option or the path.
+let scroll: { sel: string | null } | null = null;
+{
+  const at = args.indexOf("--scroll");
+  if (at >= 0) {
+    const next = args[at + 1];
+    const sel = next && !next.startsWith("-") && !next.startsWith("/");
+    scroll = { sel: sel ? next : null };
+    args.splice(at, sel ? 2 : 1);
+  }
+}
+const still = toggle("--still");
+const dark = toggle("--dark");
+const element = flag("--element");
+const stepsFile = flag("--steps");
+const waitArg = flag("--wait");
+const views = (flag("--views") ?? "phone,desktop").split(",");
+const cache = flag("--cache") ?? join(tmpdir(), "record-cache");
+const [base, out, path = "/"] = args;
+if (!base || !out) {
+  console.error(
+    "usage: pnpm screenshot|record <base-url> <out-dir> [path] [--views phone,desktop] [--dark] [--steps file.ts] [--scroll [selector]] [--element selector] [--wait ms] [--cache dir]",
+  );
+  process.exit(1);
+}
+// Git Bash turns a bare "/" into its install folder; run from PowerShell, or
+// set MSYS_NO_PATHCONV=1.
+if (!path.startsWith("/")) {
+  console.error(`path must start with "/", got ${path}`);
+  process.exit(1);
+}
+if (element && !still) {
+  console.error("--element is for screenshots: use pnpm screenshot");
+  process.exit(1);
+}
+const named: Record<string, [number, number]> = {
+  phone: [390, 844],
+  tablet: [768, 1024],
+  desktop: [1280, 800],
+};
+const sizes = views.map((v) => {
+  const [width, height] = named[v] ?? v.split("x").map(Number);
+  if (!width || !height) {
+    console.error(`unknown view ${v}: use phone, tablet, desktop or WxH`);
+    process.exit(1);
+  }
+  return { name: v, width, height };
+});
+const steps: ((page: Page) => Promise<void>) | null = stepsFile
+  ? (await import(pathToFileURL(resolve(stepsFile)).href)).default
+  : null;
+mkdirSync(out, { recursive: true });
+mkdirSync(cache, { recursive: true });
+const origin = new URL(base).origin;
+
+const browser = await chromium.launch();
+for (const s of sizes) {
+  const size = { width: s.width, height: s.height };
+  const ctx = await browser.newContext({
+    viewport: size,
+    colorScheme: dark ? "dark" : "light",
+  });
+  // Only the date is fixed, not the clock: Playwright's clock would also fake
+  // performance.timeOrigin and performance.now, which the timetable and the
+  // trimming below rely on.
+  // One minute to midnight today (UTC): after the builds being compared, and
+  // the same for both runs when they are recorded on the same day.
+  const today = new Date().setUTCHours(23, 59, 0, 0);
+  await ctx.addInitScript((fixed) => {
+    // A function, not a class, so Date() without `new` still works (it
+    // returns a string, as the real one does).
+    const Real = Date;
+    function Fixed(this: unknown, ...a: unknown[]) {
+      const at = a.length ? (a as [number]) : ([fixed] as [number]);
+      return new.target ? new Real(...at) : new Real(fixed).toString();
+    }
+    Fixed.prototype = Real.prototype;
+    Fixed.parse = Real.parse;
+    Fixed.UTC = Real.UTC;
+    Fixed.now = () => fixed;
+    globalThis.Date = Fixed as unknown as DateConstructor;
+    let seed = 42;
+    Math.random = () => {
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }, today);
+  await ctx.route("**/*", async (route) => {
+    const req = route.request();
+    if (new URL(req.url()).origin === origin) return route.continue();
+    const key = join(cache, createHash("sha1").update(req.url()).digest("hex"));
+    if (!existsSync(`${key}.json`)) {
+      const res = await route.fetch();
+      // Keep only what worked, so a failed call is retried next run.
+      if (res.status() !== 200) return route.fulfill({ response: res });
+      writeFileSync(`${key}.body`, await res.body());
+      writeFileSync(
+        `${key}.json`,
+        JSON.stringify({ status: res.status(), headers: res.headers() }),
+      );
+    }
+    const { status, headers } = JSON.parse(readFileSync(`${key}.json`, "utf8"));
+    // The saved body is already decoded, so drop what described the wire.
+    delete headers["content-encoding"];
+    delete headers["content-length"];
+    return route.fulfill({
+      status,
+      headers,
+      body: readFileSync(`${key}.body`),
+    });
+  });
+  // Load it once first, so fonts and scripts come from cache in the take.
+  const warm = await ctx.newPage();
+  await warm.goto(base + path);
+  await warm.waitForTimeout(1500);
+  await warm.close();
+  const page = await ctx.newPage();
+
+  if (still) {
+    await page.goto(base + path);
+    // A still shows the settled page. Scrolling comes first, so things that
+    // animate in on scroll start, and so steps (a hover) act where the
+    // screenshot is taken. Then every animation with an end must finish;
+    // script-driven motion has no such signal, so raise --wait for that.
+    if (scroll)
+      await page.evaluate(
+        ({ sel, max }) => {
+          const el = sel && document.querySelector(sel);
+          if (el) el.scrollIntoView({ block: "end", behavior: "instant" });
+          else scrollTo({ top: max, behavior: "instant" });
+        },
+        { sel: scroll.sel, max: s.height * 2.5 },
+      );
+    if (element)
+      await page
+        .locator(element)
+        .first()
+        .evaluate((el) => el.scrollIntoView({ block: "center" }));
+    if (steps) await steps(page);
+    await page.waitForTimeout(Number(waitArg ?? 1000));
+    await page
+      .waitForFunction(
+        () =>
+          document
+            .getAnimations()
+            .every(
+              (a) =>
+                a.playState !== "running" ||
+                a.effect?.getComputedTiming().iterations ===
+                  Number.POSITIVE_INFINITY,
+            ),
+        null,
+        { timeout: 15_000 },
+      )
+      .catch(() => console.warn(`${s.name}: still animating after 15s`));
+    const png = join(out, `${s.name}.png`);
+    await (element ? page.locator(element).first() : page).screenshot({
+      path: png,
+    });
+    await ctx.close();
+    console.log(png);
+    continue;
+  }
+
+  // Chrome sends a frame whenever the page repaints, with its time.
+  const frames: { data: string; t: number }[] = [];
+  const cdp = await ctx.newCDPSession(page);
+  cdp.on("Page.screencastFrame", ({ data, metadata, sessionId }) => {
+    // The time is optional in the protocol; Chrome always sends it here.
+    frames.push({ data, t: metadata.timestamp ?? Date.now() / 1000 });
+    cdp.send("Page.screencastFrameAck", { sessionId }).catch(() => {});
+  });
+  await cdp.send("Page.startScreencast", {
+    format: "jpeg",
+    quality: 92,
+    maxWidth: s.width,
+    maxHeight: s.height,
+  });
+
+  // The scroll runs inside the page on a timetable measured from the start of
+  // navigation, so two versions recorded separately are at the same place at
+  // the same moment. Scrolling from here instead drifts: each step's round
+  // trip and the smooth-scroll animation vary from run to run.
+  if (scroll)
+    await page.addInitScript(
+      ({ sel, max }) => {
+        const wait = 1200; // read the top first
+        const flick = 350; // one thumb flick, easing out
+        const pause = 1300; // then read
+        let from = 0;
+        let target: number | null = null;
+        const step = () => {
+          const t = performance.now();
+          if (t >= wait) {
+            // Measured once, when the first flick starts. Measuring every
+            // frame lets one odd reading end a run's scroll early, and then
+            // the two versions no longer line up.
+            if (target === null) {
+              const el = sel && document.querySelector(sel);
+              const limit = document.documentElement.scrollHeight - innerHeight;
+              target = Math.min(
+                limit,
+                el
+                  ? el.getBoundingClientRect().bottom + scrollY - innerHeight
+                  : max,
+              );
+            }
+            const dist = Math.round(innerHeight * 0.4);
+            const into = t - wait;
+            const n = Math.floor(into / (flick + pause));
+            const k = Math.min(1, (into - n * (flick + pause)) / flick);
+            const y = Math.min(target, n * dist + dist * (1 - (1 - k) ** 3));
+            if (y !== from) scrollTo({ top: y, behavior: "instant" });
+            from = y;
+            if (y >= target) {
+              window.__scrolled = true;
+              return;
+            }
+          }
+          requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      },
+      { sel: scroll.sel, max: s.height * 2.5 },
+    );
+
+  await page.goto(base + path);
+  if (steps) await steps(page);
+  if (scroll)
+    await page.waitForFunction(() => window.__scrolled, null, {
+      timeout: 60_000,
+    });
+  await page.waitForTimeout(Number(waitArg ?? (scroll ? 1500 : 4500)));
+  // Both clips start the moment navigation began.
+  const start = (await page.evaluate(() => performance.timeOrigin)) / 1000;
+  const end = Date.now() / 1000;
+  await cdp.send("Page.stopScreencast");
+  await ctx.close();
+
+  // Each frame lasts until the next one; ffmpeg's concat list says how long.
+  // Frames from before navigation (the blank page) are dropped, and the first
+  // frame after it is stretched back to the start.
+  const kept = frames.filter((f) => f.t >= start);
+  if (!kept.length) throw new Error(`no frames recorded for ${s.name}`);
+  frames.splice(0, frames.length, ...kept);
+  frames[0].t = start;
+  const dir = mkdtempSync(join(tmpdir(), "record-"));
+  const list = frames.map((f, i) => {
+    const file = join(dir, `${String(i).padStart(5, "0")}.jpg`);
+    writeFileSync(file, Buffer.from(f.data, "base64"));
+    const next = frames[i + 1]?.t ?? Math.max(end, f.t + 0.5);
+    return `file '${file.replaceAll("\\", "/")}'\nduration ${(next - f.t).toFixed(4)}`;
+  });
+  const last = join(dir, `${String(frames.length - 1).padStart(5, "0")}.jpg`);
+  writeFileSync(
+    join(dir, "list.txt"),
+    `${list.join("\n")}\nfile '${last.replaceAll("\\", "/")}'\n`,
+  );
+  const mp4 = join(out, `${s.name}.mp4`);
+  execFileSync("ffmpeg", [
+    "-y",
+    "-loglevel",
+    "error",
+    "-f",
+    "concat",
+    "-safe",
+    "0",
+    "-i",
+    join(dir, "list.txt"),
+    "-vf",
+    "fps=60,scale=trunc(iw/2)*2:trunc(ih/2)*2",
+    "-c:v",
+    "libx264",
+    "-crf",
+    "20",
+    "-preset",
+    "slow",
+    "-pix_fmt",
+    "yuv420p",
+    "-movflags",
+    "+faststart",
+    mp4,
+  ]);
+  rmSync(dir, { recursive: true, force: true });
+  console.log(mp4);
+}
+await browser.close();
