@@ -10,10 +10,10 @@ figures:
     value: "99%, 83 pts"
 pubDate: "Oct 21 2026"
 ---
-<Fig title="Same level and seed, half speed">
+<Fig>
   <div class="vids">
-    <Clip src="/blog/gvgai/aliens-2018-agent" label="My 2018 agent playing Aliens, winning with 57 points" rate={0.5}><b>My 2018 agent</b>: won, 57 points</Clip>
-    <Clip src="/blog/gvgai/aliens-dqn-2026-best" label="The best 2026 agent playing the same game, winning with 85 points" rate={0.5} hi><b>Best 2026 agent</b>: won, 85 points</Clip>
+    <Clip src="/blog/gvgai/aliens-2018-agent" label="My 2018 agent playing Aliens, winning with 57 points" rate={0.5}><b>My 2018 agent</b>: 73% wins<br />this game: won, 57 points</Clip>
+    <Clip src="/blog/gvgai/aliens-dqn-2026-best" label="The best 2026 agent playing the same game, winning with 85 points" rate={0.5} hi><b>Best 2026 agent</b>: 99% wins<br />this game: won, 85 points</Clip>
   </div>
 </Fig>
 
@@ -41,7 +41,7 @@ Each row adds one change to the row above it, starting from today's DQN, which a
   ]} />
 </Fig>
 
-Winning comes first, and points only break ties between agents that win. As far as I know, that's how the GVGAI competition ranks them too. So the bars are games won, and points sit next to them.
+Winning comes first, and points only break ties between agents that win, so the bars are games won and points sit next to them.
 
 More practice did most of the work on wins, and the new reward took it to almost every game. After that, moving more often didn't change wins, but it added 20 points.
 
@@ -78,10 +78,10 @@ DQN and Rainbow don't beat it, and the runs vary a lot.[^runs] PPO was the odd o
 
 Holding the shoot button, and nothing else. That wins 82% of Aliens games, and my agent only won 73%, with its best run at 82%.
 
-<Fig title="Same level and seed, half speed: holding shoot against my 2018 agent">
+<Fig>
   <div class="vids">
-    <Clip src="/blog/gvgai/aliens-hold-shoot" label="Holding the shoot button in Aliens, winning with 42 points" rate={0.5}><b>Holding shoot</b>, no learning: won, 42 points</Clip>
-    <Clip src="/blog/gvgai/aliens-2018-agent" label="My 2018 agent playing the same game, winning with 57 points" rate={0.5} hi><b>My 2018 agent</b>: won, 57 points</Clip>
+    <Clip src="/blog/gvgai/aliens-hold-shoot" label="Holding the shoot button in Aliens, winning with 42 points" rate={0.5}><b>Holding shoot</b>: 82% wins<br />this game: won, 42 points</Clip>
+    <Clip src="/blog/gvgai/aliens-2018-agent" label="My 2018 agent playing the same game, winning with 57 points" rate={0.5} hi><b>My 2018 agent</b>: 73% wins<br />this game: won, 57 points</Clip>
   </div>
 </Fig>
 
