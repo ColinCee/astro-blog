@@ -50,6 +50,8 @@ Winning comes first, and points only break ties between agents that win. As far 
 
 More practice did most of the work on wins, and the new reward took it to almost every game. After that, moving more often didn't change wins, but it added 20 points.
 
+At each step I kept whatever won, wins first and then points, but with only 3 runs each a gap only counts when the runs don't overlap, otherwise it's a tie and I keep the simpler or cheaper one.[^runs3]
+
 Each chart below changes one thing at a time and keeps the rest the same:
 
 - **Striped** is my 2018 version.
@@ -113,7 +115,7 @@ My agent did learn something though. It gets 50 points a game against the button
 </div>
 </figure>
 
-A lot. With 5M frames, DQN and Rainbow both win more often than my agent, and score more too. That's about 17 minutes a run now, which would've been 2 or 3 days in 2018.
+A lot, with 5M frames DQN and Rainbow both win more often than my agent and score more too. That's about 17 minutes a run now, which would've been 2 or 3 days in 2018. Rainbow and DQN overlap though, so it's a tie and I carried on with DQN since it's the simpler one.
 
 ## Which reward works best?
 
@@ -171,12 +173,18 @@ This is the one I never thought about in 2018. The agent holds each move for 4 f
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>Every frame</b><small>standard network</small></span><span class="pts__t" style="--a:0.987;--b:0.997;--lo:0.990;--hi:1.000"><i></i><i class="pts__more"></i><s></s></span><em>99.7%<small>+1</small></em><em class="pts__w">78.7<small>+20</small></em></div>
 <div class="pts__r"><span class="pts__k" tabindex="0"><b>Every 4 frames</b><small>bigger network</small></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%</em><em class="pts__w">62.9</em></div>
 <div class="pts__r pts__r--hi"><span class="pts__k" tabindex="0"><b>Every 2 frames</b><small>bigger network</small></span><span class="pts__t" style="--a:0.997;--b:0.997;--lo:0.990;--hi:1.000"><i></i><s></s></span><em>99.7%<small class="pts__same">±0</small></em><em class="pts__w">82.6<small>+20</small></em></div>
+<div class="pts__r"><span class="pts__k" tabindex="0"><b>Every frame</b><small>bigger network</small></span><span class="pts__t" style="--a:1.000;--b:1.000;--lo:1.000;--hi:1.000"><i></i><s></s></span><em>100%<small class="pts__same">±0</small></em><em class="pts__w">82.3<small>+19</small></em></div>
 <span class="pts__sp"></span><span class="pts__axis"><span style="--x:0.0">0</span><span style="--x:0.25">25</span><span style="--x:0.5">50</span><span style="--x:0.75">75</span><span style="--x:1.0">100%</span></span><span></span><span></span>
 <span class="pts__sp"></span><span class="pts__h pts__xt">games won</span><span></span><span></span>
 </div>
 </figure>
 
-Wins hardly move, since they were already near the top. Points are where it shows. Moving every frame took it from 59 points to 79, about the same as MCTS. Moving every 2 frames with the bigger network got 83, and it won 299 of 300 games.[^moves] It does take longer to train, about 53 minutes a run instead of 14.
+Wins hardly move, since they were already near the top. Points are where it shows. Moving every frame took it from 59 points to 79, about the same as MCTS. With the bigger network:
+
+- **Every 2 frames** scored 83 and won 299 of 300 games, in about 53 minutes a run.
+- **Every frame** scored 82 and won all 300, but took about 3 hours a run.
+
+That's a tie on points, so I kept every 2 frames since it's over 3 times quicker to train, but it does still lose that 1 game in 300.[^moves]
 
 ## Why does it still lose 1 game in 300?
 
@@ -201,5 +209,6 @@ The fix should be a loss that costs more than the points can earn, like ±10 for
 [^rainbow]: Double DQN and prioritised replay (my 2018 agent's two), plus dueling networks, multi-step returns, distributional values and noisy networks. [The Rainbow paper](https://arxiv.org/abs/1710.02298)
 [^runs]: DQN's three runs won 42% to 84%. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^results]: On two of my other three games, one button wins every game: Deceptizelda (hold right) and Wafer Thin Mints (any direction). [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^moves]: 3 runs of 100 test games each. 1 loss in 300 games on the training levels for each of the two best setups. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^moves]: 3 runs of 100 test games each. Points 81.9 to 83.3 against 82.2 to 82.4. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^runs3]: The runs come from a few versions of the code that learn the same, just faster. The earlier ones were tested on 50 games each, the later ones on 100. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^log]: From my Claude Code session log, 18 and 19 October 2026.
