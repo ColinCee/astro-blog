@@ -1,0 +1,36 @@
+/* The "more" panel. Used only by the unpublished dissertation posts (Parts 2 and 3, on the
+   dissertation-revival branch), which are written as HTML; nothing published
+   uses it. Keep until they publish. */
+/* "More" panel: an optional deeper explanation, closed by default. */
+.prose details.more {
+  margin: 1.2rem 0;
+}
+.prose details.more > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.4rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+.prose details.more > summary::-webkit-details-marker {
+  display: none;
+}
+.prose details.more > summary::before {
+  content: "+";
+  color: var(--accent-soft);
+}
+.prose details.more[open] > summary::before {
+  content: "−";
+}
+.prose details.more > summary:hover,
+.prose details.more > summary:focus-visible {
+  border-color: var(--accent-line);
+  outline: none;
+}

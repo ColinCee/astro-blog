@@ -76,7 +76,7 @@ components:
 # Design System: colincheung.dev
 
 > Single source of truth for the visual system. Tokens live in
-> [`src/styles/terminal.css`](src/styles/terminal.css); this file explains how to
+> [`src/styles/tokens.css`](src/styles/tokens.css); this file explains how to
 > apply them so new pages stay on-brand. When you build a new surface, read this
 > first, reuse the tokens, and follow the named rules below.
 
@@ -89,8 +89,8 @@ components:
 > grey page at ~90% lightness with raised surfaces one step lighter, chosen so
 > large areas do not glare. **Dark** is the original warm near-black. The accent
 > moved from cyan to tomato (see
-> "Colour" below). Token values in `terminal.css` are authoritative; where
-> prose below still quotes the old dark ramp's figures, read it as the role.
+> "Colour" below). Token values in `tokens.css` are authoritative; values
+> below are given as light / dark.
 
 ### Colour
 One accent hue, tomato (`--accent`, `--accent-soft`), on a warm neutral ramp. The
@@ -136,31 +136,34 @@ big.
 ## 2. Colors
 
 A warm-neutral greyscale carrying a single tomato signal. Strategy: **Restrained** —
-one accent used on well under 10% of any screen, against a warm dark ramp.
+one accent used on well under 10% of any screen, against a warm neutral ramp.
 
 ### Primary
-- **Signal Tomato** (`--accent`, `oklch(0.82 0.15 205)`): The only chromatic color.
+- **Signal Tomato** (`--accent`, `oklch(0.55 0.19 32)` / `oklch(0.75 0.17 38)`): The only chromatic color.
   Reserved for the single most important thing in a view — the metric in a line,
   the current timeline node, the active/hover link border, the terminal `@` and
   prompt. If two things are tomato in one glance, one is wrong.
-- **Soft Tomato** (`--accent-soft`, `oklch(0.8 0.08 205)`): The desaturated tomato for
+- **Soft Tomato** (`--accent-soft`, `oklch(0.49 0.17 32)` / `oklch(0.79 0.11 38)`): The desaturated tomato for
   runs of accented *text* (metric highlights, `//` kickers, inline links) where
   full-chroma tomato would vibrate. Reads as "important" without shouting.
-- **Accent Ink** (`--accent-ink`, `oklch(0.18 0.05 220)`): Dark text/ink for the
-  rare filled-tomato surface.
+- **Accent Ink** (`--accent-ink`, `oklch(0.98 0.01 60)` / `oklch(0.2 0.04 40)`): Text on
+  the rare filled-tomato surface.
 
 ### Neutral (the warm ramp, hue 80–95)
-- **Ink** (`--ink`, `oklch(0.95 0.01 95)`): Primary text — display headings, names,
-  titles on hover. ~16.7:1 on `--bg`.
-- **Muted** (`--muted`, `oklch(0.72 0.02 95)`): Body copy, bullet text, resting
-  titles, positions. ~7.8:1 on `--bg`.
-- **Faint** (`--faint`, `oklch(0.63 0.02 95)`): Small mono metadata — dates, stacks,
-  end-caps. ~5.5:1 on `--bg` (still AA, even at 10–12px).
-- **Background** (`--bg`, `oklch(0.165 0.012 80)`): The warm near-black body.
-- **Panel / Pane** (`--panel` `0.205`, `--pane` `0.185`): Slightly raised warm
-  surfaces for terminal panes; used sparingly.
-- **Line** (`--line`, `oklch(0.31 0.018 80)`): All hairlines, borders, timeline
-  spines, tag outlines, section rules.
+- **Ink** (`--ink`, `oklch(0.22 0.012 85)` / `oklch(0.95 0.01 95)`): Primary text —
+  display headings, names, titles on hover.
+- **Muted** (`--muted`, `oklch(0.42 0.013 85)` / `oklch(0.72 0.02 95)`): Body copy,
+  bullet text, resting titles, positions.
+- **Faint** (`--faint`, `oklch(0.49 0.013 85)` / `oklch(0.63 0.02 95)`): Small mono
+  metadata — dates, stacks, end-caps. Still AA at 11px.
+- **Prose ink** (`--prose-ink`, `oklch(0.27 0.012 85)` / `oklch(0.87 0.012 95)`): Post
+  body text, a notch softer than `--ink` for sustained reading.
+- **Background** (`--bg`, `oklch(0.905 0.008 85)` / `oklch(0.165 0.012 80)`): Stone /
+  the warm near-black body.
+- **Panel / Pane** (`--panel` `0.92` / `0.205`, `--pane` `0.935` / `0.185`): Slightly
+  raised warm surfaces for terminal panes and figures; used sparingly.
+- **Line** (`--line`, `oklch(0.82 0.011 85)` / `oklch(0.31 0.018 80)`): All hairlines,
+  borders, timeline spines, tag outlines, section rules.
 
 ### Print
 The CV re-declares the tokens inside `@media print` to flip the terminal palette to
@@ -168,7 +171,7 @@ ink-on-white for a clean PDF: `--bg`/`--panel`/`--pane` become `#ffffff`, `--ink
 `#111111`, `--muted` `#333333`, `--faint` `#5a5a5a`, `--line` `#d5d5d5`, and both
 tomatos become `#0e7490` (a print-safe teal). Site chrome (nav and footer) is hidden
 and entries use `break-inside: avoid`. This is the only place the palette
-legitimately leaves the dark ramp.
+legitimately leaves the two themes.
 
 ### Named Rules
 **The One Signal Rule.** Tomato is the only hue on the page and marks the single most
@@ -189,7 +192,7 @@ rest and shift to `--ink` only on hover. The eye should land on the result first
 monospace — contrast on a real axis (proportional vs. fixed, warm vs. technical),
 never two similar sans-serifs. Bricolage carries voice and scale; JetBrains Mono
 is the machine chrome (labels, dates, code, terminal). Loaded via Google Fonts
-`@import` in `terminal.css`.
+`@import` in `tokens.css`.
 
 ### Hierarchy
 - **Display** (Bricolage 800, `clamp(2.4rem, 8vw, 7.5rem)`, lh 0.86–0.9, tracking −0.03em):
@@ -224,10 +227,10 @@ lift** (the one floating set-piece on the homepage).
 ### Glow / Shadow Vocabulary
 - **Accent focus ring** — the **`--ring`** token (`0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent)`):
   the current timeline node and hovered/focused interactive nodes.
-- **Ambient hero wash** — the **`--wash`** token (a faint `var(--accent) 12%` radial bloom),
-  applied on `.shell` and the homepage `.t`. Atmosphere, not a card shadow.
-- **Terminal window lift** (`box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.7)` on
-  `.term`): The only dark drop shadow in the system. It floats the tmux window over
+- **Ambient hero wash** — the **`--wash`** token (a faint `var(--accent) 8%` radial bloom),
+  applied on `.shell`, the frame every page sits in. Atmosphere, not a card shadow.
+- **Terminal window lift** — the **`--lift`** token on `.term` (a soft warm shadow in
+  light, `0 40px 80px -40px rgba(0, 0, 0, 0.7)` in dark): The only drop shadow in the system. It floats the tmux window over
   the page as the homepage's one physical object. Never reuse it on cards, inputs,
   or other surfaces.
 
@@ -239,18 +242,20 @@ homepage terminal window's ambient lift, nothing else.
 ## 5. Components
 
 ### Navigation
-- Shared `Nav.astro` (content pages) mirrors the homepage `.t-nav`. A mono mark
+- One `components/site/Nav.astro` on every page. A mono mark
   `colin@glasgow:~$` (the `@` is tomato, `:~$` faint) on the left; mono links
   (`0.72rem`, tracking 0.1em, `--muted`) on the right.
 - **Hover/active:** color shifts to `--ink` with a tomato `border-bottom`.
 - Links: **BLOG**, **CV**. (No About; contact lives on the homepage.)
 - Centered on `--w-page`, so the mark lines up with the content's left edge and
-  the links line up with its right edge (and with the footer).
+  the links line up with its right edge (and with the footer). On the homepage it
+  spans `--w-poster` and hides its links below 560px.
 
 ### Footer
-- Shared `SiteFooter.astro`: `COLIN CHEUNG` (mono, `--muted`) + `© {year} · BUILT
-  IN GLASGOW` (`--faint`), centered on `--w-page`, `1px` top rule. Same width as
-  the nav.
+- One `components/site/Footer.astro`: `COLIN CHEUNG` (mono, `--muted`) + `© {year}
+  · BUILT IN GLASGOW` (`--faint`), centered on `--w-page`, `1px` top rule. Same width
+  as the nav. On the homepage it spans `--w-poster`, its meta is `--muted`, and it
+  ends with `LAST DEPLOY <commit>`.
 
 ### Kicker
 - The `//` mono section label. `--accent-soft` (or `--muted`), `0.75rem`, tracking
@@ -277,7 +282,7 @@ homepage terminal window's ambient lift, nothing else.
   end date on top (`now` in `--accent` for the current role, else month + year) and
   the start date below, dialed down to `--muted`/`--faint` so it does not compete. On
   mobile (≤640px) the rail collapses to one left spine with the dates inline.
-- **Article timeline (`BlogPost.astro`):** the third use of the spine, and it is
+- **Article timeline (`layouts/Post.astro`):** the third use of the spine, and it is
   in the flow of the article, not a sidebar. When a post opens with three or more
   dated `##` headings (`16 December: they move the flight`), the layout splits the
   rendered Markdown at those headings and renders each section as a timeline entry.
@@ -298,13 +303,20 @@ homepage terminal window's ambient lift, nothing else.
 ### Shipped pane (homepage terminal)
 - The terminal's right-top, active pane (`1:shipped`). Each row is one improvement
   with a `before` bar (`--bar`) and an `after` bar (`--accent`) drawn to scale
-  (after ÷ before), plus a mono `WHERE · WHEN` meta. Data lives in the `shipped`
-  array in `index.astro`. Bars grow in once after the panes rise.
+  (after ÷ before), plus a mono `WHERE · WHEN` meta. Data lives in
+  `src/data/shipped.json`. Bars grow in once after the panes rise.
 
 ### Projects (homepage section)
-- `// projects` sits below the companies strip as four flat neutral tiles (`--pane`,
-  `--line` border, 10px radius). At rest the only colour is a small accent dot;
-  hover lifts the tile and turns the border and arrow accent. 1, 2 or 4 columns.
+- `// projects` sits below the companies strip as five flat neutral tiles (`--pane`,
+  `--line` border, 10px radius), each with a live piece of the project under its
+  header: the dissertation agent playing with the network's value for each move
+  (`AgentPane`), a simulated radar of the London airspace (`RadarPane`, no network
+  calls), the homelab's Compose stacks, one real card from the Anki deck that flips
+  on hover or tap, and this site's own commit → build → live line from the commit it
+  was built from. At rest the only colour is a small accent dot; hover turns the
+  border and arrow accent and swaps the `~/projects/…` path for where the project
+  really lives. 1, 2 or 3 columns; the dissertation tile spans two. The live parts
+  boot in once, a beat apart, when the section scrolls into view.
 
 ### Writing (homepage section)
 - `// writing`: the newest post is a lead panel (same flat surface as the
@@ -319,17 +331,26 @@ homepage terminal window's ambient lift, nothing else.
 - Sections below the terminal carry `data-reveal` and rise in on scroll (armed by
   JS; visible without it).
 - A faint dot grid sits behind the hero and terminal and fades out down the page.
+  Over it, contour lines drawn on a canvas: still until the mouse moves across the
+  hero, then they drift for a moment and dip under the cursor.
+- Things that move on their own: the one-liner under the name rotates every few
+  seconds, the status-bar clock ticks, the companies strip scrolls (with a pause
+  button), and the project tiles run once they scroll into view. Reduced motion
+  stops all of them and shows each at rest.
+- The status bar and footer carry the commit the page was built from (`built 2h
+  ago · abc1234`), so the page says when it was last deployed.
+- The lead post's headline figure is outlined behind its panel in the writing
+  section, in the display face.
 
 ### Metric Highlight (signature)
 - `.hl` — inline `<b>` in `--accent-soft`, weight 600, `tabular-nums`. Wraps the
   one number/outcome in a sentence. This is the visual thesis of the whole site.
 
 ### Blog Post (long-form reading)
-- Posts render on the shared `Base` shell via `BlogPost.astro`. Below `64rem` it is a
-  single `42rem` column. At `64rem` and up it becomes a two-column grid on
-  `--w-page` — `11rem` article rail, `3.25rem` gap, then the article — so the rail
-  occupies the left margin and the whole block still starts its left edge on the nav
-  mark. Content carries a `// writing` back-kicker, a Bricolage display title
+- Posts render on the shared `Base` shell via `layouts/Post.astro`; the prose styles are `styles/prose.css`. Below `64rem` it is a
+  single `--w-prose` column. At `64rem` and up the post sits on `--w-page`, inset by
+  `--rail` (`9rem`) plus `--rail-gap` (`3.5rem`), so timeline dates sit in the left
+  margin and plain and timeline posts share one left edge. Content carries a `// writing` back-kicker, a Bricolage display title
   (`clamp(2rem, 5.5vw, 3.1rem)`, weight 800), and a mono meta line (date · N min read).
 - **Figures ledger:** optional `figures` frontmatter (label + value pairs) renders
   under the standfirst as a hairline-ruled row of large numbers; the last one is the
@@ -339,16 +360,27 @@ homepage terminal window's ambient lift, nothing else.
   takeaways: hairline-separated rows with mono accent numerals.
 - **Body size:** `--prose-size`, 16-17px (`clamp(1rem, 0.96rem + 0.18vw, 1.0625rem)`),
   line-height 1.65. Larger sizes read as heavy in Bricolage; do not raise it.
-- **Figures** (`<figure class="fig">` written as HTML in the Markdown): one raised
-  panel with mono labels and a caption. Building blocks: `.cmp` (before/after bars to
-  scale; wrap the rows in `<div class="cmp-ref" style="--ref:…">` and each bar in
-  `<em class="track">` for a dashed reference line), `.dot` (dot plot: one row per item on a shared axis), `.stack` + `.legend`
-  (one bar split into parts), `.split` (two panels),
-  `.rows` / `.cols` (row vs column illustration), `.diag` (an inline SVG diagram:
-  parts joined by arrows, a timeline spine, blocks along time; drawn at its viewBox
-  width, `--vw`, so its text stays true size). Draw any flow, process or sequence
-  as a `.diag` with arrows; `.boxes` / `.box` (plain boxes in a row) is retired for
-  diagrams: it reads as a template, not a picture of what happens.
+- **Figures** are components in `src/components/figures/`, used by name in a
+  post's MDX (no import needed): give them the raw numbers and they compute the
+  bars, positions and shares. Each one's styles sit beside it as a `.css` file,
+  global and under `.prose`, all loaded for every post through `figures.css` in
+  the order they apply. `<Fig title caption grow>` is the frame: one raised panel,
+  a short title above, a caption below; `grow` animates its bars in once when seen.
+  Inside it: `<Cmp>` (before/after bars to scale; `from` makes a step of a
+  waterfall, `ref` a dashed reference line, `cols` the column widths), `<Dots>` (a
+  dot plot on one axis, in titled groups), `<Stack>` (one bar split into shares,
+  with a legend), `<Split>` + `<Panel title>` (panels side by side),
+  `<RowsVsColumns>` (records as JSON lines against columns), `<Boxes>` (a row of
+  jobs or steps), `<Runs>` (blocks on a shared time axis: how long each run takes
+  and how many fit), `<Splits>` (bars cut into parts with a key above; a part with
+  no text is a sliver whose time goes after the bar; `est` rows are estimates,
+  drawn lighter), `<Breakdown>` (one row per part of a total: explanation,
+  bar, time and share) and `<Pts>` (games won as the bar with the runs' range,
+  wins and points beside it, each row's change from `prev` in the accent or in
+  `--loss` red; `base` stripes the 2018 baseline; one dashed line for holding
+  shoot). Recordings are `<Clip src label rate hi>` (pixelated, playing only while
+  on screen and never on their own under reduced motion); anything inside a Clip
+  is its caption, and several sit side by side in a `<div class="vids">`.
   Marks are neutral; only the result takes the accent. Aim for at least one figure
   per post so no screen is text alone. Explanations sit next to what they explain
   (a short title above, labels on the marks), not in a paragraph under the figure.
@@ -356,53 +388,54 @@ homepage terminal window's ambient lift, nothing else.
   sizes only, at any screen width: 11px for titles, ticks and notes, 12.8px for labels
   on the marks and values. SVG charts get there through `--k` (set by the layout
   script), so their text never scales with the drawing.
-- **More figure blocks** (added with the dissertation series, Oct 2026):
-  `.vids` / `.vid` (game recordings side by side, pixelated, stacking on phones;
-  videos play only while on screen and never on their own under reduced motion),
-  `.chart` (inline SVG on a 640-wide viewBox with `.ax`, `.ref`, `.band`, `.mk`,
-  `.ln`, `.bar` and `.hi` marks; it keeps that width and scrolls sideways on phones
-  so labels stay at 11px), `.net` / `.slab` / `.deck` (a network's layers as tilted
-  stacks of real activation maps that face the reader on hover or focus), `.map`
-  (an SVG route drawn over a game screen), `.gains` / `.gain` (before → after with
-  a log-scale bar of the multiplier; `.gain--hi` is the headline row), `.arch` / `.cube` (a network as 3D blocks sized
-  by each layer's shape; a face can carry a real frame as an inline background, and `--slices` rules the depth faces into that many layers), `.flow` (a game as a row of equal decision boxes ending in the win, each shaded by its score; `.flow__b--over` hatches a score above the true value), `.player` (one bar of recording controls split by dividers: play/pause, a chevron each way for one decision, a scrubber and the position), `.tlist` / `.trow` (a timing ladder:
-  one row per part, explanation beside the bar, time at the end), `.runs` (blocks on a
-  shared time axis: how long each run takes and how many fit), `.pts` (a results chart: name and tag, a games-won bar on a shared 0–100% axis with the spread of runs, then wins and points each with its change, a drop in `--loss` red; one dashed reference line in every chart), `.ctab` (a comparison table: every row in the same columns, the last a bar to scale with its value; `--hi` the subject, `--none` a no-learning baseline, hatched), `.splits` (bars cut into parts, one row each, time inside each part, one key above; `--thin` for a sliver whose time is written after the bar (`.sbar__after`), `--est` drawn lighter for an estimate), `.loop` (a process diagram with a dot running
-  each loop; accent outlines mark the parts the post is about), and `data-grow` (`.cmp` bars grow in once
-  when seen).
-- **Interactive figures** carry `data-widget` and load `src/scripts/widgets.ts`
-  only on posts that use one: `ladder` (a step chart of a sequence of speed changes, x axis the change number; tap a step for its detail), `lines` (a line chart from JSON data: axes, an optional band, a line and labels), both drawn at the figure's real width in pixels and redrawn on resize, so they run full width with text at true size,
-  `chain` (a toy of a reward travelling back through a game), `reveal` (a button
-  that adds a baseline to a chart) and `qview` (a recording with the network's
-  value for each move under it; optionally `.ctl` buttons to pause and step one decision at a time and a `.peek` block showing the four frames that decision saw, cut from a sprite sheet, and the four ticks its move is held), `pick` (tap a part of a figure to open its detail), `flow` (a slider of training passes for the `.flow` row: the win's value reaching back one box per pass). Controls use `.ctl`: pill buttons and range
-  inputs at least 44px tall. Numbers live in the Markdown's data- attributes.
+- **Interactive figures** are components too, and load `src/scripts/widgets.ts`
+  only on posts that use one: `<LineChart>` (a line chart from data: axes, an
+  optional band, a line, dots and a legend; one function in
+  `src/scripts/line-chart.ts` draws it at build time as the no-script fallback and
+  in the browser at the figure's real width), `<Ladder>` (a step chart of a
+  sequence of speed changes, x axis the change number; tap or drag across a step
+  for its detail) and `<QView>` (a recording with the network's value for each
+  move under it, a `.player` bar to pause and step one decision at a time, and a
+  `.peek` block showing the four frames that decision saw, cut from a sprite
+  sheet). Charts drawn in code run full width with text at true size.
+- **Figure types only the unpublished dissertation posts use** (Parts 2 and 3, on
+  the `dissertation-revival` branch, still written as HTML): `.ctl` (pill buttons
+  and range inputs at least 44px tall), `.net` / `.slab` / `.deck` (a network's
+  layers as tilted stacks of real activation maps), `.map` (a route over a game
+  screen), `.gains` / `.gain` (before → after with a log-scale bar of the
+  multiplier), `.loop` (a process diagram with a dot running each loop), `.arch` /
+  `.cube` (a network as 3D blocks sized by each layer's shape), `details.more`,
+  `.flow` (a game as a row of decision boxes shaded by score) and the `chain`,
+  `reveal`, `pick` and `flow` widgets. Their styles are kept, marked, in
+  `src/components/figures/`; turn each into a component when its post moves to MDX.
 - **Post header:** title, then the post's `subtitle` (when set) as a standfirst
   (`.post__lede`, Body 500, `--muted`), a hairline, and the meta row: the `stat`
-  chip (when set), date and read time. Header, prose, timeline and footer all share one measure, `--measure` (44rem),
+  chip (when set), date and read time (prose words only, at 200 a minute; figures do not count). Header, prose, timeline and footer all share one measure, `--measure` (44rem),
   so every block on a post (text, figures, code, tables) has the same left and
   right edge. Wider "breakout" figures and code were tried and rejected (Oct 2026).
 - **Reading progress:** a 2px accent bar fixed to the top of the viewport.
 - **Post footer:** `older` / `newer` links by publish date, then `all writing`.
 - **Sections:** each `##` gets a hairline above it so long posts scan as sections.
-- **`.prose`** styles the slotted Markdown: body ink `oklch(0.87 0.012 95)` (a notch
-  brighter than `--muted` for sustained reading), line-height `1.72`, measure `58ch`.
-  Headings are Bricolage `--ink`; links are `--accent-soft` with a tomato bottom-border;
-  list markers and the blockquote rule are tomato.
-- **A wide screen grows the type, never the measure.** `.prose` font-size is fluid —
-  `clamp(1.06rem, 0.95rem + 0.25vw, 1.19rem)`. `58ch` lands at roughly 75 rendered
-  characters, which is the top of the comfortable band, so the answer to a cramped
-  big monitor is bigger text and a filled margin, not a longer line.
+- **`.prose`** styles the slotted Markdown: `--prose-ink`, `--prose-size`, line-height
+  `1.65`, measure `--measure` (`44rem`). Headings are Bricolage `--ink`; links are
+  `--accent-soft` with a tomato bottom-border; list markers and the blockquote rule
+  are tomato.
+- **A wide screen grows the type, never the measure.** The measure is in rem, so it
+  grows only with the root size on large monitors (see "Large screens"); the answer
+  to a cramped big monitor is a filled margin, not a longer line.
 - **Tables** are hairline data rails, not boxes: no outer border, a single
-  `--line` rule under a mono uppercase `--faint` header row, and `--line-soft`
-  between rows. Column alignment in the Markdown drives the styling — a `---:`
+  `--line` rule under a mono `--faint` header row, and `--line` at 55% between
+  rows. Column alignment in the Markdown drives the styling — a `---:`
   column renders mono, `tabular-nums` and `nowrap` so figures align on the decimal.
   Below `40rem` the table scrolls horizontally in its own overflow container.
-- **Code:** fenced blocks are rendered by Expressive Code (`github-dark`); inline code
+- **Code:** fenced blocks are rendered by Expressive Code (`github-light` /
+  `github-dark`, following the system setting); inline code
   is a mono chip on a faint `--ink` 10% wash. Never hand-restyle Expressive Code blocks.
 
 ### Terminal Session (homepage only)
 - The `.term` tmux mock: title bar with traffic-light dots, panes (`whoami`,
-  `shipped`, `writing`), a live status bar with clock/date/weather. This is the
+  `shipped`, `writing`), and a status bar with the build, date and a live clock.
+  Glasgow's live weather is a `$ weather` command in the `whoami` pane. This is the
   scarce set-piece — do not reproduce it on other pages.
 - The `writing` pane reads the **blog collection** (newest three, then "All posts"), so
   publishing a post updates the homepage on its own. Titles are short, so the same
@@ -439,7 +472,6 @@ homepage terminal window's ambient lift, nothing else.
   `border-right` colored side-stripes on cards, list items, callouts, or alerts.
   Depth is tonal + hairlines. (The sole exception: the prose blockquote's 2px tomato
   left rule, a standard long-form convention, never a card stripe.)
-- **Don't** draw a diagram as plain boxes in a row (`.boxes`). Show the flow with arrows, a spine or a loop (`.diag`).
 - **Don't** add drop shadows on cards, inputs, or other surfaces. The only shadows are the
   tomato state glow and the homepage terminal window's ambient lift.
 - **Don't** over-round: the terminal window caps at `14px`, chips/nodes are

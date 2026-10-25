@@ -1,6 +1,6 @@
 ---
-import Base from "../../layouts/Base.astro";
 import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
 import { readMinutes } from "../../scripts/read-minutes";
 
 const posts = (await getCollection("blog")).sort(
@@ -10,7 +10,6 @@ const posts = (await getCollection("blog")).sort(
 // Each index row comes from the post's frontmatter: `title`, `stat` with an
 // optional `statLabel`, and `subtitle`. Every post gets the same row; nothing
 // is listed here.
-
 
 const entries = posts.map((post) => {
   return {
@@ -40,30 +39,28 @@ const entries = posts.map((post) => {
     </header>
 
     <ol class="log__list">
-      {
-        entries.map((e, i) => (
-          <li class="log__item" style={`--i:${i}`}>
-            <a class="log__link" href={e.href}>
-              <span class="log__node" aria-hidden="true" />
-              <div class="log__date">
-                <span class="log__year">{e.year}</span>
-                <span class="log__mon">{e.mon}</span>
-                <span class="log__read">{e.read} min</span>
-              </div>
-              <div class="log__body">
-                <h2 class="log__title">{e.title}</h2>
-                {e.metric && (
-                  <p class="log__sig" aria-hidden="true">
-                    {e.metric}
-                    {e.label && <span class="log__label">{e.label}</span>}
-                  </p>
-                )}
-                {e.hook && <p class="log__hook">{e.hook}</p>}
-              </div>
-            </a>
-          </li>
-        ))
-      }
+      {entries.map((e, i) => (
+        <li class="log__item" style={`--i:${i}`}>
+          <a class="log__link" href={e.href}>
+            <span class="log__node" aria-hidden="true" />
+            <div class="log__date">
+              <span class="log__year">{e.year}</span>
+              <span class="log__mon">{e.mon}</span>
+              <span class="log__read">{e.read} min</span>
+            </div>
+            <div class="log__body">
+              <h2 class="log__title">{e.title}</h2>
+              {e.metric && (
+                <p class="log__sig" aria-hidden="true">
+                  {e.metric}
+                  {e.label && <span class="log__label">{e.label}</span>}
+                </p>
+              )}
+              {e.hook && <p class="log__hook">{e.hook}</p>}
+            </div>
+          </a>
+        </li>
+      ))}
     </ol>
 
     <p class="log__end" style={`--i:${entries.length}`}>

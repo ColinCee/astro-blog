@@ -1,7 +1,7 @@
 ---
 // CV — terminal-native résumé for colincheung.dev.
 // Same light shell, tomato accent, Bricolage + JetBrains Mono as the rest of the
-// site (see src/styles/terminal.css and DESIGN.md). Content lives here as typed
+// site (see src/styles/tokens.css and DESIGN.md). Content lives here as typed
 // data so the markup can highlight the metric in every line — the number is the
 // accent, the prose stays muted. Prints clean to ink-on-white via @media print.
 import Base from "../layouts/Base.astro";
@@ -176,7 +176,10 @@ const experience: Role[] = [
 ];
 
 const skills: { label: string; items: string[] }[] = [
-  { label: "Languages", items: ["TypeScript", "Node.js", "Python", "Scala", "SQL"] },
+  {
+    label: "Languages",
+    items: ["TypeScript", "Node.js", "Python", "Scala", "SQL"],
+  },
   {
     label: "AWS & cloud",
     items: [
@@ -227,7 +230,15 @@ const skills: { label: string; items: string[] }[] = [
   },
   {
     label: "Frontend & testing",
-    items: ["React", "Astro", "Vite", "Tailwind", "Playwright", "Cypress", "Vitest"],
+    items: [
+      "React",
+      "Astro",
+      "Vite",
+      "Tailwind",
+      "Playwright",
+      "Cypress",
+      "Vitest",
+    ],
   },
 ];
 
@@ -275,67 +286,63 @@ const projects = [
     <section class="cv__sec" aria-labelledby="xp-h">
       <h2 class="cv__sec-head" id="xp-h">// experience</h2>
       <ol class="xp__list">
-        {
-          experience.map((r) => (
-            <li class:list={["xp__item", { "role--current": r.current }]}>
-              <article class="role">
-                <span class="role__node" aria-hidden="true" />
-                <div class="role__when">
-                  <span class="role__date role__date--end">
-                    {r.current ? (
-                      <b class="role__now">now</b>
-                    ) : (
-                      r.to && (
-                        <>
-                          <span class="role__mon">{r.to.mon}</span>
-                          <span class="role__yr">{r.to.yr}</span>
-                        </>
-                      )
-                    )}
-                  </span>
-                  <span class="role__link" aria-hidden="true" />
-                  <span class="role__date role__date--start">
-                    <span class="role__mon">{r.from.mon}</span>
-                    <span class="role__yr">{r.from.yr}</span>
-                  </span>
-                </div>
-                <div class="role__body">
-                  <h3 class="role__co">{r.co}</h3>
-                  <p class="role__pos">{r.pos}</p>
-                  <p class="role__ctx">{r.ctx}</p>
-                  <ul class="role__points">
-                    {r.points.map((p) => (
-                      <li class="role__point">
-                        {p.pre}
-                        {p.hl && <b class="hl">{p.hl}</b>}
-                        {p.post}
-                      </li>
-                    ))}
-                  </ul>
-                  <p class="role__stack">{r.stack.join("  ·  ")}</p>
-                </div>
-              </article>
-            </li>
-          ))
-        }
+        {experience.map((r) => (
+          <li class:list={["xp__item", { "role--current": r.current }]}>
+            <article class="role">
+              <span class="role__node" aria-hidden="true" />
+              <div class="role__when">
+                <span class="role__date role__date--end">
+                  {r.current ? (
+                    <b class="role__now">now</b>
+                  ) : (
+                    r.to && (
+                      <Fragment>
+                        <span class="role__mon">{r.to.mon}</span>
+                        <span class="role__yr">{r.to.yr}</span>
+                      </Fragment>
+                    )
+                  )}
+                </span>
+                <span class="role__link" aria-hidden="true" />
+                <span class="role__date role__date--start">
+                  <span class="role__mon">{r.from.mon}</span>
+                  <span class="role__yr">{r.from.yr}</span>
+                </span>
+              </div>
+              <div class="role__body">
+                <h3 class="role__co">{r.co}</h3>
+                <p class="role__pos">{r.pos}</p>
+                <p class="role__ctx">{r.ctx}</p>
+                <ul class="role__points">
+                  {r.points.map((p) => (
+                    <li class="role__point">
+                      {p.pre}
+                      {p.hl && <b class="hl">{p.hl}</b>}
+                      {p.post}
+                    </li>
+                  ))}
+                </ul>
+                <p class="role__stack">{r.stack.join("  ·  ")}</p>
+              </div>
+            </article>
+          </li>
+        ))}
       </ol>
     </section>
 
     <section class="cv__sec" aria-labelledby="sk-h">
       <h2 class="cv__sec-head" id="sk-h">// skills</h2>
       <div class="skills">
-        {
-          skills.map((g) => (
-            <div class="skill">
-              <span class="skill__label">{g.label}</span>
-              <ul class="skill__items">
-                {g.items.map((it) => (
-                  <li class="tag">{it}</li>
-                ))}
-              </ul>
-            </div>
-          ))
-        }
+        {skills.map((g) => (
+          <div class="skill">
+            <span class="skill__label">{g.label}</span>
+            <ul class="skill__items">
+              {g.items.map((it) => (
+                <li class="tag">{it}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </section>
 
@@ -356,26 +363,26 @@ const projects = [
       <section class="cv__sec" aria-labelledby="pr-h">
         <h2 class="cv__sec-head" id="pr-h">// projects</h2>
         <ul class="proj">
-          {
-            projects.map((p) => (
-              <li class="proj__item">
-                <h3 class="proj__name">
-                  <a href={p.href} rel="noopener">{p.name}</a>
-                </h3>
-                <p class="proj__desc">{p.desc}</p>
-                <p class="proj__stack">{p.stack}</p>
-              </li>
-            ))
-          }
+          {projects.map((p) => (
+            <li class="proj__item">
+              <h3 class="proj__name">
+                <a href={p.href} rel="noopener">
+                  {p.name}
+                </a>
+              </h3>
+              <p class="proj__desc">{p.desc}</p>
+              <p class="proj__stack">{p.stack}</p>
+            </li>
+          ))}
         </ul>
       </section>
     </div>
 
     <p class="cv__end">
       <span>Open to remote roles · Glasgow, UK</span>
-      <a href="https://www.linkedin.com/in/colin-cheung/"
-        >Let's talk <span aria-hidden="true">↗</span></a
-      >
+      <a href="https://www.linkedin.com/in/colin-cheung/">
+        Let's talk <span aria-hidden="true">↗</span>
+      </a>
     </p>
   </article>
 </Base>

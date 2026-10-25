@@ -1,0 +1,26 @@
+/* Every figure type's styles, global and under .prose, in the order they
+   apply. Imported by layouts/Post.astro for every post, so posts still
+   written as HTML get them too. */
+@import "./fig.css";
+@import "./cmp.css";
+@import "./pts.css";
+@import "./stack.css";
+@import "./split.css";
+@import "./dot.css";
+@import "./clip.css";
+@import "./chart.css";
+@import "./ctl.css";
+@import "./net.css";
+@import "./map.css";
+@import "./gains.css";
+@import "./runs.css";
+@import "./loop.css";
+@import "./pick.css";
+@import "./arch.css";
+@import "./ladder.css";
+@import "./qview.css";
+@import "./more.css";
+@import "./breakdown.css";
+@import "./splits.css";
+@import "./flow.css";
+@import "./reveal.css";

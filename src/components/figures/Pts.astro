@@ -1,0 +1,89 @@
+---
+// Wins and points, one row per setup: the bar is games won (0-100%) with the
+// spread of runs as a whisker, then wins and points with their change from
+// `prev` (the step before, or the baseline). A row that wins more than its
+// `prev` draws the gain in the accent. `base` stripes the baseline (my 2018
+// version), `hi` bolds the pick. `ref` is the dashed line (holding shoot).
+// Hover or tap a row and the others fade. Styles: pts.css.
+interface Row {
+  name: string;
+  tag?: string;
+  won: number;
+  lo: number;
+  hi: number;
+  points: number;
+  prev?: { won: number; points: number };
+  kind?: "base" | "hi";
+}
+interface Props {
+  rows: Row[];
+  ref?: { at: number; label: string };
+}
+const { rows, ref = { at: 82, label: "holding shoot 82%" } } = Astro.props;
+const f = (v: number) => (v / 100).toFixed(3);
+const pct = (w: number) =>
+  Math.abs(w - Math.round(w)) < 0.05 || w < 95
+    ? `${w.toFixed(0)}%`
+    : `${w.toFixed(1)}%`;
+const delta = (d: number) =>
+  Math.abs(d) < 1
+    ? { cls: "pts__same", text: "±0" }
+    : d > 0
+      ? { cls: undefined, text: `+${d.toFixed(0)}` }
+      : { cls: "pts__minus", text: `−${Math.abs(d).toFixed(0)}` };
+const ticks = [0, 25, 50, 75, 100];
+---
+
+<div class="pts" style={`--r1:${f(ref.at)};`}>
+  <span class="pts__h"></span>
+  <span class="pts__h pts__refs"
+    ><span style={`--x:${f(ref.at)}`}>{ref.label}</span></span
+  >
+  <span class="pts__h pts__wh">won</span>
+  <span class="pts__h pts__wh">points</span>
+  {rows.map((r) => {
+    const gain = r.prev !== undefined && r.won - r.prev.won >= 1;
+    const a = gain && r.prev ? r.prev.won : r.won;
+    const dw = r.prev && delta(r.won - r.prev.won);
+    const dp = r.prev && delta(r.points - r.prev.points);
+    return (
+      <div class:list={["pts__r", r.kind && `pts__r--${r.kind}`]}>
+        <span class="pts__k" tabindex="0">
+          <b>{r.name}</b>
+          {r.tag && <small>{r.tag}</small>}
+        </span>
+        <span
+          class="pts__t"
+          style={`--a:${f(a)};--b:${f(r.won)};--lo:${f(r.lo)};--hi:${f(r.hi)}`}
+        >
+          <i />
+          {gain && <i class="pts__more" />}
+          <s />
+        </span>
+        <em>
+          {pct(r.won)}
+          {dw && <small class={dw.cls}>{dw.text}</small>}
+        </em>
+        <em class="pts__w">
+          {r.points.toFixed(1)}
+          {dp && <small class={dp.cls}>{dp.text}</small>}
+        </em>
+      </div>
+    );
+  })}
+  <span class="pts__sp"></span>
+  <span class="pts__axis">
+    {ticks.map((t) => (
+      <span style={`--x:${t / 100}`}>
+        {t}
+        {t === 100 ? "%" : ""}
+      </span>
+    ))}
+  </span>
+  <span></span>
+  <span></span>
+  <span class="pts__sp"></span>
+  <span class="pts__h pts__xt">games won</span>
+  <span></span>
+  <span></span>
+</div>

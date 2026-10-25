@@ -1,0 +1,73 @@
+---
+// The homepage's closing call to connect.
+import links from "../../data/links.json";
+---
+
+<section class="reach" id="contact" aria-label="Get in touch" data-reveal>
+  <p class="reach__tag">// reach out</p>
+  <p class="reach__line">
+    Best way to reach me is{" "}
+    <a href={links.linkedin}> LinkedIn <span aria-hidden="true">↗</span> </a>
+  </p>
+  <p class="reach__alt">
+    or read the code on{" "}
+    <a href={links.github}> GitHub <span aria-hidden="true">↗</span> </a>
+  </p>
+</section>
+
+<style>
+  .reach {
+    max-width: var(--w-poster);
+    margin: 0 auto;
+    padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(0.5rem, 2vw, 1rem);
+    scroll-margin-top: clamp(1.5rem, 5vw, 3rem);
+  }
+  .reach__tag {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    margin: 0 0 clamp(1rem, 2.5vw, 1.6rem);
+  }
+  .reach__line {
+    font-family: var(--grotesk);
+    font-weight: 600;
+    font-size: clamp(1.8rem, 4.6vw, 3.4rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin: 0;
+    max-width: 18ch;
+    text-wrap: balance;
+  }
+  .reach__line a {
+    color: var(--accent);
+    border-bottom: 1px solid var(--accent-line);
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .reach__alt {
+    margin: 1rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .reach__alt a {
+    color: var(--ink);
+    border-bottom: 1px solid var(--accent-line);
+  }
+  .reach__line a:hover,
+  .reach__alt a:hover {
+    border-color: var(--accent);
+  }
+  .reach__line a span,
+  .reach__alt a span {
+    display: inline-block;
+    font-size: 0.9em;
+    margin-left: 0.1em;
+    transition: transform var(--dur-fast) var(--ease);
+  }
+  .reach__line a:hover span,
+  .reach__alt a:hover span {
+    transform: translate(3px, -3px);
+  }
+</style>

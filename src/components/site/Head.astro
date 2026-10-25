@@ -1,0 +1,37 @@
+---
+// The <head> every page shares: charset, colour scheme, icon, title,
+// description, canonical URL and the social card.
+interface Props {
+  title: string;
+  description: string;
+  // The social card's line, when it should differ from the description.
+  ogDescription?: string;
+  ogType?: string;
+}
+const {
+  title,
+  description,
+  ogDescription = description,
+  ogType = "website",
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL("/og.png", Astro.site);
+---
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="generator" content={Astro.generator}>
+
+<title>{title}</title>
+<meta name="description" content={description}>
+<link rel="canonical" href={canonical}>
+
+<meta property="og:type" content={ogType}>
+<meta property="og:url" content={canonical}>
+<meta property="og:title" content={title}>
+<meta property="og:description" content={ogDescription}>
+<meta property="og:image" content={ogImage}>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content={ogImage}>

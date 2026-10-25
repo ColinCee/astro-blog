@@ -1,49 +1,35 @@
 ---
-// Base layout for content pages (blog, about, cv). The shared shell:
-// clean head (follows the system light/dark setting, no toggle), shared nav + footer, base motion.
-import "../styles/terminal.css";
-import Nav from "../components/Nav.astro";
-import SiteFooter from "../components/SiteFooter.astro";
+// The shell every page sits in: the shared head, nav and footer around the
+// page's content, on the site's surface, following the system light/dark
+// setting. `home` widens the frame to the poster width for the homepage.
+import "../styles/tokens.css";
+import Footer from "../components/site/Footer.astro";
+import Head from "../components/site/Head.astro";
+import Nav from "../components/site/Nav.astro";
 
 interface Props {
   title: string;
   description: string;
+  ogDescription?: string;
   ogType?: string;
+  home?: boolean;
 }
-const { title, description, ogType = "website" } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site);
-const ogImage = new URL("/og.png", Astro.site);
+const { home = false, ...head } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light dark" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-
-    <meta property="og:type" content={ogType} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content={ogImage} />
+    <Head {...head} />
   </head>
 
   <body>
-    <div class="shell">
-      <Nav />
+    <div class:list={["shell", { "shell--home": home }]}>
+      <Nav home={home} />
       <main class="shell__main">
         <slot />
       </main>
-      <SiteFooter />
+      <Footer home={home} />
     </div>
   </body>
 </html>
@@ -64,6 +50,7 @@ const ogImage = new URL("/og.png", Astro.site);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    /* biome-ignore lint/suspicious/noDuplicateProperties: 100vh above is the fallback where svh is unsupported */
     min-height: 100svh;
     padding: 1.1rem clamp(1rem, 4vw, 3rem) 3rem;
     background: var(--wash), var(--bg);
@@ -75,6 +62,13 @@ const ogImage = new URL("/og.png", Astro.site);
   /* Push the footer to the bottom when content is short. */
   .shell__main {
     flex: 1 0 auto;
+  }
+  /* The homepage: its backdrop is drawn behind the whole shell, and it ends
+     with more room under the footer. */
+  .shell--home {
+    position: relative;
+    isolation: isolate;
+    padding-bottom: clamp(5rem, 9vw, 6.5rem);
   }
 
   :where(.shell) :focus-visible {

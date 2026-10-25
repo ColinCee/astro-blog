@@ -1,0 +1,27 @@
+/* The figure frame: one raised panel, mono labels, title above (Fig). */
+/* ---- Figures: small diagrams written as HTML inside the Markdown ----
+   One raised panel, mono labels, neutral marks, accent for the result. */
+.prose .fig {
+  margin: 1.8rem 0;
+  padding: 1.1rem 1.2rem;
+  display: grid;
+  gap: 0.75rem;
+  background: var(--pane);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.prose .fig figcaption {
+  font-size: 0.74rem;
+  color: var(--faint);
+}
+.prose .fig__k {
+  margin: 0 0 0.45rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}

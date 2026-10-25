@@ -1,0 +1,68 @@
+/* One row per part of a total (Breakdown). */
+/* Timing ladder: one row per part of a total, the explanation beside the
+   bar and the time at the end (--w: share of the longest). Waiting is
+   hatched; the part that matters is the accent. */
+.prose .tlist {
+  display: grid;
+  gap: 0.55rem;
+}
+.prose .trow {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 6.5rem;
+  align-items: center;
+  gap: 0.3rem 0.9rem;
+}
+.prose .trow span {
+  color: var(--muted);
+}
+.prose .trow span b {
+  color: var(--ink);
+}
+.prose .trow span small {
+  display: block;
+  font-size: 0.6875rem;
+  color: var(--faint);
+}
+.prose .trow i {
+  display: block;
+  height: 1.1rem;
+  min-width: 3px;
+  width: calc(var(--w) * 100%);
+  background: var(--bar);
+  border-radius: 2px;
+}
+.prose .trow--wait i {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--bar) 0 6px,
+    transparent 6px 10px
+  );
+  border: 1px solid var(--bar);
+}
+.prose .trow em {
+  font-style: normal;
+  color: var(--ink);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.prose .trow em small {
+  display: inline-block;
+  min-width: 2.6rem;
+  font-size: 0.6875rem;
+  color: var(--faint);
+}
+.prose .trow--hi span b,
+.prose .trow--hi em {
+  color: var(--accent-soft);
+}
+.prose .trow--hi i {
+  background: var(--accent);
+}
+@media (max-width: 34rem) {
+  .prose .trow {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .prose .trow span {
+    grid-column: 1 / -1;
+  }
+}

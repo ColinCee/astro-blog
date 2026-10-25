@@ -1,0 +1,61 @@
+---
+title: "A Story about Parquet"
+subtitle: "What columnar storage is doing under the hood."
+stat: "4.5 GB → 221 MB"
+statLabel: "95% smaller"
+pubDate: "Sep 03 2025"
+---
+At work I pull data-lake exports down from S3 most days to debug production issues. Each one is a JSONL file of about 4.5GB, around 1.5 million records, and it takes over ten minutes to download.
+
+I tried converting one to Parquet:
+
+<Fig caption="Same 1.5 million records, drawn to scale. 95% smaller.">
+  <Cmp
+    rows={[
+      { label: "data_export.jsonl", value: 4500, text: "4.5 GB" },
+      { label: "data_export.parquet", value: 221, text: "221 MB", after: true },
+    ]}
+  />
+</Fig>
+
+It's the same records, and the download went from ten minutes to about 30 seconds. So I had a look at why the difference is so big.
+
+It turns out JSONL wastes space in two ways.
+
+The first is that it writes out every field name on every single row. We have 106 fields, so that's 106 keys repeated 1.5 million times, which comes to roughly 1.9GB of nothing but keys.
+
+The second is that everything is stored as text. A boolean is the string `"TRUE"` when it could be one bit. A timestamp is a full ISO string when it could be 8 bytes. And `"null"` gets spelled out millions of times.
+
+Parquet does it the other way round. It stores data by column instead of by row, so all the values for one field sit next to each other.
+
+<Fig caption="A made-up three-row example. In JSONL the field names (highlighted) repeat on every row; in Parquet each appears once.">
+  <RowsVsColumns
+    rowsTitle="JSONL: one row at a time"
+    colsTitle="Parquet: one column at a time"
+    records={[
+      { id: 1, status: "OPEN", active: true },
+      { id: 2, status: "OPEN", active: true },
+      { id: 3, status: "DONE", active: false },
+    ]}
+  />
+</Fig>
+
+That lets it do a few things:
+
+- It knows the types, so a boolean really is a bit and a timestamp really is 8 bytes.
+- It dictionary-encodes repeated values. Our `status` field only has 6 possible values, so it stores each one once and then points at them.
+- It runs Zstandard compression over the whole lot.
+
+Put together, about **66% of the JSONL file was overhead**. Only a third of it was actual data and the rest was JSON syntax.
+
+<Fig caption="Where the 4.5 GB went. The overhead split is approximate: 66% of the file, less the 1.9 GB of keys.">
+  <Stack
+    parts={[
+      { share: 42, value: "~1.9 GB", label: "field names" },
+      { share: 24, value: "~1.1 GB", label: "other JSON overhead" },
+      { share: 34, value: "~1.5 GB", label: "actual data", data: true },
+    ]}
+  />
+</Fig>
+
+The one downside is that you can't `grep` a Parquet file. But `duckdb -c "SELECT * FROM 'file.parquet'"` opens it instantly, so I haven't really missed that.

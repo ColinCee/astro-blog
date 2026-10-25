@@ -1,35 +1,39 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content';
-import BlogPost from '../../layouts/BlogPost.astro';
-import { render } from 'astro:content';
-import { readMinutes } from '../../scripts/read-minutes';
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import * as figures from "../../components/figures";
+import Post from "../../layouts/Post.astro";
+import { readMinutes } from "../../scripts/read-minutes";
 
 export async function getStaticPaths() {
-	const posts = (await getCollection('blog')).sort(
-		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-	);
-	const link = (p?: CollectionEntry<'blog'>) =>
-		p && { title: p.data.title, href: `/blog/${p.id}/` };
-	// Sorted newest first, so the newer post is the previous index.
-	return posts.map((post, i) => ({
-		params: { slug: post.id },
-		props: { post, newer: link(posts[i - 1]), older: link(posts[i + 1]) },
-	}));
+  const posts = (await getCollection("blog")).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  );
+  const link = (p?: CollectionEntry<"blog">) =>
+    p && { title: p.data.title, href: `/blog/${p.id}/` };
+  // Sorted newest first, so the newer post is the previous index.
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, newer: link(posts[i - 1]), older: link(posts[i + 1]) },
+  }));
 }
 type Adjacent = { title: string; href: string } | undefined;
-type Props = { post: CollectionEntry<'blog'>; newer: Adjacent; older: Adjacent };
+type Props = {
+  post: CollectionEntry<"blog">;
+  newer: Adjacent;
+  older: Adjacent;
+};
 
 const { post, newer, older } = Astro.props;
 const { Content, headings } = await render(post);
 const minutesRead = readMinutes(post.body);
 ---
 
-<BlogPost
-	{...post.data}
-	minutesRead={minutesRead}
-	headings={headings}
-	newer={newer}
-	older={older}
+<Post
+  {...post.data}
+  minutesRead={minutesRead}
+  headings={headings}
+  newer={newer}
+  older={older}
 >
-	<Content />
-</BlogPost>
+  <Content components={figures} />
+</Post>

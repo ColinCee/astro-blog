@@ -1,0 +1,74 @@
+---
+// A recording of an agent playing, with the network's value for each move
+// drawn under it as it plays, a player to pause and step one decision at a
+// time, and the frames each decision saw. The qview widget reads `src`
+// (the clip's path without an extension: its .json holds every decision)
+// and `stack` (a sprite sheet of the frames, one row per decision). The
+// slot explains the figure. Styles: clip.css, cmp.css, qview.css.
+
+import Clip from "./Clip.astro";
+import Fig from "./Fig.astro";
+
+interface Props {
+  src: string;
+  stack: string;
+  label: string;
+  rate?: number;
+}
+const { src, stack, label, rate } = Astro.props;
+---
+
+<Fig data-widget="qview" data-src={`${src}.json`} data-stack={stack}>
+  <div class="vids">
+    <Clip src={src} label={label} rate={rate} />
+  </div>
+  <slot />
+  <div class="qbars" aria-live="off"></div>
+  <div class="player">
+    <button type="button" data-play aria-pressed="true" aria-label="Pause">
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path class="i-play" d="M4 2.5v11l9-5.5z"></path>
+        <path class="i-pause" d="M4 2.5h3v11H4zM9 2.5h3v11H9z"></path>
+      </svg>
+    </button>
+    <button type="button" data-step="-1" aria-label="Previous decision">
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M10 3 5 8l5 5"></path>
+      </svg>
+    </button>
+    <button type="button" data-step="1" aria-label="Next decision">
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M6 3l5 5-5 5"></path>
+      </svg>
+    </button>
+    <span class="player__track">
+      <input
+        type="range"
+        data-scrub
+        min="0"
+        max="0"
+        value="0"
+        step="1"
+        aria-label="Decision"
+      >
+    </span>
+    <output data-at></output>
+  </div>
+  <div class="peek">
+    <p class="fig__k">
+      The agent gets given 4 frames as input, <span data-seen-ticks></span>,
+      then plays <b data-held-name>shoot</b> for the next 4. Tap a frame to
+      enlarge it.
+    </p>
+    <div class="peek__seen" data-seen>
+      <i></i>
+      <i></i>
+      <i></i>
+      <i></i>
+    </div>
+    <div class="peek__zoom" data-zoom hidden>
+      <i></i>
+      <small></small>
+    </div>
+  </div>
+</Fig>

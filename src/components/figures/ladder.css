@@ -1,0 +1,53 @@
+/* The ladder widget's step chart (Ladder). */
+/* Ladder (widget): step chart with a focusable column per step. */
+.prose .ladder svg {
+  display: block;
+  width: 100%;
+  touch-action: pan-y;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.prose .ladder .ax {
+  stroke: var(--line);
+}
+.prose .ladder .ln {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 2;
+}
+.prose .ladder .riser {
+  stroke: transparent;
+  stroke-width: 4;
+}
+.prose .ladder .riser.is-on {
+  stroke: var(--accent);
+}
+.prose .ladder .hit {
+  fill: transparent;
+  cursor: pointer;
+  outline: none;
+}
+.prose .ladder .hit.is-on {
+  fill: color-mix(in oklch, var(--accent) 10%, transparent);
+}
+.prose .ladder .hit:focus-visible {
+  stroke: var(--accent);
+}
+.prose .ladder [data-out] {
+  display: grid;
+  gap: 0.2rem;
+  min-height: 4.6rem;
+  margin: 0;
+}
+.prose .ladder [data-out] b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.prose .ladder [data-out] strong {
+  color: var(--accent-soft);
+}
+.prose .ladder [data-out] small {
+  color: var(--faint);
+  font-size: 0.6875rem;
+}

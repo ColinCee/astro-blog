@@ -1,0 +1,50 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  // Posts and docs keep their author's line breaks; .astro support is
+  // experimental in Biome, so check rendered pages after a format.
+  "files": {
+    "includes": [
+      "**",
+      "!public",
+      "!.impeccable",
+      "!**/*.md",
+      "!**/*.mdx",
+      "!pnpm-lock.yaml"
+    ]
+  },
+  "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 80 },
+  "javascript": { "formatter": { "quoteStyle": "double" } },
+  "html": {
+    "experimentalFullSupportEnabled": true,
+    "formatter": { "enabled": true, "indentScriptAndStyle": true }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      // Off where they fight how this site is written: elements the page
+      // itself renders are read with `!`, `forEach` arrows assign in place,
+      // and `!important` is how reduced motion and print win over everything.
+      // The CSS cascade order is deliberate and checked against screenshots.
+      "style": {
+        "noNonNullAssertion": "off",
+        "noDescendingSpecificity": "off"
+      },
+      "suspicious": {
+        "useIterableCallbackReturn": "off",
+        "noAssignInExpressions": "off"
+      },
+      "complexity": { "noImportantStyles": "off" }
+    }
+  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "overrides": [
+    {
+      // Left as written so the dissertation-revival branch, which edits it,
+      // still merges cleanly.
+      "includes": ["src/scripts/widgets.ts"],
+      "formatter": { "enabled": false }
+    }
+  ]
+}

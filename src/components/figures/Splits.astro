@@ -1,0 +1,53 @@
+---
+// Bars cut into parts on one scale from 0 to `max`, one row each, with a key
+// above naming the parts (the first takes the accent). A part too small to
+// hold its time has no `text`; the row's `after` text then sits after the
+// bar. `est` rows are estimates, drawn lighter. Styles: splits.css.
+interface Row {
+  label: string;
+  note?: string;
+  parts: { value: number; text?: string }[];
+  after?: string;
+  est?: boolean;
+}
+interface Props {
+  keys: string[];
+  max: number;
+  rows: Row[];
+}
+const { keys, max, rows } = Astro.props;
+const basis = (v: number) => `flex-basis:${((v / max) * 100).toFixed(2)}%`;
+---
+
+<p class="splits__key">
+  {keys.map((k, i) => <span class:list={{ "sbar--hi": i === 0 }}>{k}</span>)}
+</p>
+<div class="splits">
+  {rows.map((r) => (
+    <Fragment>
+      <span class="splits__k">
+        {r.label}
+        {r.note && <small>{r.note}</small>}
+      </span>
+      <div class="sbar">
+        {r.parts.map((p, i) => (
+          <i
+            class:list={{
+              "sbar--hi": i === 0,
+              "sbar--est": r.est,
+              "sbar--thin": !p.text,
+            }}
+            style={basis(p.value)}
+          >
+            {p.text && <b>{p.text}</b>}
+          </i>
+        ))}
+        {r.after && (
+          <em class="sbar__after">
+            <b>{r.after}</b>
+          </em>
+        )}
+      </div>
+    </Fragment>
+  ))}
+</div>

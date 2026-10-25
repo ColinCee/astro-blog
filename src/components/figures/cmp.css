@@ -1,0 +1,89 @@
+/* Before/after bars drawn to scale (Cmp). */
+/* Before/after bars, drawn to scale: --w is the value as a fraction of the larger. */
+.prose .cmp {
+  display: grid;
+  grid-template-columns: 10.5rem minmax(0, 1fr) 4.2rem;
+  align-items: center;
+  gap: 0.3rem 0.8rem;
+}
+.prose .cmp i {
+  display: block;
+  height: 0.7rem;
+  min-width: 3px;
+  width: calc(var(--w) * 100%);
+  background: var(--bar);
+  border-radius: 1px;
+}
+.prose .cmp b {
+  font-weight: 500;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.prose .cmp--after i {
+  background: var(--accent);
+}
+.prose .cmp--after b {
+  color: var(--accent-soft);
+  font-weight: 700;
+}
+/* A reference line across .cmp bars: wrap the rows in <div class="cmp-ref"> with
+   --ref (the reference value as a fraction of the largest). On wide screens it is one
+   line through the bar column; on phones, where labels sit above the bars, each row
+   carries its own short segment (the bars are wrapped in <em class="track">). */
+.prose .cmp-ref {
+  position: relative;
+  display: grid;
+  gap: 0.75rem;
+}
+.prose .cmp-ref::after {
+  content: "";
+  position: absolute;
+  top: -0.2rem;
+  bottom: -0.2rem;
+  left: calc(
+    10.5rem +
+    0.8rem +
+    (100% - 10.5rem - 4.2rem - 1.6rem) *
+    var(--ref)
+  );
+  border-left: 1.5px dashed var(--faint);
+  pointer-events: none;
+}
+.prose .cmp .track {
+  display: block;
+  font-style: normal;
+}
+@media (max-width: 34rem) {
+  .prose .cmp-ref::after {
+    display: none;
+  }
+  .prose .cmp .track {
+    position: relative;
+  }
+  .prose .cmp .track::after {
+    content: "";
+    position: absolute;
+    top: -0.3rem;
+    bottom: -0.3rem;
+    left: calc(var(--ref) * 100%);
+    border-left: 1.5px dashed var(--faint);
+  }
+  .prose .cmp {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .prose .cmp span {
+    grid-column: 1 / -1;
+  }
+}
+/* Bars grow in once when their figure scrolls into view (JS adds .is-in). */
+@media (prefers-reduced-motion: no-preference) {
+  .prose .fig[data-grow] .cmp i {
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.9s var(--ease-out);
+  }
+  .prose .fig[data-grow].is-in .cmp i {
+    transform: none;
+  }
+}

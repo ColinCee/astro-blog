@@ -1,0 +1,28 @@
+---
+// A dot plot: one row per item, a dot at its value on one axis from 0 to
+// `max`, in titled groups. The `after` row is the result. Styles: dot.css.
+interface Row {
+  label: string;
+  value: number;
+  text: string;
+  after?: boolean;
+}
+interface Props {
+  max: number;
+  groups: { title?: string; rows: Row[] }[];
+}
+const { max, groups } = Astro.props;
+---
+
+{groups.map((g) => (
+  <Fragment>
+    {g.title && <p class="fig__k">{g.title}</p>}
+    {g.rows.map((r) => (
+      <div class:list={["dot", { "dot--after": r.after }]}>
+        <span>{r.label}</span>
+        <i style={`--x:${(r.value / max).toFixed(3)}`} />
+        <b>{r.text}</b>
+      </div>
+    ))}
+  </Fragment>
+))}

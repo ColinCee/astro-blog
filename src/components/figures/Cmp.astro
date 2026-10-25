@@ -1,0 +1,54 @@
+---
+// Bars drawn to scale, one row each: a label, the bar and its value. Each bar
+// is its value as a fraction of the largest (or of `max`); the `after` row is
+// the result and takes the accent. A row with `from` is a step that runs from
+// `from` to `value`, drawn muted (a waterfall). `ref` draws a dashed line at
+// that value across every bar. `cols` sets the label and value column widths.
+// Styles: cmp.css.
+interface Row {
+  label: string;
+  value: number;
+  text: string;
+  after?: boolean;
+  from?: number;
+}
+interface Props {
+  rows: Row[];
+  max?: number;
+  ref?: number;
+  cols?: [string, string];
+}
+const { rows, ref, cols } = Astro.props;
+const max =
+  Astro.props.max ?? Math.max(...rows.flatMap((r) => [r.value, r.from ?? 0]));
+const frac = (v: number) => (v / max).toFixed(3);
+const grid = cols
+  ? `grid-template-columns:${cols[0]} minmax(0,1fr) ${cols[1]}`
+  : undefined;
+const bar = (r: Row) =>
+  r.from === undefined
+    ? `--w:${frac(r.value)}`
+    : `--w:${frac(Math.abs(r.value - r.from))};margin-left:${((Math.min(r.value, r.from) / max) * 100).toFixed(1)}%;background:var(--muted)`;
+---
+
+{ref === undefined ? (
+  rows.map((r) => (
+    <div class:list={["cmp", { "cmp--after": r.after }]} style={grid}>
+      <span>{r.label}</span>
+      <i style={bar(r)} />
+      <b>{r.text}</b>
+    </div>
+  ))
+) : (
+  <div class="cmp-ref" style={`--ref:${frac(ref)}`}>
+    {rows.map((r) => (
+      <div class:list={["cmp", { "cmp--after": r.after }]} style={grid}>
+        <span>{r.label}</span>
+        <em class="track">
+          <i style={bar(r)} />
+        </em>
+        <b>{r.text}</b>
+      </div>
+    ))}
+  </div>
+)}

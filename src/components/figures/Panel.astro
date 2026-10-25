@@ -1,0 +1,12 @@
+---
+// One panel of a <Split>: a title above its content.
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<div>
+  <p class="fig__k">{title}</p>
+  <slot />
+</div>

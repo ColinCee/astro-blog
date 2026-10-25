@@ -63,7 +63,7 @@
       {
         "name": "--wash",
         "value": "radial-gradient(48rem 36rem at 88% -8%, color-mix(in oklch, var(--accent) 12%, transparent), transparent 60%)",
-        "purpose": "Token in terminal.css. Faint cyan atmosphere bloom on .shell and the homepage .t. Never a card shadow."
+        "purpose": "Token in tokens.css. Faint accent atmosphere bloom on .shell. Never a card shadow."
       },
       {
         "name": "terminal-window-lift",

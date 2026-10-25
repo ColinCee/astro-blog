@@ -1,0 +1,161 @@
+---
+title: "CI Faster Than GitHub's, for Free"
+subtitle: "Faster than GitHub's runner, with every job in a throwaway VM."
+stat: "26 s → 20 s"
+statLabel: "vs GitHub"
+pubDate: "Oct 16 2026"
+---
+## Results
+
+<Fig caption="From GitHub starting the run to done: about 1.3× faster, and no minutes. The same commit on both, 5 runs each, in one session.">
+  <Split>
+    <Panel title="Run start to done">
+      <Cmp
+        cols={["4.5rem", "3.5rem"]}
+        rows={[
+          { label: "GitHub", value: 26, text: "26 s" },
+          { label: "Mini PC", value: 20, text: "20 s", after: true },
+        ]}
+      />
+    </Panel>
+    <Panel title="Minutes used per job">
+      <Cmp
+        cols={["4.5rem", "3.5rem"]}
+        rows={[
+          { label: "GitHub", value: 1, text: "1 min" },
+          { label: "Mini PC", value: 0, text: "0", after: true },
+        ]}
+      />
+    </Panel>
+  </Split>
+</Fig>
+
+That's an Intel N100 mini PC running CI for cortex, a private Python/TypeScript project.[^perf] GitHub bills every job as at least a minute.[^rounding]
+
+## Why not GitHub's runners
+
+On GitHub's Free plan, private repos get 2,000 free minutes a month,[^minutes] and a few projects with small commits burn through them. A self-hosted runner fixes that, but a CI job is just code from the repo, and on a home server it runs next to everything else in the house. So each job gets its own throwaway box: the internet, and nothing else. Being faster than GitHub came later, as a bonus.
+
+## Why Firecracker
+
+The rule was that a job doesn't share the host's kernel, which is what Firecracker is built for.[^firecracker] Escape a container and you're on the box with Home Assistant; escape a VM and you still have to get past the hypervisor and Firecracker's jailer. That ruled out six of the eight sandboxes I tried, Docker included.
+
+<Fig caption="A separate test: the same cortex check, offline with warm caches, under each sandbox, on one axis from 0 to 40 s.">
+  <Dots
+    max={40}
+    groups={[
+      {
+        title: "Own kernel",
+        rows: [
+          { label: "QEMU VM", value: 39.52, text: "39.5 s" },
+          { label: "Firecracker", value: 14.28, text: "14.3 s", after: true },
+        ],
+      },
+      {
+        title: "Shares the host's kernel, so ruled out",
+        rows: [
+          { label: "firejail", value: 10.32, text: "10.3 s" },
+          { label: "systemd-nspawn", value: 10.4, text: "10.4 s" },
+          { label: "systemd hardening", value: 10.6, text: "10.6 s" },
+          { label: "None (baseline)", value: 10.72, text: "10.7 s" },
+          { label: "Rootless Podman", value: 10.72, text: "10.7 s" },
+          { label: "Docker", value: 11.28, text: "11.3 s" },
+          { label: "Incus container", value: 19, text: "19 s" },
+        ],
+      },
+    ]}
+  />
+</Fig>
+
+Of the two left, QEMU was nearly three times slower, mostly boot and disk. Firecracker costs about 4 seconds against no sandbox, 0.8 of it booting. It also means jobs can have `sudo`, which is fine in a VM you throw away.
+
+## How it works
+
+1. A small Python supervisor[^supervisor] polls GitHub for queued jobs every 2 seconds (unchanged answers are free).
+2. It asks GitHub for a just-in-time runner:[^jit] a one-off registration that takes exactly one job, after which GitHub removes the runner.
+3. It boots a fresh Firecracker VM and hands it only that registration. The GitHub token itself never leaves the PC, so a job that breaks out can't touch the repo's settings or register more runners.
+4. The VM gets a copy of a cache disk with main's packages, and its image already has the tools and actions, so nothing but the code downloads.
+5. The job runs, and the VM is deleted with everything it wrote.
+
+The full design is in the runbook.[^runbook]
+
+<Fig
+  title="Where the 6 seconds go"
+  caption="The same runs as above, medians, drawn to scale. The rest, GitHub's own bookkeeping between steps, takes the same on both; the tests' extra second is noise."
+>
+  <Cmp
+    rows={[
+      { label: "GitHub", value: 26, text: "26 s" },
+      { label: "Pickup", from: 26, value: 25, text: "−1 s" },
+      { label: "Set up, checkout", from: 25, value: 24, text: "−1 s" },
+      { label: "Tools, installs", from: 24, value: 19, text: "−5 s" },
+      { label: "Tests", from: 19, value: 20, text: "+1 s" },
+      { label: "Mini PC", value: 20, text: "20 s", after: true },
+    ]}
+  />
+</Fig>
+
+Almost all of it is tool setup and installs: 7 s on GitHub, 2 s from the cache disk. Pickup is a second quicker too; a VM is already booted and waiting.
+
+## From 51 seconds to 20
+
+<Fig
+  title="Run start to done, each stage on today's commit"
+  caption="The dashed line is GitHub's 26 s. Every stage was rebuilt and run in one session alongside GitHub, 5 runs each, with identical isolation; only the speed changes differ."
+>
+  <Cmp
+    ref={26}
+    rows={[
+      { label: "First version", value: 51, text: "51 s" },
+      { label: "+ tools in the image", value: 48, text: "48 s" },
+      { label: "+ one VM waiting", value: 37, text: "37 s" },
+      { label: "+ cache disk", value: 28, text: "28 s" },
+      { label: "+ front-load the rest", value: 20, text: "20 s", after: true },
+    ]}
+  />
+</Fig>
+
+- Node, uv and Python baked into the VM image, so the tools stop downloading per job: 3 s.
+- One VM kept booted and waiting, for 450 MB of RAM: 11 s, the biggest single step.
+- A cache disk with main's packages, instead of restoring GitHub's caches: 9 s.
+- The rest front-loaded: the actions unpacked in the image and `setup-uv` and `setup-node` dropped, leaving one install step that copies `node_modules` from the disk when the lockfile matches and runs `uv sync --no-install-project`: 8 s.
+
+I also sped up cortex's own tests (TypeScript 7's compiler, slow checks first), but every bar here runs the same commit, GitHub included, so that's on both sides. The biggest part left is the tests.
+
+## What didn't help
+
+### More CPUs
+
+4 vCPUs instead of 2 changed nothing; a few slow tests set the time.
+
+### Snapshots
+
+I built it properly: a snapshot taken right after a real build of main, restored as the waiting VM in 11 to 15 ms. It saved about a second, all of it `uv sync`, which `--no-install-project` now gets anyway. Boot was never the slow part, each snapshot needs a 4.1 GB memory file, and every restored VM starts with the same random-number state, which Firecracker's docs warn about.[^snapshots]
+
+### A second waiting VM
+
+The second of two simultaneous jobs finished 4 seconds sooner, but the average per job didn't move. Not worth another 440 MB of RAM.
+
+### Smaller tweaks
+
+Mounting `node_modules` instead of copying it, reading packages into memory ahead of time, turning off CPU mitigations and tuning pytest workers were all either noise or slower.
+
+## Limitations
+
+This is fast because it's tuned for one repo, not because self-hosting is fast.
+
+- Prewarming is per repo. A new language, action or lockfile means rebuilding the image or the cache disk.
+- A changed lockfile falls back to a normal install from the cached packages, and every green push to main has to upload a fresh cache.
+- Only one repo gets the waiting VM. Others boot first, about 11 s slower.
+- It's one small machine: two jobs at a time, Linux only, no failover.
+- Kernel and runner upgrades are mine to do.
+- One repo, 5 runs per setup, whole-second timestamps. GitHub alone varied from 24 s to 32 s.
+
+[^perf]: Every number in this post: [CI runner performance](https://github.com/ColinCee/homelab/blob/main/docs/ci-runner-performance.md), in my homelab repo.
+[^rounding]: GitHub, [Actions minute multipliers](https://docs.github.com/en/billing/reference/actions-minute-multipliers): partial minutes are rounded up per job.
+[^minutes]: GitHub, [billing for GitHub Actions](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
+[^firecracker]: [Firecracker](https://firecracker-microvm.github.io/).
+[^supervisor]: The supervisor: [`scripts/ci_supervisor.py`](https://github.com/ColinCee/homelab/blob/main/scripts/ci_supervisor.py).
+[^jit]: GitHub, [ephemeral runners for autoscaling](https://docs.github.com/en/actions/reference/runners/self-hosted-runners): just-in-time runners are de-registered after one job.
+[^runbook]: [CI runner runbook](https://github.com/ColinCee/homelab/blob/main/docs/runbooks/ci-runner.md).
+[^snapshots]: Firecracker, [random for clones](https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/random-for-clones.md).

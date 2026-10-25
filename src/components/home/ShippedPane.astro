@@ -1,0 +1,122 @@
+---
+// The terminal's active pane: improvements I shipped, each a before and an
+// after bar drawn to scale (after ÷ before). Data: src/data/shipped.json.
+import { getCollection } from "astro:content";
+import Pane from "./Pane.astro";
+
+const shipped = (await getCollection("shipped")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<Pane idx={1} name="shipped" area="ship" active>
+  <ul class="ships">
+    {shipped.map(({ data: s }) => (
+      <li>
+        <a class="ship" href={s.href}>
+          <span class="ship__head">
+            <span class="ship__what">{s.what}</span>
+            <span class="ship__meta">
+              {s.where} · {s.when}
+            </span>
+          </span>
+          <span class="ship__bar">
+            <span class="ship__label">before</span>
+            <span class="ship__track">
+              <i class="ship__fill" style="--w: 1" />
+              <b>{s.before}</b>
+            </span>
+          </span>
+          <span class="ship__bar ship__bar--after">
+            <span class="ship__label">after</span>
+            <span class="ship__track">
+              <i
+                class="ship__fill"
+                style={`--w: ${(s.scale.after / s.scale.before).toFixed(4)}`}
+              />
+              <b>{s.after}</b>
+            </span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Pane>
+
+<style>
+  .ships {
+    display: grid;
+    gap: 0.7rem;
+  }
+  .ship {
+    display: grid;
+    gap: 0.18rem;
+    padding: 0.35rem 0.45rem;
+    margin: 0 -0.45rem;
+    border-radius: 7px;
+    transition: background-color var(--dur-fast) var(--ease);
+  }
+  .ship:hover {
+    background: color-mix(in oklch, var(--accent) 12%, transparent);
+  }
+  .ship__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 1rem;
+  }
+  .ship__what {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .ship__meta,
+  .ship__label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+  .ship__bar {
+    display: grid;
+    grid-template-columns: 3.4rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .ship__track {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .ship__fill {
+    display: block;
+    height: 0.5rem;
+    min-width: 3px;
+    width: calc(var(--w) * (100% - 7.5rem));
+    background: var(--bar);
+    border-radius: 1px;
+    transform-origin: left;
+    animation: grow 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.7s both;
+  }
+  .ship__track b {
+    font-weight: 500;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .ship__bar--after .ship__fill {
+    background: var(--accent);
+    animation-delay: 1.05s;
+  }
+  .ship__bar--after b {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  @keyframes grow {
+    from {
+      transform: scaleX(0);
+    }
+  }
+</style>

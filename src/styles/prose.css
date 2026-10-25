@@ -1,0 +1,220 @@
+/* Prose: the long-form text of a post, under .prose. Imported by
+   layouts/Post.astro. Global, because the rendered Markdown is not reachable
+   by a component's scoped styles. */
+.prose {
+  max-width: var(--measure, 44rem);
+  font-size: var(--prose-size);
+  line-height: 1.65;
+  color: var(--prose-ink);
+}
+.prose > :first-child {
+  margin-top: 0;
+}
+.prose p {
+  margin: 1em 0;
+  text-wrap: pretty;
+}
+/* A hairline above each H2 so a long post reads as distinct sections. */
+.prose h2 {
+  margin: 2.8rem 0 0.85rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 3.5rem;
+  font-family: var(--grotesk);
+  font-weight: 700;
+  font-size: clamp(1.2rem, 2.4vw, 1.35rem);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.prose h3 {
+  margin: 2rem 0 0.7rem;
+  font-family: var(--grotesk);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+.prose a {
+  color: var(--accent-soft);
+  border-bottom: 1px solid var(--accent-line);
+  transition:
+    color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+.prose a:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+.prose strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+.prose em {
+  font-style: italic;
+}
+.prose ul,
+.prose ol {
+  margin: 1.15rem 0;
+  padding-left: 1.35rem;
+}
+.prose li {
+  margin: 0.45rem 0;
+}
+.prose li::marker {
+  color: var(--accent-soft);
+}
+/* Quoted documents (emails, rulings): set apart as an excerpt on the raised
+   surface, so evidence reads differently from narration. */
+.prose blockquote {
+  margin: 1.6rem 0;
+  padding: 1.1rem 1.3rem;
+  background: var(--pane);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink);
+  font-size: 0.97em;
+  line-height: 1.6;
+}
+.prose blockquote p {
+  margin: 0;
+}
+/* Numbered takeaways: mono accent numerals in the margin. */
+.prose ol {
+  list-style: none;
+  padding-left: 0;
+  counter-reset: item;
+}
+.prose ol > li {
+  counter-increment: item;
+  position: relative;
+  margin: 0;
+  padding: 0.95rem 0 0.95rem 2.6rem;
+  border-top: 1px solid var(--line);
+}
+.prose ol > li:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.prose ol > li::before {
+  content: counter(item);
+  position: absolute;
+  left: 0.2rem;
+  top: 1.05rem;
+  font-family: var(--mono);
+  font-size: 0.8em;
+  font-weight: 700;
+  color: var(--accent-soft);
+}
+/* Footnotes (Markdown [^1]): a quiet source list, not numbered takeaways. */
+.prose .footnotes {
+  font-size: 0.85em;
+  color: var(--muted);
+}
+.prose .footnotes h2 {
+  font-size: 1rem;
+}
+.prose .footnotes ol > li {
+  padding: 0.3rem 0 0.3rem 2rem;
+  border: 0;
+}
+.prose .footnotes ol > li::before {
+  top: 0.4rem;
+}
+.prose .footnotes p {
+  margin: 0;
+}
+.prose sup a {
+  border-bottom: 0;
+  padding: 0 0.1em;
+}
+.prose hr {
+  margin: 2.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+/* Inline metric highlight — the site's "the metric is the accent" rule,
+   carried into long-form. Use it on the one number that is the point. */
+.prose .hl {
+  color: var(--accent-soft);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tables: a data rail, not a card. Hairlines only, no fill, no zebra —
+   depth is tonal per DESIGN.md. The first column is the mono date/key rail,
+   mirroring the timeline rails on the blog index and CV. */
+.prose table {
+  width: 100%;
+  margin: 1.8rem 0;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  text-align: left;
+}
+.prose thead th {
+  padding: 0 0 0.6rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  vertical-align: bottom;
+  border-bottom: 1px solid var(--line);
+}
+.prose tbody td {
+  padding: 0.72rem 0;
+  vertical-align: baseline;
+  border-bottom: 1px solid color-mix(in oklch, var(--line) 55%, transparent);
+  text-wrap: pretty;
+}
+.prose tbody tr:last-child td {
+  border-bottom: 0;
+}
+/* A bold final row is a total: rule it off in ink. */
+.prose tbody tr:last-child td:has(strong) {
+  border-top: 1px solid var(--ink);
+}
+.prose th + th,
+.prose td + td {
+  padding-left: 1.35rem;
+}
+/* Author-controlled data column: Markdown's `---:` alignment marks the
+   column that holds values, which then gets the mono/tabular treatment.
+   Markdown writes it as align="right", MDX as a text-align style. */
+.prose th[align="right"],
+.prose td[align="right"],
+.prose th[style*="text-align:right"],
+.prose td[style*="text-align:right"] {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.prose td[align="right"],
+.prose td[style*="text-align:right"] {
+  color: var(--ink);
+}
+@media (max-width: 34rem) {
+  .prose table {
+    font-size: 0.9rem;
+  }
+  .prose th + th,
+  .prose td + td {
+    padding-left: 0.85rem;
+  }
+}
+/* Inline code only. Fenced blocks are styled by Expressive Code. */
+.prose :not(pre) > code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  padding: 0.1em 0.38em;
+  border-radius: 4px;
+  background: color-mix(in oklch, var(--ink) 10%, transparent);
+  color: var(--ink);
+}
+.prose .expressive-code {
+  margin: 1.6rem 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    scroll-behavior: smooth;
+  }
+}

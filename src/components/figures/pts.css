@@ -1,0 +1,192 @@
+/* Wins-and-points chart (Pts): rows of name + tag, a bar of games won on a
+   0-100% axis with the spread of runs (s), then wins and points with their
+   change. --a/--b: the bar, --a the step before's value when a row adds to it
+   (.pts__more is the gain). --r1 draws the same dashed reference line (above the
+   bars) in every chart, labelled over it. */
+.prose .pts {
+  display: grid;
+  grid-template-columns: minmax(0, 12rem) minmax(0, 1fr) 5.2rem 4.6rem;
+  align-items: center;
+  gap: 0 0.8rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+}
+.prose .pts__r > * {
+  padding: 0.2rem 0;
+}
+.prose .pts__r {
+  display: contents;
+}
+.prose .pts__h {
+  font-size: 0.6875rem;
+  color: var(--faint);
+}
+.prose .pts__wh {
+  text-align: right;
+}
+.prose .pts__k b {
+  font-weight: 500;
+  color: var(--ink);
+}
+.prose .pts__k small {
+  display: block;
+  font-size: 0.6875rem;
+  color: var(--faint);
+}
+.prose .pts__t {
+  position: relative;
+  align-self: stretch;
+  min-height: 1.8rem;
+}
+.prose .pts__t::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(var(--faint) 0 3px, transparent 3px 6px) no-repeat
+    calc(var(--r1) * 100%) 0 / 1px 100%;
+}
+.prose .pts__t i {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: calc(var(--a) * 100%);
+  height: 0.7rem;
+  transform: translateY(-50%);
+  background: var(--bar);
+  border-radius: 1px;
+}
+.prose .pts__t .pts__more {
+  left: calc(var(--a) * 100%);
+  width: calc((var(--b) - var(--a)) * 100%);
+  background: var(--accent);
+}
+.prose .pts__t s {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--lo) * 100%);
+  width: calc((var(--hi) - var(--lo)) * 100%);
+  min-width: 1px;
+  height: 0.55rem;
+  transform: translateY(-50%);
+  z-index: 2;
+  border: solid var(--ink);
+  border-width: 0 1.5px;
+  background:
+    linear-gradient(var(--ink), var(--ink)) no-repeat 0 50% / 100% 1.5px;
+  filter: drop-shadow(0 0 1px var(--bg)) drop-shadow(0 0 1px var(--bg));
+}
+.prose .pts em {
+  font-style: normal;
+  color: var(--ink);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.prose .pts em small {
+  margin-left: 0.3rem;
+  color: var(--accent-soft);
+}
+.prose .pts em small.pts__same {
+  color: var(--faint);
+}
+.prose .pts em small.pts__minus {
+  color: var(--loss);
+}
+.prose .pts .pts__w {
+  color: var(--muted);
+}
+.prose .pts__r--hi .pts__k b {
+  font-weight: 700;
+}
+/* My 2018 version, the baseline: striped, the same in every chart. */
+.prose .pts__r--base .pts__t i:first-child {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--muted) 0 2px,
+    var(--bar) 2px 5px
+  );
+}
+/* Hover or tap a row and the others fade, to read one row across. */
+.prose .pts__k {
+  cursor: default;
+  outline: none;
+}
+.prose .pts__r > * {
+  transition: opacity 0.15s;
+}
+.prose
+  .pts:has(.pts__r:hover, .pts__r:focus-within)
+  .pts__r:not(:hover, :focus-within)
+  > * {
+  opacity: 0.3;
+}
+.prose .pts__axis,
+.prose .pts__refs {
+  position: relative;
+  align-self: stretch;
+  min-height: 1.2rem;
+}
+.prose .pts__axis {
+  border-top: 1px solid var(--line);
+}
+.prose .pts__axis span,
+.prose .pts__refs span {
+  position: absolute;
+  left: calc(var(--x) * 100%);
+  transform: translateX(-50%);
+  font-size: 0.6875rem;
+  color: var(--faint);
+  white-space: nowrap;
+}
+.prose .pts__axis span {
+  top: 0.25rem;
+}
+.prose .pts__xt {
+  padding-top: 0.15rem;
+  text-align: center;
+}
+.prose .pts__axis span::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -0.3rem;
+  height: 0.2rem;
+  border-left: 1px solid var(--line);
+}
+.prose .pts__axis span:first-child {
+  transform: none;
+}
+.prose .pts__axis span:first-child::before {
+  left: 0;
+}
+.prose .pts__axis span:last-child {
+  transform: translateX(-100%);
+}
+.prose .pts__axis span:last-child::before {
+  left: auto;
+  right: 0;
+}
+.prose .pts__refs span {
+  bottom: 0.15rem;
+}
+@media (max-width: 34rem) {
+  .prose .pts {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 0.15rem 0.6rem;
+  }
+  .prose .pts__k,
+  .prose .pts > .pts__h:first-child {
+    grid-column: 1 / -1;
+    margin-top: 0.35rem;
+  }
+  .prose .pts > .pts__h:first-child,
+  .prose .pts > .pts__sp {
+    display: none;
+  }
+  .prose .pts__axis span {
+    font-size: 0.625rem;
+  }
+}

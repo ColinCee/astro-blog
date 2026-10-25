@@ -1,0 +1,27 @@
+[
+  {
+    "id": "observability",
+    "order": 1,
+    "services": "grafana · prometheus · loki · alloy"
+  },
+  {
+    "id": "flight-tracker",
+    "order": 2,
+    "services": "backend · cloudflared"
+  },
+  {
+    "id": "home-assistant",
+    "order": 3,
+    "services": "homeassistant"
+  },
+  {
+    "id": "crowdsec",
+    "order": 4,
+    "services": "crowdsec"
+  },
+  {
+    "id": "backup",
+    "order": 5,
+    "services": "restic, nightly"
+  }
+]

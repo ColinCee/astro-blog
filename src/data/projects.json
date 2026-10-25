@@ -1,0 +1,38 @@
+[
+  {
+    "id": "dissertation",
+    "order": 1,
+    "repo": "github.com/ColinCee/GVGAI-Dissertation",
+    "href": "https://github.com/ColinCee/GVGAI-Dissertation",
+    "desc": "game-playing agents, trained in 2018 and again in 2026",
+    "wide": true
+  },
+  {
+    "id": "flight-tracker",
+    "order": 2,
+    "repo": "flight-tracker-at-home.pages.dev",
+    "href": "https://flight-tracker-at-home.pages.dev",
+    "desc": "the London airspace; the real one is live"
+  },
+  {
+    "id": "home-lab",
+    "order": 3,
+    "repo": "github.com/ColinCee/homelab",
+    "href": "https://github.com/ColinCee/homelab",
+    "desc": "one mini-PC, five Compose stacks"
+  },
+  {
+    "id": "anki-chinese",
+    "order": 4,
+    "repo": "github.com/ColinCee/anki-chinese",
+    "href": "https://github.com/ColinCee/anki-chinese",
+    "desc": "the Mandarin deck I'm learning from"
+  },
+  {
+    "id": "colincheung.dev",
+    "order": 5,
+    "repo": "github.com/ColinCee/astro-blog",
+    "href": "https://github.com/ColinCee/astro-blog",
+    "desc": "this site, deployed from every commit"
+  }
+]

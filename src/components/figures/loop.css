@@ -1,0 +1,60 @@
+/* The learning loop. Used only by the unpublished dissertation posts (Parts 2 and 3, on the
+   dissertation-revival branch), which are written as HTML; nothing published
+   uses it. Keep until they publish. */
+/* The learning loop: hand-written parts outlined in the accent; a dot runs
+   each loop (fast: playing, slow: learning). */
+.prose .loop svg {
+  display: block;
+  width: 100%;
+  max-width: 30rem;
+  margin: 0 auto;
+}
+.prose .loop rect {
+  fill: var(--pane);
+  stroke: var(--line);
+  stroke-width: 1.2;
+}
+.prose .loop .mine rect {
+  stroke: var(--accent);
+  stroke-width: 1.6;
+}
+.prose .loop text {
+  font-family: var(--mono);
+  font-size: 12px;
+  fill: var(--ink);
+}
+.prose .loop text.sub {
+  font-size: 11px;
+  fill: var(--faint);
+}
+.prose .loop .arr {
+  fill: none;
+  stroke: var(--faint);
+  stroke-width: 1.2;
+  marker-end: url(#loop-head);
+}
+.prose .loop .pulse {
+  fill: var(--accent);
+  offset-rotate: 0deg;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .prose .loop .pulse {
+    animation: loop-run 2.4s linear infinite;
+  }
+  .prose .loop .pulse--slow {
+    animation-duration: 5s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .prose .loop .pulse {
+    display: none;
+  }
+}
+@keyframes loop-run {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}

@@ -1,11 +1,12 @@
-// Interactive figures, loaded by BlogPost.astro only on posts that have a
+// Interactive figures, loaded by layouts/Post.astro only on posts that have a
 // [data-widget] element. Each widget reads its numbers from data- attributes in
-// the Markdown, so the post stays the one place its figures live.
+// the post, so the post stays the one place its figures live.
+import { chartHeight, type LineData, lineChart } from "./line-chart";
 
 const fmt = new Intl.NumberFormat("en-GB");
 
 
-// Chain: one lost game as a row of decisions, the only reward at the end.
+// Chain (used only by the unpublished dissertation posts): one lost game as a row of decisions, the only reward at the end.
 // Plain Q-learning updates on random moves from the game (as replay does)
 // show how slowly that end signal reaches the early moves; the 2018 penalty
 // puts a signal on every move at once.
@@ -59,7 +60,7 @@ function chain(root: HTMLElement) {
   draw();
 }
 
-// Reveal: a button that shows the figure's hidden layer (.reveal) and hides
+// Reveal (used only by the unpublished dissertation posts): a button that shows the figure's hidden layer (.reveal) and hides
 // what it replaces (.hide-on-reveal). Used for "now add the baseline".
 function reveal(root: HTMLElement) {
   const btn = root.querySelector<HTMLButtonElement>("button")!;
@@ -81,10 +82,16 @@ function reveal(root: HTMLElement) {
 // [data-zoom]; [data-held-name] for the move it then holds; [data-at] for where
 // the game is.
 type Decision = { tick: number; action: string; score?: number; q?: number[] };
+// The recorder's JSON for one game (tools/record.py in the dissertation repo).
+type Recording = {
+  action_names: string[];
+  video: { fps: number; ticks_per_frame: number };
+  decisions: Decision[];
+};
 async function qview(root: HTMLElement) {
   const video = root.querySelector("video")!;
   const box = root.querySelector<HTMLElement>(".qbars")!;
-  const data: any = await (await fetch(root.dataset.src!)).json();
+  const data: Recording = await (await fetch(root.dataset.src!)).json();
   const names: string[] = data.action_names.map((n: string) =>
     n.replace(/^ACTION_/, "").toLowerCase().replace("use", "shoot"),
   );
@@ -178,7 +185,7 @@ async function qview(root: HTMLElement) {
   video.addEventListener("play", () => requestAnimationFrame(loop));
   video.addEventListener("seeked", draw);
   draw();
-  // BlogPost's autoplay holds this video until its data is ready; start it
+  // Post.astro's autoplay holds this video until its data is ready; start it
   // now if it's on screen (and the reader allows motion).
   video.dataset.ready = "1";
   if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches)
@@ -188,7 +195,7 @@ async function qview(root: HTMLElement) {
       if (!video.dataset.hold) video.play().catch(() => {});
     }, { threshold: 0.35 }).observe(video);
 
-  // Controls. data-hold on the video tells BlogPost's autoplay-when-visible
+  // Controls. data-hold on the video tells Post.astro's autoplay-when-visible
   // observer to leave a video the reader paused alone.
   const playBtn = root.querySelector<HTMLButtonElement>("[data-play]");
   const setPlayBtn = () => {
@@ -208,21 +215,30 @@ async function qview(root: HTMLElement) {
       video.pause();
     }
   });
+  // The site's host answers a byte-range request with the whole file, so a
+  // streamed clip can't seek: every seek lands back on the first frame. The
+  // clips are small, so the first time a seek is needed the clip is loaded
+  // whole into memory, where every frame can be reached.
+  let whole: Promise<void> | undefined;
+  const loadWhole = () =>
+    (whole ??= (async () => {
+      const source = [...video.querySelectorAll("source")].find((s) => video.canPlayType(s.type));
+      if (!source) return;
+      const blob = await (await fetch(source.src)).blob();
+      const loaded = new Promise((r) => video.addEventListener("loadedmetadata", r, { once: true }));
+      video.src = URL.createObjectURL(blob);
+      await loaded;
+    })());
   // Pause on decision i and show its frame.
   const goTo = (i: number) => {
     video.dataset.hold = "1";
     video.pause();
     i = Math.min(decisions.length - 1, Math.max(0, i));
     show(i);
-    // Land in the middle of the frame that shows the decision's tick; a
-    // video that hasn't loaded yet (preload="none") is loaded first.
-    const seek = () => (video.currentTime = (decisions[i].tick + 0.5) / (fps * ticksPerFrame));
-    if (video.readyState >= 1) seek();
-    else {
-      video.addEventListener("loadedmetadata", seek, { once: true });
-      video.preload = "auto";
-      video.load();
-    }
+    // Land in the middle of the frame that shows the decision's tick.
+    loadWhole().then(() => {
+      video.currentTime = (decisions[i].tick + 0.5) / (fps * ticksPerFrame);
+    });
   };
   root.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((b) =>
     b.addEventListener("click", () => goTo(last + Number(b.dataset.step))),
@@ -342,71 +358,26 @@ function svgEl(svg: SVGSVGElement) {
   };
 }
 
-// Lines: a line chart from data, drawn in screen pixels at the figure's width
-// (the SVG in the page is the no-script fallback). Data: x and y axes with a
-// max, ticks and a title; an optional band of [x, low, high]; a line of
-// [x, y]; optional dots of [x, y] (a run known only at a few points, joined
-// dashed); labels placed at data points with pixel offsets; and a legend
-// drawn in the plot's empty top-left corner.
-type Axis = { max: number; ticks: number[]; title: string };
-type Label = { x: number; y: number; text: string; cls?: string; anchor?: string; dx?: number; dy?: number };
-type Key = { kind: "line" | "dots" | "band"; text: string };
+// Lines: a line chart from data (src/scripts/line-chart.ts), drawn in screen
+// pixels at the figure's width and redrawn when it changes. The SVG in the
+// page is the no-script fallback, drawn from the same data at build time.
 function lines(root: HTMLElement) {
-  const d: { x: Axis; y: Axis; band?: number[][]; line: number[][]; dots?: number[][]; labels?: Label[]; legend?: Key[] } = JSON.parse(
-    root.querySelector("script")!.textContent!,
-  );
+  const d: LineData = JSON.parse(root.querySelector("script")!.textContent!);
   const svg = root.querySelector("svg")!;
   const draw = () => {
     const W = Math.round(svg.parentElement!.clientWidth);
     if (!W) return;
-    const H = Math.round(Math.min(300, Math.max(220, W * 0.42)));
-    const L = 52, R = 12, T = 12, B = 44;
+    const H = chartHeight(W);
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.dataset.px = "";
     svg.style.setProperty("--k", "1");
-    svg.replaceChildren();
-    const el = svgEl(svg);
-    const X = (v: number) => L + (v / d.x.max) * (W - L - R);
-    const Y = (v: number) => H - B - (v / d.y.max) * (H - T - B);
-    for (const t of d.y.ticks) {
-      el("line", { class: "ax", x1: L, x2: W - R, y1: Y(t), y2: Y(t) });
-      el("text", { x: L - 6, y: Y(t) + 4, "text-anchor": "end" }).textContent = fmt.format(t);
-    }
-    d.x.ticks.forEach((t, i) => {
-      const anchor = i === 0 ? "start" : i === d.x.ticks.length - 1 ? "end" : "middle";
-      el("text", { x: X(t), y: H - B + 17, "text-anchor": anchor }).textContent = fmt.format(t);
-    });
-    el("text", { x: L + (W - L - R) / 2, y: H - 6, "text-anchor": "middle" }).textContent = d.x.title;
-    const yt = (T + H - B) / 2;
-    el("text", { x: 11, y: yt, "text-anchor": "middle", transform: `rotate(-90 11 ${yt})` }).textContent = d.y.title;
-    if (d.band) {
-      const up = d.band.map(([x, , h]) => `${X(x)},${Y(h)}`);
-      const down = d.band.map(([x, l]) => `${X(x)},${Y(l)}`).reverse();
-      el("polygon", { class: "band band--runs", points: [...up, ...down].join(" ") });
-    }
-    el("polyline", { class: "ln hi", points: d.line.map(([x, v]) => `${X(x)},${Y(v)}`).join(" ") });
-    if (d.dots) {
-      el("polyline", { class: "ln hi ln--dash", points: d.dots.map(([x, v]) => `${X(x)},${Y(v)}`).join(" ") });
-      for (const [x, v] of d.dots) el("circle", { class: "hi", cx: X(x), cy: Y(v), r: 4 });
-    }
-    (d.legend ?? []).forEach((k, i) => {
-      const ky = T + 10 + i * 18, kx = L + 10;
-      if (k.kind === "band") el("rect", { class: "band band--runs", x: kx, y: ky - 5, width: 22, height: 10 });
-      else el("line", { class: k.kind === "dots" ? "ln hi ln--dash" : "ln hi", x1: kx, x2: kx + 22, y1: ky, y2: ky });
-      if (k.kind === "dots") el("circle", { class: "hi", cx: kx + 11, cy: ky, r: 3.5 });
-      el("text", { x: kx + 30, y: ky + 4, class: "ink" }).textContent = k.text;
-    });
-    for (const l of d.labels ?? []) {
-      const t = el("text", { x: X(l.x) + (l.dx ?? 0), y: Y(l.y) + (l.dy ?? 0), "text-anchor": l.anchor ?? "start" });
-      if (l.cls) t.setAttribute("class", l.cls);
-      t.textContent = l.text;
-    }
+    svg.innerHTML = lineChart(d, W, H);
   };
   new ResizeObserver(draw).observe(svg.parentElement!);
   draw();
 }
 
-// Pick: tappable parts of a figure ([data-pick]); choosing one shows its
+// Pick (used only by the unpublished dissertation posts): tappable parts of a figure ([data-pick]); choosing one shows its
 // <template data-for> in the figure's [data-panel]. Choosing it again closes it.
 function pick(root: HTMLElement) {
   const items = [...root.querySelectorAll<HTMLElement | SVGElement>("[data-pick]")];
@@ -433,7 +404,7 @@ function pick(root: HTMLElement) {
   });
 }
 
-// Flow: one won game as a row of decision boxes. After p passes of practice
+// Flow (used only by the unpublished dissertation posts): one won game as a row of decision boxes. After p passes of practice
 // the win has reached p boxes back, each worth 0.99 of the box after it; the
 // slider sets p. Each box is shaded by its score.
 function flow(root: HTMLElement) {
@@ -460,4 +431,3 @@ const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qvie
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });
-export {};

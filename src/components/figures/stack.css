@@ -1,0 +1,54 @@
+/* One bar split into parts, with its legend (Stack). */
+/* One bar split into parts: --w is each part's share. */
+.prose .stack {
+  display: flex;
+  height: 1.5rem;
+  border-radius: 3px;
+  overflow: hidden;
+  gap: 2px;
+}
+.prose .stack span {
+  flex: var(--w) 0 0;
+  background: var(--bar);
+}
+.prose .stack span:nth-child(2) {
+  background: color-mix(in oklch, var(--bar) 60%, var(--pane));
+}
+/* span.is-data ties with :nth-child(2) and wins by coming later, so the result
+   keeps the accent whatever position it is in. */
+.prose .stack span.is-data {
+  background: var(--accent);
+}
+.prose .legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.prose .legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+.prose .legend li::before {
+  content: "";
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 2px;
+  background: var(--bar);
+}
+.prose .legend li:nth-child(2)::before {
+  background: color-mix(in oklch, var(--bar) 60%, var(--pane));
+  border: 1px solid var(--line);
+}
+.prose .legend li.is-data::before {
+  background: var(--accent);
+  border: 0;
+}
+.prose .legend b {
+  color: var(--ink);
+  font-weight: 500;
+}

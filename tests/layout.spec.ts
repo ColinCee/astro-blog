@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 // Layout smoke tests. They assert things a reader would notice immediately:
 // nothing scrolls sideways, and the reading column is wide enough to read.
@@ -53,7 +53,10 @@ for (const vp of viewports) {
         // staying laptop-sized in a wide window.
         const min =
           vp.width < 700 ? vp.width * 0.8 : vp.width >= 2000 ? 740 : 480;
-        expect(prose!.width, `${href} prose column width`).toBeGreaterThanOrEqual(min);
+        expect(
+          prose!.width,
+          `${href} prose column width`,
+        ).toBeGreaterThanOrEqual(min);
 
         // Every block in the post shares one left edge and one width, so the
         // header, body, figures, timeline and footer line up.
@@ -72,10 +75,19 @@ for (const vp of viewports) {
           );
         const right = Math.max(...boxes.map((b) => b.right));
         for (const box of boxes) {
-          expect(Math.abs(box.left - boxes[0].left), `${href} left edges`).toBeLessThanOrEqual(1);
-          expect(box.right, `${href} block wider than the column`).toBeLessThanOrEqual(right);
+          expect(
+            Math.abs(box.left - boxes[0].left),
+            `${href} left edges`,
+          ).toBeLessThanOrEqual(1);
+          expect(
+            box.right,
+            `${href} block wider than the column`,
+          ).toBeLessThanOrEqual(right);
         }
-        expect(right - boxes[0].left, `${href} column width`).toBeLessThanOrEqual(
+        expect(
+          right - boxes[0].left,
+          `${href} column width`,
+        ).toBeLessThanOrEqual(
           (await page.locator(".post__head").boundingBox())!.width + 1,
         );
       }
