@@ -23,14 +23,14 @@ My 2018 agent wins 73% of Aliens games and scores 47 points a game. The best age
 
 ## How did we beat it?
 
-Each row adds one change to the row above it:
+Each row adds one change to the row above it, starting from today's DQN, which actually does worse than my agent at 1M frames, but it's what every later change builds on:
 
 - **An extra 4M frames** of training, 5M in total.
 - **Win + points ÷ 10**, a new reward: +1 for a win, −1 for a loss, plus a tenth of the points.
 - **The IMPALA network**, a bigger one.
 - **A move every 2 frames** instead of every 4.
 
-<Fig title="How we beat my 2018 agent, one change at a time. Average of 3 runs, the line is their range">
+<Fig title="How we beat my 2018 agent, one change at a time. Average of 5 runs, the line is their range">
   <Pts rows={[
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
     {"name": "Today's DQN", "tag": "same 1M frames", "won": 51.2, "lo": 30.0, "hi": 78.0, "points": 39.88, "prev": {"won": 72.8, "points": 46.89}},
@@ -45,7 +45,7 @@ Winning comes first, and points only break ties between agents that win. As far 
 
 More practice did most of the work on wins, and the new reward took it to almost every game. After that, moving more often didn't change wins, but it added 20 points.
 
-At each step I kept whatever won, wins first and then points, but with only 5 runs each a gap only counts when the runs don't overlap, otherwise it's a tie and I keep the simpler or cheaper one.[^runs3]
+At each step I kept whatever won, wins first and then points, but only when a significance test over 5 runs says the gap is real, otherwise it's a tie and I keep the simpler or cheaper one.[^runs3]
 
 Each chart below starts from what the step before kept and changes one thing:
 
@@ -53,7 +53,7 @@ Each chart below starts from what the step before kept and changes one thing:
 - **Grey** is where the step before got to.
 - **Orange** is what a change added.
 - **Bold** is the one I kept for the next step.
-- **The dashed line** is what you win by just holding the shoot button. More on that below.
+- **The dashed line** is what you win by just holding the shoot button.[^button] More on that below.
 
 ## Do newer methods beat it?
 
@@ -72,7 +72,7 @@ I tried three, each with the same 1M frames my agent got:
   ]} />
 </Fig>
 
-None of them clearly beat it, and the runs vary a lot.[^runs] PPO was the odd one, it wins a bit more often than my agent but scores the least. So what was it doing?
+DQN and Rainbow don't beat it, and the runs vary a lot.[^runs] PPO was the odd one, it won more often than my agent but scored the least. So what was it doing?
 
 ## What was PPO doing?
 
@@ -87,7 +87,7 @@ Holding the shoot button, and nothing else. That wins 82% of Aliens games, and m
 
 I never checked that in 2018. To be honest, Claude didn't think to at first either. Overnight, the second model it had checking its work spotted two PPO runs with exactly the same scores. Claude guessed they were just holding one button, so it checked.[^results]
 
-My agent did learn something though. It gets 47 points a game against the button's 36, because it also shoots the bases in front of the aliens. So from here on:
+My agent did learn something though. It gets 47 points a game against the button's 37, because it also shoots the bases in front of the aliens. So from here on:
 
 - **Wins:** the button's 82% is the bar to beat.
 - **Points:** show who actually learned to play.
@@ -102,7 +102,7 @@ My agent did learn something though. It gets 47 points a game against the button
   ]} />
 </Fig>
 
-A lot, with 5M frames DQN and Rainbow both win more often than my agent and score more too, though PPO actually won less. That's about 17 minutes a run now, which would've been 2 or 3 days in 2018. Rainbow and DQN overlap though, so it's a tie and I carried on with DQN since it's the simpler one.
+A lot, with 5M frames DQN and Rainbow both win more often than my agent and score more too, though PPO's wins didn't improve. That's about 17 minutes a run now, which would've been 2 or 3 days in 2018. Rainbow and DQN are a tie though, so I carried on with DQN since it's the simpler one.
 
 ## Which reward works best?
 
@@ -137,7 +137,7 @@ The network is the part that turns the screen into a score for each move. The bi
   ]} />
 </Fig>
 
-It won every test game and scored 3 more points, but one run each overlaps, so by my rule it's only just a tie.
+It won every test game and scored 3 more points, and the test says that gain is real, so I kept it even though it takes about twice as long to train.
 
 ## How often should it move?
 
@@ -147,28 +147,22 @@ This is the one I never thought about in 2018. The agent holds each move for 4 f
   <Pts rows={[
     {"name": "Every 4 frames", "tag": "kept from before", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96},
     {"name": "Every 2 frames", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "kind": "hi"},
-    {"name": "Every frame", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 82.31, "prev": {"won": 100.0, "points": 61.96}},
+    {"name": "Every frame", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 82.48, "prev": {"won": 100.0, "points": 61.96}},
   ]} />
 </Fig>
 
 Wins hardly move since they were already near the top, so points are where it shows:
 
 - **Every 2 frames** scored 83 and won 495 of 500 games, in about 45 minutes a run.
-- **Every frame** scored 82 and won all 300, but took about 3 hours a run.
+- **Every frame** scored 82 and won all 500, but took about 2 hours a run.
 
-That's a tie on points, so I kept every 2 frames since it's over 3 times quicker to train, and that's the last row of the chart at the top. Both beat MCTS's 78 too, but it does still lose about 1 game in 100.[^moves]
+That's a tie on both, so I kept every 2 frames since it's about 2½ times quicker to train, and that's the last row of the chart at the top. Both beat MCTS's 78 too, but every 2 frames does still lose about 1 game in 100.[^moves]
 
 ## Why does it still lose 1 game in 100?
 
-I replayed the lost games. As far as I can tell, every loss is the same thing: a bomb lands on the ship while it sits still and shoots.
+I replayed lost games from earlier runs, and as far as I can tell every loss was the same thing: a bomb lands on the ship while it sits still and shoots. My guess was the reward, since each point is worth +0.1 and a death only costs −1, so taking a risk for more points is nearly free. But changing how much points are worth didn't clearly change it, points ÷ 20 lost 3 games in 500 and ÷ 10 and ÷ 5 lost 6 each.[^deaths]
 
-I think the reward is to blame:
-
-- **Points add up.** Each one is worth +0.1, and a game has about 40 kills. That's roughly +4.
-- **A death only costs −1.** So a risk for more points is nearly free.
-- **More weight on points, more deaths.** With a move every 4 frames, that's 0 deaths in 300 games at points ÷ 20, 4 at ÷ 10 and 7 at ÷ 5.[^deaths]
-
-The fix should be a loss that costs more than the points can earn, like ±10 for the result. That's a follow-up for another day.
+Moving every frame with the bigger network lost none of its 500 though, so maybe it's just reaction time, but that's too few losses to tell, and a follow-up for another day.
 
 ## What did I learn?
 
@@ -180,8 +174,9 @@ The fix should be a loss that costs more than the points can earn, like ±10 for
 
 [^rainbow]: Double DQN and prioritised replay (my 2018 agent's two), plus dueling networks, multi-step returns, distributional values and noisy networks. [The Rainbow paper](https://arxiv.org/abs/1710.02298)
 [^runs]: DQN's five runs won 30% to 78%. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^button]: On the same 500 test games as every agent: 82.4% wins and 37 points. PPO at 1M frames matched it game for game.
 [^results]: On two of my other three games, one button wins every game: Deceptizelda (hold right) and Wafer Thin Mints (any direction). [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^moves]: Every 2 frames is 5 runs and every frame 3, of 100 test games each. Points 82.4 to 83.2 against 82.2 to 82.4. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^runs3]: Every chart is 5 runs of the same code, each tested on 100 games, apart from every frame with the bigger network, which is 3. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^moves]: 5 runs of 100 test games each. Points 82.4 to 83.2 against 82.2 to 82.9, wins p = 0.19 and points p = 0.24. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^runs3]: Every chart is 5 runs of the same code, each tested on 100 games. A gap counts when Welch's t-test gives p < 0.05: 0.013 for more practice, 0.001 for the new reward, 0.025 for the bigger network and under 0.001 for moving every 2 frames. DQN against Rainbow (0.7) and every 2 frames against every frame (0.24) are ties. The four steps that count still pass a Holm correction for running several tests. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^log]: From my Claude Code session log, 18 and 19 October 2026.
-[^deaths]: From an earlier batch of 3 runs each, on an older version of the code that learns the same.
+[^deaths]: 5 runs each, all with a move every 4 frames and the standard network.
