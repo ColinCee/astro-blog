@@ -67,7 +67,7 @@ With the same 1M frames, DQN and Rainbow both do worse than my agent, and their 
 
 I never checked that in 2018, and to be honest Claude didn't either until its overnight reviewer spotted two PPO runs with the same scores.[^results] My agent did learn something though, it scores 47 against the button's 37 because it also shoots the bases, so the button's 82% is the bar for wins and my 47 is the bar for points.
 
-With 5M frames, DQN and Rainbow get past my agent on both, while PPO stops just holding the button but doesn't win any more often. That's 17 minutes a run now, which would've been 2 or 3 days in 2018. DQN and Rainbow tie, so I carried on with the simpler, faster DQN.[^practice]
+With 5M frames, DQN and Rainbow get past my agent on both, while PPO stops just holding the button but doesn't win any more often. That's 17 minutes a run now, which would've been 2 or 3 days in 2018. DQN and Rainbow tie, so I carried on with the simpler, faster DQN.[^practice] I sorted out practice before the network because at 1M frames the runs varied too much to tell smaller changes apart.
 
 ## Step 2: which reward works best?
 
