@@ -60,8 +60,8 @@ const keys = [
 <div class="pts" style={`--r1:${f(ref.at)};`}>
   <span class="pts__h"></span>
   <span class="pts__h"></span>
-  <span class="pts__h pts__wh">win rate</span>
-  <span class="pts__h pts__wh">avg points</span>
+  <span class="pts__h pts__wh">win rate (Δ)</span>
+  <span class="pts__h pts__wh">avg points (Δ)</span>
   {rows.map((r) => {
     const dw = r.prev && delta(r.won - r.prev.won, r.real?.won ?? true);
     const dp =
@@ -105,7 +105,7 @@ const keys = [
     </span>
     {keys.map((k, i) => (
       <span>
-        <b class={k.cls}>{k.word} change</b>: {k.text}
+        <b class={k.cls}>{k.word} Δ</b>: {k.text}
         {note && i === keys.length - 1 && (
           <sup>
             <a href={note.href}>{note.n}</a>
