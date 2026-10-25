@@ -140,11 +140,15 @@ What I learned:
 - Check the dumbest baseline first: holding one button needs no training, and I never tried it.
 - Run everything more than once: my three 2018 runs ended up to 14 percentage points apart on win rate.
 
+### Closing remarks
+
+Here's every training run from this project, on Aliens and my other three games, one square per day:
+
 <Fig title="All 400 training runs, at 2018 speed and now">
   <Days then={606} now={4.25} thenLabel="2018 speed: 606 days" nowLabel="2026: 4 days" />
 </Fig>
 
-That's every run I did, counting my other three games and the dead ends.
+That's about 4 days of training, against 606 at 2018 speed. Five runs per setting, the dead ends, trying every frame: none of it was possible in 2018. Fast feedback loops are what let me experiment, and Claude is what made the loop fast.
 
 [^test]: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) on the 5 runs: a gap counts as real when p < 0.05, so luck alone would give one that big less than 1 time in 20. Every p-value is in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^mcts]: One run of 51 games, since it doesn't learn.
