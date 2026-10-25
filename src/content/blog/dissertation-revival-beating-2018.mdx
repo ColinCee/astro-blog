@@ -73,7 +73,7 @@ With 5M frames, DQN and Rainbow get past my agent on both, while PPO stops just 
 
 So far it's just been the game's points.[^clip] I tried:
 
-- **Win:** +1 for a win, −1 for a loss.
+- **Win only:** +1 for a win, −1 for a loss.
 - **Win + points ÷ 10:** the same, plus a bit for scoring.
 - **My 2018 reward:** points and win, plus −0.5 on every move of a lost game.
 
@@ -82,12 +82,12 @@ So far it's just been the game's points.[^clip] I tried:
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
     {"name": "points", "tag": "kept so far", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32},
     {"name": "win + points ÷ 10", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": false}, "kind": "hi"},
-    {"name": "win", "won": 99.6, "lo": 99.0, "hi": 100.0, "points": 44.05, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
+    {"name": "win only", "won": 99.6, "lo": 99.0, "hi": 100.0, "points": 44.05, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
     {"name": "my 2018 reward", "won": 95.8, "lo": 94.0, "hi": 98.0, "points": 48.99, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
   ]} />
 </Fig>
 
-Win and win + points ÷ 10 tie on wins, so points decide it, 59 against 44.[^reward] My 2018 reward did its job back then, but it falls behind with more practice.
+Win only and win + points ÷ 10 tie on wins, so points decide it, 59 against 44.[^reward] My 2018 reward did its job back then, but it falls behind with more practice.
 
 ## Step 3: does a bigger network help?
 
@@ -131,7 +131,7 @@ Every 2 frames added 21 points, and every frame scored the same but took 2 hours
 [^button]: On the same 500 test games as today's agents: 82.4% wins and 37 points. PPO at 1M frames matched it game for game.
 [^results]: On two of my other three games, one button wins every game: Deceptizelda (hold right) and Wafer Thin Mints (any direction). [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^practice]: DQN, 1M to 5M frames: wins p = 0.013. DQN against Rainbow at 5M: wins p = 0.71, points p = 0.51.
-[^reward]: Against points: win + points ÷ 10 wins p = 0.0015. Win against win + points ÷ 10: wins p = 0.19, points p < 0.001. I also tried points ÷ 5 and ÷ 20: ÷ 5 scored 1.6 more (p = 0.047), but picking the best of several options makes a lucky gap more likely, and a Holm correction across the two needs p under 0.025, so it's a tie. The ÷ 5 and ÷ 20 runs ran on later versions of the code with the same learning.
+[^reward]: Against points: win + points ÷ 10 wins p = 0.0015. Win only against win + points ÷ 10: wins p = 0.19, points p < 0.001. I also tried points ÷ 5 and ÷ 20: ÷ 5 scored 1.6 more (p = 0.047), but picking the best of several options makes a lucky gap more likely, and a Holm correction across the two needs p under 0.025, so it's a tie. The ÷ 5 and ÷ 20 runs ran on later versions of the code with the same learning.
 [^network]: Wins p = 0.07, points p = 0.025.
 [^moves]: Every 4 to every 2 frames: points p < 0.001. Every 2 against every frame: wins p = 0.19, points p = 0.24. Three of the five every-frame runs ran on an earlier version of the code with the same learning.
 [^mcts]: One run of 51 games: MCTS doesn't learn, so its games only vary with the level.
