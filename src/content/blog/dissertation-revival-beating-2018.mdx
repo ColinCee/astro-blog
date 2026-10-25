@@ -6,20 +6,20 @@ statLabel: "win rate, 2018 vs 2026"
 figures:
   - label: "My 2018 agent"
     value: "73%, 47 pts"
-  - label: "Best 2026 agent"
+  - label: "Final 2026 agent"
     value: "99%, 83 pts"
 pubDate: "Oct 21 2026"
 ---
 <Fig>
   <div class="vids">
     <Clip src="/blog/gvgai/aliens-2018-agent" label="My 2018 agent playing Aliens, winning with 57 points" rate={0.5}><b>My 2018 agent</b>: 73% wins<br />this game: won, 57 points</Clip>
-    <Clip src="/blog/gvgai/aliens-dqn-2026-best" label="The best 2026 agent playing the same game, winning with 85 points" rate={0.5} hi><b>Best 2026 agent</b>: 99% wins<br />this game: won, 85 points</Clip>
+    <Clip src="/blog/gvgai/aliens-dqn-2026-best" label="The final 2026 agent playing the same game, winning with 85 points" rate={0.5} hi><b>Final 2026 agent</b>: 99% wins<br />this game: won, 85 points</Clip>
   </div>
 </Fig>
 
 In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster, so I wanted to see if today's methods could beat what I built as an undergrad.
 
-My dissertation says my agent won 82.6% of Aliens games, but that was one run, measured while it was still training.[^2018] Retrained and tested properly, it won 73% of 500 games, scoring 47 points a game on average. The best agent Claude trained won 99% of games, scoring 83 points on average.
+My dissertation says my agent won 82.6% of Aliens games, but that was one run, measured while it was still training.[^2018] Retrained and tested properly, it won 73% of 500 games, scoring 47 points a game on average. The final agent won 99% of games, scoring 83 points on average.
 
 ## How did we beat it?
 
@@ -135,7 +135,7 @@ The final agent wins 99% of games to my 2018 agent's 73%, and scores 83, more th
 - **Question the settings you copied.** Holding each move for 4 frames came from Atari and cost about 20 points here.
 - **Check the dumbest baseline first.** Holding one button needs no training, and I never tried it.
 - **Run everything more than once.** My three 2018 runs ended up to 14 percentage points apart on win rate.
-- **Beating MCTS.** Back when I wrote my dissertation, my agent didn't come close to MCTS, which can look ahead. Now my best agent scores more.
+- **Beating MCTS.** Back when I wrote my dissertation, my agent didn't come close to MCTS, which can look ahead. Now my final agent scores more.
 
 [^test]: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) on the 5 runs: a gap counts as real when p < 0.05, so luck alone would give one that big less than 1 time in 20. Every p-value is in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^mcts]: One run of 51 games, since it doesn't learn.
