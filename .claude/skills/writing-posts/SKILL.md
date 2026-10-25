@@ -21,14 +21,15 @@ Colin is a visual reader who skims. A post is one story, results first, in his o
 
 ## 2. His voice
 
-Write how he talks in chat: casual, conversational British English, first person.
+Write how he talks in chat and writes himself: casual, conversational British English. Use "I" for his own work and memories, and "we" for what he and Claude did together. His 2018 dissertation and the passages he's written into posts are the reference; Claude's own prose isn't.
 
-- **Hedge where he would.** Use phrases like "I kind of assumed", "to be honest", "as far as I can tell". No absolutes, and no invented consensus ("everyone says", "the common take").
-- **Sentences run on the way he talks.** Comma run-ons are fine. Never write clipped fragments ("Not once. 1,370 times.") or punchy one-liners. No semicolons, no em dashes, active voice.
+- **Say things plainly, without AI drama.** He states strong claims straight ("Take a look at the massive difference in speed") and hedges where he's unsure ("I think", "kind of", "to be honest"). What he can't stand is manufactured contrast and invented consensus: "It isn't X. It's Y.", "everyone thinks", "the common take", clipped fragments ("Not once. 1,370 times."), one-line punchlines.
+- **Sentences run on the way he talks**, joined by commas, "but", "so" and "and". He opens with "However", "So", "Contrary to popular belief", "What it does is", "fundamentally" and "I remember". No semicolons, no em dashes, active voice.
+- **He explains through story and scale.** He'll give a short history to set the scene (Deep Blue, then Watson, then AlphaGo in his dissertation), a comparison that makes a number land (atoms in the universe), a memory ("leave the PC running overnight"), and a question that sets up the next part ("why not have multiple agents playing at the same time?").
 - **About three sentences a paragraph, each a new fact.** Cut what the previous sentence or a figure already says, never explain what a later section covers, and end on a nudge to the next part.
-- **Headings are questions or dates**, never "Background" or "Results".
-- **Keep his words.** When he's written a passage, fix only facts and grammar, and tell him what changed. Never "tidy" it into your prose.
-- **Less is more, formatted for scanning.** Lists and tables are for things with real structure, not decoration. No bold lead-ins on every bullet, no restating the chart, no detail a curious reader can follow a link to.
+- **Headings are short**: a question ("How did we beat it?"), a plain statement ("PPO actually wins more at 1M frames") or a plain label ("Closing remarks"). Never report-speak like "Background" or "Results and discussion".
+- **Keep his words.** When he's written a passage, fix only facts and real grammar errors (not his missing commas or run-ons), and tell him what changed. Never "tidy" it into your prose, and never upgrade or downgrade how sure he sounds.
+- **Less is more, formatted for scanning.** Lists and tables are for things with real structure, like his dissertation's numbered "Fully Deterministic - …" definitions, not decoration. No bold lead-ins on every bullet, no restating the chart, no detail a curious reader can follow a link to.
 
 ## 3. Numbers and claims
 
@@ -41,7 +42,7 @@ Write how he talks in chat: casual, conversational British English, first person
 
 ## 4. Figures
 
-Show, don't ask: build the change or two or three distinct variations, put them in front of him, then iterate.
+Show, don't ask: build the change or two or three distinct variations, put them in front of him, then iterate. His 2018 dissertation is the opposite of the target here: default plots with a "Figure 5.1: Comparison of…" caption underneath. The figures in his recent posts are the standard.
 
 - **Pick the form by the job.** Bars drawn to scale for A vs B. A step chart for sequential improvements. A dot plot for comparing options. A bridge chart for where time goes. A grid of squares for time at a glance. Trees or arrows for structure. Never plain boxes with text in them, and skip 3D or click-to-reveal unless it explains better than a still.
 - **Chart basics, every time.**
