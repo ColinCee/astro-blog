@@ -142,13 +142,13 @@ What I learned:
 
 ### Closing remarks
 
-Here's every training run from this project, on Aliens and my other three games, one square per day:
+Take a look at the massive difference in speed. While reviving my dissertation I trained various agents, not just on Aliens but on other games in the GVGAI framework, and all those runs added up to about 4 days of training.
 
 <Fig title="All 400 training runs, at 2018 speed and now">
   <Days then={606} now={4.25} thenLabel="2018 speed: 606 days" nowLabel="2026: 4 days" />
 </Fig>
 
-That's about 4 days of training, against 606 at 2018 speed. Five runs per setting, the dead ends, trying every frame: none of that fits in a 2018 dissertation. Fast feedback loops are what let me experiment, and Claude is what made the loop fast.
+Feedback loops are important, and the faster you make them the more things you can experiment with. I think most of these experiments and findings would've been infeasible back then without Claude and the optimisations from part 1.
 
 [^test]: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) on the 5 runs: a gap counts as real when p < 0.05, so luck alone would give one that big less than 1 time in 20. Every p-value is in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^mcts]: One run of 51 games, since it doesn't learn.
