@@ -115,11 +115,12 @@ const shipped = (await getCollection("shipped")).sort(
   /* On a phone each row grows as it scrolls in, so it needn't wait for the
      pane's load-time entrance. */
   @media (max-width: 900px) {
+    /* Rows already on screen together still step down one by one. */
     .ship__fill {
-      animation-delay: 0.2s;
+      animation-delay: calc(0.2s + var(--i) * 0.12s);
     }
     .ship__bar--after .ship__fill {
-      animation-delay: 0.5s;
+      animation-delay: calc(0.5s + var(--i) * 0.12s);
     }
   }
   .ship__bar--after b {

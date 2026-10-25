@@ -80,3 +80,30 @@ test("desktop holds nothing back: the writing lines print on load", async ({
     timeout: 5000,
   });
 });
+
+test("phone: whoami waits to type until the terminal scrolls in", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  // The hero sizes to the screen, so on real phones the terminal usually
+  // starts on screen. Push it below the release line to test the case where
+  // it doesn't (a long hero, a landscape phone).
+  await page.route("/", async (route) => {
+    const res = await route.fetch();
+    const html = (await res.text()).replace(
+      "</head>",
+      "<style>.term { margin-top: 120vh !important; }</style></head>",
+    );
+    await route.fulfill({ response: res, body: html });
+  });
+  await page.goto("/");
+  const pane = page.locator(".pane--who");
+  const first = page.locator(".who__session .js-cmd").first();
+
+  await page.waitForTimeout(1500);
+  expect(await first.textContent()).toBe("");
+
+  await pane.evaluate((el) => el.scrollIntoView({ block: "start" }));
+  await expect(first).toHaveText("whoami");
+  await expect(pane).not.toHaveClass(/is-held/);
+});

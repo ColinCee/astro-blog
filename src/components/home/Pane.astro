@@ -47,7 +47,8 @@ const { idx, name, area, active = false } = Astro.props;
   @media (max-width: 900px) {
     .pane--ship,
     .pane--writing {
-      animation-delay: 0s;
+      /* A beat, so the hold lands before the first frame of the rise. */
+      animation-delay: 0.1s;
     }
   }
   .pane.is-active {
@@ -116,6 +117,15 @@ const { idx, name, area, active = false } = Astro.props;
     items.forEach((el) => {
       el.classList.add("is-held");
       io.observe(el);
+    });
+    // Tabbing into something held (at opacity 0) shows it straight away.
+    document.addEventListener("focusin", (e) => {
+      let held = (e.target as Element).closest?.(".is-held");
+      while (held) {
+        held.classList.remove("is-held");
+        io.unobserve(held);
+        held = held.closest(".is-held");
+      }
     });
   }
 </script>
