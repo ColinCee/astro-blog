@@ -16,11 +16,11 @@ import { existsSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 
 const args = process.argv.slice(2);
-const flag = (name) => {
+const flag = (name: string): string | null => {
   const at = args.indexOf(name);
   return at >= 0 ? args.splice(at, 2)[1] : null;
 };
-const toggle = (name) => {
+const toggle = (name: string): boolean => {
   const at = args.indexOf(name);
   if (at >= 0) args.splice(at, 1);
   return at >= 0;
@@ -38,7 +38,7 @@ if (!after || !out) {
 
 mkdirSync(dirname(out), { recursive: true });
 
-const probe = (file, entries) =>
+const probe = (file: string, entries: string) =>
   execFileSync("ffprobe", [
     "-v",
     "error",
@@ -52,17 +52,17 @@ const probe = (file, entries) =>
   ])
     .toString()
     .trim();
-const ffmpeg = (...a) =>
+const ffmpeg = (...a: string[]) =>
   execFileSync("ffmpeg", ["-y", "-loglevel", "error", ...a], {
     maxBuffer: 64 * 1024 * 1024,
   });
 
-const isImage = (f) => /\.(png|jpe?g|webp)$/i.test(f);
+const isImage = (f: string) => /\.(png|jpe?g|webp)$/i.test(f);
 const font =
   process.platform === "win32"
     ? "fontfile='C\\:/Windows/Fonts/consola.ttf':"
     : "font=monospace:";
-const tag = (text) =>
+const tag = (text: string) =>
   `drawtext=${font}text=${text}:x=16:y=16:fontsize=32:fontcolor=white:box=1:boxcolor=black@0.7:boxborderw=10`;
 
 // Nothing to compare against: the one version, labelled.
@@ -81,8 +81,10 @@ if (isNew) {
   console.log(out);
   process.exit(0);
 }
+if (!before) throw new Error("usage: pnpm compare <before> <after> <out>");
 
-const dims = (f) => probe(f, "stream=width,height").split(",").map(Number);
+const dims = (f: string) =>
+  probe(f, "stream=width,height").split(",").map(Number);
 const [[w0, h0], [w1, h1]] = [dims(before), dims(after)];
 const wide = Math.max(w0, w1);
 const tall = Math.max(h0, h1);
@@ -94,7 +96,7 @@ const length = Math.max(...lengths);
 
 // The shorter clip holds its last frame, so both end together; a smaller
 // image is padded at the bottom and right, so both start level.
-const label = (text) =>
+const label = (text: string) =>
   (length ? `tpad=stop_mode=clone:stop_duration=${length},` : "") +
   `pad=${wide}:${tall}:0:0:white,${tag(text)}`;
 const sideBySide = stacked
@@ -136,7 +138,7 @@ if (noStill) process.exit(0);
 // Each measure is the mean brightness of a difference, frame by frame; the
 // clips must be the same size, as `pnpm record` makes them.
 if (!still) {
-  const measure = (graph, ...inputs) =>
+  const measure = (graph: string, ...inputs: string[]) =>
     ffmpeg(
       ...inputs.flatMap((f) => ["-i", f]),
       "-filter_complex",
@@ -150,14 +152,14 @@ if (!still) {
       .flatMap((l) => l.match(/YAVG=([\d.]+)/)?.[1] ?? [])
       .map(Number);
   const diff = measure("[0][1]blend=all_mode=difference", before, after);
-  const motion = (f) => measure("[0]tblend=all_mode=difference", f);
+  const motion = (f: string) => measure("[0]tblend=all_mode=difference", f);
   const [moveA, moveB] = [motion(before), motion(after)];
   const fps = 60;
   let best = { i: diff.length - 1, d: -1 };
   diff.forEach((d, i) => {
     // Still for about 150 ms either side, so it isn't a flick's first frame.
-    const still = (m) =>
-      m.slice(Math.max(0, i - 9), i + 10).every((x) => x < 0.3);
+    const still = (m: number[]) =>
+      m.slice(Math.max(0, i - 9), i + 10).every((x: number) => x < 0.3);
     if (i / fps >= 0.5 && still(moveA) && still(moveB) && d > best.d)
       best = { i, d };
   });

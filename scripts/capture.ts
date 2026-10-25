@@ -9,7 +9,7 @@
 //                         (1280x800) or WxH, comma-separated; default
 //                         phone,desktop. Files are named after them.
 //   --dark                prefers-color-scheme: dark
-//   --steps <file.mjs>    runs `export default async (page) => {}` after load
+//   --steps <file.ts>    runs `export default async (page) => {}` after load
 //                         and before capture: hover, click, fill a form, wait
 //   --scroll [selector]   scroll down until the selector's bottom is on
 //                         screen (default: two and a half screens)
@@ -55,21 +55,27 @@ import {
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { chromium } from "@playwright/test";
+import { chromium, type Page } from "@playwright/test";
+
+declare global {
+  interface Window {
+    __scrolled?: boolean;
+  }
+}
 
 const args = process.argv.slice(2);
-const flag = (name) => {
+const flag = (name: string): string | null => {
   const at = args.indexOf(name);
   return at >= 0 ? args.splice(at, 2)[1] : null;
 };
-const toggle = (name) => {
+const toggle = (name: string): boolean => {
   const at = args.indexOf(name);
   if (at >= 0) args.splice(at, 1);
   return at >= 0;
 };
 // --scroll takes an optional selector: the next word, unless it's another
 // option or the path.
-let scroll = null;
+let scroll: { sel: string | null } | null = null;
 {
   const at = args.indexOf("--scroll");
   if (at >= 0) {
@@ -89,7 +95,7 @@ const cache = flag("--cache") ?? join(tmpdir(), "record-cache");
 const [base, out, path = "/"] = args;
 if (!base || !out) {
   console.error(
-    "usage: pnpm screenshot|record <base-url> <out-dir> [path] [--views phone,desktop] [--dark] [--steps file.mjs] [--scroll [selector]] [--element selector] [--wait ms] [--cache dir]",
+    "usage: pnpm screenshot|record <base-url> <out-dir> [path] [--views phone,desktop] [--dark] [--steps file.ts] [--scroll [selector]] [--element selector] [--wait ms] [--cache dir]",
   );
   process.exit(1);
 }
@@ -103,7 +109,7 @@ if (element && !still) {
   console.error("--element is for screenshots: use pnpm screenshot");
   process.exit(1);
 }
-const named = {
+const named: Record<string, [number, number]> = {
   phone: [390, 844],
   tablet: [768, 1024],
   desktop: [1280, 800],
@@ -116,7 +122,7 @@ const sizes = views.map((v) => {
   }
   return { name: v, width, height };
 });
-const steps = stepsFile
+const steps: ((page: Page) => Promise<void>) | null = stepsFile
   ? (await import(pathToFileURL(resolve(stepsFile)).href)).default
   : null;
 mkdirSync(out, { recursive: true });
@@ -139,13 +145,13 @@ for (const s of sizes) {
   await ctx.addInitScript((fixed) => {
     const Real = Date;
     globalThis.Date = class extends Real {
-      constructor(...a) {
-        super(...(a.length ? a : [fixed]));
+      constructor(...a: unknown[]) {
+        super(...((a.length ? a : [fixed]) as [number]));
       }
       static now() {
         return fixed;
       }
-    };
+    } as unknown as DateConstructor;
     let seed = 42;
     Math.random = () => {
       seed = (seed + 0x6d2b79f5) | 0;
@@ -193,12 +199,12 @@ for (const s of sizes) {
     // script-driven motion has no such signal, so raise --wait for that.
     if (scroll)
       await page.evaluate(
-        ([sel, max]) => {
+        ({ sel, max }) => {
           const el = sel && document.querySelector(sel);
           if (el) el.scrollIntoView({ block: "end", behavior: "instant" });
           else scrollTo({ top: max, behavior: "instant" });
         },
-        [scroll.sel, s.height * 2.5],
+        { sel: scroll.sel, max: s.height * 2.5 },
       );
     if (element)
       await page
@@ -232,10 +238,11 @@ for (const s of sizes) {
   }
 
   // Chrome sends a frame whenever the page repaints, with its time.
-  const frames = [];
+  const frames: { data: string; t: number }[] = [];
   const cdp = await ctx.newCDPSession(page);
   cdp.on("Page.screencastFrame", ({ data, metadata, sessionId }) => {
-    frames.push({ data, t: metadata.timestamp });
+    // The time is optional in the protocol; Chrome always sends it here.
+    frames.push({ data, t: metadata.timestamp ?? Date.now() / 1000 });
     cdp.send("Page.screencastFrameAck", { sessionId }).catch(() => {});
   });
   await cdp.send("Page.startScreencast", {
@@ -251,12 +258,12 @@ for (const s of sizes) {
   // trip and the smooth-scroll animation vary from run to run.
   if (scroll)
     await page.addInitScript(
-      ([sel, max]) => {
+      ({ sel, max }) => {
         const wait = 1200; // read the top first
         const flick = 350; // one thumb flick, easing out
         const pause = 1300; // then read
         let from = 0;
-        let target = null;
+        let target: number | null = null;
         const step = () => {
           const t = performance.now();
           if (t >= wait) {
@@ -289,7 +296,7 @@ for (const s of sizes) {
         };
         requestAnimationFrame(step);
       },
-      [scroll.sel, s.height * 2.5],
+      { sel: scroll.sel, max: s.height * 2.5 },
     );
 
   await page.goto(base + path);
