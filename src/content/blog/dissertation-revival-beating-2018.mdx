@@ -39,24 +39,29 @@ Each row adds one change, and I only kept it if a significance test over 5 runs 
 - **Orange** is a real gain, **red** a real drop and **grey** a tie.
 - **Bold** is what I kept.
 
-## Do today's methods beat it with the same practice?
+<Recipe steps={["DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="What did I learn" />
 
-I tried three, with the same 1M frames as my agent:
+## Step 1: which method, and how much practice?
+
+I tried three methods, first with the same 1M frames as my agent, then with 5 times that:
 
 - **[DQN](https://www.nature.com/articles/nature14236):** DeepMind's 2015 Atari method, and my agent is this plus 2 tricks.
 - **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.[^rainbow]
 - **[PPO](https://arxiv.org/abs/1707.06347):** a different kind of learner.
 
-<Fig title="Same 1M frames">
+<Fig title="1M → 5M frames">
   <Pts rows={[
-    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
-    {"name": "DQN", "tag": "today's version", "won": 51.2, "lo": 30.0, "hi": 78.0, "points": 39.88, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": true}},
-    {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 64.2, "lo": 47.0, "hi": 82.0, "points": 42.73, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": false}},
-    {"name": "PPO", "tag": "= holding shoot", "won": 82.4, "lo": 80.0, "hi": 85.0, "points": 37.35, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base", "group": "baseline"},
+    {"name": "DQN", "tag": "today's version", "won": 51.2, "lo": 30.0, "hi": 78.0, "points": 39.88, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": true}, "group": "same 1M frames"},
+    {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 64.2, "lo": 47.0, "hi": 82.0, "points": 42.73, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": false}, "group": "same 1M frames"},
+    {"name": "PPO", "tag": "= holding shoot", "won": 82.4, "lo": 80.0, "hi": 85.0, "points": 37.35, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "group": "same 1M frames"},
+    {"name": "DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 51.2, "points": 39.88}, "real": {"won": true, "points": true}, "kind": "hi", "group": "5M frames"},
+    {"name": "Rainbow", "tag": "a tie with DQN", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 64.2, "points": 42.73}, "real": {"won": true, "points": true}, "group": "5M frames"},
+    {"name": "PPO", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 82.4, "points": 37.35}, "real": {"won": false, "points": true}, "group": "5M frames"},
   ]} />
 </Fig>
 
-DQN and Rainbow both do worse than my agent with the same practice, and their runs vary a lot.[^runs] PPO looks like the winner since it wins the most, but it also scores the least, and it turns out it's just holding the shoot button, which wins 82% on its own, about what my dissertation said my agent won.[^button]
+With the same practice, DQN and Rainbow both do worse than my agent, and their runs vary a lot.[^runs] PPO looks like the winner since it wins the most, but it also scores the least, and it turns out it's just holding the shoot button, which wins 82% on its own, about what my dissertation said my agent won.[^button]
 
 <Fig>
   <div class="vids">
@@ -65,22 +70,9 @@ DQN and Rainbow both do worse than my agent with the same practice, and their ru
   </div>
 </Fig>
 
-I never checked that in 2018, and to be honest Claude didn't either until its overnight reviewer spotted two PPO runs with the same scores.[^results] My agent did learn something though, it scores 47 against the button's 37 because it also shoots the bases. So from here, the button's 82% is the bar for wins and my 47 is the bar for points.
+I never checked that in 2018, and to be honest Claude didn't either until its overnight reviewer spotted two PPO runs with the same scores.[^results] My agent did learn something though, it scores 47 against the button's 37 because it also shoots the bases, so the button's 82% is the bar for wins and my 47 is the bar for points.
 
-<Recipe steps={["DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="What did I learn" />
-
-## Step 1: does more practice help?
-
-<Fig title="1M → 5M frames">
-  <Pts rows={[
-    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
-    {"name": "DQN", "tag": "1M → 5M frames", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 51.2, "points": 39.88}, "real": {"won": true, "points": true}, "kind": "hi"},
-    {"name": "Rainbow", "tag": "1M → 5M frames, a tie with DQN", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 64.2, "points": 42.73}, "real": {"won": true, "points": true}},
-    {"name": "PPO", "tag": "1M → 5M frames", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 82.4, "points": 37.35}, "real": {"won": false, "points": true}},
-  ]} />
-</Fig>
-
-A lot, 5M frames gets DQN and Rainbow past my agent on both, while PPO, still holding the button, doesn't improve. That's 17 minutes a run now, which would've been 2 or 3 days in 2018. DQN and Rainbow tie, so I carried on with the simpler, faster DQN.[^practice]
+With 5M frames, DQN and Rainbow get past my agent on both, while PPO, still holding the button, doesn't improve. That's 17 minutes a run now, which would've been 2 or 3 days in 2018. DQN and Rainbow tie, so I carried on with the simpler, faster DQN.[^practice]
 
 ## Step 2: which reward works best?
 
