@@ -1,7 +1,14 @@
 // Records a page as MP4s for a pull request: a phone scrolling down it and a
-// desktop watching it load. Needs a running server and ffmpeg on PATH.
+// desktop watching it load. Needs ffmpeg on PATH.
 //
-//   pnpm record <base-url> <out-dir> [path] [--until <selector>] [--hold <selector>]
+//   pnpm record <base-url> <out-dir> [path] [--until <selector>] [--hold <selector>] [--cache <dir>]
+//
+// Before and after, as shipped, each on its own port:
+//   git worktree add --detach ../before <ref>     (then in ../before:)
+//   pnpm install --frozen-lockfile && pnpm astro build && pnpm astro preview --port 4401
+//   pnpm record http://localhost:4401 <tmp>/before / --until .term   (same for after)
+//   pnpm compare <tmp>/before/phone.mp4 <tmp>/after/phone.mp4 <tmp>/phone.mp4
+//   then stop the servers and `git worktree remove` the copies.
 //
 // The phone scrolls in flicks with a pause after each, like a reader, on the
 // same timetable every run, so recordings of two versions line up, until
@@ -11,9 +18,26 @@
 //
 // Frames come from Chrome's screencast (a sharp JPEG on every repaint), not
 // Playwright's video, which is low bitrate and blurs text.
+//
+// So the two versions differ only where the code does: the clock is fixed,
+// Math.random is seeded, and anything from another origin (an API, fonts) is
+// answered from --cache, shared by both runs (default: a folder in the temp
+// directory; delete it to refresh). The scroll goes by position, so a version
+// whose content above moved shows different content at the same moment.
+// Scroll position matches between runs to the pixel, but when an animation
+// starts can still vary by about 0.3s from run to run, so don't read fine
+// timing differences from the clips.
 
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { chromium } from "@playwright/test";
@@ -25,14 +49,17 @@ const flag = (name) => {
 };
 const hold = flag("--hold");
 const until = flag("--until");
+const cache = flag("--cache") ?? join(tmpdir(), "record-cache");
 const [base, out, path = "/"] = args;
 if (!base || !out) {
   console.error(
-    "usage: pnpm record <base-url> <out-dir> [path] [--until <selector>] [--hold <selector>]",
+    "usage: pnpm record <base-url> <out-dir> [path] [--until <selector>] [--hold <selector>] [--cache <dir>]",
   );
   process.exit(1);
 }
 mkdirSync(out, { recursive: true });
+mkdirSync(cache, { recursive: true });
+const origin = new URL(base).origin;
 
 const shots = [
   { name: "phone", width: 390, height: 844, scroll: true },
@@ -42,23 +69,65 @@ const shots = [
 const browser = await chromium.launch();
 for (const s of shots) {
   const size = { width: s.width, height: s.height };
-  // Warm the dev server first, so its first-load reload isn't recorded.
-  const warm = await browser.newPage({ viewport: size });
-  await warm.goto(base + path);
-  await warm.waitForTimeout(2000);
-  await warm.close();
-
   const ctx = await browser.newContext({ viewport: size });
-  const page = await ctx.newPage();
-  if (hold)
-    await page.route(base + path, async (route) => {
-      const res = await route.fetch();
-      const html = (await res.text()).replace(
-        "</head>",
-        `<style>${hold} { margin-top: 120vh !important; }</style></head>`,
+  await ctx.clock.setFixedTime(new Date("2026-01-01T12:00:00Z"));
+  await ctx.addInitScript(() => {
+    let seed = 42;
+    Math.random = () => {
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  });
+  await ctx.route("**/*", async (route) => {
+    const req = route.request();
+    if (!req.url().startsWith(origin)) {
+      const key = join(
+        cache,
+        createHash("sha1").update(req.url()).digest("hex"),
       );
-      await route.fulfill({ response: res, body: html });
-    });
+      if (!existsSync(`${key}.json`)) {
+        const res = await route.fetch();
+        writeFileSync(`${key}.body`, await res.body());
+        writeFileSync(
+          `${key}.json`,
+          JSON.stringify({ status: res.status(), headers: res.headers() }),
+        );
+      }
+      const { status, headers } = JSON.parse(
+        readFileSync(`${key}.json`, "utf8"),
+      );
+      // The saved body is already decoded, so drop what described the wire.
+      delete headers["content-encoding"];
+      delete headers["content-length"];
+      return route.fulfill({
+        status,
+        headers,
+        body: readFileSync(`${key}.body`),
+      });
+    }
+    if (hold && req.resourceType() === "document") {
+      const res = await route.fetch();
+      const html = await res.text();
+      if (!html.includes("</head>"))
+        throw new Error(`--hold: no </head> in ${req.url()}`);
+      return route.fulfill({
+        response: res,
+        body: html.replace(
+          "</head>",
+          `<style>${hold} { margin-top: 120vh !important; }</style></head>`,
+        ),
+      });
+    }
+    return route.continue();
+  });
+  // Load it once first, so fonts and scripts come from cache in the take.
+  const warm = await ctx.newPage();
+  await warm.goto(base + path);
+  await warm.waitForTimeout(1500);
+  await warm.close();
+  const page = await ctx.newPage();
 
   // Chrome sends a frame whenever the page repaints, with its time.
   const frames = [];
@@ -85,20 +154,18 @@ for (const s of shots) {
         const flick = 350; // one thumb flick, easing out
         const pause = 1300; // then read
         let from = 0;
-        let target = null;
         const step = () => {
           const t = performance.now();
-          if (target === null && t >= wait) {
+          if (t >= wait) {
+            // Measured every frame, since fonts and images move the layout.
             const el = sel && document.querySelector(sel);
             const limit = document.documentElement.scrollHeight - innerHeight;
-            target = Math.min(
+            const target = Math.min(
               limit,
               el
                 ? el.getBoundingClientRect().bottom + scrollY - innerHeight
                 : max,
             );
-          }
-          if (target !== null) {
             const dist = Math.round(innerHeight * 0.4);
             const into = t - wait;
             const n = Math.floor(into / (flick + pause));
@@ -134,12 +201,11 @@ for (const s of shots) {
   await ctx.close();
 
   // Each frame lasts until the next one; ffmpeg's concat list says how long.
-  // The frame on screen when navigation began is stretched back to it.
-  const first = Math.max(
-    0,
-    frames.findLastIndex((f) => f.t <= start),
-  );
-  frames.splice(0, first);
+  // Frames from before navigation (the blank page) are dropped, and the first
+  // frame after it is stretched back to the start.
+  const kept = frames.filter((f) => f.t >= start);
+  if (!kept.length) throw new Error(`no frames recorded for ${s.name}`);
+  frames.splice(0, frames.length, ...kept);
   frames[0].t = start;
   const dir = mkdtempSync(join(tmpdir(), "record-"));
   const list = frames.map((f, i) => {
