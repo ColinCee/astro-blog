@@ -375,16 +375,17 @@ homepage terminal window's ambient lift, nothing else.
   and how many fit), `<Splits>` (bars cut into parts with a key above; a part with
   no text is a sliver whose time goes after the bar; `est` rows are estimates,
   drawn lighter), `<Breakdown>` (one row per part of a total: explanation,
-  bar, time and share) and `<Pts>` (games won as the bar with the runs' range,
-  wins and points beside it, each row's change from `prev` in the accent or in
-  `--loss` red, or grey when `real` says a significance test calls it a tie; `base` stripes the 2018 baseline; one dashed line for holding
-  shoot). Recordings are `<Clip src label rate hi>` (pixelated, playing only while
+  bar, time and share) and `<Pts>` (win rate as the bar with the runs' range,
+  win rate and points beside it; each change from `prev` green for a real gain,
+  `--loss` red for a real drop, faint for a tie, by the `real` flags; the kept
+  row alone in the accent; `base` stripes the 2018 baseline; `before` splits a
+  bar into the earlier value and what a change added or lost; one dashed line
+  for holding shoot; a legend inside names only what the chart uses). Recordings are `<Clip src label rate hi>` (pixelated, playing only while
   on screen and never on their own under reduced motion); anything inside a Clip
   is its caption, and several sit side by side in a `<div class="vids">`. A post told as numbered steps can carry `<Recipe steps until>`: a
   panel floating in the right margin (only where the margin fits it), the passed
   steps in ink and the current one in the accent, shown from the "Step 1"
-  heading until the `until` one. In `<Pts>`, a row's `group` opens a labelled
-  band under a hairline (baseline, starting point, tried).
+  heading until the `until` one.
   Marks are neutral; only the result takes the accent. Aim for at least one figure
   per post so no screen is text alone. Explanations sit next to what they explain
   (a short title above, labels on the marks), not in a paragraph under the figure.

@@ -1,12 +1,13 @@
 ---
-// Win rate and average points, one row per setup: the bar is win rate (0-100%) with the
-// spread of runs as a whisker, then wins and points with their change from
-// `prev` (the step before, or the baseline). A row that wins more than its
-// `prev` draws the gain in the accent. `base` stripes the baseline (my 2018
-// version), `hi` bolds the pick. `ref` is the dashed line (holding shoot).
-// A row's `group` (e.g. baseline, starting point, tried) opens a labelled
-// band split from the one above by a hairline.
-// Hover or tap a row and the others fade. Styles: pts.css.
+// Win rate and average points, one row per setup: the bar is win rate (0-100%)
+// with the spread of runs as a whisker, then win rate and points with their
+// change from `prev` (what the row builds on): green when a significance test
+// calls it a real gain (`real`), red a real drop, faint a tie. `base` stripes
+// the baseline (my 2018 agent), `hi` marks the option kept, in the accent.
+// `before` splits the bar: its first section is the earlier value (e.g. 1M
+// frames), the next what the change added, or an empty outline for what it lost.
+// `ref` is the dashed line (holding shoot). A legend above names only what the
+// chart uses. Hover or tap a row and the others fade. Styles: pts.css.
 interface Row {
   name: string;
   tag?: string;
@@ -15,10 +16,9 @@ interface Row {
   hi: number;
   points: number;
   prev?: { won: number; points: number };
-  kind?: "base" | "hi";
-  group?: string;
-  // which changes from `prev` a significance test calls real; the others are ties, drawn grey
   real?: { won: boolean; points: boolean };
+  before?: { won: number; label: string };
+  kind?: "base" | "hi";
 }
 interface Props {
   rows: Row[];
@@ -34,55 +34,69 @@ const delta = (d: number, real = true) =>
   Math.abs(d) < 1
     ? { cls: "pts__same", text: "±0" }
     : {
-        cls: !real ? "pts__same" : d > 0 ? undefined : "pts__minus",
+        cls: !real ? "pts__same" : d > 0 ? "pts__plus" : "pts__minus",
         text: d > 0 ? `+${d.toFixed(0)}` : `−${Math.abs(d).toFixed(0)}`,
       };
 const ticks = [0, 25, 50, 75, 100];
+const beforeLabel = rows.find((r) => r.before)?.before?.label;
+const legend = [
+  rows.some((r) => r.kind === "base") && { cls: "base", text: "my 2018 agent" },
+  rows.some((r) => r.kind === "hi") && { cls: "hi", text: "kept" },
+  !beforeLabel && rows.some((r) => !r.kind) && { cls: "other", text: "tried" },
+  beforeLabel && { cls: "before", text: beforeLabel },
+  beforeLabel && { cls: "add", text: "added after" },
+  rows.some((r) => r.before && r.won < r.before.won) && {
+    cls: "lost",
+    text: "lost after",
+  },
+  { cls: "ref", text: "holding shoot" },
+].filter(Boolean) as { cls: string; text: string }[];
 ---
 
 <div class="pts" style={`--r1:${f(ref.at)};`}>
+  <p class="pts__legend">
+    {legend.map((l) => (
+      <span class={`pts__key pts__key--${l.cls}`}>{l.text}</span>
+    ))}
+    <span class="pts__key pts__key--deltas">
+      change: <b class="pts__plus">gain</b> <b class="pts__minus">drop</b>{" "}
+      <b class="pts__same">tie</b>
+    </span>
+  </p>
   <span class="pts__h"></span>
   <span class="pts__h pts__refs"
     ><span style={`--x:${f(ref.at)}`}>{ref.label}</span></span
   >
   <span class="pts__h pts__wh">win rate</span>
   <span class="pts__h pts__wh">avg points</span>
-  {rows.map((r, i) => {
-    const opens = r.group && r.group !== rows[i - 1]?.group;
-    const gain =
-      r.prev !== undefined && r.won - r.prev.won >= 1 && (r.real?.won ?? true);
-    const a = gain && r.prev ? r.prev.won : r.won;
+  {rows.map((r) => {
     const dw = r.prev && delta(r.won - r.prev.won, r.real?.won ?? true);
     const dp =
       r.prev && delta(r.points - r.prev.points, r.real?.points ?? true);
     return (
-      <>
-        {opens && (
-          <p class:list={["pts__g", { "pts__g--first": i === 0 }]}>{r.group}</p>
-        )}
-        <div class:list={["pts__r", r.kind && `pts__r--${r.kind}`]}>
-          <span class="pts__k" tabindex="0">
-            <b>{r.name}</b>
-            {r.tag && <small>{r.tag}</small>}
-          </span>
-          <span
-            class="pts__t"
-            style={`--a:${f(a)};--b:${f(r.won)};--lo:${f(r.lo)};--hi:${f(r.hi)}`}
-          >
-            <i />
-            {gain && <i class="pts__more" />}
-            <s />
-          </span>
-          <em>
-            {pct(r.won)}
-            {dw && <small class={dw.cls}>{dw.text}</small>}
-          </em>
-          <em class="pts__w">
-            {r.points.toFixed(1)}
-            {dp && <small class={dp.cls}>{dp.text}</small>}
-          </em>
-        </div>
-      </>
+      <div class:list={["pts__r", r.kind && `pts__r--${r.kind}`]}>
+        <span class="pts__k" tabindex="0">
+          <b>{r.name}</b>
+          {r.tag && <small>{r.tag}</small>}
+        </span>
+        <span
+          class:list={["pts__t", { "pts__t--pair": r.before }]}
+          style={`--a:${f(r.before ? Math.min(r.won, r.before.won) : r.won)};--b:${f(Math.max(r.won, r.before?.won ?? 0))};--lo:${f(r.lo)};--hi:${f(r.hi)}`}
+        >
+          <i />
+          {r.before && r.won > r.before.won && <i class="pts__add" />}
+          {r.before && r.won < r.before.won && <i class="pts__lost" />}
+          <s />
+        </span>
+        <em>
+          {pct(r.won)}
+          {dw && <small class={dw.cls}>{dw.text}</small>}
+        </em>
+        <em class="pts__w">
+          {r.points.toFixed(1)}
+          {dp && <small class={dp.cls}>{dp.text}</small>}
+        </em>
+      </div>
     );
   })}
   <span class="pts__sp"></span>

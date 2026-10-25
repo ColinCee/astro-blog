@@ -1,9 +1,8 @@
 /* Wins-and-points chart (Pts): rows of name + tag, a bar of win rate on a
    0-100% axis with the spread of runs (s), then win rate and points with their
-   change. --a/--b: the bar, --a the step before's value when a row adds to it
-   (.pts__more is the gain, a lighter neutral). Only the kept row (--hi) takes
-   the accent. --r1 draws the same dashed reference line (above the bars) in
-   every chart, labelled over it. */
+   change. --a/--b: the bar's sections (see the split bar below). Only the kept
+   row (--hi) takes the accent. --r1 draws the same dashed reference line (above
+   the bars) in every chart, labelled over it. */
 .prose .pts {
   display: grid;
   grid-template-columns: minmax(0, 12rem) minmax(0, 1fr) 5.2rem 4.6rem;
@@ -59,11 +58,6 @@
   background: var(--bar);
   border-radius: 1px;
 }
-.prose .pts__t .pts__more {
-  left: calc(var(--a) * 100%);
-  width: calc((var(--b) - var(--a)) * 100%);
-  background: var(--muted);
-}
 .prose .pts__t s {
   position: absolute;
   top: 50%;
@@ -93,14 +87,16 @@
 .prose .pts em small.pts__same {
   color: var(--faint);
 }
+.prose .pts .pts__plus {
+  color: var(--gain);
+}
 .prose .pts em small.pts__minus {
   color: var(--loss);
 }
 .prose .pts .pts__w {
   color: var(--muted);
 }
-.prose .pts__r--hi .pts__t i,
-.prose .pts__r--hi .pts__t .pts__more {
+.prose .pts__r--hi .pts__t i {
   background: var(--accent);
 }
 .prose .pts__r--hi .pts__k b {
@@ -114,21 +110,84 @@
     var(--bar) 2px 5px
   );
 }
-/* Row groups: a hairline and a small label above each band of rows. */
-.prose .pts__g {
+/* A split bar (`before`): the earlier value, then what the change added
+   (darker, or the accent on the kept row) or an outline of what it lost. */
+.prose .pts__t .pts__add,
+.prose .pts__t .pts__lost {
+  left: calc(var(--a) * 100%);
+  width: calc((var(--b) - var(--a)) * 100%);
+}
+.prose .pts__t .pts__add {
+  background: var(--muted);
+}
+.prose .pts__r--hi .pts__t--pair i:first-child {
+  background: var(--bar);
+}
+.prose .pts__r--hi .pts__t .pts__add {
+  background: var(--accent);
+}
+.prose .pts__t .pts__lost {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--faint);
+}
+/* The legend: a swatch per mark the chart uses, and the change colours. */
+.prose .pts__legend {
   grid-column: 1 / -1;
-  margin: 0.45rem 0 0;
-  padding-top: 0.35rem;
-  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  margin: 0 0 0.5rem;
   font-size: 0.625rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--faint);
 }
-.prose .pts__g--first {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: 0;
+.prose .pts__key::before {
+  content: "";
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.5rem;
+  margin-right: 0.35rem;
+  vertical-align: -0.05rem;
+  border-radius: 1px;
+}
+.prose .pts__key--base::before {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--muted) 0 2px,
+    var(--bar) 2px 5px
+  );
+}
+.prose .pts__key--hi::before {
+  background: var(--accent);
+}
+.prose .pts__key--other::before {
+  background: var(--bar);
+}
+.prose .pts__key--before::before {
+  background: var(--bar);
+}
+.prose .pts__key--add::before {
+  background: var(--muted);
+}
+.prose .pts__key--lost::before {
+  box-shadow: inset 0 0 0 1px var(--faint);
+}
+.prose .pts__key--ref::before {
+  width: 0;
+  height: 0.75rem;
+  border-left: 1px dashed var(--faint);
+  border-radius: 0;
+}
+.prose .pts__key--deltas::before {
+  content: none;
+}
+.prose .pts__key--deltas b {
+  font-weight: 500;
+}
+.prose .pts__key--deltas .pts__same {
+  color: var(--faint);
+}
+.prose .pts__key--deltas .pts__minus {
+  color: var(--loss);
 }
 /* Hover or tap a row and the others fade, to read one row across. */
 .prose .pts__k {
