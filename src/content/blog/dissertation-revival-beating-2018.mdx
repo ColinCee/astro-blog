@@ -35,9 +35,9 @@ My dissertation says my agent won 82.6% of Aliens games, but that was one run, m
 
 Each row adds one change, and I only kept it if a significance test over 5 runs said the gap was real, otherwise the simpler option stays.[^test] More practice did most of the work on wins, the new reward got it to almost every game, and moving more often added 20 points.
 
-- **Bars** are the average win rate over 5 runs, and the line is their range. Striped is my 2018 agent, and the dashed line is just holding shoot.
-- **Orange** is a real gain, **red** a real drop and **grey** a tie.
-- **Bold** is what I kept.
+- **Bars** are the average win rate over 5 runs, and the line is their range. The lighter part is what a change added, striped is my 2018 agent, and the dashed line is just holding shoot.
+- **Orange** is the one I kept.
+- **Changes** are against what each row builds on, red for a real drop and faint for a tie.
 
 <Recipe steps={["DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="What did I learn" />
 
@@ -51,17 +51,14 @@ I tried three methods, first with the same 1M frames as my agent, then with 5 ti
 
 <Fig title="1M → 5M frames">
   <Pts rows={[
-    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base", "group": "baseline"},
-    {"name": "DQN", "tag": "today's version", "won": 51.2, "lo": 30.0, "hi": 78.0, "points": 39.88, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": true}, "group": "same 1M frames"},
-    {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 64.2, "lo": 47.0, "hi": 82.0, "points": 42.73, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": false}, "group": "same 1M frames"},
-    {"name": "PPO", "tag": "= holding shoot", "won": 82.4, "lo": 80.0, "hi": 85.0, "points": 37.35, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "group": "same 1M frames"},
-    {"name": "DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 51.2, "points": 39.88}, "real": {"won": true, "points": true}, "kind": "hi", "group": "5M frames"},
-    {"name": "Rainbow", "tag": "a tie with DQN", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 64.2, "points": 42.73}, "real": {"won": true, "points": true}, "group": "5M frames"},
-    {"name": "PPO", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 82.4, "points": 37.35}, "real": {"won": false, "points": true}, "group": "5M frames"},
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "DQN", "tag": "at 1M: 51%, 40 points", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 51.2, "points": 39.88}, "real": {"won": true, "points": true}, "kind": "hi"},
+    {"name": "Rainbow", "tag": "at 1M: 64%, 43 points", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 64.2, "points": 42.73}, "real": {"won": true, "points": true}},
+    {"name": "PPO", "tag": "at 1M: 82%, 37 points, = holding shoot", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 82.4, "points": 37.35}, "real": {"won": false, "points": true}},
   ]} />
 </Fig>
 
-With the same practice, DQN and Rainbow both do worse than my agent, and their runs vary a lot.[^runs] PPO looks like the winner since it wins the most, but it also scores the least, and it turns out it's just holding the shoot button, which wins 82% on its own, about what my dissertation said my agent won.[^button]
+With the same 1M frames, DQN and Rainbow both do worse than my agent, and their runs vary a lot.[^runs] PPO looks like the winner since it wins the most, but it also scores the least, and it turns out it's just holding the shoot button, which wins 82% on its own, about what my dissertation said my agent won.[^button]
 
 <Fig>
   <div class="vids">

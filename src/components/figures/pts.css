@@ -1,8 +1,9 @@
-/* Wins-and-points chart (Pts): rows of name + tag, a bar of games won on a
-   0-100% axis with the spread of runs (s), then wins and points with their
+/* Wins-and-points chart (Pts): rows of name + tag, a bar of win rate on a
+   0-100% axis with the spread of runs (s), then win rate and points with their
    change. --a/--b: the bar, --a the step before's value when a row adds to it
-   (.pts__more is the gain). --r1 draws the same dashed reference line (above the
-   bars) in every chart, labelled over it. */
+   (.pts__more is the gain, a lighter neutral). Only the kept row (--hi) takes
+   the accent. --r1 draws the same dashed reference line (above the bars) in
+   every chart, labelled over it. */
 .prose .pts {
   display: grid;
   grid-template-columns: minmax(0, 12rem) minmax(0, 1fr) 5.2rem 4.6rem;
@@ -61,7 +62,7 @@
 .prose .pts__t .pts__more {
   left: calc(var(--a) * 100%);
   width: calc((var(--b) - var(--a)) * 100%);
-  background: var(--accent);
+  background: var(--muted);
 }
 .prose .pts__t s {
   position: absolute;
@@ -87,7 +88,7 @@
 }
 .prose .pts em small {
   margin-left: 0.3rem;
-  color: var(--accent-soft);
+  color: var(--ink);
 }
 .prose .pts em small.pts__same {
   color: var(--faint);
@@ -97,6 +98,10 @@
 }
 .prose .pts .pts__w {
   color: var(--muted);
+}
+.prose .pts__r--hi .pts__t i,
+.prose .pts__r--hi .pts__t .pts__more {
+  background: var(--accent);
 }
 .prose .pts__r--hi .pts__k b {
   font-weight: 700;
