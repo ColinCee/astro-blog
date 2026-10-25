@@ -109,6 +109,22 @@
     var(--bar) 2px 5px
   );
 }
+/* Row groups: a hairline and a small label above each band of rows. */
+.prose .pts__g {
+  grid-column: 1 / -1;
+  margin: 0.45rem 0 0;
+  padding-top: 0.35rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.prose .pts__g--first {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
 /* Hover or tap a row and the others fade, to read one row across. */
 .prose .pts__k {
   cursor: default;

@@ -4,6 +4,8 @@
 // `prev` (the step before, or the baseline). A row that wins more than its
 // `prev` draws the gain in the accent. `base` stripes the baseline (my 2018
 // version), `hi` bolds the pick. `ref` is the dashed line (holding shoot).
+// A row's `group` (e.g. baseline, starting point, tried) opens a labelled
+// band split from the one above by a hairline.
 // Hover or tap a row and the others fade. Styles: pts.css.
 interface Row {
   name: string;
@@ -14,6 +16,7 @@ interface Row {
   points: number;
   prev?: { won: number; points: number };
   kind?: "base" | "hi";
+  group?: string;
 }
 interface Props {
   rows: Row[];
@@ -41,34 +44,40 @@ const ticks = [0, 25, 50, 75, 100];
   >
   <span class="pts__h pts__wh">win rate</span>
   <span class="pts__h pts__wh">avg points</span>
-  {rows.map((r) => {
+  {rows.map((r, i) => {
+    const opens = r.group && r.group !== rows[i - 1]?.group;
     const gain = r.prev !== undefined && r.won - r.prev.won >= 1;
     const a = gain && r.prev ? r.prev.won : r.won;
     const dw = r.prev && delta(r.won - r.prev.won);
     const dp = r.prev && delta(r.points - r.prev.points);
     return (
-      <div class:list={["pts__r", r.kind && `pts__r--${r.kind}`]}>
-        <span class="pts__k" tabindex="0">
-          <b>{r.name}</b>
-          {r.tag && <small>{r.tag}</small>}
-        </span>
-        <span
-          class="pts__t"
-          style={`--a:${f(a)};--b:${f(r.won)};--lo:${f(r.lo)};--hi:${f(r.hi)}`}
-        >
-          <i />
-          {gain && <i class="pts__more" />}
-          <s />
-        </span>
-        <em>
-          {pct(r.won)}
-          {dw && <small class={dw.cls}>{dw.text}</small>}
-        </em>
-        <em class="pts__w">
-          {r.points.toFixed(1)}
-          {dp && <small class={dp.cls}>{dp.text}</small>}
-        </em>
-      </div>
+      <>
+        {opens && (
+          <p class:list={["pts__g", { "pts__g--first": i === 0 }]}>{r.group}</p>
+        )}
+        <div class:list={["pts__r", r.kind && `pts__r--${r.kind}`]}>
+          <span class="pts__k" tabindex="0">
+            <b>{r.name}</b>
+            {r.tag && <small>{r.tag}</small>}
+          </span>
+          <span
+            class="pts__t"
+            style={`--a:${f(a)};--b:${f(r.won)};--lo:${f(r.lo)};--hi:${f(r.hi)}`}
+          >
+            <i />
+            {gain && <i class="pts__more" />}
+            <s />
+          </span>
+          <em>
+            {pct(r.won)}
+            {dw && <small class={dw.cls}>{dw.text}</small>}
+          </em>
+          <em class="pts__w">
+            {r.points.toFixed(1)}
+            {dp && <small class={dp.cls}>{dp.text}</small>}
+          </em>
+        </div>
+      </>
     );
   })}
   <span class="pts__sp"></span>

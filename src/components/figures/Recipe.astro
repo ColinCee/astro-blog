@@ -1,8 +1,9 @@
 ---
-// The recipe so far, for a post built as numbered steps: one chip per step,
-// sticky at the top while the steps are read. A script marks the chips of the
-// steps already passed (headings starting "Step N") and hides the bar once the
-// heading `until` is reached. Styles: recipe.css.
+// The recipe so far, for a post built as numbered steps: a panel floating in
+// the margin beside the prose, one line per step. It shows from the "Step 1"
+// heading until the heading starting `until` (moved to <body>, as an ancestor's
+// transform would pin a fixed element to it); the steps passed read in ink,
+// the current one in the accent. Only where the margin fits it. Styles: recipe.css.
 interface Props {
   steps: string[];
   until?: string;
@@ -10,20 +11,21 @@ interface Props {
 const { steps, until = "" } = Astro.props;
 ---
 
-<nav class="recipe" aria-label="The recipe so far" data-until={until}>
-  <span class="recipe__k">recipe</span>
+<aside class="recipe" aria-label="The recipe so far" data-until={until}>
+  <p class="recipe__k">recipe so far</p>
   <ol>
     {steps.map((s, i) => (
       <li data-step={i + 1}>
         <b>{i + 1}</b>
-        {s}
+        <span>{s}</span>
       </li>
     ))}
   </ol>
-</nav>
+</aside>
 
 <script>
   for (const bar of document.querySelectorAll<HTMLElement>(".recipe")) {
+    document.body.append(bar); // fixed position needs to escape the prose's transformed ancestors
     const heads = [...document.querySelectorAll<HTMLElement>(".prose h2")];
     const steps = heads
       .map((h) => ({
@@ -47,10 +49,8 @@ const { steps, until = "" } = Astro.props;
         li.classList.toggle("is-done", n < now);
         li.classList.toggle("is-now", n === now);
       }
-      bar.classList.toggle(
-        "is-gone",
-        !!end && end.getBoundingClientRect().top < line,
-      );
+      const past = !!end && end.getBoundingClientRect().top < line;
+      bar.classList.toggle("is-on", now > 0 && !past);
     };
     addEventListener("scroll", update, { passive: true });
     addEventListener("resize", update);
