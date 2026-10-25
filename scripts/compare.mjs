@@ -11,6 +11,8 @@
 // the two frames at --still, or by default at the moment they differ most.
 
 import { execFileSync } from "node:child_process";
+import { existsSync, mkdirSync } from "node:fs";
+import { dirname } from "node:path";
 
 const args = process.argv.slice(2);
 const flag = (name) => {
@@ -27,6 +29,8 @@ if (!before || !after || !out) {
   );
   process.exit(1);
 }
+
+mkdirSync(dirname(out), { recursive: true });
 
 const probe = (file, entries) =>
   execFileSync("ffprobe", [
@@ -53,11 +57,10 @@ const [[w0, h0], [w1, h1]] = [dims(before), dims(after)];
 const wide = Math.max(w0, w1);
 const tall = Math.max(h0, h1);
 const stacked = wide > tall;
-const length = isImage(before)
-  ? 0
-  : Math.max(
-      ...[before, after].map((f) => Number(probe(f, "format=duration"))),
-    );
+const lengths = isImage(before)
+  ? [0]
+  : [before, after].map((f) => Number(probe(f, "format=duration")));
+const length = Math.max(...lengths);
 
 const font =
   process.platform === "win32"
@@ -103,33 +106,41 @@ ffmpeg(
 console.log(out);
 if (noStill) process.exit(0);
 
-// The moment the two differ most: the mean brightness of their difference,
-// frame by frame. Needs both clips the same size, as `pnpm record` makes them.
+// The moment the two differ most, while neither is moving: mid-scroll the
+// whole page shifts and swamps the real change, and so does the first paint.
+// Each measure is the mean brightness of a difference, frame by frame; the
+// clips must be the same size, as `pnpm record` makes them.
 if (!still) {
-  const log = ffmpeg(
-    "-i",
-    before,
-    "-i",
-    after,
-    "-filter_complex",
-    "[0][1]blend=all_mode=difference,signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=-",
-    "-f",
-    "null",
-    "-",
-  ).toString();
-  let best = { t: 0, diff: -1 };
-  let t = 0;
-  for (const line of log.split("\n")) {
-    const time = line.match(/pts_time:([\d.]+)/);
-    if (time) t = Number(time[1]);
-    const v = line.match(/YAVG=([\d.]+)/);
-    if (v && Number(v[1]) > best.diff) best = { t, diff: Number(v[1]) };
-  }
-  still = best.t.toFixed(2);
+  const measure = (graph, ...inputs) =>
+    ffmpeg(
+      ...inputs.flatMap((f) => ["-i", f]),
+      "-filter_complex",
+      `${graph},signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=-`,
+      "-f",
+      "null",
+      "-",
+    )
+      .toString()
+      .split("\n")
+      .flatMap((l) => l.match(/YAVG=([\d.]+)/)?.[1] ?? [])
+      .map(Number);
+  const diff = measure("[0][1]blend=all_mode=difference", before, after);
+  const motion = (f) => measure("[0]tblend=all_mode=difference", f);
+  const [moveA, moveB] = [motion(before), motion(after)];
+  const fps = 60;
+  let best = { i: diff.length - 1, d: -1 };
+  diff.forEach((d, i) => {
+    const still = (m) => (m[i - 1] ?? 0) < 0.3 && (m[i] ?? 0) < 0.3;
+    if (i / fps >= 0.5 && still(moveA) && still(moveB) && d > best.d)
+      best = { i, d };
+  });
+  still = (best.i / fps).toFixed(2);
   console.log(`most different at ${still}s`);
 }
-// Past the end there is no frame to take: use the last one.
-still = String(Math.min(Number(still), Math.max(0, length - 0.05)));
+// Past the end of the shorter clip there is no frame to take from it.
+still = String(
+  Math.min(Number(still), Math.max(0, Math.min(...lengths) - 0.05)),
+);
 const png = out.replace(/\.mp4$/, "-still.png");
 ffmpeg(
   "-ss",
@@ -146,4 +157,5 @@ ffmpeg(
   "1",
   png,
 );
+if (!existsSync(png)) throw new Error(`no frame at ${still}s for the still`);
 console.log(png);

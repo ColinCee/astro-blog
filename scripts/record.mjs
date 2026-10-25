@@ -51,6 +51,12 @@ const hold = flag("--hold");
 const until = flag("--until");
 const cache = flag("--cache") ?? join(tmpdir(), "record-cache");
 const [base, out, path = "/"] = args;
+// Git Bash turns a bare "/" into its install folder; run from PowerShell, or
+// set MSYS_NO_PATHCONV=1.
+if (!path.startsWith("/")) {
+  console.error(`path must start with "/", got ${path}`);
+  process.exit(1);
+}
 if (!base || !out) {
   console.error(
     "usage: pnpm record <base-url> <out-dir> [path] [--until <selector>] [--hold <selector>] [--cache <dir>]",
@@ -70,8 +76,20 @@ const browser = await chromium.launch();
 for (const s of shots) {
   const size = { width: s.width, height: s.height };
   const ctx = await browser.newContext({ viewport: size });
-  await ctx.clock.setFixedTime(new Date("2026-01-01T12:00:00Z"));
+  // Only the date is fixed, not the clock: Playwright's clock would also fake
+  // performance.timeOrigin and performance.now, which the timetable and the
+  // trimming below rely on.
   await ctx.addInitScript(() => {
+    const fixed = Date.UTC(2026, 0, 1, 12);
+    const Real = Date;
+    globalThis.Date = class extends Real {
+      constructor(...a) {
+        super(...(a.length ? a : [fixed]));
+      }
+      static now() {
+        return fixed;
+      }
+    };
     let seed = 42;
     Math.random = () => {
       seed = (seed + 0x6d2b79f5) | 0;
@@ -89,6 +107,8 @@ for (const s of shots) {
       );
       if (!existsSync(`${key}.json`)) {
         const res = await route.fetch();
+        // Keep only what worked, so a failed call is retried next run.
+        if (res.status() !== 200) return route.fulfill({ response: res });
         writeFileSync(`${key}.body`, await res.body());
         writeFileSync(
           `${key}.json`,
@@ -154,18 +174,23 @@ for (const s of shots) {
         const flick = 350; // one thumb flick, easing out
         const pause = 1300; // then read
         let from = 0;
+        let target = null;
         const step = () => {
           const t = performance.now();
           if (t >= wait) {
-            // Measured every frame, since fonts and images move the layout.
-            const el = sel && document.querySelector(sel);
-            const limit = document.documentElement.scrollHeight - innerHeight;
-            const target = Math.min(
-              limit,
-              el
-                ? el.getBoundingClientRect().bottom + scrollY - innerHeight
-                : max,
-            );
+            // Measured once, when the first flick starts. Measuring every
+            // frame lets one odd reading end a run's scroll early, and then
+            // the two versions no longer line up.
+            if (target === null) {
+              const el = sel && document.querySelector(sel);
+              const limit = document.documentElement.scrollHeight - innerHeight;
+              target = Math.min(
+                limit,
+                el
+                  ? el.getBoundingClientRect().bottom + scrollY - innerHeight
+                  : max,
+              );
+            }
             const dist = Math.round(innerHeight * 0.4);
             const into = t - wait;
             const n = Math.floor(into / (flick + pause));
