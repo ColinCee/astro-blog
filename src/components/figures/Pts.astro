@@ -24,11 +24,7 @@ interface Props {
   ref?: { at: number; label: string };
   note?: { href: string; n: number };
 }
-const {
-  rows,
-  ref = { at: 82, label: "holding shoot 82%" },
-  note,
-} = Astro.props;
+const { rows, ref, note } = Astro.props;
 const f = (v: number) => (v / 100).toFixed(3);
 const pct = (w: number) =>
   Math.abs(w - Math.round(w)) < 0.05 || w < 95
@@ -57,7 +53,7 @@ const keys = [
 ].filter((k) => changes.includes(k.cls));
 ---
 
-<div class="pts" style={`--r1:${f(ref.at)};`}>
+<div class="pts" style={ref && `--r1:${f(ref.at)};`}>
   <span class="pts__h"></span>
   <span class="pts__h"></span>
   <span class="pts__h pts__wh">win rate (Δ)</span>
@@ -68,13 +64,13 @@ const keys = [
       r.prev && delta(r.points - r.prev.points, r.real?.points ?? true);
     return (
       <div class:list={["pts__r", r.kind && `pts__r--${r.kind}`]}>
-        <span class="pts__k" tabindex="0">
+        <span class="pts__k">
           <b>{r.name}</b>
           {r.tag && <small>{r.tag}</small>}
         </span>
         <span
           class="pts__t"
-          style={`--a:${f(r.won)};--b:${f(r.won)};--lo:${f(r.lo)};--hi:${f(r.hi)}`}
+          style={`--a:${f(r.won)};--lo:${f(r.lo)};--hi:${f(r.hi)}`}
         >
           <i />
           <s />
@@ -99,16 +95,20 @@ const keys = [
   <span class="pts__sp"></span>
   <span class="pts__h pts__xt">win rate (%)</span>
   <p class="pts__key">
-    <span>
-      <i class="pts__dash"></i>
-      {ref.label}
-    </span>
+    {ref && (
+      <span>
+        <i class="pts__dash"></i>
+        {ref.label}
+      </span>
+    )}
     {keys.map((k, i) => (
       <span>
         <b class={k.cls}>{k.word} Δ</b>: {k.text}
         {note && i === keys.length - 1 && (
           <sup>
-            <a href={note.href}>{note.n}</a>
+            <a href={note.href} aria-label={`footnote ${note.n}: the test`}>
+              {note.n}
+            </a>
           </sup>
         )}
       </span>

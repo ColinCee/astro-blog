@@ -30,12 +30,12 @@ My dissertation says my agent won 82.6% of Aliens games, but that was one run, m
     {"name": "2. + win + points ÷ 10", "tag": "a new reward", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": false}},
     {"name": "3. + the IMPALA network", "tag": "a bigger network", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "real": {"won": false, "points": true}},
     {"name": "4. + a move every 2 frames", "tag": "instead of every 4", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}, "kind": "hi"},
-  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
 Each row adds one change, and I only kept it if a significance test[^test] over 5 runs said the gap was real, otherwise the simpler option stays.
 
-Each bar is the average win rate over 5 runs, and each row builds on the one above. Orange is what I kept, and striped is my 2018 agent.
+Each bar is the average win rate over 5 runs, and the thin bracket is their range. Δ is the change from the row it builds on, striped is my 2018 agent, and orange is the final agent. The dashed line is what you get by just holding the shoot button, more on that in step 1.
 
 <Recipe steps={["DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="Conclusion" />
 
@@ -53,7 +53,7 @@ I tried three algorithms, each with 5 times the practice my agent got:
     {"name": "DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
     {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
     {"name": "PPO", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": false}},
-  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
 DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster DQN. That's 17 minutes a run now, which would've been 2 or 3 days in 2018.
@@ -70,7 +70,7 @@ With the same 1M frames as my agent, PPO wins 82% of the time, which is about wh
 
 ## Step 2: which reward works best?
 
-So far it's just been the game's points, which can mislead, since some GVGAI games are [built so the score tricks agents](https://arxiv.org/abs/1802.00048).[^clip] I tried:
+So far it's just been the game's points,[^clip] which can mislead, since some GVGAI games are [built so the score tricks agents](https://arxiv.org/abs/1802.00048). I tried:
 
 - **Win only:** +1 for a win, −1 for a loss.
 - **Win + points ÷ 10:** the same, plus a bit for scoring.
@@ -83,7 +83,7 @@ So far it's just been the game's points, which can mislead, since some GVGAI gam
     {"name": "win + points ÷ 10", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": false}, "kind": "hi"},
     {"name": "win only", "won": 99.6, "lo": 99.0, "hi": 100.0, "points": 44.05, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
     {"name": "my 2018 reward", "won": 95.8, "lo": 94.0, "hi": 98.0, "points": 48.99, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
-  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
 Wins matter most, then points. Win + points ÷ 10 wins more than points alone. Win only and win + points ÷ 10 both win almost every game, a tie, so points decide it, 59 against 44.
@@ -97,7 +97,7 @@ Wins matter most, then points. Win + points ÷ 10 wins more than points alone. W
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
     {"name": "Standard", "tag": "kept so far, the 2015 one", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93},
     {"name": "IMPALA", "tag": "15 layers", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "real": {"won": false, "points": true}, "kind": "hi"},
-  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
 The gap in wins could be luck, but the gap in points is real, so I kept IMPALA, even though it's twice as slow to train.
@@ -112,10 +112,10 @@ In 2018 I wrote that holding each move for 4 frames meant my agent could never r
     {"name": "Every 4 frames", "tag": "kept so far", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96},
     {"name": "Every 2 frames", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}, "kind": "hi"},
     {"name": "Every frame", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 82.48, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}},
-  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-Every 2 frames added 21 points, and every frame did no better, so I kept the cheaper every 2 frames. It still loses about 1 game in 100, and replaying its games lost 2, both a bomb landing on it while it sat still and shot, which might just be reaction time.
+Every 2 frames added 21 points, and every frame did no better, so I kept the cheaper every 2 frames. It still loses about 1 game in 100, and replaying its 500 games lost 2, both to a bomb landing on it while it sat still and shot, which might just be reaction time.
 
 ## Conclusion
 
@@ -125,26 +125,26 @@ Every 2 frames added 21 points, and every frame did no better, so I kept the che
     {"name": "MCTS", "tag": "plans every move, no training", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 77.82},
     {"name": "Every 2 frames", "tag": "the final agent", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
     {"name": "Every frame", "tag": "2 to 3 hours a run", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 82.48, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
-  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
 My 2018 agent won 73% of games. The final agent wins 99% and scores 83, even outscoring MCTS,[^mcts] which my 2018 agent never got close to.
 
-So why not keep every frame, which won all 500 games? Because the test can't tell 99% from 100% apart from luck, and when it's a tie I keep the cheaper option.
+So why not keep every frame, which won all 500 games? Because the test can't tell the gap between 99% and 100% from luck, and when it's a tie I keep the cheaper option.
 
 Picking the winner after looking is how you fool yourself, which is why scientists [fix their rules up front](https://en.wikipedia.org/wiki/Preregistration_%28science%29).
 
 What I learned:
 
 - Question the settings you copied: holding each move for 4 frames came from Atari and cost about 20 points here.
-- Check the dumbest baseline first: holding one button needs no training, and I never tried it.
-- Run everything more than once: my three 2018 runs ended up to 14 percentage points apart on win rate.
+- Check the dumbest baseline first: holding one button needs no training, and I never tried it in 2018.
+- Run everything more than once: my three original 2018 runs ended up to 14 percentage points apart on win rate.
 
 ### Closing remarks
 
 Take a look at the massive difference in speed. While reviving my dissertation I trained various agents, not just on Aliens but on other games in the GVGAI framework, and all those runs added up to about 4 days of training.
 
-<Fig title="All 400 training runs, at 2018 speed and now">
+<Fig title="All 400 training runs, at 2018 speed (12 h per 1M frames) and now">
   <Days then={606} now={4.27} thenLabel="2018 speed: 606 days" nowLabel="2026: 4 days" />
 </Fig>
 
