@@ -46,9 +46,7 @@ const ticks = [0, 25, 50, 75, 100];
 
 <div class="pts" style={`--r1:${f(ref.at)};`}>
   <span class="pts__h"></span>
-  <span class="pts__h pts__refs"
-    ><span style={`--x:${f(ref.at)}`}>{ref.label}</span></span
-  >
+  <span class="pts__h"></span>
   <span class="pts__h pts__wh">win rate</span>
   <span class="pts__h pts__wh">avg points</span>
   {rows.map((r) => {
@@ -88,6 +86,10 @@ const ticks = [0, 25, 50, 75, 100];
   <span class="pts__sp"></span>
   <span class="pts__h pts__xt">win rate (%)</span>
   <p class="pts__key">
+    <span>
+      <i class="pts__dash"></i>
+      {ref.label}
+    </span>
     <span>
       <b class="pts__plus">green</b>
       / <b class="pts__minus">red</b>: a{" "}

@@ -2,7 +2,7 @@
    0-100% axis with the spread of runs (s), then win rate and points with their
    change. --a/--b: the bar's width. Only the kept
    row (--hi) takes the accent. --r1 draws the same dashed reference line (above
-   the bars) in every chart, labelled over it. */
+   the bars) in every chart, named in the key under it. */
 .prose .pts {
   display: grid;
   grid-template-columns: minmax(0, 12rem) minmax(0, 1fr) 5.2rem 6rem;
@@ -22,8 +22,7 @@
   color: var(--faint);
 }
 .prose .pts__wh {
-  text-align: right;
-  padding-right: calc(3ch + 0.3rem);
+  text-align: center;
 }
 .prose .pts__k b {
   font-weight: 500;
@@ -126,6 +125,13 @@
   text-align: right;
   color: var(--muted);
 }
+.prose .pts__dash {
+  display: inline-block;
+  height: 0.7rem;
+  margin-right: 0.4rem;
+  vertical-align: -0.1rem;
+  border-left: 1px dashed var(--faint);
+}
 .prose .pts__key b {
   font-weight: 500;
 }
@@ -146,8 +152,7 @@
   > * {
   opacity: 0.3;
 }
-.prose .pts__axis,
-.prose .pts__refs {
+.prose .pts__axis {
   position: relative;
   align-self: stretch;
   min-height: 1.2rem;
@@ -155,8 +160,7 @@
 .prose .pts__axis {
   border-top: 1px solid var(--line);
 }
-.prose .pts__axis span,
-.prose .pts__refs span {
+.prose .pts__axis span {
   position: absolute;
   left: calc(var(--x) * 100%);
   transform: translateX(-50%);
@@ -192,9 +196,6 @@
   left: auto;
   right: 0;
 }
-.prose .pts__refs span {
-  bottom: 0.15rem;
-}
 @media (max-width: 34rem) {
   .prose .pts {
     grid-template-columns: minmax(0, 1fr) auto auto;
@@ -214,9 +215,5 @@
   }
   .prose .pts__key {
     grid-column: 2 / -1;
-  }
-  /* the reference label ends at its line, clear of the column headers */
-  .prose .pts__refs span {
-    transform: translateX(calc(-100% + 0.5rem));
   }
 }
