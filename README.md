@@ -15,7 +15,7 @@
 
 ## What it does
 
-- Terminal-inspired homepage with a dark terminal window
+- Terminal-inspired homepage built around a tmux-style window with live project tiles
 - Technical blog written in MDX, with figure components and Expressive Code blocks
 - Printable CV page that prints clean to ink-on-white
 - Light and dark themes that follow the system setting

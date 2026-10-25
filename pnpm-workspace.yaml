@@ -2,7 +2,3 @@ allowBuilds:
   esbuild: true
   sharp: true
   workerd: true
-# Astro's prerender bundle imports cookie from the project root; hoist Astro's
-# cookie (2.x) there rather than Wrangler's older one, or the build fails.
-publicHoistPattern:
-  - cookie

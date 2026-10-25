@@ -6,6 +6,7 @@
     "@astrojs/sitemap": "3.7.4",
     "astro": "7.4.2",
     "astro-expressive-code": "0.44.3",
+    "cookie": "2.0.1",
     "typescript": "6.0.3"
   },
   "devDependencies": {
