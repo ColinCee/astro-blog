@@ -1,6 +1,7 @@
 ---
 // The terminal's writing pane: the three newest posts by title, then a link
 // to all of them. Read from the blog collection, so a new post shows here.
+// The lines print one after another as the list scrolls into view.
 import { getCollection } from "astro:content";
 import Pane from "./Pane.astro";
 
@@ -21,9 +22,9 @@ const posts: { title: string; date: string; href: string; all?: boolean }[] = [
 ---
 
 <Pane idx={2} name="writing" area="writing">
-  <ul class="posts">
-    {posts.map((p) => (
-      <li>
+  <ul class="posts" data-scroll-in>
+    {posts.map((p, i) => (
+      <li style={`--i: ${i}`}>
         <a class:list={["post", { "post--all": p.all }]} href={p.href}>
           <span class="post__title">{p.title}</span>
           {p.date && <span class="post__date">{p.date}</span>}
@@ -40,6 +41,22 @@ const posts: { title: string; date: string; href: string; all?: boolean }[] = [
   .posts {
     display: grid;
     gap: 0.2rem;
+  }
+  .posts li {
+    /* On a desktop, after the last shipped bar starts to grow. */
+    animation: print 0.4s var(--ease-out)
+      calc(1.15s + var(--ship-rows, 0) * 0.25s + var(--i) * 0.09s) both;
+  }
+  @media (max-width: 900px) {
+    .posts li {
+      animation-delay: calc(0.1s + var(--i) * 0.09s);
+    }
+  }
+  @keyframes print {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
   }
   .post {
     display: grid;
