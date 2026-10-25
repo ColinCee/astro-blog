@@ -30,7 +30,7 @@ My dissertation says my agent won 82.6% of Aliens games, but that was one run, m
     {"name": "2. + win + points ÷ 10", "tag": "a new reward", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": false}},
     {"name": "3. + the IMPALA network", "tag": "a bigger network", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "real": {"won": false, "points": true}},
     {"name": "4. + a move every 2 frames", "tag": "instead of every 4", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}, "kind": "hi"},
-  ]} note="#user-content-fn-test" />
+  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
 Each row adds one change, and I only kept it if a significance test over 5 runs said the gap was real, otherwise the simpler option stays.[^test] More practice did most of the work on wins, the new reward got it to almost every game, and moving more often added 21 points.
@@ -44,7 +44,7 @@ Each bar is the average win rate over 5 runs, and the thin line is their range. 
 I tried three methods, each with 5 times the practice my agent got:
 
 - **[DQN](https://www.nature.com/articles/nature14236):** DeepMind's 2015 Atari method, and my agent is this plus 2 tricks.
-- **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.[^rainbow]
+- **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.
 - **[PPO](https://arxiv.org/abs/1707.06347):** a different kind of learner.
 
 <Fig title="Which method, 5M frames?">
@@ -53,12 +53,12 @@ I tried three methods, each with 5 times the practice my agent got:
     {"name": "DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
     {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
     {"name": "PPO", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": false}},
-  ]} note="#user-content-fn-test" />
+  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster DQN.[^practice] That's 17 minutes a run now, which would've been 2 or 3 days in 2018.
+DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster DQN. That's 17 minutes a run now, which would've been 2 or 3 days in 2018.
 
-With the same 1M frames as my agent, none of them beat it on both.[^runs] PPO came closest, winning 82%, but it was just holding the shoot button, which wins 82% on its own, about what my dissertation said my agent won.[^button]
+With the same 1M frames as my agent, none of them beat it on both. PPO came closest, winning 82%, but it was just holding the shoot button, which wins 82% on its own, about what my dissertation said my agent won.
 
 <Fig>
   <div class="vids">
@@ -67,7 +67,7 @@ With the same 1M frames as my agent, none of them beat it on both.[^runs] PPO ca
   </div>
 </Fig>
 
-I never checked that in 2018, and to be honest Claude didn't either until its overnight reviewer spotted two PPO runs with the same scores.[^results] My agent did learn something though, it scores 47 against the button's 37 because it also shoots the bases, so the button's 82% is the bar for wins and my 47 is the bar for points.
+I never checked that in 2018, and to be honest Claude didn't either until its overnight reviewer spotted two PPO runs with the same scores. My agent did learn something though, it scores 47 against the button's 37 because it also shoots the bases, so the button's 82% is the bar for wins and my 47 is the bar for points.
 
 ## Step 2: which reward works best?
 
@@ -84,10 +84,10 @@ So far it's just been the game's points.[^clip] I tried:
     {"name": "win + points ÷ 10", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": false}, "kind": "hi"},
     {"name": "win only", "won": 99.6, "lo": 99.0, "hi": 100.0, "points": 44.05, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
     {"name": "my 2018 reward", "won": 95.8, "lo": 94.0, "hi": 98.0, "points": 48.99, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
-  ]} note="#user-content-fn-test" />
+  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-Win only and win + points ÷ 10 tie on wins, so points decide it, 59 against 44.[^reward] My 2018 reward did its job back then, but it falls behind with more practice.
+Win only and win + points ÷ 10 tie on wins, so points decide it, 59 against 44. My 2018 reward did its job back then, but it falls behind with more practice.
 
 ## Step 3: does a bigger network help?
 
@@ -98,10 +98,10 @@ Win only and win + points ÷ 10 tie on wins, so points decide it, 59 against 44.
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
     {"name": "Standard", "tag": "kept so far, the 2015 one", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93},
     {"name": "IMPALA", "tag": "15 layers", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "real": {"won": false, "points": true}, "kind": "hi"},
-  ]} note="#user-content-fn-test" />
+  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-Wins tie, but it scores 3 more, so I kept it even though it's twice as slow to train.[^network]
+Wins tie, but it scores 3 more, so I kept it even though it's twice as slow to train.
 
 ## Step 4: how often should it move?
 
@@ -113,29 +113,19 @@ I actually wrote in 2018 that holding each move for 4 frames meant my agent coul
     {"name": "Every 4 frames", "tag": "kept so far", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96},
     {"name": "Every 2 frames", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}, "kind": "hi"},
     {"name": "Every frame", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 82.48, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}},
-  ]} note="#user-content-fn-test" />
+  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-Every 2 frames added 21 points, and every frame scored the same but took 2 hours a run instead of 45 minutes, so every 2 frames it is.[^moves] It still loses about 1 game in 100, and the losses I replayed were all a bomb landing on it while it sat still and shot, which might just be reaction time.[^deaths]
+Every 2 frames added 21 points, and every frame scored the same but took 2 hours a run instead of 45 minutes, so every 2 frames it is. It still loses about 1 game in 100, and the losses I replayed were all a bomb landing on it while it sat still and shot, which might just be reaction time.
 
 ## What did I learn?
 
 - **Question the settings you copied.** Holding each move for 4 frames came from Atari and cost about 20 points here.
 - **Check the dumbest baseline first.** Holding one button needs no training, and I never tried it.
 - **Run everything more than once.** My three 2018 runs ended up to 14 points apart on win rate.
-- **Claude wrote all the code, but liked to stop early.** I pushed back six times in about 2½ hours.[^log]
+- **Claude wrote all the code, but liked to stop early.** I pushed back six times in about 2½ hours.
 
-[^test]: Welch's t-test over the 5 runs, each tested on 100 games: a gap counts when p < 0.05, which means a gap that big would come up by luck less than 1 time in 20. In the charts, green and red changes pass it and grey ones don't. Each step's footnote has its numbers, and the four steps I kept still pass a Holm correction across those four. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^rainbow]: Double DQN and prioritised replay (my 2018 agent's two), plus dueling networks, multi-step returns, distributional values and noisy networks. [The Rainbow paper](https://arxiv.org/abs/1710.02298)
-[^runs]: At 1M frames, DQN's five runs won 30% to 78%. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^button]: On the same 500 test games as today's agents: 82.4% wins and 37 points. PPO at 1M frames matched it game for game.
-[^results]: On two of my other three games, one button wins every game: Deceptizelda (hold right) and Wafer Thin Mints (any direction). [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^practice]: Against my agent, DQN wins p = 0.005 and points p = 0.009, Rainbow wins p = 0.006 and points p = 0.008. DQN against Rainbow: wins p = 0.71, points p = 0.51.
-[^reward]: Against points: win + points ÷ 10 wins p = 0.0015. Win only against win + points ÷ 10: wins p = 0.19, points p < 0.001. I also tried points ÷ 5 and ÷ 20: ÷ 5 scored 1.6 more (p = 0.047), but picking the best of several options makes a lucky gap more likely, and a Holm correction across the two needs p under 0.025, so it's a tie. The ÷ 5 and ÷ 20 runs ran on later versions of the code with the same learning.
-[^network]: Wins p = 0.07, points p = 0.025.
-[^moves]: Every 4 to every 2 frames: points p < 0.001. Every 2 against every frame: wins p = 0.19, points p = 0.24. Three of the five every-frame runs ran on an earlier version of the code with the same learning.
-[^mcts]: One run of 51 games: MCTS doesn't learn, so its games only vary with the level.
-[^clip]: As in DeepMind's Atari setup, the reward counts each scoring move as one, so a base and an alien count the same.
-[^2018]: The report says it played 50 test games, but 82.6% isn't a whole number of 50, and the log that gives it is the training one: games 1,500 to 2,000, while it still made 1 in 10 moves at random. The report's Table 6.1 also gives 56.3 points, which I can't trace back to a log. The retrained version is tested on 100 games per run, on other games from the same levels as today's agents, and its 2,000 games come to about 1M frames. All the code and results are in [my dissertation repo](https://github.com/ColinCee/GVGAI-Dissertation).
-[^deaths]: The 2 losses a replay brought back. Changing the points weight didn't clearly change how often it loses (3, 6 and 6 in 500 at ÷ 20, ÷ 10 and ÷ 5), and every frame lost none of its 500.
-[^log]: From my Claude Code session log, 18 and 19 October 2026.
+[^test]: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) on the 5 runs: a gap counts as real when p < 0.05, so luck alone would give one that big less than 1 time in 20. Every p-value is in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
+[^mcts]: One run of 51 games, since it doesn't learn.
+[^clip]: Each scoring move counts as 1, as in DeepMind's Atari setup.
+[^2018]: Counted over training games 1,500 to 2,000, while it still made 1 in 10 moves at random.

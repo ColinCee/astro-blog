@@ -5,8 +5,8 @@
 // calls it a real gain (`real`), red a real drop, faint when the test can't
 // tell it from luck. `base` stripes the baseline (my 2018 agent), `hi` marks
 // the option kept, in the accent. `ref` is the dashed line (holding shoot).
-// A key under the chart says what the change colours mean, linking `note`
-// (the post's footnote on the test). Hover or tap a row and the others fade.
+// A key under the chart names that line and each change colour the chart
+// uses, with `note`'s number linking the post's footnote on the test. Hover or tap a row and the others fade.
 // Styles: pts.css.
 interface Row {
   name: string;
@@ -22,7 +22,7 @@ interface Row {
 interface Props {
   rows: Row[];
   ref?: { at: number; label: string };
-  note?: string;
+  note?: { href: string; n: number };
 }
 const {
   rows,
@@ -42,6 +42,19 @@ const delta = (d: number, real = true) =>
         text: d > 0 ? `+${d.toFixed(0)}` : `−${Math.abs(d).toFixed(0)}`,
       };
 const ticks = [0, 25, 50, 75, 100];
+const changes = rows.flatMap((r) =>
+  r.prev
+    ? [
+        delta(r.won - r.prev.won, r.real?.won ?? true).cls,
+        delta(r.points - r.prev.points, r.real?.points ?? true).cls,
+      ]
+    : [],
+);
+const keys = [
+  { cls: "pts__plus", word: "green", text: "a real gain" },
+  { cls: "pts__minus", word: "red", text: "a real drop" },
+  { cls: "pts__same", word: "grey", text: "could be luck" },
+].filter((k) => changes.includes(k.cls));
 ---
 
 <div class="pts" style={`--r1:${f(ref.at)};`}>
@@ -90,12 +103,15 @@ const ticks = [0, 25, 50, 75, 100];
       <i class="pts__dash"></i>
       {ref.label}
     </span>
-    <span>
-      <b class="pts__plus">green</b>
-      / <b class="pts__minus">red</b>: a{" "}
-      {note ? <a href={note}>real</a> : "real"}
-      change
-    </span>
-    <span> <b class="pts__same">grey</b>: could be luck </span>
+    {keys.map((k, i) => (
+      <span>
+        <b class={k.cls}>{k.word}</b>: {k.text}
+        {note && i === keys.length - 1 && (
+          <sup>
+            <a href={note.href}>{note.n}</a>
+          </sup>
+        )}
+      </span>
+    ))}
   </p>
 </div>
