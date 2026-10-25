@@ -42,7 +42,7 @@ Write how he talks in chat and writes himself: casual, conversational British En
 
 ## 4. Figures
 
-Show, don't ask: build the change or two or three distinct variations, put them in front of him, then iterate. His 2018 dissertation is the opposite of the target here: default plots with a "Figure 5.1: Comparison of…" caption underneath. The figures in his recent posts are the standard.
+Show, don't ask: build the change or two or three distinct variations, put them in front of him, then iterate. The figures in his recent posts are the standard. Numbered captions underneath ("Figure 5.1: Comparison of…", as in his dissertation) suit a report, where figures float away from the text that cites them. In a post the figure sits next to its text, so it gets a short title above and, at most, a one-line caption below for a note.
 
 - **Pick the form by the job.** Bars drawn to scale for A vs B. A step chart for sequential improvements. A dot plot for comparing options. A bridge chart for where time goes. A grid of squares for time at a glance. Trees or arrows for structure. Never plain boxes with text in them, and skip 3D or click-to-reveal unless it explains better than a still.
 - **Chart basics, every time.**
