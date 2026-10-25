@@ -45,12 +45,20 @@ test.describe("phone", () => {
     await page.waitForTimeout(2000);
 
     // Below the fold, long after the load-time entrance would have finished:
-    // still on its first frame.
+    // still held, on its first frame. Read once: toHaveCSS retries.
     const lastBar = page.locator(".ship__bar--after .ship__fill").last();
-    expect(await lastBar.evaluate((el) => getComputedStyle(el).transform)).toBe(
-      "matrix(0, 0, 0, 1, 0, 0)",
-    );
-    await expect(page.locator(".posts li").first()).toHaveCSS("opacity", "0");
+    expect(
+      await lastBar.evaluate((el) => ({
+        held: !!el.closest(".is-held"),
+        transform: getComputedStyle(el).transform,
+      })),
+    ).toEqual({ held: true, transform: "matrix(0, 0, 0, 1, 0, 0)" });
+    expect(
+      await page
+        .locator(".posts li")
+        .first()
+        .evaluate((el) => getComputedStyle(el).opacity),
+    ).toBe("0");
 
     // Scrolled to, it plays.
     await lastBar.evaluate((el) => el.scrollIntoView({ block: "center" }));
@@ -59,5 +67,16 @@ test.describe("phone", () => {
       .locator(".posts")
       .evaluate((el) => el.scrollIntoView({ block: "center" }));
     await expect(page.locator(".posts li").last()).toHaveCSS("opacity", "1");
+  });
+});
+
+test("desktop holds nothing back: the writing lines print on load", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/");
+  await expect(page.locator(".is-held")).toHaveCount(0);
+  await expect(page.locator(".posts li").last()).toHaveCSS("opacity", "1", {
+    timeout: 5000,
   });
 });

@@ -91,14 +91,15 @@ const { idx, name, area, active = false } = Astro.props;
 </style>
 
 <script>
-  // Anything marked data-scroll-in holds its entrance (and its children's)
-  // until it scrolls into view. On a desktop the whole terminal is on screen,
-  // so it all plays on load as before; on a phone it plays as you scroll.
-  // Armed by JS only, so without it (or with reduced motion) everything plays
-  // on load.
+  // On a phone, where the panes stack, anything marked data-scroll-in holds
+  // its entrance (and its children's) until it scrolls into view. Desktop
+  // plays its sequence on load: a held element's delay only counts down once
+  // released, so holding there would leave a pane empty for seconds. Armed by
+  // JS only, so without it (or with reduced motion) everything plays on load.
   const items = document.querySelectorAll<HTMLElement>("[data-scroll-in]");
   if (
     items.length &&
+    matchMedia("(max-width: 900px)").matches &&
     !matchMedia("(prefers-reduced-motion: reduce)").matches &&
     "IntersectionObserver" in window
   ) {
@@ -124,5 +125,12 @@ const { idx, name, area, active = false } = Astro.props;
   .is-held,
   .is-held * {
     animation-play-state: paused !important;
+  }
+  /* Printed, nothing waits for a scroll. */
+  @media print {
+    .is-held,
+    .is-held * {
+      animation: none !important;
+    }
   }
 </style>
