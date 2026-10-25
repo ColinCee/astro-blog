@@ -215,21 +215,30 @@ async function qview(root: HTMLElement) {
       video.pause();
     }
   });
+  // The site's host answers a byte-range request with the whole file, so a
+  // streamed clip can't seek: every seek lands back on the first frame. The
+  // clips are small, so the first time a seek is needed the clip is loaded
+  // whole into memory, where every frame can be reached.
+  let whole: Promise<void> | undefined;
+  const loadWhole = () =>
+    (whole ??= (async () => {
+      const source = [...video.querySelectorAll("source")].find((s) => video.canPlayType(s.type));
+      if (!source) return;
+      const blob = await (await fetch(source.src)).blob();
+      const loaded = new Promise((r) => video.addEventListener("loadedmetadata", r, { once: true }));
+      video.src = URL.createObjectURL(blob);
+      await loaded;
+    })());
   // Pause on decision i and show its frame.
   const goTo = (i: number) => {
     video.dataset.hold = "1";
     video.pause();
     i = Math.min(decisions.length - 1, Math.max(0, i));
     show(i);
-    // Land in the middle of the frame that shows the decision's tick; a
-    // video that hasn't loaded yet (preload="none") is loaded first.
-    const seek = () => (video.currentTime = (decisions[i].tick + 0.5) / (fps * ticksPerFrame));
-    if (video.readyState >= 1) seek();
-    else {
-      video.addEventListener("loadedmetadata", seek, { once: true });
-      video.preload = "auto";
-      video.load();
-    }
+    // Land in the middle of the frame that shows the decision's tick.
+    loadWhole().then(() => {
+      video.currentTime = (decisions[i].tick + 0.5) / (fps * ticksPerFrame);
+    });
   };
   root.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((b) =>
     b.addEventListener("click", () => goTo(last + Number(b.dataset.step))),
