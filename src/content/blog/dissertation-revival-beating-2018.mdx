@@ -19,7 +19,7 @@ pubDate: "Oct 21 2026"
 
 In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster. With runs that cheap, I wanted to see if today's methods could beat what I built as an undergrad.
 
-My 2018 agent wins 73% of Aliens games and scores 47 points a game. The best agent we got to wins 99 games out of 100 and scores 83. It even beats a tree search that plans every move, and no learning agent came close to that before. All the code and results are in [my dissertation repo](https://github.com/ColinCee/GVGAI-Dissertation).
+My 2018 agent wins 73% of Aliens games and scores 47 points a game. The best agent we got to wins 99 games out of 100 and scores 83. It even outscores a tree search that plans every move, and none of my learning agents had come close to that. All the code and results are in [my dissertation repo](https://github.com/ColinCee/GVGAI-Dissertation).
 
 ## How did we beat it?
 
@@ -49,9 +49,9 @@ At each step I kept whatever won, wins first and then points, but only when a si
 
 Each chart below starts from what the step before kept and changes one thing:
 
-- **Striped** is my 2018 version.
-- **Grey** is where the step before got to.
-- **Orange** is what a change added.
+- **Striped** is my 2018 agent, or my 2018 reward.
+- **Grey** is where the step before got to, or the whole bar when a row dropped.
+- **Orange** is what a change added, and **red** numbers are drops.
 - **Bold** is the one I kept for the next step.
 - **The dashed line** is what you win by just holding the shoot button.[^button] More on that below.
 
@@ -123,7 +123,7 @@ The reward is what the agent gets told is good. I tried mixes of three:
 
 - **Win** wins almost every game, but it doesn't care about points.
 - **Win + points ÷ 10** wins almost every game and scores 59. It's the one I kept.
-- **Other weights**, like points ÷ 5 and ÷ 20, came out the same as ÷ 10 within the noise between runs.
+- **Other weights**: ÷ 20 tied with ÷ 10, and ÷ 5 scored about 2 more points, right on the line at p = 0.047, so that's a loose end I've left for now.
 - **My 2018 reward** did its job back then, but with more practice it falls behind.
 
 ## Does a bigger network help?
@@ -132,7 +132,7 @@ The network is the part that turns the screen into a score for each move. The bi
 
 <Fig title="Does a bigger network help? DQN, 5M frames, win + points reward">
   <Pts rows={[
-    {"name": "Standard", "tag": "3 layers, kept from before", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93},
+    {"name": "Standard", "tag": "the 2015 one, kept from before", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93},
     {"name": "Bigger (IMPALA)", "tag": "15 layers", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "kind": "hi"},
   ]} />
 </Fig>
@@ -160,7 +160,7 @@ That's a tie on both, so I kept every 2 frames since it's about 2½ times quicke
 
 ## Why does it still lose 1 game in 100?
 
-I replayed the best agent's test games, and as far as I can tell every loss is the same thing: a bomb lands on the ship while it sits still and shoots. My guess was the reward, since each point is worth +0.1 and a death only costs −1, so taking a risk for more points is nearly free. But changing how much points are worth didn't clearly change it, points ÷ 20 lost 3 games in 500 and ÷ 10 and ÷ 5 lost 6 each.[^deaths]
+I replayed the best agent's test games, and the 2 losses that came up again were the same thing: a bomb lands on the ship while it sits still and shoots. My guess was the reward, since each point is worth +0.1 and a death only costs −1, so taking a risk for more points is nearly free. But changing how much points are worth didn't clearly change it, points ÷ 20 lost 3 games in 500 and ÷ 10 and ÷ 5 lost 6 each.[^deaths]
 
 Moving every frame with the bigger network lost none of its 500 though, so maybe it's just reaction time, but that's too few losses to tell, and a follow-up for another day.
 
@@ -168,7 +168,7 @@ Moving every frame with the bigger network lost none of its 500 though, so maybe
 
 - **Question the settings you copied.** Holding each move for 4 frames came from Atari, and here it cost about 20 points.
 - **Check the dumbest baseline first.** Holding one button doesn't need any training, and I never tried it.
-- **Run everything more than once.** My two 2018 runs of the same agent were 10 to 17 points apart.
+- **Run everything more than once.** My two 2018 runs of the same agent were 10 to 17% apart on games won.
 - **Claude wrote all of the code, but it liked to stop early.** I pushed back six times in about 2½ hours.[^log]
 - **I was the least informed person on my own dissertation.** About a third of my messages were me learning things like PPO and IMPALA.
 
@@ -177,6 +177,6 @@ Moving every frame with the bigger network lost none of its 500 though, so maybe
 [^button]: On the same 500 test games as today's agents: 82.4% wins and 37 points. PPO at 1M frames matched it game for game. My 2018 agent's code tests on other games from the same levels.
 [^results]: On two of my other three games, one button wins every game: Deceptizelda (hold right) and Wafer Thin Mints (any direction). [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^moves]: 5 runs of 100 test games each. Points 82.4 to 83.2 against 82.2 to 82.9, wins p = 0.19 and points p = 0.24. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^runs3]: Every chart is 5 runs of the same code, each tested on 100 games. A gap counts when Welch's t-test gives p < 0.05: 0.013 for more practice, 0.001 for the new reward, 0.025 for the bigger network and under 0.001 for moving every 2 frames. DQN against Rainbow (0.7) and every 2 frames against every frame (0.24) are ties. The four steps that count still pass a Holm correction for running several tests. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^runs3]: Every chart is 5 runs of the same code, each tested on 100 games. A gap counts when Welch's t-test gives p < 0.05: 0.013 and 0.002 on wins for more practice and the new reward, 0.025 and under 0.001 on points for the bigger network and moving every 2 frames, where wins tied. DQN against Rainbow (0.7) and every 2 frames against every frame (0.24) are ties. The four steps I kept still pass a Holm correction across those four. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^log]: From my Claude Code session log, 18 and 19 October 2026.
 [^deaths]: 5 runs each, all with a move every 4 frames and the standard network.
