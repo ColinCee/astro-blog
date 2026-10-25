@@ -29,11 +29,15 @@
   --prose-ink: oklch(0.27 0.012 85);
 
   /* ---- Accent: one hue (tomato) ----
-     The only chromatic colour. It marks results, links, and active or hover
-     states; everything else is the neutral ramp above. */
+     It marks results, links, and active or hover states; everything else is
+     the neutral ramp above, except --gain and --loss for chart changes. */
   --accent: oklch(0.55 0.19 32);
   --accent-ink: oklch(0.98 0.01 60);
   --accent-soft: oklch(0.49 0.17 32);
+  --loss: oklch(
+    0.5 0.2 15
+  ); /* a drop in a chart: crimson, kept apart from the tomato accent */
+  --gain: oklch(0.5 0.13 150); /* a real gain in a chart: green */
   /* Small accent text (labels, values): on the light surfaces --accent itself
      is under the 4.5:1 contrast text needs, so it takes the softer tone. */
   --accent-text: var(--accent-soft);
@@ -92,6 +96,8 @@
     --accent: oklch(0.75 0.17 38);
     --accent-ink: oklch(0.2 0.04 40);
     --accent-soft: oklch(0.79 0.11 38);
+    --loss: oklch(0.68 0.19 12);
+    --gain: oklch(0.76 0.15 150);
     --accent-text: var(--accent);
 
     --bar: oklch(0.38 0.018 80);

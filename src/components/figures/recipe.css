@@ -1,0 +1,68 @@
+/* The recipe so far (Recipe): a panel fixed in the right margin, beside the
+   44rem prose, shown only while the steps are read and only where the margin
+   fits it. Passed steps in ink, the current one in the accent, the rest faint. */
+.recipe {
+  display: none;
+}
+@media (min-width: 78rem) {
+  .recipe {
+    position: fixed;
+    top: 30vh;
+    left: calc(50% + var(--measure, 44rem) / 2 + 2.5rem);
+    width: 12.5rem;
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0.9rem 1rem;
+    background: var(--pane);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    line-height: 1.4;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.2s,
+      visibility 0.2s;
+  }
+  .recipe.is-on {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+.recipe__k {
+  margin: 0;
+  color: var(--faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.recipe ol {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.recipe li {
+  display: grid;
+  grid-template-columns: 1.1rem 1fr;
+  margin: 0;
+  padding: 0;
+  color: var(--faint);
+}
+.recipe li::before {
+  content: none;
+}
+.recipe li b {
+  font-weight: 500;
+}
+.recipe li.is-done {
+  color: var(--ink);
+}
+.recipe li.is-now {
+  color: var(--accent-soft);
+}
+.recipe li.is-now b {
+  font-weight: 700;
+}

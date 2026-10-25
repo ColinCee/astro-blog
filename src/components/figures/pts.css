@@ -1,0 +1,239 @@
+/* Wins-and-points chart (Pts): rows of name + tag, a bar of win rate on a
+   0-100% axis with the spread of runs (s), then win rate and points with their
+   change. --a/--b: the bar's width. Only the kept
+   row (--hi) takes the accent. --r1 draws the same dashed reference line (above
+   the bars) in every chart, named in the key under it. */
+.prose .pts {
+  display: grid;
+  grid-template-columns: minmax(0, 12rem) minmax(0, 1fr) 5.2rem 6rem;
+  align-items: center;
+  gap: 0 0.8rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+}
+.prose .pts__r > * {
+  padding: 0.2rem 0;
+}
+.prose .pts__r {
+  display: contents;
+}
+.prose .pts__h {
+  font-size: 0.6875rem;
+  color: var(--faint);
+}
+.prose .pts__wh {
+  text-align: center;
+}
+.prose .pts__k b {
+  font-weight: 500;
+  color: var(--ink);
+}
+.prose .pts__k small {
+  display: block;
+  font-size: 0.6875rem;
+  color: var(--faint);
+}
+.prose .pts__t {
+  position: relative;
+  align-self: stretch;
+  min-height: 1.8rem;
+}
+.prose .pts__t::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(var(--faint) 0 3px, transparent 3px 6px) no-repeat
+    calc(var(--r1) * 100%) 0 / 1px 100%;
+}
+.prose .pts__t i {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: calc(var(--a) * 100%);
+  height: 0.7rem;
+  transform: translateY(-50%);
+  background: var(--bar);
+  border-radius: 1px;
+}
+.prose .pts__t s {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--lo) * 100%);
+  width: calc((var(--hi) - var(--lo)) * 100%);
+  min-width: 1px;
+  height: 0.55rem;
+  transform: translateY(-50%);
+  z-index: 2;
+  border: solid var(--ink);
+  border-width: 0 1.5px;
+  background:
+    linear-gradient(var(--ink), var(--ink)) no-repeat 0 50% / 100% 1.5px;
+  filter: drop-shadow(0 0 1px var(--bg)) drop-shadow(0 0 1px var(--bg));
+}
+.prose .pts em {
+  /* value right-aligned, change in its own slot, so both line up down a column */
+  display: grid;
+  grid-template-columns: 1fr 3ch;
+  column-gap: 0.3rem;
+  align-items: baseline;
+  font-style: normal;
+  color: var(--ink);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.prose .pts em small {
+  grid-column: 2;
+  font-size: 0.6875rem;
+  text-align: left;
+  color: var(--ink);
+}
+.prose .pts em small.pts__same {
+  color: var(--faint);
+}
+.prose .pts .pts__plus {
+  color: var(--gain);
+}
+.prose .pts .pts__minus {
+  color: var(--loss);
+}
+.prose .pts .pts__w {
+  color: var(--muted);
+}
+.prose .pts__r--hi .pts__t i {
+  background: var(--accent);
+}
+.prose .pts__r--hi .pts__k b {
+  font-weight: 700;
+}
+/* My 2018 version, the baseline: striped, the same in every chart. */
+.prose .pts__r--base .pts__t i:first-child {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--muted) 0 2px,
+    var(--bar) 2px 5px
+  );
+}
+/* What the line and change colours mean: its own row under a rule, right-aligned,
+   with the footnote number hanging past the edge so the lines stay flush. */
+.prose .pts__key {
+  grid-column: 1 / -1;
+  display: grid;
+  justify-items: end;
+  margin: 0.6rem 0 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+.prose .pts__key span {
+  position: relative;
+}
+.prose .pts__key sup {
+  font-size: 0.6875rem;
+  position: absolute;
+  left: 100%;
+  top: -0.2rem;
+  padding-left: 0.15rem;
+}
+.prose .pts__dash {
+  display: inline-block;
+  height: 0.7rem;
+  margin-right: 0.4rem;
+  vertical-align: -0.1rem;
+  border-left: 1px dashed var(--faint);
+}
+.prose .pts__key b {
+  font-weight: 500;
+}
+.prose .pts__key .pts__same {
+  color: var(--faint);
+}
+/* Hover or tap a row and the others fade, to read one row across. */
+.prose .pts__k {
+  cursor: default;
+  outline: none;
+}
+/* every row two lines tall, tag or not, so the bars sit evenly apart */
+@media (min-width: 34.01rem) {
+  .prose .pts__k {
+    min-height: 2.4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+.prose .pts__r > * {
+  transition: opacity 0.15s;
+}
+.prose
+  .pts:has(.pts__r:hover, .pts__r:focus-within)
+  .pts__r:not(:hover, :focus-within)
+  > * {
+  opacity: 0.3;
+}
+.prose .pts__axis {
+  position: relative;
+  align-self: stretch;
+  min-height: 1.2rem;
+}
+.prose .pts__axis {
+  border-top: 1px solid var(--line);
+}
+.prose .pts__axis span {
+  position: absolute;
+  left: calc(var(--x) * 100%);
+  transform: translateX(-50%);
+  font-size: 0.6875rem;
+  color: var(--faint);
+  white-space: nowrap;
+}
+.prose .pts__axis span {
+  top: 0.25rem;
+}
+.prose .pts__xt {
+  padding-top: 0.15rem;
+  text-align: center;
+}
+.prose .pts__axis span::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -0.3rem;
+  height: 0.2rem;
+  border-left: 1px solid var(--line);
+}
+.prose .pts__axis span:first-child {
+  transform: none;
+}
+.prose .pts__axis span:first-child::before {
+  left: 0;
+}
+.prose .pts__axis span:last-child {
+  transform: translateX(-100%);
+}
+.prose .pts__axis span:last-child::before {
+  left: auto;
+  right: 0;
+}
+@media (max-width: 34rem) {
+  .prose .pts {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 0.15rem 0.6rem;
+  }
+  .prose .pts__k,
+  .prose .pts > .pts__h:first-child {
+    grid-column: 1 / -1;
+    margin-top: 0.35rem;
+  }
+  .prose .pts > .pts__h:first-child,
+  .prose .pts > .pts__sp {
+    display: none;
+  }
+  .prose .pts__axis span {
+    font-size: 0.6875rem;
+  }
+}
