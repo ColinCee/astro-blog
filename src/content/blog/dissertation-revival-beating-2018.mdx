@@ -26,7 +26,7 @@ My dissertation says my agent won 82.6% of Aliens games, but that was one run, m
 <Fig title="One change at a time">
   <Pts rows={[
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
-    {"name": "1. Today's DQN, 5M frames", "tag": "more practice", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
+    {"name": "1. Double DQN, 5M frames", "tag": "more practice", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
     {"name": "2. + win + points ÷ 10", "tag": "a new reward", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": false}},
     {"name": "3. + the IMPALA network", "tag": "a bigger network", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "real": {"won": false, "points": true}},
     {"name": "4. + a move every 2 frames", "tag": "instead of every 4", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}, "kind": "hi"},
@@ -37,26 +37,26 @@ Each row adds one change, and I only kept it if a significance test[^test] over 
 
 Each bar is the average win rate over 5 runs, and the thin bracket is their range. Δ is the change from the row it builds on, striped is my 2018 agent, and orange is the final agent. The dashed line is what you get by just holding the shoot button, more on that in step 1.
 
-<Recipe steps={["DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="Conclusion" />
+<Recipe steps={["Double DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="Conclusion" />
 
 ## Step 1: which algorithm is best with more practice?
 
 I tried three algorithms, each with 5 times the practice my agent got:
 
-- **[DQN](https://www.nature.com/articles/nature14236):** DeepMind's 2015 Atari method. Mine had 2 tricks on top, [Double DQN](https://arxiv.org/abs/1509.06461) and [prioritised replay](https://arxiv.org/abs/1511.05952), and today's version here keeps Double DQN but not prioritised replay.
+- **[Double DQN](https://arxiv.org/abs/1509.06461):** DeepMind's 2015 Atari method, [DQN](https://www.nature.com/articles/nature14236), with a fix for overestimating how good moves are. My agent was this plus [prioritised replay](https://arxiv.org/abs/1511.05952).
 - **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.
 - **[PPO](https://arxiv.org/abs/1707.06347):** learns which move to make directly, instead of scoring each one.
 
 <Fig title="Which algorithm, 5M frames?">
   <Pts rows={[
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
-    {"name": "DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
+    {"name": "Double DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
     {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
     {"name": "PPO", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": false}},
   ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster DQN. That's 17 minutes a run now, which would've been 2 or 3 days in 2018.
+Double DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster Double DQN. That's 17 minutes a run now, which would've been 2 or 3 days in 2018.
 
 ### PPO actually wins more at 1M frames
 With the same 1M frames as my agent, PPO wins 82% of the time, which is about what my dissertation said my agent won. However, it turns out it was just spamming the shoot button, which is why every chart has a dashed line at 82%: anything below it is worse than holding one button.
