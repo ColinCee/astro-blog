@@ -130,7 +130,9 @@ Every 2 frames added 21 points, and every frame did no better, so I kept the che
 
 My 2018 agent won 73% of games. The final agent wins 99% and scores 83, even outscoring MCTS, which my 2018 agent never got close to.
 
-So why not keep every frame, which won all 500 games? Because the test can't tell 99% from 100% apart from luck, and I'd already set the rule for every step: a tie keeps the cheaper option. Picking the winner after looking is how you fool yourself, which is why scientists [fix their rules up front](https://en.wikipedia.org/wiki/Preregistration_%28science%29).
+So why not keep every frame, which won all 500 games? Because the test can't tell 99% from 100% apart from luck, when a tie occurs I chose to keep the cheaper option. 
+
+Picking the winner after looking is how you fool yourself, which is why scientists [fix their rules up front](https://en.wikipedia.org/wiki/Preregistration_%28science%29).
 
 What I learned:
 
@@ -138,7 +140,7 @@ What I learned:
 - **Check the dumbest baseline first.** Holding one button needs no training, and I never tried it.
 - **Run everything more than once.** My three 2018 runs ended up to 14 percentage points apart on win rate.
 
-Not bad for runs that take 45 minutes now and would've taken days in 2018.
+The 80 training runs in this post took 36 hours in total. At 2018 speed they'd have taken about 5 months, and all 400 runs I did for this project nearly 2 years.
 
 [^test]: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) on the 5 runs: a gap counts as real when p < 0.05, so luck alone would give one that big less than 1 time in 20. Every p-value is in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^mcts]: One run of 51 games, since it doesn't learn.
