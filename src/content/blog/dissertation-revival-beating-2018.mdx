@@ -160,7 +160,7 @@ That's a tie on both, so I kept every 2 frames since it's about 2½ times quicke
 
 ## Why does it still lose 1 game in 100?
 
-I replayed lost games from earlier runs, and as far as I can tell every loss was the same thing: a bomb lands on the ship while it sits still and shoots. My guess was the reward, since each point is worth +0.1 and a death only costs −1, so taking a risk for more points is nearly free. But changing how much points are worth didn't clearly change it, points ÷ 20 lost 3 games in 500 and ÷ 10 and ÷ 5 lost 6 each.[^deaths]
+I replayed the best agent's test games, and as far as I can tell every loss is the same thing: a bomb lands on the ship while it sits still and shoots. My guess was the reward, since each point is worth +0.1 and a death only costs −1, so taking a risk for more points is nearly free. But changing how much points are worth didn't clearly change it, points ÷ 20 lost 3 games in 500 and ÷ 10 and ÷ 5 lost 6 each.[^deaths]
 
 Moving every frame with the bigger network lost none of its 500 though, so maybe it's just reaction time, but that's too few losses to tell, and a follow-up for another day.
 
@@ -174,7 +174,7 @@ Moving every frame with the bigger network lost none of its 500 though, so maybe
 
 [^rainbow]: Double DQN and prioritised replay (my 2018 agent's two), plus dueling networks, multi-step returns, distributional values and noisy networks. [The Rainbow paper](https://arxiv.org/abs/1710.02298)
 [^runs]: DQN's five runs won 30% to 78%. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^button]: On the same 500 test games as every agent: 82.4% wins and 37 points. PPO at 1M frames matched it game for game.
+[^button]: On the same 500 test games as today's agents: 82.4% wins and 37 points. PPO at 1M frames matched it game for game. My 2018 agent's code tests on other games from the same levels.
 [^results]: On two of my other three games, one button wins every game: Deceptizelda (hold right) and Wafer Thin Mints (any direction). [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^moves]: 5 runs of 100 test games each. Points 82.4 to 83.2 against 82.2 to 82.9, wins p = 0.19 and points p = 0.24. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^runs3]: Every chart is 5 runs of the same code, each tested on 100 games. A gap counts when Welch's t-test gives p < 0.05: 0.013 for more practice, 0.001 for the new reward, 0.025 for the bigger network and under 0.001 for moving every 2 frames. DQN against Rainbow (0.7) and every 2 frames against every frame (0.24) are ties. The four steps that count still pass a Holm correction for running several tests. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
