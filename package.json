@@ -24,7 +24,8 @@
     "test": "playwright test",
     "preview": "astro build && wrangler dev",
     "deploy": "astro build && wrangler deploy",
-    "og": "node scripts/og/render.mjs"
+    "og": "node scripts/og/render.mjs",
+    "record": "node scripts/record.mjs"
   },
   "type": "module",
   "volta": {
