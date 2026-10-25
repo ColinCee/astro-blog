@@ -68,10 +68,14 @@ for (const vp of viewports) {
               : ".post__head, .post > .prose > *, .tl__span, .post__foot",
           )
           .evaluateAll((els) =>
-            els.map((el) => {
-              const r = el.getBoundingClientRect();
-              return { left: Math.round(r.left), right: Math.round(r.right) };
-            }),
+            els
+              .map((el) => el.getBoundingClientRect())
+              // hidden blocks (the side panel on narrow screens) have no box
+              .filter((r) => r.width > 0)
+              .map((r) => ({
+                left: Math.round(r.left),
+                right: Math.round(r.right),
+              })),
           );
         const right = Math.max(...boxes.map((b) => b.right));
         for (const box of boxes) {
