@@ -43,7 +43,7 @@ Each bar is the average win rate over 5 runs, and the thin bracket is their rang
 
 I tried three algorithms, each with 5 times the practice my agent got:
 
-- **[DQN](https://www.nature.com/articles/nature14236):** DeepMind's 2015 Atari method, and my agent is this plus 2 tricks.
+- **[DQN](https://www.nature.com/articles/nature14236):** DeepMind's 2015 Atari method. Mine had 2 tricks on top, [Double DQN](https://arxiv.org/abs/1509.06461) and [prioritised replay](https://arxiv.org/abs/1511.05952), and today's version here keeps Double DQN but not prioritised replay.
 - **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.
 - **[PPO](https://arxiv.org/abs/1707.06347):** learns which move to make directly, instead of scoring each one.
 
