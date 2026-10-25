@@ -361,8 +361,12 @@ const moves = ["shoot", "left", "right"];
       // Walk the pointer to the last decision at or before this tick.
       if (i >= ds.length || ds[i].tick > tick) i = 0;
       while (i + 1 < ds.length && ds[i + 1].tick <= tick) i++;
+      // A decision lasts several frames; redraw only when it changes.
+      if (ds[i] === drawn) return;
+      drawn = ds[i];
       show(ds[i]);
     };
+    let drawn: Decision | undefined;
     const loop = () => {
       sync();
       if (!video.paused) raf = requestAnimationFrame(loop);

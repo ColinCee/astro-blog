@@ -12,6 +12,7 @@ interface Props {
   description: string;
   ogDescription?: string;
   ogType?: string;
+  article?: { headline: string; published: Date; modified?: Date };
   home?: boolean;
 }
 const { home = false, ...head } = Astro.props;
@@ -20,7 +21,7 @@ const { home = false, ...head } = Astro.props;
 <!doctype html>
 <html lang="en">
   <head>
-    <Head {...head} />
+    <Head {...head} person={home} />
   </head>
 
   <body>

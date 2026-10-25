@@ -1,6 +1,7 @@
 // @ts-check
 
 import { execSync } from "node:child_process";
+import { readdirSync, readFileSync } from "node:fs";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
@@ -26,6 +27,29 @@ function buildInfo() {
       : { hash: "", when: "", subject: "" };
   }
 }
+
+// Each post's last change (updatedDate, else pubDate) by its URL, so the
+// sitemap can say when a page last changed.
+const blog = "./src/content/blog";
+const lastmod = Object.fromEntries(
+  readdirSync(blog)
+    .filter((f) => /\.mdx?$/.test(f))
+    .map((f) => {
+      const front = readFileSync(`${blog}/${f}`, "utf8").split("---")[1] ?? "";
+      // A frontmatter line such as `pubDate: "Oct 20 2026"`.
+      const date = (/** @type {string} */ key) =>
+        front
+          .split("\n")
+          .find((line) => line.startsWith(`${key}:`))
+          ?.slice(key.length + 1)
+          .trim()
+          .replace(/^"|"$/g, "");
+      const when = date("updatedDate") ?? date("pubDate");
+      const slug = f.replace(/\.mdx?$/, "");
+      return [`https://colincheung.dev/blog/${slug}/`, when && new Date(when)];
+    })
+    .filter(([, when]) => when && !Number.isNaN(when.valueOf())),
+);
 
 export default defineConfig({
   site: "https://colincheung.dev",
@@ -55,6 +79,13 @@ export default defineConfig({
     }),
     // After Expressive Code, so code blocks in MDX posts get it too.
     mdx(),
-    sitemap(),
+    sitemap({
+      // The 404 page is not a page to index.
+      filter: (page) => !page.endsWith("/404/"),
+      serialize: (item) => {
+        const when = lastmod[item.url];
+        return when ? { ...item, lastmod: when.toISOString() } : item;
+      },
+    }),
   ],
 });

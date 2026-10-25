@@ -1,0 +1,42 @@
+---
+// What an address with nothing at it shows. Cloudflare serves it with a 404
+// status (wrangler.json: not_found_handling).
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  title="Not found · Colin Cheung"
+  description="Nothing lives at this address."
+>
+  <article class="nf">
+    <p class="nf__k">{"// 404"}</p>
+    <h1>Nothing lives at this address.</h1>
+    <p>Try the <a href="/">homepage</a> or <a href="/blog/">the writing</a>.</p>
+  </article>
+</Base>
+
+<style>
+  .nf {
+    max-width: var(--w-page);
+    margin: clamp(2rem, 8vw, 5rem) auto;
+  }
+  .nf__k {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+  }
+  h1 {
+    font-weight: 700;
+    font-size: clamp(1.8rem, 4.6vw, 3rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+  a {
+    color: var(--accent-soft);
+    border-bottom: 1px solid var(--accent-line);
+  }
+  a:hover {
+    border-color: var(--accent);
+  }
+</style>

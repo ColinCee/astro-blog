@@ -132,11 +132,11 @@ const lastLogin = `${days[at.getDay()]} ${months[at.getMonth()]} ${at.getDate()}
     color: var(--ink);
     transition: opacity 0.25s ease;
   }
-  .is-booting .term-cmd {
+  /* While booting, a line stays hidden until the script reveals it. Said with
+     :not(.is-in), not by a later rule winning: scoping gives the booting rule
+     more weight, so a separate .is-in rule would lose. */
+  .is-booting .term-cmd:not(.is-in) {
     opacity: 0;
-  }
-  .term-cmd.is-in {
-    opacity: 1;
   }
   .who__prompt {
     color: var(--accent);
@@ -257,13 +257,9 @@ const lastLogin = `${days[at.getDay()]} ${months[at.getMonth()]} ${at.getDate()}
       opacity 0.3s ease,
       transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .is-booting .js-out {
+  .is-booting .js-out:not(.is-in) {
     opacity: 0;
     transform: translateY(3px);
-  }
-  .js-out.is-in {
-    opacity: 1;
-    transform: none;
   }
   @media (prefers-reduced-motion: reduce) {
     .who__caret {

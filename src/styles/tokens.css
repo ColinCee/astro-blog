@@ -7,10 +7,9 @@
   and build UI with the var(--token) values below. That is the whole system:
   colour, type, and a couple of global niceties. Nothing here is page-specific.
 
-  Fonts: Bricolage Grotesque (display/sans) + JetBrains Mono (mono).
+  Fonts: Bricolage Grotesque (display/sans) + JetBrains Mono (mono), loaded
+  from Google Fonts by components/site/Head.astro.
 */
-
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap");
 
 :root {
   color-scheme: light dark;
@@ -39,6 +38,9 @@
     0.5 0.2 15
   ); /* a drop in a chart: crimson, kept apart from the tomato accent */
   --gain: oklch(0.5 0.13 150); /* a real gain in a chart: green */
+  /* Small accent text (labels, values): on the light surfaces --accent itself
+     is under the 4.5:1 contrast text needs, so it takes the softer tone. */
+  --accent-text: var(--accent-soft);
 
   /* Track colour for the "before" bar in before/after comparisons */
   --bar: oklch(0.78 0.011 85);
@@ -96,6 +98,7 @@
     --accent-soft: oklch(0.79 0.11 38);
     --loss: oklch(0.68 0.19 12);
     --gain: oklch(0.76 0.15 150);
+    --accent-text: var(--accent);
 
     --bar: oklch(0.38 0.018 80);
     --lift: 0 40px 80px -40px rgba(0, 0, 0, 0.7);

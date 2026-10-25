@@ -8,13 +8,14 @@ interface Props {
 const { home = false } = Astro.props;
 const path = Astro.url.pathname;
 const links = [
-  { href: "/blog", label: "BLOG" },
-  { href: "/cv", label: "CV" },
+  { href: "/blog/", label: "BLOG" },
+  { href: "/cv/", label: "CV" },
 ];
 const active = (href: string) => {
   if (href.startsWith("/#")) return false;
   const p = path.replace(/\/$/, "") || "/";
-  return href === "/" ? p === "/" : p === href || p.startsWith(`${href}/`);
+  const h = href.replace(/\/$/, "") || "/";
+  return h === "/" ? p === "/" : p === h || p.startsWith(`${h}/`);
 };
 ---
 
