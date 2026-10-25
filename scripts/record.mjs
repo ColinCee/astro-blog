@@ -3,7 +3,8 @@
 //
 //   pnpm record <base-url> <out-dir> [path] [--until <selector>] [--hold <selector>]
 //
-// The phone scrolls in flicks with a pause after each, like a reader, until
+// The phone scrolls in flicks with a pause after each, like a reader, on the
+// same timetable every run, so recordings of two versions line up, until
 // the bottom of --until is on screen (default: two and a half screens).
 // --hold pushes <selector> below the fold first, to show what happens when it
 // starts off screen. Output: <out-dir>/phone.mp4 and <out-dir>/desktop.mp4.
@@ -73,38 +74,73 @@ for (const s of shots) {
     maxHeight: s.height,
   });
 
+  // The scroll runs inside the page on a timetable measured from the start of
+  // navigation, so two versions recorded separately are at the same place at
+  // the same moment. Scrolling from here instead drifts: each step's round
+  // trip and the smooth-scroll animation vary from run to run.
+  if (s.scroll)
+    await page.addInitScript(
+      ([sel, max]) => {
+        const wait = 1200; // read the top first
+        const flick = 350; // one thumb flick, easing out
+        const pause = 1300; // then read
+        let from = 0;
+        let target = null;
+        const step = () => {
+          const t = performance.now();
+          if (target === null && t >= wait) {
+            const el = sel && document.querySelector(sel);
+            const limit = document.documentElement.scrollHeight - innerHeight;
+            target = Math.min(
+              limit,
+              el
+                ? el.getBoundingClientRect().bottom + scrollY - innerHeight
+                : max,
+            );
+          }
+          if (target !== null) {
+            const dist = Math.round(innerHeight * 0.4);
+            const into = t - wait;
+            const n = Math.floor(into / (flick + pause));
+            const k = Math.min(1, (into - n * (flick + pause)) / flick);
+            const y = Math.min(target, n * dist + dist * (1 - (1 - k) ** 3));
+            if (y !== from) scrollTo({ top: y, behavior: "instant" });
+            from = y;
+            if (y >= target) {
+              window.__scrolled = true;
+              return;
+            }
+          }
+          requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      },
+      [until, s.height * 2.5],
+    );
+
   await page.goto(base + path);
   if (s.scroll) {
-    await page.waitForTimeout(1200);
-    const done = () =>
-      page.evaluate(
-        ([sel, max]) => {
-          const el = sel && document.querySelector(sel);
-          const atEnd =
-            scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
-          if (atEnd) return true;
-          return el
-            ? el.getBoundingClientRect().bottom <= innerHeight
-            : scrollY >= max;
-        },
-        [until, s.height * 2.5],
-      );
-    while (!(await done())) {
-      for (let i = 0; i < 20; i++) {
-        await page.mouse.wheel(0, 15);
-        await page.waitForTimeout(16);
-      }
-      await page.waitForTimeout(1300);
-    }
+    await page.waitForFunction(() => window.__scrolled, null, {
+      timeout: 60_000,
+    });
     await page.waitForTimeout(1500);
   } else {
     await page.waitForTimeout(4500);
   }
+  // Both clips start the moment navigation began.
+  const start = (await page.evaluate(() => performance.timeOrigin)) / 1000;
   const end = Date.now() / 1000;
   await cdp.send("Page.stopScreencast");
   await ctx.close();
 
   // Each frame lasts until the next one; ffmpeg's concat list says how long.
+  // The frame on screen when navigation began is stretched back to it.
+  const first = Math.max(
+    0,
+    frames.findLastIndex((f) => f.t <= start),
+  );
+  frames.splice(0, first);
+  frames[0].t = start;
   const dir = mkdtempSync(join(tmpdir(), "record-"));
   const list = frames.map((f, i) => {
     const file = join(dir, `${String(i).padStart(5, "0")}.jpg`);
