@@ -24,7 +24,7 @@
     "test": "playwright test",
     "preview": "astro build && wrangler dev",
     "deploy": "astro build && wrangler deploy",
-    "og": "node scripts/og/render.mjs",
+    "og": "node scripts/og/render.ts",
     "record": "node scripts/capture.ts",
     "compare": "node scripts/compare.ts",
     "screenshot": "node scripts/capture.ts --still"
