@@ -5,8 +5,8 @@
 // calls it a real gain (`real`), red a real drop, faint
 // when the test can't tell it from luck. `base` stripes
 // the baseline (my 2018 agent), `hi` marks the option kept, in the accent.
-// `ref` is the dashed line (holding shoot). A legend above names only what the
-// chart uses. Hover or tap a row and the others fade. Styles: pts.css.
+// `ref` is the dashed line (holding shoot). No legend: the post explains the
+// marks once. Hover or tap a row and the others fade. Styles: pts.css.
 interface Row {
   name: string;
   tag?: string;
@@ -36,24 +36,9 @@ const delta = (d: number, real = true) =>
         text: d > 0 ? `+${d.toFixed(0)}` : `−${Math.abs(d).toFixed(0)}`,
       };
 const ticks = [0, 25, 50, 75, 100];
-const legend = [
-  rows.some((r) => r.kind === "base") && { cls: "base", text: "my 2018 agent" },
-  rows.some((r) => r.kind === "hi") && { cls: "hi", text: "kept" },
-  rows.some((r) => !r.kind) && { cls: "other", text: "tried" },
-  { cls: "ref", text: "holding shoot" },
-].filter(Boolean) as { cls: string; text: string }[];
 ---
 
 <div class="pts" style={`--r1:${f(ref.at)};`}>
-  <p class="pts__legend">
-    {legend.map((l) => (
-      <span class={`pts__key pts__key--${l.cls}`}>{l.text}</span>
-    ))}
-    <span class="pts__key pts__key--deltas">
-      change: <b class="pts__plus">gain</b> <b class="pts__minus">drop</b>{" "}
-      <b class="pts__same">could be luck</b>
-    </span>
-  </p>
   <span class="pts__h"></span>
   <span class="pts__h pts__refs"
     ><span style={`--x:${f(ref.at)}`}>{ref.label}</span></span

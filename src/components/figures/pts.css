@@ -110,56 +110,6 @@
     var(--bar) 2px 5px
   );
 }
-/* The legend: a swatch per mark the chart uses, and the change colours. */
-.prose .pts__legend {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem 1rem;
-  margin: 0 0 0.5rem;
-  font-size: 0.625rem;
-  color: var(--faint);
-}
-.prose .pts__key::before {
-  content: "";
-  display: inline-block;
-  width: 0.9rem;
-  height: 0.5rem;
-  margin-right: 0.35rem;
-  vertical-align: -0.05rem;
-  border-radius: 1px;
-}
-.prose .pts__key--base::before {
-  background: repeating-linear-gradient(
-    135deg,
-    var(--muted) 0 2px,
-    var(--bar) 2px 5px
-  );
-}
-.prose .pts__key--hi::before {
-  background: var(--accent);
-}
-.prose .pts__key--other::before {
-  background: var(--bar);
-}
-.prose .pts__key--ref::before {
-  width: 0;
-  height: 0.75rem;
-  border-left: 1px dashed var(--faint);
-  border-radius: 0;
-}
-.prose .pts__key--deltas::before {
-  content: none;
-}
-.prose .pts__key--deltas b {
-  font-weight: 500;
-}
-.prose .pts__key--deltas .pts__same {
-  color: var(--faint);
-}
-.prose .pts__key--deltas .pts__minus {
-  color: var(--loss);
-}
 /* Hover or tap a row and the others fade, to read one row across. */
 .prose .pts__k {
   cursor: default;
