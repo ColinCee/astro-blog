@@ -23,43 +23,27 @@ My 2018 agent wins 73% of Aliens games and scores 47 points a game. The best age
 
 ## How did we beat it?
 
-Each row adds one change to the row above it, starting from today's DQN, which actually does worse than my agent at 1M frames, but it's what every later change builds on:
-
-- **An extra 4M frames** of training, 5M in total.
-- **Win + points ÷ 10**, a new reward: +1 for a win, −1 for a loss, plus a tenth of the points.
-- **The IMPALA network**, a bigger one.
-- **A move every 2 frames** instead of every 4.
-
 <Fig title="How we beat my 2018 agent, one step at a time">
   <Pts rows={[
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
-    {"name": "1. Today's DQN", "tag": "same 1M frames", "won": 51.2, "lo": 30.0, "hi": 78.0, "points": 39.88, "prev": {"won": 72.8, "points": 46.89}},
-    {"name": "2. + an extra 4M frames", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 51.2, "points": 39.88}},
-    {"name": "3. + win + points ÷ 10", "tag": "a new reward", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}},
-    {"name": "4. + the IMPALA network", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}},
-    {"name": "5. + a move every 2 frames", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "kind": "hi"},
+    {"name": "1. Today's DQN, 5M frames", "tag": "more practice", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
+    {"name": "2. + win + points ÷ 10", "tag": "a new reward", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": false}},
+    {"name": "3. + the IMPALA network", "tag": "a bigger network", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "real": {"won": false, "points": true}},
+    {"name": "4. + a move every 2 frames", "tag": "instead of every 4", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}, "kind": "hi"},
   ]} />
 </Fig>
 
-Winning comes first, and points only break ties between agents that win, so each bar is a win rate and the average points sit next to it.
+The first step is today's DQN with 5 times the practice, then each row adds one change to the row above, and the bars are win rates, since winning comes first and points only break ties. I only kept a change when a significance test over 5 runs said the gap was real, otherwise it's a tie and the simpler or cheaper option stays.[^test]
 
 More practice did most of the work on wins, and the new reward took it to almost every game. After that, moving more often didn't change wins, but it added 20 points.
 
-At each step I kept whatever won, wins first and then points, but only when a significance test over 5 runs says the gap is real, otherwise it's a tie and I keep the simpler or cheaper one.[^runs3]
-
 How to read the charts:
 
-- **Each bar** is the average win rate of 5 runs, and the thin line across it is their range.
-- **Striped** is my 2018 agent.
-- **Grey** is where the step before got to, or the whole bar when a row dropped.
-- **Orange** is what a change added, and **red** numbers are drops. Changes in win rate are percentage points.
-- **Each step's chart** has my 2018 agent as the baseline, then the starting point the earlier steps kept, then the options I tried, and each option's change is from the starting point.
-- **Bold** is the one I kept for the next step.
-- **The dashed line** is what you win by just holding the shoot button.[^button] More on that below.
+- **Each bar** is the average win rate of 5 runs, and the thin line across it is their range. My 2018 agent is striped, and the dashed line is what you win by just holding the shoot button.
+- **Orange** numbers are real gains and **red** ones real drops, against the row they build on, and **grey** ones are ties. Win-rate changes are percentage points.
+- **Bold** is what I kept for the next step.
 
-<Recipe steps={["DQN", "5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="Why does it" />
-
-## Step 1: do newer methods beat it?
+## Do today's methods beat it with the same practice?
 
 I tried three, each with the same 1M frames my agent got:
 
@@ -67,20 +51,16 @@ I tried three, each with the same 1M frames my agent got:
 - **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.[^rainbow]
 - **[PPO](https://arxiv.org/abs/1707.06347):** a different kind of learner that picks moves directly.
 
-<Fig title="Step 1: which method? All with 1M frames">
+<Fig title="Today's methods with the same 1M frames">
   <Pts rows={[
-    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base", "group": "baseline"},
-    {"name": "PPO", "tag": "picks moves directly", "won": 82.4, "lo": 80.0, "hi": 85.0, "points": 37.35, "prev": {"won": 72.8, "points": 46.89}, "group": "tried"},
-    {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 64.2, "lo": 47.0, "hi": 82.0, "points": 42.73, "prev": {"won": 72.8, "points": 46.89}, "group": "tried"},
-    {"name": "DQN", "tag": "today's version", "won": 51.2, "lo": 30.0, "hi": 78.0, "points": 39.88, "prev": {"won": 72.8, "points": 46.89}, "kind": "hi", "group": "tried"},
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "DQN", "tag": "today's version", "won": 51.2, "lo": 30.0, "hi": 78.0, "points": 39.88, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": true}},
+    {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 64.2, "lo": 47.0, "hi": 82.0, "points": 42.73, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": false}},
+    {"name": "PPO", "tag": "= holding shoot", "won": 82.4, "lo": 80.0, "hi": 85.0, "points": 37.35, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
   ]} />
 </Fig>
 
-DQN and Rainbow don't beat it, and the runs vary a lot.[^runs] PPO was the odd one, it won more often than my agent but scored the least. So what was it doing?
-
-## What was PPO doing?
-
-Holding the shoot button, and nothing else. That wins 82% of Aliens games, and my agent only won 73%, with its best run at 82%.
+No, DQN and Rainbow don't, and the runs vary a lot.[^runs] PPO wins more often than my agent but scores the least, and it turns out it's just holding the shoot button, which wins 82% of games on its own.[^button]
 
 <Fig>
   <div class="vids">
@@ -89,89 +69,71 @@ Holding the shoot button, and nothing else. That wins 82% of Aliens games, and m
   </div>
 </Fig>
 
-I never checked that in 2018. To be honest, Claude didn't think to at first either. Overnight, the second model it had checking its work spotted two PPO runs with exactly the same scores. Claude guessed they were just holding one button, so it checked.[^results]
+I never checked that in 2018, and to be honest Claude didn't think to at first either, until its overnight reviewer spotted two PPO runs with exactly the same scores.[^results] My agent did learn something though, it gets 47 points against the button's 37 because it also shoots the bases in front of the aliens. So from here on the button's 82% is the bar for wins, and my agent's 47 is the bar for points.
 
-My agent did learn something though. It gets 47 points a game against the button's 37, because it also shoots the bases in front of the aliens. So from here on:
+<Recipe steps={["DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="What did I learn" />
 
-- **Wins:** the button's 82% is the bar to beat.
-- **Points:** show who actually learned to play.
+## Step 1: does more practice help?
 
-## Step 2: how much does practice help?
-
-<Fig title="Step 2: how much practice? 5M frames instead of 1M">
+<Fig title="Step 1: 5M frames instead of 1M">
   <Pts rows={[
-    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base", "group": "baseline"},
-    {"name": "DQN, 1M frames", "tag": "kept from step 1", "won": 51.2, "lo": 30.0, "hi": 78.0, "points": 39.88, "group": "starting point"},
-    {"name": "DQN, 5M", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 51.2, "points": 39.88}, "kind": "hi", "group": "tried"},
-    {"name": "Rainbow, 5M", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 51.2, "points": 39.88}, "group": "tried"},
-    {"name": "PPO, 5M", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 51.2, "points": 39.88}, "group": "tried"},
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "DQN", "tag": "1M → 5M frames", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 51.2, "points": 39.88}, "real": {"won": true, "points": true}, "kind": "hi"},
+    {"name": "Rainbow", "tag": "1M → 5M frames, a tie with DQN", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 64.2, "points": 42.73}, "real": {"won": true, "points": true}},
+    {"name": "PPO", "tag": "1M → 5M frames", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 82.4, "points": 37.35}, "real": {"won": false, "points": true}},
   ]} />
 </Fig>
 
-A lot, with 5M frames DQN and Rainbow both win more often than my agent and score more too, though PPO's wins didn't improve. That's about 17 minutes a run now, which would've been 2 or 3 days in 2018. Rainbow and DQN are a tie though, so I carried on with DQN since it's the simpler one.
+A lot, with 5M frames DQN and Rainbow both beat my agent on wins and points, while PPO, still holding the button, didn't get any better at winning. That's about 17 minutes a run now, which would've been 2 or 3 days in 2018. DQN and Rainbow tie though, so Rainbow's 6 extra tricks bought nothing here, and I carried on with the simpler, faster DQN.[^practice]
 
-## Step 3: which reward works best?
+## Step 2: which reward works best?
 
-The reward is what the agent gets told is good. I tried mixes of three:
+The reward is what the agent gets told is good, and so far it was just the game's points. I tried:
 
-- **Points:** the game score.
 - **Win:** +1 for a win, −1 for a loss.
-- **2018 (mine):** win, plus −0.5 on every move of a lost game.
+- **Win + points ÷ 10:** the same, plus a tenth of the points.
+- **My 2018 reward:** win, plus −0.5 on every move of a lost game.
 
-<Fig title="Step 3: which reward?">
+<Fig title="Step 2: which reward? DQN, 5M frames">
   <Pts rows={[
-    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base", "group": "baseline"},
-    {"name": "DQN, 5M, points reward", "tag": "kept from step 2", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "group": "starting point"},
-    {"name": "win", "won": 99.6, "lo": 99.0, "hi": 100.0, "points": 44.05, "prev": {"won": 89.0, "points": 56.32}, "group": "tried"},
-    {"name": "win + points ÷ 10", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "kind": "hi", "group": "tried"},
-    {"name": "my 2018 reward", "won": 95.8, "lo": 94.0, "hi": 98.0, "points": 48.99, "prev": {"won": 89.0, "points": 56.32}, "group": "tried"},
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "points", "tag": "kept so far", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32},
+    {"name": "win + points ÷ 10", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": false}, "kind": "hi"},
+    {"name": "win", "won": 99.6, "lo": 99.0, "hi": 100.0, "points": 44.05, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
+    {"name": "my 2018 reward", "won": 95.8, "lo": 94.0, "hi": 98.0, "points": 48.99, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
   ]} />
 </Fig>
 
-- **Win** wins almost every game, but it doesn't care about points.
-- **Win + points ÷ 10** wins almost every game and scores 59. It's the one I kept.
-- **Other weights**: ÷ 20 tied with ÷ 10, and ÷ 5 scored about 2 more points (p = 0.047), but I tried several weights, and corrected for that it's a tie, so ÷ 10 stays.[^holm]
-- **My 2018 reward** did its job back then, but with more practice it falls behind.
+Win and win + points ÷ 10 both win almost every game, a tie, so points decide it, and ÷ 10 scores 59 against 44.[^reward] My 2018 reward did its job back then, but with more practice it falls behind.
 
-## Step 4: does a bigger network help?
+## Step 3: does a bigger network help?
 
-The network is the part that turns the screen into a score for each move. The bigger one is [IMPALA](https://arxiv.org/abs/1802.01561), from 2018.
+The network is the part that turns the screen into a score for each move, and the bigger one is [IMPALA](https://arxiv.org/abs/1802.01561), from 2018.
 
-<Fig title="Step 4: does a bigger network help?">
+<Fig title="Step 3: a bigger network?">
   <Pts rows={[
-    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base", "group": "baseline"},
-    {"name": "… + win + points ÷ 10", "tag": "kept from step 3, the 2015 network", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "group": "starting point"},
-    {"name": "Bigger (IMPALA)", "tag": "15 layers", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "kind": "hi", "group": "tried"},
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "Standard", "tag": "kept so far, the 2015 one", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93},
+    {"name": "IMPALA", "tag": "15 layers", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "real": {"won": false, "points": true}, "kind": "hi"},
   ]} />
 </Fig>
 
-It won every test game and scored 3 more points, and the test says that gain is real, so I kept it even though it takes about twice as long to train.
+It won every test game, a tie on wins, but it scored 3 more points, a real gain, so I kept it even though it takes about twice as long to train.[^network]
 
-## Step 5: how often should it move?
+## Step 4: how often should it move?
 
-This is the one I never thought about in 2018. The agent holds each move for 4 frames, which is DeepMind's Atari setup. I suspected that makes some shots and positions impossible to reach. A tree search called MCTS picks a move every frame, and it scores 78 with no training at all.
+This is the one I never thought about in 2018. The agent holds each move for 4 frames, DeepMind's Atari setup, and I suspected that makes some shots and positions impossible to reach. A tree search called MCTS picks a move every frame, and it scores 78 with no training at all.
 
-<Fig title="Step 5: how often should it move?">
+<Fig title="Step 4: how often should it move?">
   <Pts rows={[
-    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base", "group": "baseline"},
-    {"name": "… + IMPALA", "tag": "kept from step 4, a move every 4 frames", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "group": "starting point"},
-    {"name": "Every 2 frames", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "kind": "hi", "group": "tried"},
-    {"name": "Every frame", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 82.48, "prev": {"won": 100.0, "points": 61.96}, "group": "tried"},
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "Every 4 frames", "tag": "kept so far", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96},
+    {"name": "Every 2 frames", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}, "kind": "hi"},
+    {"name": "Every frame", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 82.48, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}},
   ]} />
 </Fig>
 
-Wins hardly move since they were already near the top, so points are where it shows:
-
-- **Every 2 frames** scored 83 and won 495 of 500 games, in about 45 minutes a run.
-- **Every frame** scored 82 and won all 500, but took about 2 hours a run.
-
-That's a tie on both, so I kept every 2 frames since it's about 2½ times quicker to train, and that's the last row of the chart at the top. Both beat MCTS's 78 too, but every 2 frames does still lose about 1 game in 100.[^moves]
-
-## Why does it still lose 1 game in 100?
-
-I replayed the best agent's test games, and the 2 losses that came up again were the same thing: a bomb lands on the ship while it sits still and shoots. My guess was the reward, since each point is worth +0.1 and a death only costs −1, so taking a risk for more points is nearly free. But changing how much points are worth didn't clearly change it, points ÷ 20 lost 3 games in 500 and ÷ 10 and ÷ 5 lost 6 each.[^deaths]
-
-Moving every frame with the bigger network lost none of its 500 though, so maybe it's just reaction time, but that's too few losses to tell, and a follow-up for another day.
+Moving every 2 frames added 21 points, and moving every frame scored the same but took about 2 hours a run instead of 45 minutes, so every 2 frames stays.[^moves] Both beat MCTS's 78, and that's the end of the chain. It still loses about 1 game in 100, and the losses I could replay were all a bomb landing on the ship while it sat still and shot, which might be reaction time, but that's a follow-up.[^deaths]
 
 ## What did I learn?
 
@@ -179,14 +141,15 @@ Moving every frame with the bigger network lost none of its 500 though, so maybe
 - **Check the dumbest baseline first.** Holding one button doesn't need any training, and I never tried it.
 - **Run everything more than once.** My two 2018 runs of the same agent were 10 to 17 percentage points apart on win rate.
 - **Claude wrote all of the code, but it liked to stop early.** I pushed back six times in about 2½ hours.[^log]
-- **I was the least informed person on my own dissertation.** About a third of my messages were me learning things like PPO and IMPALA.
 
+[^test]: Welch's t-test over the 5 runs, each tested on 100 games: a gap counts when p < 0.05. Each step's footnote has its numbers, and the four steps I kept still pass a Holm correction across those four. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^rainbow]: Double DQN and prioritised replay (my 2018 agent's two), plus dueling networks, multi-step returns, distributional values and noisy networks. [The Rainbow paper](https://arxiv.org/abs/1710.02298)
 [^runs]: DQN's five runs won 30% to 78%. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^button]: On the same 500 test games as today's agents: 82.4% wins and 37 points. PPO at 1M frames matched it game for game. My 2018 agent's code tests on other games from the same levels.
 [^results]: On two of my other three games, one button wins every game: Deceptizelda (hold right) and Wafer Thin Mints (any direction). [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^moves]: 5 runs of 100 test games each. Points 82.4 to 83.2 against 82.2 to 82.9, wins p = 0.19 and points p = 0.24. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^runs3]: Every chart is 5 runs of the same code, each tested on 100 games. A gap counts when Welch's t-test gives p < 0.05: 0.013 and 0.002 on wins for more practice and the new reward, 0.025 and under 0.001 on points for the bigger network and moving every 2 frames, where wins tied. DQN against Rainbow (0.7) and every 2 frames against every frame (0.24) are ties. The four steps I kept still pass a Holm correction across those four. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^practice]: DQN, 1M to 5M frames: wins p = 0.013. DQN against Rainbow at 5M: wins p = 0.71, points p = 0.51.
+[^reward]: Against points: win + points ÷ 10 wins p = 0.002. Win against win + points ÷ 10: wins p = 0.19, points p < 0.001. I also tried points ÷ 5 and ÷ 20: ÷ 5 scored 2 more (p = 0.047), but picking the best of several options makes a lucky gap more likely, and a Holm correction across the two needs p under 0.025, so it's a tie.
+[^network]: Wins p = 0.07, points p = 0.025.
+[^moves]: Every 4 to every 2 frames: points p < 0.001. Every 2 against every frame: wins p = 0.19, points p = 0.24.
+[^deaths]: The 2 losses a replay brought back. Changing the points weight didn't clearly change how often it loses (3, 6 and 6 in 500 at ÷ 20, ÷ 10 and ÷ 5), and every frame lost none of its 500.
 [^log]: From my Claude Code session log, 18 and 19 October 2026.
-[^holm]: Picking the best of several options makes a lucky gap more likely, so the bar goes up: with ÷ 5 and ÷ 20 both tested against ÷ 10, a Holm correction needs the smaller p under 0.025.
-[^deaths]: 5 runs each, all with a move every 4 frames and the standard network.

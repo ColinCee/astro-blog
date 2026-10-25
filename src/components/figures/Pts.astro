@@ -17,6 +17,8 @@ interface Row {
   prev?: { won: number; points: number };
   kind?: "base" | "hi";
   group?: string;
+  // which changes from `prev` a significance test calls real; the others are ties, drawn grey
+  real?: { won: boolean; points: boolean };
 }
 interface Props {
   rows: Row[];
@@ -28,12 +30,13 @@ const pct = (w: number) =>
   Math.abs(w - Math.round(w)) < 0.05 || w < 95
     ? `${w.toFixed(0)}%`
     : `${w.toFixed(1)}%`;
-const delta = (d: number) =>
+const delta = (d: number, real = true) =>
   Math.abs(d) < 1
     ? { cls: "pts__same", text: "±0" }
-    : d > 0
-      ? { cls: undefined, text: `+${d.toFixed(0)}` }
-      : { cls: "pts__minus", text: `−${Math.abs(d).toFixed(0)}` };
+    : {
+        cls: !real ? "pts__same" : d > 0 ? undefined : "pts__minus",
+        text: d > 0 ? `+${d.toFixed(0)}` : `−${Math.abs(d).toFixed(0)}`,
+      };
 const ticks = [0, 25, 50, 75, 100];
 ---
 
@@ -46,10 +49,12 @@ const ticks = [0, 25, 50, 75, 100];
   <span class="pts__h pts__wh">avg points</span>
   {rows.map((r, i) => {
     const opens = r.group && r.group !== rows[i - 1]?.group;
-    const gain = r.prev !== undefined && r.won - r.prev.won >= 1;
+    const gain =
+      r.prev !== undefined && r.won - r.prev.won >= 1 && (r.real?.won ?? true);
     const a = gain && r.prev ? r.prev.won : r.won;
-    const dw = r.prev && delta(r.won - r.prev.won);
-    const dp = r.prev && delta(r.points - r.prev.points);
+    const dw = r.prev && delta(r.won - r.prev.won, r.real?.won ?? true);
+    const dp =
+      r.prev && delta(r.points - r.prev.points, r.real?.points ?? true);
     return (
       <>
         {opens && (

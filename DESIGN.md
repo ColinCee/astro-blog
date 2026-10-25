@@ -377,7 +377,7 @@ homepage terminal window's ambient lift, nothing else.
   drawn lighter), `<Breakdown>` (one row per part of a total: explanation,
   bar, time and share) and `<Pts>` (games won as the bar with the runs' range,
   wins and points beside it, each row's change from `prev` in the accent or in
-  `--loss` red; `base` stripes the 2018 baseline; one dashed line for holding
+  `--loss` red, or grey when `real` says a significance test calls it a tie; `base` stripes the 2018 baseline; one dashed line for holding
   shoot). Recordings are `<Clip src label rate hi>` (pixelated, playing only while
   on screen and never on their own under reduced motion); anything inside a Clip
   is its caption, and several sit side by side in a `<div class="vids">`. A post told as numbered steps can carry `<Recipe steps until>`: a
