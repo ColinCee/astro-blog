@@ -10,7 +10,10 @@ interface Props {
 const { idx, name, area, active = false } = Astro.props;
 ---
 
-<article class:list={["pane", `pane--${area}`, { "is-active": active }]}>
+<article
+  class:list={["pane", `pane--${area}`, { "is-active": active }]}
+  data-scroll-in
+>
   <h2 class="pane__bar">
     <span class="pane__idx">{idx}</span>
     {name}
@@ -39,6 +42,13 @@ const { idx, name, area, active = false } = Astro.props;
   .pane--writing {
     grid-area: writing;
     animation-delay: 0.28s;
+  }
+  /* On a phone the panes stack, so each waits for its turn on screen. */
+  @media (max-width: 900px) {
+    .pane--ship,
+    .pane--writing {
+      animation-delay: 0s;
+    }
   }
   .pane.is-active {
     box-shadow: inset 0 0 0 1.5px
@@ -77,5 +87,42 @@ const { idx, name, area, active = false } = Astro.props;
     font-size: 0.82rem;
     line-height: 1.55;
     flex: 1;
+  }
+</style>
+
+<script>
+  // Anything marked data-scroll-in holds its entrance (and its children's)
+  // until it scrolls into view. On a desktop the whole terminal is on screen,
+  // so it all plays on load as before; on a phone it plays as you scroll.
+  // Armed by JS only, so without it (or with reduced motion) everything plays
+  // on load.
+  const items = document.querySelectorAll<HTMLElement>("[data-scroll-in]");
+  if (
+    items.length &&
+    !matchMedia("(prefers-reduced-motion: reduce)").matches &&
+    "IntersectionObserver" in window
+  ) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          e.target.classList.remove("is-held");
+          io.unobserve(e.target);
+        });
+      },
+      { rootMargin: "0px 0px -12% 0px" },
+    );
+    items.forEach((el) => {
+      el.classList.add("is-held");
+      io.observe(el);
+    });
+  }
+</script>
+
+<style is:global>
+  /* A held animation sits on its first frame (fill: both) until released. */
+  .is-held,
+  .is-held * {
+    animation-play-state: paused !important;
   }
 </style>

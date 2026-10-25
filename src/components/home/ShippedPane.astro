@@ -13,7 +13,7 @@ const shipped = (await getCollection("shipped")).sort(
   <ul class="ships">
     {shipped.map(({ data: s }) => (
       <li>
-        <a class="ship" href={s.href}>
+        <a class="ship" href={s.href} data-scroll-in>
           <span class="ship__head">
             <span class="ship__what">{s.what}</span>
             <span class="ship__meta">
@@ -109,6 +109,16 @@ const shipped = (await getCollection("shipped")).sort(
   .ship__bar--after .ship__fill {
     background: var(--accent);
     animation-delay: 1.05s;
+  }
+  /* On a phone each row grows as it scrolls in, so it needn't wait for the
+     pane's load-time entrance. */
+  @media (max-width: 900px) {
+    .ship__fill {
+      animation-delay: 0.2s;
+    }
+    .ship__bar--after .ship__fill {
+      animation-delay: 0.5s;
+    }
   }
   .ship__bar--after b {
     color: var(--accent-text);
