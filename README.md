@@ -15,7 +15,7 @@
 
 ## What it does
 
-- Terminal-inspired homepage with a dark terminal window
+- Terminal-inspired homepage built around a tmux-style window with live project tiles
 - Technical blog written in MDX, with figure components and Expressive Code blocks
 - Printable CV page that prints clean to ink-on-white
 - Light and dark themes that follow the system setting
@@ -25,19 +25,22 @@
 
 | Area | Tooling |
 | --- | --- |
-| Framework | Astro |
+| Framework | Astro 7 (static), TypeScript 6 |
 | Content | MDX content collections; figures as Astro components |
 | Code blocks | Astro Expressive Code |
 | Styling | Custom CSS tokens in `src/styles/tokens.css`; scoped styles beside each component |
 | Hosting | Cloudflare Workers |
 | Deploys | GitHub Actions + Wrangler |
+| Tooling | Node 24 LTS (pinned with Volta), pnpm, Biome (lint and format), Playwright |
 
 ## Run locally
 
 ```sh
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
+
+Node and pnpm versions are pinned in `package.json` (`volta`, `packageManager`).
 
 ## How it works
 
@@ -63,17 +66,17 @@ public/                Static files copied into the build as they are
 
 | Command | Action |
 | --- | --- |
-| `npm install` | Install dependencies |
-| `npm run dev` | Start the local dev server |
-| `npm run build` | Build the production site |
-| `npm run check` | Type-check (`astro check`), check formatting, build, Wrangler dry run, then the tests |
-| `npm run format` | Format the code with Prettier (posts and docs are left alone) |
-| `npm run deploy` | Build and deploy to Cloudflare Workers |
-| `npm test` | Run the Playwright layout and typography tests; they start their own dev server on `PORT` (default 4380) |
+| `pnpm install` | Install dependencies |
+| `pnpm dev` | Start the local dev server |
+| `pnpm build` | Build the production site |
+| `pnpm check` | Type-check (`astro check`), lint and format check (Biome), build, Wrangler dry run, then the tests |
+| `pnpm format` | Lint-fix and format with Biome (posts and docs are left alone) |
+| `pnpm run deploy` | Build and deploy to Cloudflare Workers (`pnpm deploy` is a pnpm command of its own) |
+| `pnpm test` | Run the Playwright layout and typography tests; they start their own dev server on `PORT` (default 4380) |
 
 ## Deployment
 
-Pushes to `main` run `.github/workflows/deploy.yml`, which installs dependencies, type-checks, checks formatting, builds the site, validates the Wrangler config, runs the tests, and deploys with Cloudflare secrets. Pull requests run the same steps without the deploy.
+Pushes to `main` run `.github/workflows/deploy.yml`, which installs dependencies, type-checks, lints and checks formatting, builds the site, validates the Wrangler config, runs the tests, and deploys with Cloudflare secrets. Pull requests run the same steps without the deploy.
 
 Required repository secrets:
 

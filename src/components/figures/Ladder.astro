@@ -34,7 +34,8 @@ const top = steps.reduce((a, s) =>
   <p data-out>
     <b>{top.name}</b>
     <span>
-      {fmt.format(top.before)} → {fmt.format(top.after)} frames/s,{" "}
+      {fmt.format(top.before)}
+      → {fmt.format(top.after)} frames/s,{" "}
       <strong>×{(top.after / top.before).toFixed(1)}</strong>
     </span>
   </p>

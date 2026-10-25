@@ -3,9 +3,9 @@
 // page's content, on the site's surface, following the system light/dark
 // setting. `home` widens the frame to the poster width for the homepage.
 import "../styles/tokens.css";
+import Footer from "../components/site/Footer.astro";
 import Head from "../components/site/Head.astro";
 import Nav from "../components/site/Nav.astro";
-import Footer from "../components/site/Footer.astro";
 
 interface Props {
   title: string;
@@ -50,6 +50,7 @@ const { home = false, ...head } = Astro.props;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    /* biome-ignore lint/suspicious/noDuplicateProperties: 100vh above is the fallback where svh is unsupported */
     min-height: 100svh;
     padding: 1.1rem clamp(1rem, 4vw, 3rem) 3rem;
     background: var(--wash), var(--bg);

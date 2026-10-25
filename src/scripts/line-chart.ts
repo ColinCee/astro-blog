@@ -28,7 +28,11 @@ export type LineData = {
 
 const fmt = new Intl.NumberFormat("en-GB");
 const esc = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 
 // The drawing's height for a width: wide charts are 0.42 as tall, within
 // 220–300px.

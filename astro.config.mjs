@@ -1,9 +1,10 @@
 // @ts-check
-import { defineConfig } from "astro/config";
-import sitemap from "@astrojs/sitemap";
-import expressiveCode from "astro-expressive-code";
-import mdx from "@astrojs/mdx";
+
 import { execSync } from "node:child_process";
+import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
+import { defineConfig } from "astro/config";
+import expressiveCode from "astro-expressive-code";
 
 // The commit the site is built from, for the homepage status bar, footer and
 // the site's own tile. Read once here and handed to pages as __BUILD__. In CI
@@ -28,6 +29,7 @@ function buildInfo() {
 
 export default defineConfig({
   site: "https://colincheung.dev",
+  compressHTML: true,
   vite: {
     define: { __BUILD__: JSON.stringify(buildInfo()) },
   },

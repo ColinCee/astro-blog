@@ -3,7 +3,9 @@
 // can be paused. Data: src/data/companies.json.
 import { getCollection } from "astro:content";
 
-const companies = (await getCollection("companies")).map((c) => c.data);
+const companies = (await getCollection("companies"))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((c) => c.data);
 ---
 
 <section class="strip" aria-label="Companies I have worked at">

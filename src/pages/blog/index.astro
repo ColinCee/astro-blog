@@ -1,6 +1,6 @@
 ---
-import Base from "../../layouts/Base.astro";
 import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
 import { readMinutes } from "../../scripts/read-minutes";
 
 const posts = (await getCollection("blog")).sort(

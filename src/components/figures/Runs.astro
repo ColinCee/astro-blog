@@ -22,9 +22,7 @@ const { max, rows, ticks } = Astro.props;
 <div class="runs runs--axis">
   <span></span>
   <div>
-    {ticks.map((t) => (
-      <em>{t}</em>
-    ))}
+    {ticks.map((t) => <em>{t}</em>)}
   </div>
   <b></b>
 </div>

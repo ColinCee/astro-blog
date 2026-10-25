@@ -1,7 +1,8 @@
 // Renders scripts/og/og.html to public/og.png (1200x630), the image link previews
-// show. Run with `npm run og` after changing the page or the colour tokens.
-import { chromium } from "@playwright/test";
+// show. Run with `pnpm og` after changing the page or the colour tokens.
+
 import { fileURLToPath } from "node:url";
+import { chromium } from "@playwright/test";
 
 const page_ = fileURLToPath(new URL("./og.html", import.meta.url));
 const out = fileURLToPath(new URL("../../public/og.png", import.meta.url));

@@ -42,7 +42,10 @@
   top: -0.2rem;
   bottom: -0.2rem;
   left: calc(
-    10.5rem + 0.8rem + (100% - 10.5rem - 4.2rem - 1.6rem) * var(--ref)
+    10.5rem +
+    0.8rem +
+    (100% - 10.5rem - 4.2rem - 1.6rem) *
+    var(--ref)
   );
   border-left: 1.5px dashed var(--faint);
   pointer-events: none;

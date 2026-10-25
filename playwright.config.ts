@@ -10,7 +10,7 @@ export default defineConfig({
   reporter: "list",
   use: { baseURL: `http://localhost:${port}` },
   webServer: {
-    command: `npx astro dev --port ${port}`,
+    command: `pnpm astro dev --port ${port}`,
     url: `http://localhost:${port}`,
     reuseExistingServer: false,
     timeout: 120_000,

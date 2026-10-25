@@ -2,8 +2,9 @@
 // The homepage's set piece: a tmux window with three panes (who I am, what
 // I shipped, what I wrote) and a status bar with the build, date and a
 // live clock.
-import WhoamiPane from "./WhoamiPane.astro";
+
 import ShippedPane from "./ShippedPane.astro";
+import WhoamiPane from "./WhoamiPane.astro";
 import WritingPane from "./WritingPane.astro";
 
 const build = __BUILD__;
@@ -28,7 +29,8 @@ const today = new Date().toLocaleDateString("en-CA");
 
   <div class="term__status" aria-hidden="true">
     <span class="term__tabs">
-      <b>[colin]</b> 0:whoami <em>1:shipped*</em> 2:writing
+      <b>[colin]</b>
+      0:whoami <em>1:shipped*</em> 2:writing
     </span>
     <span class="term__ticker">
       {build.hash && (
@@ -38,9 +40,7 @@ const today = new Date().toLocaleDateString("en-CA");
         </span>
       )}
       <span data-date>{today}</span>
-      <span class="term__clock" data-clock>
-        --:--:--
-      </span>
+      <span class="term__clock" data-clock> --:--:-- </span>
     </span>
   </div>
 </section>
@@ -88,11 +88,13 @@ const today = new Date().toLocaleDateString("en-CA");
     gap: 1px;
     background: var(--line);
     grid-template-columns: 1fr 1fr;
+    /* biome-ignore lint/correctness/noInvalidGridAreas: both rows have two cells; Biome misreads strings in .astro styles */
     grid-template-areas: "who hl" "who writing";
   }
   @media (max-width: 900px) {
     .term__panes {
       grid-template-columns: 1fr;
+      /* biome-ignore lint/correctness/noInvalidGridAreas: one cell per row; Biome misreads strings in .astro styles */
       grid-template-areas: "who" "hl" "writing";
     }
   }

@@ -1,5 +1,6 @@
+import { defineCollection } from "astro:content";
 import { file, glob } from "astro/loaders";
-import { defineCollection, z } from "astro:content";
+import { z } from "astro/zod";
 
 const blog = defineCollection({
   loader: glob({ base: "./src/content/blog", pattern: "**/*.{md,mdx}" }),
@@ -24,16 +25,18 @@ const blog = defineCollection({
   }),
 });
 
-// The homepage's data, one JSON file each in src/data/, listed in the order
-// the page shows them.
+// The homepage's data, one JSON file each in src/data/. Collections come
+// back sorted by id, so each entry carries its place on the page as `order`.
+const order = z.number().int();
 
 // Side projects, one tile each. The id is the project's name and its
 // ~/projects/ path; `repo` is where it really lives, shown on hover.
 const projects = defineCollection({
   loader: file("src/data/projects.json"),
   schema: z.object({
+    order,
     repo: z.string(),
-    href: z.string().url(),
+    href: z.url(),
     desc: z.string(),
     // Spans two columns.
     wide: z.boolean().optional(),
@@ -43,7 +46,7 @@ const projects = defineCollection({
 // The "worked at" strip, oldest first.
 const companies = defineCollection({
   loader: file("src/data/companies.json"),
-  schema: z.object({ name: z.string(), year: z.string() }),
+  schema: z.object({ order, name: z.string(), year: z.string() }),
 });
 
 // The terminal's shipped pane, newest first. `before` and `after` are the
@@ -52,6 +55,7 @@ const companies = defineCollection({
 const shipped = defineCollection({
   loader: file("src/data/shipped.json"),
   schema: z.object({
+    order,
     what: z.string(),
     where: z.string(),
     when: z.string(),
@@ -71,7 +75,7 @@ const skills = defineCollection({
 // The home-lab tile: the Compose stacks, as in the homelab repo.
 const homelabStacks = defineCollection({
   loader: file("src/data/homelab-stacks.json"),
-  schema: z.object({ services: z.string() }),
+  schema: z.object({ order, services: z.string() }),
 });
 
 export const collections = {
