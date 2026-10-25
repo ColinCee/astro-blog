@@ -4,12 +4,16 @@
 // homelab's stacks, a card from the deck and this site's last deploy.
 // Tile headers: src/data/projects.json.
 import { getCollection } from "astro:content";
+import ankiCards from "../../data/anki-cards.json";
 import AgentPane from "./AgentPane.astro";
 import RadarPane from "./RadarPane.astro";
-import ankiCards from "../../data/anki-cards.json";
 
-const projects = await getCollection("projects");
-const stacks = await getCollection("homelabStacks");
+const projects = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const stacks = (await getCollection("homelabStacks")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 const build = __BUILD__;
 ---
 
@@ -247,7 +251,7 @@ const build = __BUILD__;
     transition:
       opacity 0.5s ease-out calc(var(--i) * 90ms + 120ms),
       transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1)
-        calc(var(--i) * 90ms + 120ms);
+      calc(var(--i) * 90ms + 120ms);
   }
   .work__list.is-armed .stack li {
     opacity: 0;

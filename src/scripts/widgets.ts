@@ -1,7 +1,7 @@
 // Interactive figures, loaded by layouts/Post.astro only on posts that have a
 // [data-widget] element. Each widget reads its numbers from data- attributes in
 // the post, so the post stays the one place its figures live.
-import { chartHeight, lineChart, type LineData } from "./line-chart";
+import { chartHeight, type LineData, lineChart } from "./line-chart";
 
 const fmt = new Intl.NumberFormat("en-GB");
 
@@ -82,10 +82,16 @@ function reveal(root: HTMLElement) {
 // [data-zoom]; [data-held-name] for the move it then holds; [data-at] for where
 // the game is.
 type Decision = { tick: number; action: string; score?: number; q?: number[] };
+// The recorder's JSON for one game (tools/record.py in the dissertation repo).
+type Recording = {
+  action_names: string[];
+  video: { fps: number; ticks_per_frame: number };
+  decisions: Decision[];
+};
 async function qview(root: HTMLElement) {
   const video = root.querySelector("video")!;
   const box = root.querySelector<HTMLElement>(".qbars")!;
-  const data: any = await (await fetch(root.dataset.src!)).json();
+  const data: Recording = await (await fetch(root.dataset.src!)).json();
   const names: string[] = data.action_names.map((n: string) =>
     n.replace(/^ACTION_/, "").toLowerCase().replace("use", "shoot"),
   );
@@ -416,4 +422,3 @@ const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qvie
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });
-export {};

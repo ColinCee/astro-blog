@@ -8,8 +8,8 @@
 // column beside a spine. Everything else renders as plain prose.
 import type { CollectionEntry } from "astro:content";
 import type { MarkdownHeading } from "astro";
-import Base from "./Base.astro";
 import FormattedDate from "../components/site/FormattedDate.astro";
+import Base from "./Base.astro";
 import "../styles/prose.css";
 import "../components/figures/figures.css";
 
@@ -151,9 +151,7 @@ const last = entries[entries.length - 1];
     <div class="read-bar" aria-hidden="true" data-readbar></div>
 
     <header class="post__head">
-      <a class="post__back" href="/blog">
-        // writing
-      </a>
+      <a class="post__back" href="/blog">{"// writing"}</a>
       <h1 class="post__title">{title}</h1>
       {subtitle && <p class="post__lede">{subtitle}</p>}
       {figures && (
@@ -195,7 +193,7 @@ const last = entries[entries.length - 1];
     {isTimeline && (
       <section class="tl" aria-label="Timeline">
         <p class="tl__span">
-          <span class="tl__k">// timeline</span>
+          <span class="tl__k">{"// timeline"}</span>
           <span class="tl__range">
             {first.day} {first.mon} {first.year} → {last.day} {last.mon}{" "}
             {last.year}
@@ -247,9 +245,7 @@ const last = entries[entries.length - 1];
           )}
         </nav>
       )}
-      <a class="post__more" href="/blog">
-        all writing
-      </a>
+      <a class="post__more" href="/blog"> all writing </a>
     </footer>
   </article>
 </Base>

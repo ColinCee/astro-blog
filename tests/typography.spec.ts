@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 // Typography standards, enforced. The numbers are documented in DESIGN.md
 // ("Typography standards"); change them there and here together.

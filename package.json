@@ -2,29 +2,32 @@
   "name": "colincheung-dev",
   "description": "Colin Cheung's terminal-native personal site and engineering blog (colincheung.dev).",
   "dependencies": {
-    "@astrojs/mdx": "^4.0.8",
-    "@astrojs/sitemap": "3.2.1",
-    "astro": "5.1.3",
-    "astro-expressive-code": "^0.40.2",
-    "typescript": "5.7.2"
+    "@astrojs/mdx": "8.1.1",
+    "@astrojs/sitemap": "3.7.4",
+    "astro": "7.4.2",
+    "astro-expressive-code": "0.44.3",
+    "typescript": "6.0.3"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.12",
-    "@playwright/test": "^1.63.0",
-    "prettier": "^3.9.10",
-    "prettier-plugin-astro": "^1.1.2",
-    "wrangler": "^4.7.0"
+    "@astrojs/check": "0.9.12",
+    "@biomejs/biome": "2.6.2",
+    "@playwright/test": "1.64.1",
+    "wrangler": "4.152.0"
   },
   "scripts": {
     "astro": "astro",
     "dev": "astro dev",
     "build": "astro build",
-    "check": "astro check && prettier --check . && astro build && wrangler deploy --dry-run && playwright test",
-    "format": "prettier --write .",
+    "check": "astro check && biome check . && astro build && wrangler deploy --dry-run && playwright test",
+    "format": "biome check --write .",
     "test": "playwright test",
     "preview": "astro build && wrangler dev",
     "deploy": "astro build && wrangler deploy",
     "og": "node scripts/og/render.mjs"
   },
-  "type": "module"
+  "type": "module",
+  "volta": {
+    "node": "24.22.1"
+  },
+  "packageManager": "pnpm@12.15.0"
 }

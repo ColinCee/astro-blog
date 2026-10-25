@@ -278,17 +278,13 @@ const projects = [
       <p class="cv__lede">{lede}</p>
       <div class="cv__actions">
         <nav class="cv__contact" aria-label="Contact">
-          {contact.map((c) => (
-            <a href={c.href}>{c.label}</a>
-          ))}
+          {contact.map((c) => <a href={c.href}>{c.label}</a>)}
         </nav>
       </div>
     </header>
 
     <section class="cv__sec" aria-labelledby="xp-h">
-      <h2 class="cv__sec-head" id="xp-h">
-        // experience
-      </h2>
+      <h2 class="cv__sec-head" id="xp-h">// experience</h2>
       <ol class="xp__list">
         {experience.map((r) => (
           <li class:list={["xp__item", { "role--current": r.current }]}>
@@ -335,9 +331,7 @@ const projects = [
     </section>
 
     <section class="cv__sec" aria-labelledby="sk-h">
-      <h2 class="cv__sec-head" id="sk-h">
-        // skills
-      </h2>
+      <h2 class="cv__sec-head" id="sk-h">// skills</h2>
       <div class="skills">
         {skills.map((g) => (
           <div class="skill">
@@ -354,9 +348,7 @@ const projects = [
 
     <div class="cv__lower">
       <section class="cv__sec" aria-labelledby="ed-h">
-        <h2 class="cv__sec-head" id="ed-h">
-          // education
-        </h2>
+        <h2 class="cv__sec-head" id="ed-h">// education</h2>
         <div class="edu">
           <h3 class="edu__school">{education.school}</h3>
           <p class="edu__meta">{education.meta}</p>
@@ -369,9 +361,7 @@ const projects = [
       </section>
 
       <section class="cv__sec" aria-labelledby="pr-h">
-        <h2 class="cv__sec-head" id="pr-h">
-          // projects
-        </h2>
+        <h2 class="cv__sec-head" id="pr-h">// projects</h2>
         <ul class="proj">
           {projects.map((p) => (
             <li class="proj__item">

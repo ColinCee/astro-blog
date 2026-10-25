@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 // Layout smoke tests. They assert things a reader would notice immediately:
 // nothing scrolls sideways, and the reading column is wide enough to read.

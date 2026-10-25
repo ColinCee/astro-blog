@@ -25,9 +25,7 @@ const line = (r: Props["records"][number]) =>
   <div>
     <p class="fig__k">{rowsTitle}</p>
     <div class="rows">
-      {records.map((r) => (
-        <span set:html={line(r)} />
-      ))}
+      {records.map((r) => <span set:html={line(r)} />)}
     </div>
   </div>
   <div>

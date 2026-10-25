@@ -14,14 +14,12 @@ const links = [
 const active = (href: string) => {
   if (href.startsWith("/#")) return false;
   const p = path.replace(/\/$/, "") || "/";
-  return href === "/" ? p === "/" : p === href || p.startsWith(href + "/");
+  return href === "/" ? p === "/" : p === href || p.startsWith(`${href}/`);
 };
 ---
 
 <nav class:list={["nav", { "nav--home": home }]} aria-label="Primary">
-  <a class="nav__mark" href="/">
-    colin<span>@</span>glasgow<b>:~$</b>
-  </a>
+  <a class="nav__mark" href="/"> colin<span>@</span>glasgow<b>:~$</b> </a>
   <div class="nav__links">
     {links.map((l) => (
       <a

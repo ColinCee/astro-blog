@@ -4,7 +4,9 @@
 import { getCollection } from "astro:content";
 import Pane from "./Pane.astro";
 
-const shipped = await getCollection("shipped");
+const shipped = (await getCollection("shipped")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 ---
 
 <Pane idx={1} name="shipped" area="ship" active>

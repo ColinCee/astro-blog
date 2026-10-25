@@ -5,8 +5,9 @@
 // (the clip's path without an extension: its .json holds every decision)
 // and `stack` (a sprite sheet of the frames, one row per decision). The
 // slot explains the figure. Styles: clip.css, cmp.css, qview.css.
-import Fig from "./Fig.astro";
+
 import Clip from "./Clip.astro";
+import Fig from "./Fig.astro";
 
 interface Props {
   src: string;
@@ -49,7 +50,7 @@ const { src, stack, label, rate } = Astro.props;
         value="0"
         step="1"
         aria-label="Decision"
-      />
+      >
     </span>
     <output data-at></output>
   </div>

@@ -1,5 +1,6 @@
 ---
 import { getEntry } from "astro:content";
+
 // My dissertation agent playing Aliens, with what the network thinks of each
 // move as it plays. The clips and their per-decision JSON (tick, action,
 // score, Q per action) come from the dissertation repo's recording tool; the
@@ -55,8 +56,8 @@ const moves = ["shoot", "left", "right"];
       poster={`/blog/gvgai/${first.id}.png`}
       aria-label="My dissertation agent playing Aliens"
     >
-      <source src={`/blog/gvgai/${first.id}.webm`} type="video/webm" />
-      <source src={`/blog/gvgai/${first.id}.mp4`} type="video/mp4" />
+      <source src={`/blog/gvgai/${first.id}.webm`} type="video/webm">
+      <source src={`/blog/gvgai/${first.id}.mp4`} type="video/mp4">
     </video>
     <button
       type="button"
@@ -69,12 +70,8 @@ const moves = ["shoot", "left", "right"];
   </figure>
   <div class="ag__read">
     <div class="ag__score">
-      <span class="ag__big" data-ag-score>
-        0
-      </span>
-      <span class="ag__lbl">
-        points · tick <b data-ag-tick>0</b>
-      </span>
+      <span class="ag__big" data-ag-score> 0 </span>
+      <span class="ag__lbl"> points · tick <b data-ag-tick>0</b> </span>
     </div>
     <ul class="ag__q" aria-label="The network's value for each move">
       {moves.map((m, i) => (

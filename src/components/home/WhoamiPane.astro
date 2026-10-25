@@ -3,9 +3,9 @@
 // itself out on load. Everything is in the HTML; without JS or with reduced
 // motion the finished session shows.
 import { getCollection } from "astro:content";
-import Pane from "./Pane.astro";
-import BrandIcon from "./BrandIcon.astro";
 import links from "../../data/links.json";
+import BrandIcon from "./BrandIcon.astro";
+import Pane from "./Pane.astro";
 
 const name = "Colin Cheung";
 const nameCjk = "張志權";
@@ -33,12 +33,13 @@ const lastLogin = `${days[at.getDay()]} ${months[at.getMonth()]} ${at.getDate()}
 ---
 
 <Pane idx={0} name="whoami" area="who">
-  <div class="who__session" aria-label="Colin, as a terminal session">
+  <div class="who__session">
     <p class="who__login">Last login: {lastLogin} on ttys001</p>
-    <!-- prettier-ignore -->
+    <!-- biome-ignore format: the caret must touch the typed command -->
     <p class="term-cmd">
       <span class="who__prompt">$</span>
-      <span class="who__typed js-cmd">whoami</span><span class="who__caret"></span>
+      <span class="who__typed js-cmd">whoami</span
+      ><span class="who__caret"></span>
     </p>
     <div class="term-out js-out">
       <p class="who__name">
@@ -50,10 +51,11 @@ const lastLogin = `${days[at.getDay()]} ${months[at.getMonth()]} ${at.getDate()}
       <p class="who__sub">{whoLine}</p>
     </div>
 
-    <!-- prettier-ignore -->
+    <!-- biome-ignore format: the caret must touch the typed command -->
     <p class="term-cmd">
       <span class="who__prompt">$</span>
-      <span class="who__typed js-cmd">top -u colin</span><span class="who__caret"></span>
+      <span class="who__typed js-cmd">top -u colin</span
+      ><span class="who__caret"></span>
     </p>
     <div class="term-out js-out who__mon">
       <div class="who__cols">
@@ -70,30 +72,31 @@ const lastLogin = `${days[at.getDay()]} ${months[at.getMonth()]} ${at.getDate()}
       ))}
     </div>
 
-    <!-- prettier-ignore -->
+    <!-- biome-ignore format: the caret must touch the typed command -->
     <p class="term-cmd">
       <span class="who__prompt">$</span>
-      <span class="who__typed js-cmd">cat now.md</span><span class="who__caret"></span>
+      <span class="who__typed js-cmd">cat now.md</span
+      ><span class="who__caret"></span>
     </p>
     <div class="term-out js-out">
       <p class="who__now">{nowLine}</p>
     </div>
 
-    <!-- prettier-ignore -->
+    <!-- biome-ignore format: the caret must touch the typed command -->
     <p class="term-cmd">
       <span class="who__prompt">$</span>
-      <span class="who__typed js-cmd">weather</span><span class="who__caret"></span>
+      <span class="who__typed js-cmd">weather</span
+      ><span class="who__caret"></span>
     </p>
     <div class="term-out js-out">
-      <p class="who__wx" data-weather>
-        Glasgow
-      </p>
+      <p class="who__wx" data-weather>Glasgow</p>
     </div>
 
-    <!-- prettier-ignore -->
+    <!-- biome-ignore format: the caret must touch the typed command -->
     <p class="term-cmd">
       <span class="who__prompt">$</span>
-      <span class="who__typed js-cmd">ls ~/contact</span><span class="who__caret"></span>
+      <span class="who__typed js-cmd">ls ~/contact</span
+      ><span class="who__caret"></span>
     </p>
     <div class="term-out js-out who__links">
       <a href={links.github}>
@@ -324,7 +327,7 @@ const lastLogin = `${days[at.getDay()]} ${months[at.getMonth()]} ${at.getDate()}
         }
         const temp = Math.round(c.temperature_2m);
         const [desc, icon] = wx[c.weather_code] ?? ["", ""];
-        wxEl.textContent = `Glasgow · ${icon ? icon + " " : ""}${temp}°C${desc ? " · " + desc : ""}`;
+        wxEl.textContent = `Glasgow · ${icon ? `${icon} ` : ""}${temp}°C${desc ? ` · ${desc}` : ""}`;
       })
       .catch(() => {});
   }

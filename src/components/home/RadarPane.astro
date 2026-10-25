@@ -12,9 +12,7 @@ const demo = "https://flight-tracker-at-home.pages.dev";
   </div>
   <p class="rd__foot">
     <span data-rd-status>simulated airspace</span>
-    <a href={demo}>
-      the real thing <span aria-hidden="true">↗</span>
-    </a>
+    <a href={demo}> the real thing <span aria-hidden="true">↗</span> </a>
   </p>
 </div>
 
@@ -102,7 +100,9 @@ const demo = "https://flight-tracker-at-home.pages.dev";
   };
   const ARR_AT = ["LHR", "LHR", "LHR", "LGW", "LGW", "STN", "LTN", "LCY"];
   const rnd = (a: number, b: number) => a + Math.random() * (b - a);
-  const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)];
+  function pick<T>(xs: T[]) {
+    return xs[Math.floor(Math.random() * xs.length)];
+  }
   const callsign = (ap: string) =>
     `${pick(FLEETS[ap] || FLEETS.LHR)}${Math.floor(rnd(1, 999))}${Math.random() < 0.3 ? String.fromCharCode(65 + Math.floor(rnd(0, 26))) : ""}`;
   // a point on the edge of the map, a little outside it
