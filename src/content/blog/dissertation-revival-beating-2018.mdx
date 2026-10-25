@@ -41,22 +41,24 @@ Each bar is the average win rate over 5 runs, and the thin line is their range. 
 
 ## Step 1: which method, and how much practice?
 
-I tried three methods, first with the same 1M frames as my agent, then with 5 times that:
+I tried three methods, each with 5 times the practice my agent got:
 
 - **[DQN](https://www.nature.com/articles/nature14236):** DeepMind's 2015 Atari method, and my agent is this plus 2 tricks.
 - **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.[^rainbow]
 - **[PPO](https://arxiv.org/abs/1707.06347):** a different kind of learner.
 
-<Fig title="1M → 5M frames">
+<Fig title="Which method, 5M frames?">
   <Pts rows={[
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
-    {"name": "DQN", "tag": "from 51% at 1M", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 51.2, "points": 39.88}, "real": {"won": true, "points": true}, "kind": "hi"},
-    {"name": "Rainbow", "tag": "from 64% at 1M", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 64.2, "points": 42.73}, "real": {"won": true, "points": true}},
-    {"name": "PPO", "tag": "from 82% at 1M, = holding shoot", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 82.4, "points": 37.35}, "real": {"won": false, "points": true}},
+    {"name": "DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
+    {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
+    {"name": "PPO", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": false}},
   ]} />
 </Fig>
 
-With the same 1M frames, DQN and Rainbow both do worse than my agent, and their runs vary a lot.[^runs] PPO looks like the winner since it wins the most, but it also scores the least, and it turns out it's just holding the shoot button, which wins 82% on its own, about what my dissertation said my agent won.[^button]
+DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster DQN.[^practice] That's 17 minutes a run now, which would've been 2 or 3 days in 2018.
+
+With the same 1M frames as my agent, none of them beat it on both.[^runs] PPO came closest, winning 82%, but it was just holding the shoot button, which wins 82% on its own, about what my dissertation said my agent won.[^button]
 
 <Fig>
   <div class="vids">
@@ -66,8 +68,6 @@ With the same 1M frames, DQN and Rainbow both do worse than my agent, and their 
 </Fig>
 
 I never checked that in 2018, and to be honest Claude didn't either until its overnight reviewer spotted two PPO runs with the same scores.[^results] My agent did learn something though, it scores 47 against the button's 37 because it also shoots the bases, so the button's 82% is the bar for wins and my 47 is the bar for points.
-
-With 5M frames, DQN and Rainbow get past my agent on both, while PPO stops just holding the button but doesn't win any more often. That's 17 minutes a run now, which would've been 2 or 3 days in 2018. DQN and Rainbow tie, so I carried on with the simpler, faster DQN.[^practice] I sorted out practice before the network because at 1M frames the runs varied too much to tell smaller changes apart.
 
 ## Step 2: which reward works best?
 
@@ -127,10 +127,10 @@ Every 2 frames added 21 points, and every frame scored the same but took 2 hours
 
 [^test]: Welch's t-test over the 5 runs, each tested on 100 games: a gap counts when p < 0.05. Each step's footnote has its numbers, and the four steps I kept still pass a Holm correction across those four. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^rainbow]: Double DQN and prioritised replay (my 2018 agent's two), plus dueling networks, multi-step returns, distributional values and noisy networks. [The Rainbow paper](https://arxiv.org/abs/1710.02298)
-[^runs]: DQN's five runs won 30% to 78%. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^runs]: At 1M frames, DQN's five runs won 30% to 78%. [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^button]: On the same 500 test games as today's agents: 82.4% wins and 37 points. PPO at 1M frames matched it game for game.
 [^results]: On two of my other three games, one button wins every game: Deceptizelda (hold right) and Wafer Thin Mints (any direction). [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^practice]: DQN, 1M to 5M frames: wins p = 0.013. DQN against Rainbow at 5M: wins p = 0.71, points p = 0.51.
+[^practice]: Against my agent, DQN wins p = 0.005 and points p = 0.009, Rainbow wins p = 0.006 and points p = 0.008. DQN against Rainbow: wins p = 0.71, points p = 0.51.
 [^reward]: Against points: win + points ÷ 10 wins p = 0.0015. Win only against win + points ÷ 10: wins p = 0.19, points p < 0.001. I also tried points ÷ 5 and ÷ 20: ÷ 5 scored 1.6 more (p = 0.047), but picking the best of several options makes a lucky gap more likely, and a Holm correction across the two needs p under 0.025, so it's a tie. The ÷ 5 and ÷ 20 runs ran on later versions of the code with the same learning.
 [^network]: Wins p = 0.07, points p = 0.025.
 [^moves]: Every 4 to every 2 frames: points p < 0.001. Every 2 against every frame: wins p = 0.19, points p = 0.24. Three of the five every-frame runs ran on an earlier version of the code with the same learning.
