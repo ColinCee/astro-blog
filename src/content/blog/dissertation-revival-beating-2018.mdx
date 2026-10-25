@@ -37,7 +37,7 @@ Each row adds one change, and I only kept it if a significance test[^test] over 
 
 Each bar is the average win rate over 5 runs, and each row builds on the one above. Orange is what I kept, and striped is my 2018 agent.
 
-<Recipe steps={["DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="Where did it end up" />
+<Recipe steps={["DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="Conclusion" />
 
 ## Step 1: which algorithm is best with more practice?
 
@@ -115,9 +115,9 @@ In 2018 I wrote that holding each move for 4 frames meant my agent could never r
   ]} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-Every 2 frames added 21 points. Every frame won all 500 of its games and scored the same, but that 1 game in 100 could be luck, and it took 2 hours a run instead of 45 minutes, so every 2 frames it is. It still loses about 1 game in 100, and the 2 losses I replayed were both a bomb landing on it while it sat still and shot, which might just be reaction time.
+Every 2 frames added 21 points, and every frame did no better, so I kept the cheaper every 2 frames. It still loses about 1 game in 100, and the 2 losses I replayed were both a bomb landing on it while it sat still and shot, which might just be reaction time.
 
-## Where did it end up?
+## Conclusion
 
 <Fig title="Final results">
   <Pts rows={[
@@ -128,14 +128,13 @@ Every 2 frames added 21 points. Every frame won all 500 of its games and scored 
   ]} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-The final agent wins 99% of games to my 2018 agent's 73%, and scores 83, more than MCTS, which plans every move with no training.
+The final agent wins 99% of games to my 2018 agent's 73%, and scores 83, more than MCTS, which my 2018 agent never came close to. Moving every frame won all 500 of its games, but that 1 game in 100 could be luck, and it takes 2 hours a run instead of 45 minutes, so I kept every 2 frames.
 
-## What did I learn?
+What I learned:
 
 - **Question the settings you copied.** Holding each move for 4 frames came from Atari and cost about 20 points here.
 - **Check the dumbest baseline first.** Holding one button needs no training, and I never tried it.
 - **Run everything more than once.** My three 2018 runs ended up to 14 percentage points apart on win rate.
-- **Beating MCTS.** Back when I wrote my dissertation, my agent didn't come close to MCTS, which can look ahead. Now my final agent scores more.
 
 [^test]: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) on the 5 runs: a gap counts as real when p < 0.05, so luck alone would give one that big less than 1 time in 20. Every p-value is in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^mcts]: One run of 51 games, since it doesn't learn.
