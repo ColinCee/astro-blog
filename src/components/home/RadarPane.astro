@@ -267,12 +267,17 @@ const demo = "https://flight-tracker-at-home.pages.dev";
       const n = planes.filter(
         (p) => !p.gone && Math.hypot(p.x, p.y) < R * 1.05,
       ).length;
+      // Touch the page only when the line changes, not every frame.
+      const line = next ? `${next.cs} → ${next.ap}|${n}` : `|${n}`;
+      if (line === shown) return;
+      shown = line;
       status.innerHTML = next
         ? `<b></b> inbound · ${n} tracked · simulated`
         : `${n} tracked · simulated`;
       if (next)
         status.querySelector("b")!.textContent = `${next.cs} → ${next.ap}`;
     };
+    let shown = "";
 
     const draw = (now: number) => {
       ctx.clearRect(0, 0, W, H);
@@ -368,12 +373,15 @@ const demo = "https://flight-tracker-at-home.pages.dev";
       });
       ctx.globalAlpha = 1;
     };
+    // 30 frames a second: the traffic and the sweep move slowly enough that
+    // more frames would only cost CPU.
     const loop = (ms: number) => {
+      if (visible) raf = requestAnimationFrame(loop);
+      if (prev && ms - prev < 1000 / 31) return;
       const dt = Math.min(0.05, prev ? (ms - prev) / 1000 : 0.016);
       prev = ms;
       step(dt, ms);
       draw(ms);
-      if (visible) raf = requestAnimationFrame(loop);
     };
 
     colors();

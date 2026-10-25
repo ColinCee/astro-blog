@@ -146,6 +146,9 @@ one accent used on well under 10% of any screen, against a warm neutral ramp.
 - **Soft Tomato** (`--accent-soft`, `oklch(0.49 0.17 32)` / `oklch(0.79 0.11 38)`): The desaturated tomato for
   runs of accented *text* (metric highlights, `//` kickers, inline links) where
   full-chroma tomato would vibrate. Reads as "important" without shouting.
+- **Accent Text** (`--accent-text`): small accented text (pane labels, result values,
+  status-bar tabs). In light it is Soft Tomato, because Signal Tomato on the light
+  surfaces is under the 4.5:1 text needs; in dark it is Signal Tomato.
 - **Accent Ink** (`--accent-ink`, `oklch(0.98 0.01 60)` / `oklch(0.2 0.04 40)`): Text on
   the rare filled-tomato surface.
 
@@ -191,8 +194,8 @@ rest and shift to `--ink` only on hover. The eye should land on the result first
 **Character:** One expressive humanist-grotesque display paired with one precise
 monospace — contrast on a real axis (proportional vs. fixed, warm vs. technical),
 never two similar sans-serifs. Bricolage carries voice and scale; JetBrains Mono
-is the machine chrome (labels, dates, code, terminal). Loaded via Google Fonts
-`@import` in `tokens.css`.
+is the machine chrome (labels, dates, code, terminal). Loaded from Google Fonts
+by a `<link>` in `components/site/Head.astro`, with preconnects.
 
 ### Hierarchy
 - **Display** (Bricolage 800, `clamp(2.4rem, 8vw, 7.5rem)`, lh 0.86–0.9, tracking −0.03em):

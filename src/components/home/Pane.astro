@@ -58,7 +58,7 @@ const { idx, name, area, active = false } = Astro.props;
     background: color-mix(in oklch, var(--panel) 60%, transparent);
   }
   .pane.is-active .pane__bar {
-    color: var(--accent);
+    color: var(--accent-text);
   }
   .pane__idx {
     display: inline-grid;
@@ -68,7 +68,7 @@ const { idx, name, area, active = false } = Astro.props;
     padding: 0 0.25rem;
     border-radius: 5px;
     background: color-mix(in oklch, var(--accent) 18%, transparent);
-    color: var(--accent);
+    color: var(--accent-text);
     font-size: 0.6875rem;
   }
   .pane__body {
