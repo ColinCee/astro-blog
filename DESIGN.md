@@ -323,8 +323,8 @@ homepage terminal window's ambient lift, nothing else.
 
 ### Writing (homepage section)
 - `// writing`: the newest post is a lead panel (same flat surface as the
-  tiles) with a filled `latest` tag, title, subtitle and a stat
-  chip; the remaining posts are hairline rows (mono date, title, subtitle, chip)
+  tiles) with a filled `latest` tag, title, and a stat
+  chip with its `statLabel` beside it; the remaining posts are hairline rows (mono date, title, chip)
   ending in an `All posts` row.
 - **Stat chip** (`.chip`): the post's `stat` frontmatter as a mono pill on a 10%
   accent tint. Posts without a `stat` show no chip.
@@ -355,9 +355,8 @@ homepage terminal window's ambient lift, nothing else.
   `--rail` (`9rem`) plus `--rail-gap` (`3.5rem`), so timeline dates sit in the left
   margin and plain and timeline posts share one left edge. Content carries a `// writing` back-kicker, a Bricolage display title
   (`clamp(2rem, 5.5vw, 3.1rem)`, weight 800), and a mono meta line (date · N min read).
-- **Figures ledger:** optional `figures` frontmatter (label + value pairs) renders
-  under the standfirst as a hairline-ruled row of large numbers; the last one is the
-  result and takes the accent. When present it replaces the stat chip in the meta row.
+- **Headline stat:** the post's `stat` renders under the title as one large number in
+  the accent between hairlines, its `statLabel` above it in mono caps.
 - **Quotes** are excerpts on the raised surface (`--pane`, `--line`, 10px radius), so
   quoted documents read differently from narration. **Ordered lists** are numbered
   takeaways: hairline-separated rows with mono accent numerals.
@@ -415,9 +414,8 @@ homepage terminal window's ambient lift, nothing else.
   `.flow` (a game as a row of decision boxes shaded by score) and the `chain`,
   `reveal`, `pick` and `flow` widgets. Their styles are kept, marked, in
   `src/components/figures/`; turn each into a component when its post moves to MDX.
-- **Post header:** title, then the post's `subtitle` (when set) as a standfirst
-  (`.post__lede`, Body 500, `--muted`), a hairline, and the meta row: the `stat`
-  chip (when set), date and read time (prose words only, at 200 a minute; figures do not count). Header, prose, timeline and footer all share one measure, `--measure` (44rem),
+- **Post header:** title, then the headline stat (when set), and the meta row: date
+  and read time (prose words only, at 200 a minute; figures do not count). Header, prose, timeline and footer all share one measure, `--measure` (44rem),
   so every block on a post (text, figures, code, tables) has the same left and
   right edge. Wider "breakout" figures and code were tried and rejected (Oct 2026).
 - **Reading progress:** a 2px accent bar fixed to the top of the viewport.
