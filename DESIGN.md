@@ -185,8 +185,7 @@ whole point. Never introduce a second accent hue.
 **The Metric Is The Accent Rule.** A page's headline numbers get the accent, in
 one place: the CV's four-tile highlights row, a post's stat on the index. A
 metric that recurs inside a bullet or paragraph is bold `--ink`, the sentence
-around it `--muted`. The CV (Oct 2026) used to colour every metric, kicker, year
-and skill label tomato and read as a wall of orange; the demotion is deliberate.
+around it `--muted`.
 Titles are muted at rest and shift to `--ink` only on hover.
 
 ## 3. Typography
