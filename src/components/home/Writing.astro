@@ -8,8 +8,8 @@ const latest = (await getCollection("blog"))
   .slice(0, 3);
 const [lead, ...rest] = latest.map((p) => ({
   title: p.data.title,
-  subtitle: p.data.subtitle,
   stat: p.data.stat,
+  statLabel: p.data.statLabel,
   date: p.data.pubDate.toLocaleDateString("en-US", {
     month: "short",
     year: "numeric",
@@ -35,9 +35,13 @@ const leadFig = lead?.stat ? lead.stat.split("→").pop()!.trim() : "";
           {lead.date}
         </span>
         <span class="lead__title">{lead.title}</span>
-        {lead.subtitle && <span class="lead__desc">{lead.subtitle}</span>}
         <span class="lead__foot">
-          {lead.stat && <span class="chip">{lead.stat}</span>}
+          <span class="lead__stat">
+            {lead.stat && <span class="chip">{lead.stat}</span>}
+            {lead.statLabel && (
+              <span class="lead__label">{lead.statLabel}</span>
+            )}
+          </span>
           <span class="feat__go">
             read <span aria-hidden="true">→</span>
           </span>
@@ -51,7 +55,6 @@ const leadFig = lead?.stat ? lead.stat.split("→").pop()!.trim() : "";
             <span class="row__date">{p.date}</span>
             <span class="row__body">
               <span class="row__title">{p.title}</span>
-              {p.subtitle && <span class="row__desc">{p.subtitle}</span>}
             </span>
             {p.stat && <span class="chip">{p.stat}</span>}
           </a>
@@ -189,11 +192,17 @@ const leadFig = lead?.stat ? lead.stat.split("→").pop()!.trim() : "";
     text-wrap: balance;
     margin-top: clamp(0.6rem, 2vw, 1.6rem);
   }
-  .lead__desc {
-    color: var(--muted);
-    font-size: clamp(1rem, 1.3vw, 1.1rem);
-    max-width: 46ch;
-    text-wrap: pretty;
+  /* The lead's stat, with what it measures beside it. */
+  .lead__stat {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem 0.6rem;
+  }
+  .lead__label {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--faint);
   }
   .lead__foot {
     display: flex;
@@ -229,10 +238,6 @@ const leadFig = lead?.stat ? lead.stat.split("→").pop()!.trim() : "";
     line-height: 1.25;
     letter-spacing: -0.01em;
     color: var(--ink);
-  }
-  .row__desc {
-    color: var(--muted);
-    font-size: 0.95rem;
   }
   .row--all .row__title {
     color: var(--accent-soft);

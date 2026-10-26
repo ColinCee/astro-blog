@@ -10,11 +10,11 @@ Colin is a visual reader who skims. A post is one story, results first, in his o
 ## 1. Settle the story before any figure
 
 - **One story, one comparison.** Say it in a line first ("Jest 7 min → Vitest 23 s", "73% → 99%"). Every section serves it, and anything else becomes a sentence or goes.
-- **Hook, problem, fix, in that order**, with the result scannable at the top (stat, figures, a chart or clip).
+- **Hook, problem, fix, in that order**, with the result scannable at the top (the stat, then a chart or clip).
 - **One baseline, used everywhere.** It's the first row of every chart, and every number agrees across text, charts, the card and the frontmatter. Jumping between baselines loses his trust faster than anything.
 - **Apples to apples.** Change one thing at a time against the same baseline, on the same test set. Leave out anything both sides share.
 - **Gauge depth.** Ask him (a few options) how much his readers already know about the domain before deciding how much background to give. Define jargon on first use, as a link or a one-line list item.
-- **Title short and catchy, and it says the result** ("CI faster than GitHub's"). The subtitle is one optional line, not a paragraph. Use the same words on the card, the index and the embed.
+- **Title short and catchy, and it says the result** ("CI faster than GitHub's"). The `stat` is the result and `statLabel` says what it measures, and that's all the frontmatter says about it: no subtitle. Use the same words on the card, the index and the embed.
 - **An overall limitation gets a line at the end** when the comparison isn't fully like for like, not a section.
 - **Draft the content high level first**, then the figures, then the wording.
 - **When he asks for versions, make them distinct** in opening, structure, figures and depth, on the same facts.

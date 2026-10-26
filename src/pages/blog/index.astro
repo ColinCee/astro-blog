@@ -7,15 +7,13 @@ const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
-// Each index row comes from the post's frontmatter: `title`, `stat` with an
-// optional `statLabel`, and `subtitle`. Every post gets the same row; nothing
-// is listed here.
+// Each index row comes from the post's frontmatter: `title`, and `stat` with
+// an optional `statLabel`. Every post gets the same row; nothing is listed here.
 
 const entries = posts.map((post) => {
   return {
     href: `/blog/${post.id}/`,
     title: post.data.title,
-    hook: post.data.subtitle,
     year: post.data.pubDate.getFullYear(),
     mon: post.data.pubDate.toLocaleDateString("en-US", { month: "short" }),
     read: readMinutes(post.body),
@@ -56,7 +54,6 @@ const entries = posts.map((post) => {
                   {e.label && <span class="log__label">{e.label}</span>}
                 </p>
               )}
-              {e.hook && <p class="log__hook">{e.hook}</p>}
             </div>
           </a>
         </li>
@@ -209,14 +206,6 @@ const entries = posts.map((post) => {
     letter-spacing: -0.01em;
     color: var(--accent-soft);
     font-variant-numeric: tabular-nums;
-  }
-  .log__hook {
-    margin: 0.3rem 0 0;
-    max-width: 52ch;
-    font-size: 0.82rem;
-    line-height: 1.45;
-    color: var(--muted);
-    text-wrap: pretty;
   }
   .log__label {
     margin-left: 0.5rem;
