@@ -5,7 +5,8 @@
 // data and mirrors the PDF CV's facts, not its layout: the career is a ledger,
 // one row per role (dates, company, title, headline result) that opens in place
 // for the detail, so the whole thing fits one screen closed. The accent marks
-// the current row's node only; metrics are bold ink. Prints with every row open.
+// the current row's node and the result column; metrics inside bullets are bold
+// ink. Prints with every row open.
 import Base from "../layouts/Base.astro";
 
 const name = "Colin Cheung";
@@ -27,6 +28,7 @@ type Ym = { mon: string; yr: string };
 type Role = {
   co: string;
   pos: string;
+  contract?: boolean;
   from: Ym;
   to?: Ym;
   current?: boolean;
@@ -40,7 +42,8 @@ const experience: Role[] = [
   {
     co: "EDF Energy",
     result: "1.6M accounts a day",
-    pos: "Senior Software Engineer · Contract",
+    pos: "Senior Software Engineer",
+    contract: true,
     from: { mon: "Apr", yr: "2023" },
     current: true,
     ctx: "Hands-on technical lead on the Retail/Debt platform.",
@@ -89,7 +92,8 @@ const experience: Role[] = [
   {
     co: "BBC",
     result: "CI-log digging −90%",
-    pos: "Senior Software Engineer · Contract",
+    pos: "Senior Software Engineer",
+    contract: true,
     from: { mon: "Nov", yr: "2022" },
     to: { mon: "Apr", yr: "2023" },
     ctx: "Developer tooling for a BBC engineering team.",
@@ -322,6 +326,7 @@ const projects = [
                 <span class="row__who">
                   <span class="row__co">{r.co}</span>
                   <span class="row__pos">{r.pos}</span>
+                  {r.contract && <span class="row__pill">contract</span>}
                 </span>
                 <span class="row__result">{r.result}</span>
                 <svg
@@ -364,18 +369,14 @@ const projects = [
 
     <section class="cv__sec" aria-labelledby="sk-h">
       <h2 class="cv__sec-head" id="sk-h">// skills</h2>
-      <div class="skills">
+      <dl class="skills">
         {skills.map((g) => (
           <div class="skill">
-            <span class="skill__label">{g.label}</span>
-            <ul class="skill__items">
-              {g.items.map((it) => (
-                <li class="tag">{it}</li>
-              ))}
-            </ul>
+            <dt class="skill__label">{g.label}</dt>
+            <dd class="skill__items">{g.items.join(" · ")}</dd>
           </div>
         ))}
-      </div>
+      </dl>
     </section>
 
     <div class="cv__lower">
@@ -659,12 +660,22 @@ const projects = [
     letter-spacing: 0.02em;
     color: var(--muted);
   }
+  .row__pill {
+    padding: 0.12rem 0.55rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    border: 1px solid var(--faint);
+    border-radius: 999px;
+    align-self: center;
+  }
   .row__result {
     font-family: var(--grotesk);
     font-weight: 600;
     font-size: 0.95rem;
     letter-spacing: -0.005em;
-    color: var(--ink);
+    color: var(--accent-text);
     text-align: right;
     white-space: nowrap;
   }
@@ -746,32 +757,23 @@ const projects = [
   /* ---------------- skills ---------------- */
   .skills {
     display: grid;
-    gap: 0;
-  }
-  .skill {
-    display: grid;
-    grid-template-columns: 8.5rem 1fr;
-    gap: 1.25rem;
-    align-items: baseline;
-    padding: clamp(0.7rem, 1.6vw, 0.95rem) 0;
-    border-top: 1px solid var(--line);
-  }
-  .skill:last-child {
-    border-bottom: 1px solid var(--line);
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 1.1rem clamp(1.5rem, 4vw, 3rem);
+    margin: 0;
   }
   .skill__label {
+    margin: 0 0 0.2rem;
     font-family: var(--mono);
-    font-size: 0.72rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.04em;
-    color: var(--muted);
+    color: var(--faint);
   }
   .skill__items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem 0.5rem;
     margin: 0;
-    padding: 0;
-    list-style: none;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--ink);
+    text-wrap: pretty;
   }
   .tag {
     padding: 0.18rem 0.62rem;
@@ -905,8 +907,10 @@ const projects = [
       grid-column: 1;
     }
     .row__who {
-      flex-direction: column;
-      gap: 0.15rem;
+      gap: 0.25rem 0.6rem;
+    }
+    .row__co {
+      flex-basis: 100%;
     }
     .row__result {
       text-align: left;
@@ -920,10 +924,6 @@ const projects = [
     }
     .row__body {
       padding-left: 1.4rem;
-    }
-    .skill {
-      grid-template-columns: 1fr;
-      gap: 0.55rem;
     }
   }
 </style>

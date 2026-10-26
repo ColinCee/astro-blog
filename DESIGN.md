@@ -183,9 +183,10 @@ important element in view. Keep it under ~10% of any screen; its rarity is the
 whole point. Never introduce a second accent hue.
 
 **The Metric Is The Accent Rule.** A page's one headline number gets the accent
-(a post's stat on the index, the `after` bar in the shipped pane). A metric in a
-bullet, paragraph or ledger row is bold `--ink`, the sentence around it `--muted`.
-On the CV the only tomato is the current row's node and `now`.
+(a post's stat on the index, the `after` bar in the shipped pane, the result
+column of the CV ledger). A metric inside a bullet or paragraph is bold `--ink`,
+the sentence around it `--muted`. All-neutral read as monotone on the CV (Oct
+2026), so the one accented column stays.
 Titles are muted at rest and shift to `--ink` only on hover.
 
 ## 3. Typography
@@ -287,7 +288,8 @@ homepage terminal window's ambient lift, nothing else.
 - **CV ledger (`pages/cv.astro`):** one `<details>` row per role, so the whole
   career fits one laptop screen closed. Closed, a row is the evidence: node, mono
   dates (`now` in accent text for the current role), company in Bricolage, title in
-  mono, and the headline result right-aligned in bold `--ink`. Open, it unfolds in
+  mono with a `contract` pill (ink text, `--faint` outline) where it applies, and
+  the headline result right-aligned in `--accent-text`. Open, it unfolds in
   place (`::details-content` height and opacity, the page's one authored motion)
   into the context line, bullets and stack tags, indented to the company column.
   An `open all` / `close all` mono control sits on the section line, and every
