@@ -106,8 +106,10 @@
 .prose .pts__r--hi .pts__t i {
   background: var(--accent);
 }
+/* The post's subject is named in the accent too, so the chart needs no colour key. */
 .prose .pts__r--hi .pts__k b {
   font-weight: 700;
+  color: var(--accent-text);
 }
 /* My 2018 version, the baseline: striped, the same in every chart. */
 .prose .pts__r--base .pts__t i:first-child {

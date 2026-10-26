@@ -1,0 +1,40 @@
+---
+// An LLM against a decision model as a timeline (a Gantt chart): time runs
+// left to right, a column per pass, each pass a bar with its output centred
+// on top. The LLM's passes queue one after another, each outputting a word;
+// the decision model's one pass outputs a probability for every choice,
+// stacked, its pick in the accent (the post's subject). Styles: decide.css.
+interface Props {
+  tokens: string[];
+  choices: { name: string; p: number }[];
+}
+const { tokens, choices } = Astro.props;
+const top = choices.reduce((a, c) => (c.p > a.p ? c : a));
+const at = (row: number, col: string | number) =>
+  `grid-row:${row};grid-column:${col}`;
+const jevRow = tokens.length + 1;
+---
+
+<div class="decide" style={`--n:${tokens.length}`}>
+  <span class="decide__k" style={at(1, 1)}>An LLM</span>
+  {tokens.map((t, i) => (
+    <span class="decide__pass" style={at(i + 1, i + 2)}>
+      <b>{t}</b>
+      <i />
+    </span>
+  ))}
+  <span class="decide__k decide__jev" style={at(jevRow, 1)}>Jev</span>
+  <span class="decide__pass" style={at(jevRow, 2)}>
+    <span class="decide__mini">
+      {choices.map((c) => (
+        <span class:list={[c === top && "decide__top"]}>
+          {c.name} {c.p}%
+        </span>
+      ))}
+    </span>
+    <i class="decide__on" />
+  </span>
+  <span class="decide__axis" style={at(jevRow + 1, "2 / -1")}>
+    time, one bar per pass →
+  </span>
+</div>
