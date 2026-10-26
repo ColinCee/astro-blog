@@ -56,7 +56,7 @@ I tried three algorithms, each with 5 times the practice my agent got:
   ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
-Double DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster Double DQN. That's 17 minutes a run now, which would've been 2 or 3 days in 2018.
+Double DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster Double DQN. That's 17 minutes a run now, which would've been 2 or 3 days in 2018. I also tried putting prioritised replay back afterwards, and it didn't clearly help.[^per]
 
 ### PPO actually wins more at 1M frames
 With the same 1M frames as my agent, PPO wins 82% of the time, which is about what my dissertation said my agent won. However, it turns out it was just spamming the shoot button, which is why every chart has a dashed line at 82%: anything below it is worse than holding one button.
@@ -117,19 +117,6 @@ In 2018 I wrote that holding each move for 4 frames meant my agent could never r
 
 Every 2 frames added 21 points, and every frame did no better, so I kept the cheaper every 2 frames. It still loses about 1 game in 100, and replaying its 500 games lost 2, both to a bomb landing on it while it sat still and shot, which might just be reaction time.
 
-### What about prioritised replay?
-
-I added my agent's other trick back after the chain was done, at step 1 and on the final agent. At step 1 it won a bit more, 93% against 89%, but with four options to pick from that gap could still be luck, so the simpler Double DQN stays.[^per] On the final agent it scored less, 81 against 83.
-
-<Fig title="With or without PER?">
-  <Pts rows={[
-    {"name": "Double DQN", "tag": "step 1", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "kind": "hi"},
-    {"name": "+ PER", "won": 93.0, "lo": 92.0, "hi": 95.0, "points": 58.87, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": false, "points": false}},
-    {"name": "The final agent", "tag": "kept", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "kind": "hi"},
-    {"name": "+ PER", "won": 99.6, "lo": 99.0, "hi": 100.0, "points": 80.78, "prev": {"won": 99.0, "points": 82.72}, "real": {"won": false, "points": true}},
-  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
-</Fig>
-
 ## Conclusion
 
 <Fig title="Final results">
@@ -165,6 +152,6 @@ Feedback loops are important, and the faster you make them the more things you c
 
 [^test]: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) on the 5 runs: a gap counts as real when p < 0.05, so luck alone would give one that big less than 1 time in 20. The p-values are in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^mcts]: One run of 51 games, since it doesn't learn.
-[^per]: Wins p = 0.048, but with three other options to compare against, a [Holm correction](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method) needs p under 0.025 here. On the final agent it won the same (p = 0.42) and scored less (p = 0.007).
+[^per]: Within luck here, and 2 points worse on the final agent. [The results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
 [^clip]: Each scoring move counts as 1, as in DeepMind's Atari setup.
 [^2018]: Counted over training games 1,500 to 2,000, while it still made 1 in 10 moves at random.
