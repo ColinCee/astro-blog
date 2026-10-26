@@ -2,9 +2,10 @@
 // CV — terminal-native résumé for colincheung.dev.
 // Same light shell, tomato accent, Bricolage + JetBrains Mono as the rest of the
 // site (see src/styles/tokens.css and DESIGN.md). Content lives here as typed
-// data and mirrors the PDF CV. The accent is spent on the highlights row and the
-// current timeline node only; metrics inside bullets are bold ink, so the page
-// is not a wall of tomato. Prints clean to ink-on-white via @media print.
+// data and mirrors the PDF CV's facts, not its layout: the career is a ledger,
+// one row per role (dates, company, title, headline result) that opens in place
+// for the detail, so the whole thing fits one screen closed. The accent marks
+// the current row's node only; metrics are bold ink. Prints with every row open.
 import Base from "../layouts/Base.astro";
 
 const name = "Colin Cheung";
@@ -21,27 +22,6 @@ const contact = [
   { label: "github.com/ColinCee", href: "https://github.com/ColinCee" },
 ];
 
-// The four headline numbers from the PDF's highlights row, scannable before the
-// timeline. Each is the one place its metric is tomato.
-const highlights = [
-  {
-    value: "1.6M/day",
-    label: "accounts processed by the EDF debt platform I build",
-  },
-  {
-    value: "30 → 5 min",
-    label: "CI cycle after moving the monorepo to GitHub Actions",
-  },
-  {
-    value: "2× faster",
-    label: "half the team, AI-assisted: 3 engineers in 1 month vs 6 in 2",
-  },
-  {
-    value: "8 h → 2 min",
-    label: "HR data sync rebuilt on AWS Lambda and SQS",
-  },
-];
-
 type Point = { pre: string; hl?: string; post?: string };
 type Ym = { mon: string; yr: string };
 type Role = {
@@ -50,6 +30,7 @@ type Role = {
   from: Ym;
   to?: Ym;
   current?: boolean;
+  result: string;
   ctx: string;
   points: Point[];
   stack: string[];
@@ -58,6 +39,7 @@ type Role = {
 const experience: Role[] = [
   {
     co: "EDF Energy",
+    result: "1.6M accounts a day",
     pos: "Senior Software Engineer · Contract",
     from: { mon: "Apr", yr: "2023" },
     current: true,
@@ -106,6 +88,7 @@ const experience: Role[] = [
   },
   {
     co: "BBC",
+    result: "CI-log digging −90%",
     pos: "Senior Software Engineer · Contract",
     from: { mon: "Nov", yr: "2022" },
     to: { mon: "Apr", yr: "2023" },
@@ -124,6 +107,7 @@ const experience: Role[] = [
   },
   {
     co: "Hopper",
+    result: "100k+ requests a day",
     pos: "Senior Software Engineer",
     from: { mon: "Mar", yr: "2022" },
     to: { mon: "Oct", yr: "2022" },
@@ -152,6 +136,7 @@ const experience: Role[] = [
   },
   {
     co: "Hometree",
+    result: "Checkout flow, led end to end",
     pos: "Senior Software Engineer",
     from: { mon: "Jun", yr: "2021" },
     to: { mon: "Mar", yr: "2022" },
@@ -167,6 +152,7 @@ const experience: Role[] = [
   },
   {
     co: "Skyscanner",
+    result: "8 h sync → 2 min",
     pos: "Software Engineer",
     from: { mon: "Feb", yr: "2020" },
     to: { mon: "Apr", yr: "2021" },
@@ -182,6 +168,7 @@ const experience: Role[] = [
   },
   {
     co: "PodFather",
+    result: "10k+ drivers",
     pos: "Software Engineer",
     from: { mon: "Jul", yr: "2017" },
     to: { mon: "Feb", yr: "2020" },
@@ -294,69 +281,82 @@ const projects = [
 >
   <article class="cv">
     <header class="cv__head">
-      <p class="cv__kicker">// curriculum vitae</p>
       <h1 class="cv__name">{name}</h1>
       <p class="cv__role">{role}</p>
       <p class="cv__lede">{lede}</p>
-      <div class="cv__actions">
-        <nav class="cv__contact" aria-label="Contact">
-          {contact.map((c) => <a href={c.href}>{c.label}</a>)}
-        </nav>
-      </div>
+      <nav class="cv__contact" aria-label="Contact">
+        {contact.map((c) => <a href={c.href}>{c.label}</a>)}
+      </nav>
     </header>
 
-    <section class="cv__sec cv__sec--first" aria-labelledby="hi-h">
-      <h2 class="cv__sec-head" id="hi-h">// highlights</h2>
-      <ul class="hi">
-        {highlights.map((h) => (
-          <li class="hi__tile">
-            <span class="hi__value">{h.value}</span>
-            <span class="hi__label">{h.label}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    <section class="cv__sec" aria-labelledby="xp-h">
-      <h2 class="cv__sec-head" id="xp-h">// experience</h2>
-      <ol class="xp__list">
+    <section class="cv__sec cv__sec--ledger" aria-labelledby="xp-h">
+      <div class="cv__sec-bar">
+        <h2 class="cv__sec-head" id="xp-h">// experience</h2>
+        <button
+          class="cv__toggle"
+          type="button"
+          aria-pressed="false"
+          data-cv-toggle
+          hidden
+        >
+          open all
+        </button>
+      </div>
+      <ol class="ledger">
         {experience.map((r) => (
-          <li class:list={["xp__item", { "role--current": r.current }]}>
-            <article class="role">
-              <span class="role__node" aria-hidden="true" />
-              <div class="role__when">
-                <span class="role__date role__date--end">
+          <li class:list={["ledger__item", { "is-current": r.current }]}>
+            <details class="row" data-cv-row>
+              <summary class="row__sum">
+                <span class="row__node" aria-hidden="true" />
+                <span class="row__when">
+                  {r.from.mon} {r.from.yr}
+                  <span class="row__dash" aria-hidden="true">
+                    –
+                  </span>
                   {r.current ? (
-                    <b class="role__now">now</b>
+                    <b class="row__now">now</b>
                   ) : (
-                    r.to && (
-                      <Fragment>
-                        <span class="role__mon">{r.to.mon}</span>
-                        <span class="role__yr">{r.to.yr}</span>
-                      </Fragment>
-                    )
+                    r.to && `${r.to.mon} ${r.to.yr}`
                   )}
                 </span>
-                <span class="role__link" aria-hidden="true" />
-                <span class="role__date role__date--start">
-                  <span class="role__mon">{r.from.mon}</span>
-                  <span class="role__yr">{r.from.yr}</span>
+                <span class="row__who">
+                  <span class="row__co">{r.co}</span>
+                  <span class="row__pos">{r.pos}</span>
                 </span>
-              </div>
-              <div class="role__body">
-                <h3 class="role__co">{r.co}</h3>
-                <p class="role__pos">{r.pos}</p>
-                <p class="role__ctx">{r.ctx}</p>
-                <ul class="role__points">
+                <span class="row__result">{r.result}</span>
+                <svg
+                  class="row__chev"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  height="16"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 6l4 4 4-4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </summary>
+              <div class="row__body">
+                <p class="row__ctx">{r.ctx}</p>
+                <ul class="row__points">
                   {r.points.map((p) => (
-                    <li class="role__point">
+                    <li class="row__point">
                       {[p.pre, p.hl && <b class="hl">{p.hl}</b>, p.post]}
                     </li>
                   ))}
                 </ul>
-                <p class="role__stack">{r.stack.join("  ·  ")}</p>
+                <ul class="row__stack" aria-label="Stack">
+                  {r.stack.map((t) => (
+                    <li class="tag">{t}</li>
+                  ))}
+                </ul>
               </div>
-            </article>
+            </details>
           </li>
         ))}
       </ol>
@@ -419,6 +419,44 @@ const projects = [
   </article>
 </Base>
 
+<script>
+  // "open all" / "close all" for the ledger, and every row open for print.
+  // Without JS the rows still open one at a time, natively.
+  const rows = [
+    ...document.querySelectorAll<HTMLDetailsElement>("[data-cv-row]"),
+  ];
+  const toggle = document.querySelector<HTMLButtonElement>("[data-cv-toggle]");
+  if (toggle && rows.length) {
+    toggle.hidden = false;
+    const sync = () => {
+      const all = rows.every((r) => r.open);
+      toggle.textContent = all ? "close all" : "open all";
+      toggle.setAttribute("aria-pressed", String(all));
+    };
+    toggle.addEventListener("click", () => {
+      const open = !rows.every((r) => r.open);
+      rows.forEach((r) => {
+        r.open = open;
+      });
+      sync();
+    });
+    rows.forEach((r) => r.addEventListener("toggle", sync));
+    sync();
+  }
+  let wasOpen: boolean[] = [];
+  addEventListener("beforeprint", () => {
+    wasOpen = rows.map((r) => r.open);
+    rows.forEach((r) => {
+      r.open = true;
+    });
+  });
+  addEventListener("afterprint", () => {
+    rows.forEach((r, i) => {
+      r.open = wasOpen[i] ?? false;
+    });
+  });
+</script>
+
 <style>
   .cv {
     max-width: var(--w-page);
@@ -427,55 +465,40 @@ const projects = [
 
   /* ---------------- masthead ---------------- */
   .cv__head {
-    margin-bottom: clamp(3rem, 7vw, 5rem);
-  }
-  .cv__kicker {
-    margin: 0 0 1rem;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    color: var(--muted);
+    margin-bottom: clamp(2.2rem, 5vw, 3.5rem);
   }
   .cv__name {
     margin: 0;
     font-family: var(--grotesk);
     font-weight: 800;
-    font-size: clamp(2.4rem, 8vw, 4.5rem);
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
     line-height: 0.9;
     letter-spacing: -0.03em;
     color: var(--ink);
     text-wrap: balance;
   }
   .cv__role {
-    margin: 0.9rem 0 0;
+    margin: 0.8rem 0 0;
     font-family: var(--mono);
-    font-size: clamp(0.8rem, 1.4vw, 0.9rem);
+    font-size: clamp(0.78rem, 1.4vw, 0.86rem);
     letter-spacing: 0.03em;
     color: var(--muted);
   }
   .cv__lede {
-    margin: 1.6rem 0 0;
-    max-width: 74ch;
+    margin: 1.2rem 0 0;
+    max-width: 72ch;
     font-family: var(--grotesk);
-    font-weight: 500;
+    font-weight: 450;
     font-size: 0.95rem;
-    line-height: 1.6;
-    letter-spacing: -0.01em;
-    color: var(--ink);
+    line-height: 1.55;
+    color: var(--muted);
     text-wrap: pretty;
-  }
-  .cv__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem 1.5rem;
-    margin: 2rem 0 0;
   }
   .cv__contact {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.6rem 1.4rem;
+    gap: 0.5rem 1.4rem;
+    margin: 1.2rem 0 0;
     font-family: var(--mono);
     font-size: 0.76rem;
     letter-spacing: 0.01em;
@@ -497,8 +520,15 @@ const projects = [
   .cv__sec {
     margin-top: clamp(3rem, 7vw, 5rem);
   }
-  .cv__sec--first {
+  .cv__sec--ledger {
     margin-top: 0;
+  }
+  .cv__sec-bar {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0 0 0.9rem;
   }
   .cv__sec-head {
     margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
@@ -508,186 +538,187 @@ const projects = [
     letter-spacing: 0.06em;
     color: var(--muted);
   }
-
-  /* ---------------- highlights: four stat tiles ----------------
-     The one place the accent shouts: the value is tomato, the label muted. */
-  .hi {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1.5rem clamp(1.25rem, 3vw, 2.5rem);
+  .cv__sec-bar .cv__sec-head {
     margin: 0;
-    padding: 0;
-    list-style: none;
   }
-  .hi__tile {
-    display: grid;
-    gap: 0.4rem;
-    padding-left: 0.9rem;
-    border-left: 1px solid var(--line);
-  }
-  .hi__value {
-    font-family: var(--grotesk);
-    font-weight: 700;
-    font-size: clamp(1.45rem, 2.6vw, 2rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    color: var(--accent-text);
-    text-wrap: nowrap;
-  }
-  .hi__label {
-    max-width: 22ch;
-    font-size: 0.82rem;
-    line-height: 1.45;
+  .cv__toggle {
+    margin: 0;
+    padding: 0.1rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--accent-line);
+    background: none;
+    font: inherit;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
     color: var(--muted);
-    text-wrap: pretty;
+    cursor: pointer;
+    transition:
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
   }
-  @media (max-width: 900px) {
-    .hi {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  @media (max-width: 420px) {
-    .hi {
-      grid-template-columns: 1fr;
-    }
+  .cv__toggle:hover {
+    color: var(--ink);
+    border-color: var(--accent);
   }
 
-  /* ---------------- experience timeline ---------------- */
-  .xp__list {
-    --rail: 5.75rem;
-    position: relative;
+  /* ---------------- the ledger ----------------
+     One row per role. Closed, the row is the evidence: dates, company, title
+     and the headline result. Open, it unfolds the detail in place. */
+  .ledger {
     margin: 0;
     padding: 0;
     list-style: none;
+    border-top: 1px solid var(--line);
   }
-  .xp__list::before {
-    content: "";
-    position: absolute;
-    top: 0.6rem;
-    bottom: 0.6rem;
-    left: var(--rail);
-    width: 1px;
-    background: var(--line);
+  .row {
+    --col-when: 8.5rem;
+    border-bottom: 1px solid var(--line);
+    interpolate-size: allow-keywords;
   }
-  .role {
-    --pad: clamp(1.4rem, 3vw, 2.1rem);
+  .row__sum {
     position: relative;
     display: grid;
-    grid-template-columns: var(--rail) 1fr;
-    gap: clamp(1.5rem, 3vw, 2.75rem);
-    padding: var(--pad) 0;
+    grid-template-columns: var(--col-when) minmax(0, 1fr) auto 1rem;
+    align-items: center;
+    gap: 0 1.25rem;
+    padding: 0.95rem 0.5rem 0.95rem 1.5rem;
+    margin: 0 -0.5rem;
+    border-radius: var(--r-row, 7px);
+    list-style: none;
+    cursor: pointer;
+    transition: background-color var(--dur-fast) var(--ease);
   }
-  .xp__item:first-child .role {
-    padding-top: 0.2rem;
+  .row__sum::-webkit-details-marker {
+    display: none;
   }
-  .role__node {
+  @media (hover: hover) {
+    .row__sum:hover {
+      background: var(--panel);
+    }
+  }
+  .row__sum:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+  .row__node {
     position: absolute;
-    left: var(--rail);
-    top: calc(var(--pad) + 0.5rem);
+    left: 0.5rem;
+    top: 50%;
     width: 9px;
     height: 9px;
-    translate: -50% 0;
+    translate: 0 -50%;
     border-radius: 50%;
     background: var(--bg);
     border: 2px solid var(--faint);
-    z-index: 1;
+    transition:
+      border-color var(--dur-fast) var(--ease),
+      background-color var(--dur-fast) var(--ease);
   }
-  .xp__item:first-child .role__node {
-    top: 0.7rem;
-  }
-  .role--current .role__node {
+  .is-current .row__node {
     border-color: var(--accent);
     box-shadow: var(--ring);
   }
-  .role__when {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.3rem;
-    padding-top: 0.02rem;
-    padding-right: 0.95rem;
-    font-variant-numeric: tabular-nums;
+  .row[open] .row__node {
+    background: var(--faint);
   }
-  .role__date {
-    display: flex;
-    align-items: baseline;
-    gap: 0.4rem;
+  .is-current .row[open] .row__node {
+    background: var(--accent);
   }
-  .role__mon {
+  .row__when {
     font-family: var(--mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
     color: var(--faint);
+    white-space: nowrap;
   }
-  .role__yr {
-    font-family: var(--mono);
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--ink);
+  .row__dash {
+    margin: 0 0.3rem;
   }
-  .role__now {
-    font-family: var(--mono);
-    font-size: 0.95rem;
+  .row__now {
     font-weight: 600;
-    color: var(--accent);
+    color: var(--accent-text);
   }
-  .role__date--start .role__yr {
-    font-size: 0.6875rem;
-    font-weight: 400;
-    color: var(--muted);
-  }
-  .role__link {
-    display: none;
-    width: 1px;
-    height: 0.6rem;
-    margin: 0.05rem 0;
-    background: var(--line);
-  }
-  .role__body {
+  .row__who {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.15rem 0.9rem;
     min-width: 0;
   }
-  .role__co {
-    margin: 0;
+  .row__co {
     font-family: var(--grotesk);
-    font-weight: 700;
-    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    font-weight: 650;
+    font-size: 1.08rem;
     letter-spacing: -0.01em;
     color: var(--ink);
   }
-  .role__pos {
-    margin: 0.25rem 0 0;
+  .row__pos {
     font-family: var(--mono);
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     letter-spacing: 0.02em;
     color: var(--muted);
   }
-  .role__ctx {
-    margin: 0.75rem 0 0;
-    max-width: 72ch;
+  .row__result {
     font-family: var(--grotesk);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .row__chev {
+    color: var(--faint);
+    transition: rotate 0.3s var(--ease-out);
+  }
+  .row[open] .row__chev {
+    rotate: 180deg;
+  }
+
+  /* The one authored motion: a row unfolding. Browsers without
+     ::details-content open it instantly. */
+  .row::details-content {
+    block-size: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      block-size 0.4s var(--ease-out),
+      opacity 0.3s var(--ease-out),
+      content-visibility 0.4s allow-discrete;
+  }
+  .row[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+  .row__body {
+    padding: 0.25rem 0 1.6rem calc(var(--col-when) + 2.25rem);
+  }
+  .row__ctx {
+    margin: 0;
+    max-width: 68ch;
     font-size: 0.94rem;
     line-height: 1.5;
-    color: var(--muted);
+    color: var(--ink);
     text-wrap: pretty;
   }
-  .role__points {
-    margin: 1rem 0 0;
+  .row__points {
+    margin: 0.85rem 0 0;
     padding: 0;
     list-style: none;
     display: grid;
-    gap: 0.6rem;
+    gap: 0.55rem;
   }
-  .role__point {
+  .row__point {
     position: relative;
     padding-left: 1.15rem;
-    max-width: 74ch;
+    max-width: 70ch;
     font-size: 0.9rem;
     line-height: 1.55;
     color: var(--muted);
     text-wrap: pretty;
   }
-  .role__point::before {
+  .row__point::before {
     content: "";
     position: absolute;
     left: 0;
@@ -697,18 +728,19 @@ const projects = [
     border-radius: 1px;
     background: var(--faint);
   }
-  /* A metric inside a bullet: bold ink, as in the PDF. Tomato is spent on the
-     highlights row above, so repeating it here would bury the signal. */
+  /* A metric inside a bullet: bold ink. The accent is spent on the current
+     row's node, so repeating it here would bury the signal. */
   .hl {
     color: var(--ink);
     font-weight: 600;
   }
-  .role__stack {
-    margin: 0.95rem 0 0;
-    font-family: var(--mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.02em;
-    color: var(--faint);
+  .row__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.5rem;
+    margin: 1.1rem 0 0;
+    padding: 0;
+    list-style: none;
   }
 
   /* ---------------- skills ---------------- */
@@ -861,64 +893,37 @@ const projects = [
   }
 
   /* ---------------- responsive ---------------- */
-  @media (max-width: 640px) {
-    .xp__list::before {
-      left: 4px;
-    }
-    .role {
-      grid-template-columns: 1fr;
-      gap: 0.5rem;
+  @media (max-width: 720px) {
+    .row__sum {
+      grid-template-columns: minmax(0, 1fr) 1rem;
+      gap: 0.3rem 0.75rem;
       padding-left: 1.4rem;
     }
-    .role__node,
-    .xp__item:first-child .role__node {
-      left: 4px;
-      top: 0.5rem;
+    .row__when,
+    .row__who,
+    .row__result {
+      grid-column: 1;
     }
-    .role__when {
-      flex-direction: row;
-      align-items: center;
-      gap: 0.5rem;
-      padding-right: 0;
+    .row__who {
+      flex-direction: column;
+      gap: 0.15rem;
     }
-    .role__date--start {
-      order: 0;
+    .row__result {
+      text-align: left;
+      white-space: normal;
+      font-size: 0.9rem;
     }
-    .role__link {
-      order: 1;
-      display: block;
-      height: 0.75rem;
+    .row__chev {
+      grid-column: 2;
+      grid-row: 1 / span 3;
+      align-self: center;
     }
-    .role__date--end {
-      order: 2;
+    .row__body {
+      padding-left: 1.4rem;
     }
     .skill {
       grid-template-columns: 1fr;
       gap: 0.55rem;
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .cv__head,
-    .xp__item,
-    .cv__sec,
-    .cv__end {
-      animation: rise var(--dur-slow) var(--ease-out) both;
-    }
-    .xp__item:nth-child(2) {
-      animation-delay: 0.05s;
-    }
-    .xp__item:nth-child(3) {
-      animation-delay: 0.1s;
-    }
-    .xp__item:nth-child(4) {
-      animation-delay: 0.15s;
-    }
-    .xp__item:nth-child(5) {
-      animation-delay: 0.2s;
-    }
-    .xp__item:nth-child(6) {
-      animation-delay: 0.25s;
     }
   }
 </style>
@@ -936,6 +941,7 @@ const projects = [
       --faint: #5a5a5a;
       --accent: #0e7490;
       --accent-soft: #0e7490;
+      --accent-text: #0e7490;
       color-scheme: light;
     }
     @page {
@@ -948,7 +954,9 @@ const projects = [
       color: #111 !important;
     }
     .nav,
-    .foot {
+    .foot,
+    .cv__toggle,
+    .row__chev {
       display: none !important;
     }
     .cv {
@@ -960,10 +968,7 @@ const projects = [
     .cv__sec {
       margin-top: 1.6rem;
     }
-    .hi__value {
-      color: #0e7490;
-    }
-    .role,
+    .row,
     .proj__item,
     .edu {
       break-inside: avoid;
