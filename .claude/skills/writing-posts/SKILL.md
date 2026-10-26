@@ -36,6 +36,7 @@ Write how he talks in chat and writes himself: casual, conversational British En
 
 ## 3. Numbers and claims
 
+- **In figures, numbers are symbols and digits, not words:** "< $0.01", "~ 200 ms", "1 game", not "under 1¢", "about 200 ms", "a game".
 - **One way to say each number** (1.4×, not also "31% less time"), the same everywhere.
 - **Measured data only.** No estimates or demo data when the real thing can be run. If an estimate has to stay, mark it (`est`) so it draws lighter. Get his OK before any GPU run.
 - **Comparisons that could be noise get a significance test** (e.g. Welch's t-test over 5 runs, p < 0.05). Fix the decision rule before looking: a tie keeps the simpler or cheaper option. Never pick or headline the better-looking number after the fact.
