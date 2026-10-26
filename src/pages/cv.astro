@@ -2,8 +2,9 @@
 // CV — terminal-native résumé for colincheung.dev.
 // Same light shell, tomato accent, Bricolage + JetBrains Mono as the rest of the
 // site (see src/styles/tokens.css and DESIGN.md). Content lives here as typed
-// data so the markup can highlight the metric in every line — the number is the
-// accent, the prose stays muted. Prints clean to ink-on-white via @media print.
+// data and mirrors the PDF CV. The accent is spent on the highlights row and the
+// current timeline node only; metrics inside bullets are bold ink, so the page
+// is not a wall of tomato. Prints clean to ink-on-white via @media print.
 import Base from "../layouts/Base.astro";
 
 const name = "Colin Cheung";
@@ -18,6 +19,27 @@ const contact = [
     href: "https://www.linkedin.com/in/colin-cheung/",
   },
   { label: "github.com/ColinCee", href: "https://github.com/ColinCee" },
+];
+
+// The four headline numbers from the PDF's highlights row, scannable before the
+// timeline. Each is the one place its metric is tomato.
+const highlights = [
+  {
+    value: "1.6M/day",
+    label: "accounts processed by the EDF debt platform I build",
+  },
+  {
+    value: "30 → 5 min",
+    label: "CI cycle after moving the monorepo to GitHub Actions",
+  },
+  {
+    value: "2× faster",
+    label: "half the team, AI-assisted: 3 engineers in 1 month vs 6 in 2",
+  },
+  {
+    value: "8 h → 2 min",
+    label: "HR data sync rebuilt on AWS Lambda and SQS",
+  },
 ];
 
 type Point = { pre: string; hl?: string; post?: string };
@@ -283,6 +305,18 @@ const projects = [
       </div>
     </header>
 
+    <section class="cv__sec cv__sec--first" aria-labelledby="hi-h">
+      <h2 class="cv__sec-head" id="hi-h">// highlights</h2>
+      <ul class="hi">
+        {highlights.map((h) => (
+          <li class="hi__tile">
+            <span class="hi__value">{h.value}</span>
+            <span class="hi__label">{h.label}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
     <section class="cv__sec" aria-labelledby="xp-h">
       <h2 class="cv__sec-head" id="xp-h">// experience</h2>
       <ol class="xp__list">
@@ -316,9 +350,7 @@ const projects = [
                 <ul class="role__points">
                   {r.points.map((p) => (
                     <li class="role__point">
-                      {p.pre}
-                      {p.hl && <b class="hl">{p.hl}</b>}
-                      {p.post}
+                      {[p.pre, p.hl && <b class="hl">{p.hl}</b>, p.post]}
                     </li>
                   ))}
                 </ul>
@@ -402,7 +434,7 @@ const projects = [
     font-family: var(--mono);
     font-size: 0.75rem;
     letter-spacing: 0.06em;
-    color: var(--accent-soft);
+    color: var(--muted);
   }
   .cv__name {
     margin: 0;
@@ -465,13 +497,59 @@ const projects = [
   .cv__sec {
     margin-top: clamp(3rem, 7vw, 5rem);
   }
+  .cv__sec--first {
+    margin-top: 0;
+  }
   .cv__sec-head {
     margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
     font-family: var(--mono);
     font-size: 0.75rem;
     font-weight: 400;
     letter-spacing: 0.06em;
-    color: var(--accent-soft);
+    color: var(--muted);
+  }
+
+  /* ---------------- highlights: four stat tiles ----------------
+     The one place the accent shouts: the value is tomato, the label muted. */
+  .hi {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem clamp(1.25rem, 3vw, 2.5rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .hi__tile {
+    display: grid;
+    gap: 0.4rem;
+    padding-left: 0.9rem;
+    border-left: 1px solid var(--line);
+  }
+  .hi__value {
+    font-family: var(--grotesk);
+    font-weight: 700;
+    font-size: clamp(1.45rem, 2.6vw, 2rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--accent-text);
+    text-wrap: nowrap;
+  }
+  .hi__label {
+    max-width: 22ch;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  @media (max-width: 900px) {
+    .hi {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 420px) {
+    .hi {
+      grid-template-columns: 1fr;
+    }
   }
 
   /* ---------------- experience timeline ---------------- */
@@ -546,7 +624,7 @@ const projects = [
     font-family: var(--mono);
     font-size: 0.95rem;
     font-weight: 500;
-    color: var(--accent-soft);
+    color: var(--ink);
   }
   .role__now {
     font-family: var(--mono);
@@ -617,12 +695,13 @@ const projects = [
     width: 5px;
     height: 5px;
     border-radius: 1px;
-    background: color-mix(in oklch, var(--accent) 65%, transparent);
+    background: var(--faint);
   }
+  /* A metric inside a bullet: bold ink, as in the PDF. Tomato is spent on the
+     highlights row above, so repeating it here would bury the signal. */
   .hl {
-    color: var(--accent-soft);
+    color: var(--ink);
     font-weight: 600;
-    font-variant-numeric: tabular-nums;
   }
   .role__stack {
     margin: 0.95rem 0 0;
@@ -652,7 +731,7 @@ const projects = [
     font-family: var(--mono);
     font-size: 0.72rem;
     letter-spacing: 0.04em;
-    color: var(--accent-soft);
+    color: var(--muted);
   }
   .skill__items {
     display: flex;
@@ -880,6 +959,9 @@ const projects = [
     }
     .cv__sec {
       margin-top: 1.6rem;
+    }
+    .hi__value {
+      color: #0e7490;
     }
     .role,
     .proj__item,

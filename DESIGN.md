@@ -125,7 +125,8 @@ big.
 - Light (Stone) and dark themes from one token set, switched by `prefers-color-scheme`. Never cream, never pure white, never pure black.
 - Exactly one chromatic color: tomato. Everything else is a warm-neutral ramp.
 - Big Bricolage Grotesque display against small JetBrains Mono technical chrome.
-- The metric is the accent: numbers/outcomes glow tomato, prose stays muted.
+- The metric is the accent, once: a page's headline numbers (the CV highlights
+  row, a post's stat) glow tomato; a metric repeated inside prose is bold ink.
 - The literal terminal metaphor is scarce — reserved for the homepage.
 - Widths are one three-tier scale: `--w-prose` (`46rem`, reading), `--w-page`
   (`68rem`, content pages) and `--w-poster` (`90rem`, the homepage). Content
@@ -140,11 +141,11 @@ one accent used on well under 10% of any screen, against a warm neutral ramp.
 
 ### Primary
 - **Signal Tomato** (`--accent`, `oklch(0.55 0.19 32)` / `oklch(0.75 0.17 38)`): The only chromatic color.
-  Reserved for the single most important thing in a view — the metric in a line,
+  Reserved for the single most important thing in a view — the headline metric,
   the current timeline node, the active/hover link border, the terminal `@` and
   prompt. If two things are tomato in one glance, one is wrong.
 - **Soft Tomato** (`--accent-soft`, `oklch(0.49 0.17 32)` / `oklch(0.79 0.11 38)`): The desaturated tomato for
-  runs of accented *text* (metric highlights, `//` kickers, inline links) where
+  runs of accented *text* (headline values, inline links) where
   full-chroma tomato would vibrate. Reads as "important" without shouting.
 - **Accent Text** (`--accent-text`): small accented text (pane labels, result values,
   status-bar tabs). In light it is Soft Tomato, because Signal Tomato on the light
@@ -181,9 +182,12 @@ legitimately leaves the two themes.
 important element in view. Keep it under ~10% of any screen; its rarity is the
 whole point. Never introduce a second accent hue.
 
-**The Metric Is The Accent Rule.** In prose, the number or outcome gets
-`--accent-soft`; the surrounding sentence stays `--muted`. Titles are muted at
-rest and shift to `--ink` only on hover. The eye should land on the result first.
+**The Metric Is The Accent Rule.** A page's headline numbers get the accent, in
+one place: the CV's four-tile highlights row, a post's stat on the index. A
+metric that recurs inside a bullet or paragraph is bold `--ink`, the sentence
+around it `--muted`. The CV (Oct 2026) used to colour every metric, kicker, year
+and skill label tomato and read as a wall of orange; the demotion is deliberate.
+Titles are muted at rest and shift to `--ink` only on hover.
 
 ## 3. Typography
 
@@ -282,8 +286,9 @@ homepage terminal window's ambient lift, nothing else.
   spine; body content to the right.
 - **CV date rail:** a `--rail` variable (5.75rem) drives the spine offset, the grid
   column, and the node position together so they always line up. Each role shows the
-  end date on top (`now` in `--accent` for the current role, else month + year) and
-  the start date below, dialed down to `--muted`/`--faint` so it does not compete. On
+  end date on top (`now` in `--accent` for the current role, else month + year in
+  `--ink`) and the start date below, dialed down to `--muted`/`--faint` so it does not
+  compete. The `//` kickers and section heads on the CV are `--muted`, not tomato. On
   mobile (≤640px) the rail collapses to one left spine with the dates inline.
 - **Article timeline (`layouts/Post.astro`):** the third use of the spine, and it is
   in the flow of the article, not a sidebar. When a post opens with three or more
