@@ -41,26 +41,22 @@ Each bar is the average win rate over 5 runs, and the thin bracket is their rang
 
 ## Step 1: which algorithm is best with more practice?
 
-I tried four, each with 5 times the practice my agent got. DQN and PPO are the actual algorithms, and the rest are tricks added on top of DQN:
+I tried three algorithms, each with 5 times the practice my agent got:
 
-- **[Double DQN](https://arxiv.org/abs/1509.06461) (DDQN):** DeepMind's 2015 Atari method, [DQN](https://www.nature.com/articles/nature14236), with a fix for overestimating how good moves are.
-- **Double DQN + [prioritised replay](https://arxiv.org/abs/1511.05952) (PER):** it also replays the moves it got most wrong more often. This is what my 2018 agent was.
-- **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including those 2.
+- **[Double DQN](https://arxiv.org/abs/1509.06461) (DDQN):** DeepMind's 2015 Atari method, [DQN](https://www.nature.com/articles/nature14236), with a fix for overestimating how good moves are. My agent was this plus [prioritised replay](https://arxiv.org/abs/1511.05952) (PER), which replays the moves it got most wrong more often.
+- **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.
 - **[PPO](https://arxiv.org/abs/1707.06347):** learns which move to make directly, instead of scoring each one.
 
 <Fig title="Which algorithm, 5M frames?">
   <Pts rows={[
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
     {"name": "Double DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
-    {"name": "Double DQN + PER", "tag": "a tie with Double DQN", "won": 93.0, "lo": 92.0, "hi": 95.0, "points": 58.87, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
     {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
     {"name": "PPO", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": false}},
   ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
 Double DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster Double DQN. That's 17 minutes a run now, which would've been 2 or 3 days in 2018.
-
-I added prioritised replay after the chain was done, and it won a bit more, 93% against 89%, but with four options to pick from that gap could still be luck, so the simpler Double DQN stays.[^per] I also put it on the final agent, just in case, and it scored less, 81 against 83.
 
 ### PPO actually wins more at 1M frames
 With the same 1M frames as my agent, PPO wins 82% of the time, which is about what my dissertation said my agent won. However, it turns out it was just spamming the shoot button, which is why every chart has a dashed line at 82%: anything below it is worse than holding one button.
@@ -70,6 +66,19 @@ With the same 1M frames as my agent, PPO wins 82% of the time, which is about wh
     <Clip src="/blog/gvgai/aliens-hold-shoot" label="Holding the shoot button in Aliens, winning with 42 points" rate={0.5}><b>Holding shoot</b>: 82% wins<br />this game: won, 42 points</Clip>
     <Clip src="/blog/gvgai/aliens-2018-agent" label="My 2018 agent playing the same game, winning with 57 points" rate={0.5} hi><b>My 2018 agent</b>: 73% wins<br />this game: won, 57 points</Clip>
   </div>
+</Fig>
+
+### What about prioritised replay?
+
+I added my agent's other trick back after the chain was done, at step 1 and on the final agent. At step 1 it won a bit more, 93% against 89%, but with four options to pick from that gap could still be luck, so the simpler Double DQN stays.[^per] On the final agent it scored less, 81 against 83.
+
+<Fig title="With or without PER?">
+  <Pts rows={[
+    {"name": "Double DQN", "tag": "step 1, kept", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "kind": "hi"},
+    {"name": "+ PER", "won": 93.0, "lo": 92.0, "hi": 95.0, "points": 58.87, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": false, "points": false}},
+    {"name": "The final agent", "tag": "after step 4", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "kind": "hi"},
+    {"name": "+ PER", "won": 99.6, "lo": 99.0, "hi": 100.0, "points": 80.78, "prev": {"won": 99.0, "points": 82.72}, "real": {"won": false, "points": true}},
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
 </Fig>
 
 ## Step 2: which reward works best?
