@@ -41,7 +41,7 @@ Each bar is the average win rate over 5 runs, and the thin bracket is their rang
 
 ## Step 1: which algorithm is best with more practice?
 
-Here's my agent and the three algorithms I tried, each with 5 times its practice:
+Here's my agent, and the three algorithms I tried with 5 times its practice:
 
 - **My 2018 agent:** Double DQN plus [prioritised replay](https://arxiv.org/abs/1511.05952) (PER), which replays the moves it got most wrong more often.
 - **[Double DQN](https://arxiv.org/abs/1509.06461) (DDQN):** DeepMind's 2015 Atari method, [DQN](https://www.nature.com/articles/nature14236), with a fix for overestimating how good moves are.
@@ -153,6 +153,6 @@ Feedback loops are important, and the faster you make them the more things you c
 
 [^test]: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) on the 5 runs: a gap counts as real when p < 0.05, so luck alone would give one that big less than 1 time in 20. The p-values are in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^mcts]: One run of 51 games, since it doesn't learn.
-[^per]: Within luck here, and 2 points worse on the final agent. [The results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
+[^per]: A tie at step 1 once corrected for testing three options (p = 0.048 against p < 0.025), and 2 points worse on the final agent. The p-values are in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
 [^clip]: Each scoring move counts as 1, as in DeepMind's Atari setup.
 [^2018]: Counted over training games 1,500 to 2,000, while it still made 1 in 10 moves at random.
