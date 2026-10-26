@@ -41,17 +41,18 @@ Each bar is the average win rate over 5 runs, and the thin bracket is their rang
 
 ## Step 1: which algorithm is best with more practice?
 
-I tried three algorithms, plus my own 2018 one, each with 5 times the practice my agent got:
+I tried four, each with 5 times the practice my agent got. DQN and PPO are the actual algorithms, and the rest are tricks added on top of DQN:
 
-- **[Double DQN](https://arxiv.org/abs/1509.06461) (DDQN):** DeepMind's 2015 Atari method, [DQN](https://www.nature.com/articles/nature14236), with a fix for overestimating how good moves are. My agent was this plus [prioritised replay](https://arxiv.org/abs/1511.05952).
-- **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.
+- **[Double DQN](https://arxiv.org/abs/1509.06461) (DDQN):** DeepMind's 2015 Atari method, [DQN](https://www.nature.com/articles/nature14236), with a fix for overestimating how good moves are.
+- **Double DQN + [prioritised replay](https://arxiv.org/abs/1511.05952) (PER):** it also replays the moves it got most wrong more often. This is what my 2018 agent was.
+- **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including those 2.
 - **[PPO](https://arxiv.org/abs/1707.06347):** learns which move to make directly, instead of scoring each one.
 
 <Fig title="Which algorithm, 5M frames?">
   <Pts rows={[
     {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
     {"name": "Double DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
-    {"name": "Double DQN + PER", "tag": "my 2018 agent's 2 tricks", "won": 93.0, "lo": 92.0, "hi": 95.0, "points": 58.87, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
+    {"name": "Double DQN + PER", "tag": "Δ against Double DQN", "won": 93.0, "lo": 92.0, "hi": 95.0, "points": 58.87, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": false, "points": false}},
     {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
     {"name": "PPO", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": false}},
   ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
@@ -59,7 +60,7 @@ I tried three algorithms, plus my own 2018 one, each with 5 times the practice m
 
 Double DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster Double DQN. That's 17 minutes a run now, which would've been 2 or 3 days in 2018.
 
-After the chain was done I also tried putting prioritised replay back, which is my 2018 agent's algorithm with 5 times the practice, and it won a bit more, 93% against 89%, but with four options to pick from that gap could still be luck, so Double DQN stays.[^per] I also put it on the final agent, just in case, and it scored less, 81 against 83.
+I added prioritised replay after the chain was done, and it won a bit more, 93% against 89%, but with four options to pick from that gap could still be luck, so the simpler Double DQN stays.[^per] I also put it on the final agent, just in case, and it scored less, 81 against 83.
 
 ### PPO actually wins more at 1M frames
 With the same 1M frames as my agent, PPO wins 82% of the time, which is about what my dissertation said my agent won. However, it turns out it was just spamming the shoot button, which is why every chart has a dashed line at 82%: anything below it is worse than holding one button.
