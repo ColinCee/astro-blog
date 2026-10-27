@@ -1,0 +1,350 @@
+---
+// The career as a ledger: one row per role (dates, company, title, headline
+// result) that opens in place for the detail, so the whole thing fits one
+// screen closed. Each row has an id (#role-edf) so it can be linked to.
+import type { Role } from "../../data/cv";
+
+interface Props {
+  experience: Role[];
+}
+const { experience } = Astro.props;
+---
+
+<section class="cv__sec cv__sec--ledger" aria-labelledby="xp-h">
+  <div class="cv__sec-bar">
+    <h2 class="cv__sec-head" id="xp-h">// experience</h2>
+    <button class="cv__toggle" type="button" data-cv-toggle hidden>
+      open all
+    </button>
+  </div>
+  <ol class="ledger">
+    {experience.map((r) => (
+      <li class:list={["ledger__item", { "is-current": r.current }]}>
+        <details class="row" id={`role-${r.id}`} data-cv-row>
+          <summary class="row__sum">
+            <span class="row__node" aria-hidden="true" />
+            <span class="row__when">
+              {r.from.mon} {r.from.yr}
+              <span class="row__dash">
+                <span aria-hidden="true">–</span>
+                <span class="sr-only">to</span>
+              </span>
+              {r.current ? (
+                <b class="row__now">now</b>
+              ) : (
+                r.to && `${r.to.mon} ${r.to.yr}`
+              )}
+            </span>
+            <span class="row__who">
+              <span class="row__co">{r.co}</span>
+              <span class="row__pos">{r.pos}</span>
+              {r.contract && <span class="row__pill">contract</span>}
+            </span>
+            <span class="row__result">{r.result}</span>
+            <svg
+              class="row__chev"
+              viewBox="0 0 16 16"
+              width="16"
+              height="16"
+              aria-hidden="true"
+            >
+              <path
+                d="M4 6l4 4 4-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </summary>
+          <div class="row__body">
+            <p class="row__ctx">{r.ctx}</p>
+            <ul class="row__points">
+              {r.points.map((p) => (
+                <li class="row__point">
+                  {[p.pre, p.hl && <b class="hl">{p.hl}</b>, p.post]}
+                </li>
+              ))}
+            </ul>
+            <ul class="row__stack" aria-label="Stack">
+              {r.stack.map((t) => (
+                <li class="tag">{t}</li>
+              ))}
+            </ul>
+          </div>
+        </details>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<script>
+  // "open all" / "close all" for the ledger, and every row open for print.
+  // Without JS the rows still open one at a time, natively.
+  const rows = [
+    ...document.querySelectorAll<HTMLDetailsElement>("[data-cv-row]"),
+  ];
+  const toggle = document.querySelector<HTMLButtonElement>("[data-cv-toggle]");
+  if (toggle && rows.length) {
+    toggle.hidden = false;
+    const sync = () => {
+      const all = rows.every((r) => r.open);
+      toggle.textContent = all ? "close all" : "open all";
+    };
+    toggle.addEventListener("click", () => {
+      const open = !rows.every((r) => r.open);
+      rows.forEach((r) => {
+        r.open = open;
+      });
+      sync();
+    });
+    rows.forEach((r) => r.addEventListener("toggle", sync));
+    sync();
+  }
+  let wasOpen: boolean[] = [];
+  addEventListener("beforeprint", () => {
+    wasOpen = rows.map((r) => r.open);
+    rows.forEach((r) => {
+      r.open = true;
+    });
+  });
+  addEventListener("afterprint", () => {
+    rows.forEach((r, i) => {
+      r.open = wasOpen[i] ?? false;
+    });
+  });
+</script>
+
+<style>
+  /* ---------------- the ledger ----------------
+     One row per role. Closed, the row is the evidence: dates, company, title
+     and the headline result. Open, it unfolds the detail in place. */
+  .ledger {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+  .row {
+    --col-when: 8.5rem;
+    border-bottom: 1px solid var(--line);
+    interpolate-size: allow-keywords;
+  }
+  .row__sum {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--col-when) minmax(0, 1fr) auto 1rem;
+    align-items: center;
+    gap: 0 1.25rem;
+    padding: 0.7rem 0.5rem 0.7rem 1.5rem;
+    margin: 0 -0.5rem;
+    border-radius: var(--r-row, 7px);
+    list-style: none;
+    cursor: pointer;
+    transition: background-color var(--dur-fast) var(--ease);
+  }
+  .row__sum::-webkit-details-marker {
+    display: none;
+  }
+  @media (hover: hover) {
+    .row__sum:hover {
+      background: var(--panel);
+    }
+  }
+  .row__sum:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+  .row__node {
+    position: absolute;
+    left: 0.5rem;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    translate: 0 -50%;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--faint);
+    transition:
+      border-color var(--dur-fast) var(--ease),
+      background-color var(--dur-fast) var(--ease);
+  }
+  .is-current .row__node {
+    border-color: var(--accent);
+    box-shadow: var(--ring);
+  }
+  .row[open] .row__node {
+    background: var(--faint);
+  }
+  .is-current .row[open] .row__node {
+    background: var(--accent);
+  }
+  .row__when {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+    white-space: nowrap;
+  }
+  .row__dash {
+    margin: 0 0.3rem;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .row__now {
+    font-weight: 600;
+    color: var(--accent-text);
+  }
+  .row__who {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.15rem 0.9rem;
+    min-width: 0;
+  }
+  .row__co {
+    font-family: var(--grotesk);
+    font-weight: 650;
+    font-size: 1.08rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .row__pos {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+  .row__pill {
+    padding: 0.12rem 0.55rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    border: 1px solid var(--faint);
+    border-radius: 999px;
+    align-self: center;
+  }
+  .row__result {
+    font-family: var(--grotesk);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: -0.005em;
+    color: var(--accent-text);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .row__chev {
+    color: var(--faint);
+    transition: rotate 0.3s var(--ease-out);
+  }
+  .row[open] .row__chev {
+    rotate: 180deg;
+  }
+
+  /* The one authored motion: a row unfolding. Browsers without
+     ::details-content open it instantly. */
+  .row::details-content {
+    block-size: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      block-size 0.4s var(--ease-out),
+      opacity 0.3s var(--ease-out),
+      content-visibility 0.4s allow-discrete;
+  }
+  .row[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .row::details-content {
+      transition: none;
+    }
+  }
+  .row__body {
+    padding: 0.25rem 0 1.6rem calc(var(--col-when) + 2.25rem);
+  }
+  .row__ctx {
+    margin: 0;
+    max-width: 68ch;
+    font-size: 0.94rem;
+    line-height: 1.5;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+  .row__points {
+    margin: 0.85rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.55rem;
+  }
+  .row__point {
+    position: relative;
+    padding-left: 1.15rem;
+    max-width: 70ch;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .row__point::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 5px;
+    height: 5px;
+    border-radius: 1px;
+    background: var(--faint);
+  }
+  .row__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.5rem;
+    margin: 1.1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* ---------------- responsive ---------------- */
+  @media (max-width: 720px) {
+    .row__sum {
+      grid-template-columns: minmax(0, 1fr) 1rem;
+      gap: 0.3rem 0.75rem;
+      padding-left: 1.4rem;
+    }
+    .row__when,
+    .row__who,
+    .row__result {
+      grid-column: 1;
+    }
+    .row__who {
+      gap: 0.25rem 0.6rem;
+    }
+    .row__co {
+      flex-basis: 100%;
+    }
+    .row__result {
+      text-align: left;
+      white-space: normal;
+      font-size: 0.9rem;
+    }
+    .row__chev {
+      grid-column: 2;
+      grid-row: 1 / span 3;
+      align-self: center;
+    }
+    .row__body {
+      padding-left: 1.4rem;
+    }
+  }
+</style>

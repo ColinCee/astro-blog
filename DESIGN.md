@@ -62,7 +62,7 @@ components:
     textColor: "{colors.muted}"
     typography: "{typography.label}"
   kicker:
-    textColor: "{colors.accent-soft}"
+    textColor: "{colors.muted}"
     typography: "{typography.label}"
   tag:
     textColor: "{colors.muted}"
@@ -70,7 +70,7 @@ components:
     rounded: "{rounded.pill}"
     padding: "0.18rem 0.62rem"
   metric:
-    textColor: "{colors.accent-soft}"
+    textColor: "{colors.ink}"
 ---
 
 # Design System: colincheung.dev
@@ -125,7 +125,8 @@ big.
 - Light (Stone) and dark themes from one token set, switched by `prefers-color-scheme`. Never cream, never pure white, never pure black.
 - Exactly one chromatic color: tomato. Everything else is a warm-neutral ramp.
 - Big Bricolage Grotesque display against small JetBrains Mono technical chrome.
-- The metric is the accent: numbers/outcomes glow tomato, prose stays muted.
+- The metric is the accent, once: a page's one headline number (a post's stat on
+  the index) glows tomato; a metric inside prose or a ledger row is bold ink.
 - The literal terminal metaphor is scarce — reserved for the homepage.
 - Widths are one three-tier scale: `--w-prose` (`46rem`, reading), `--w-page`
   (`68rem`, content pages) and `--w-poster` (`90rem`, the homepage). Content
@@ -140,11 +141,11 @@ one accent used on well under 10% of any screen, against a warm neutral ramp.
 
 ### Primary
 - **Signal Tomato** (`--accent`, `oklch(0.55 0.19 32)` / `oklch(0.75 0.17 38)`): The only chromatic color.
-  Reserved for the single most important thing in a view — the metric in a line,
+  Reserved for the single most important thing in a view — the headline metric,
   the current timeline node, the active/hover link border, the terminal `@` and
   prompt. If two things are tomato in one glance, one is wrong.
 - **Soft Tomato** (`--accent-soft`, `oklch(0.49 0.17 32)` / `oklch(0.79 0.11 38)`): The desaturated tomato for
-  runs of accented *text* (metric highlights, `//` kickers, inline links) where
+  runs of accented *text* (headline values, inline links) where
   full-chroma tomato would vibrate. Reads as "important" without shouting.
 - **Accent Text** (`--accent-text`): small accented text (pane labels, result values,
   status-bar tabs). In light it is Soft Tomato, because Signal Tomato on the light
@@ -181,9 +182,12 @@ legitimately leaves the two themes.
 important element in view. Keep it under ~10% of any screen; its rarity is the
 whole point. Never introduce a second accent hue.
 
-**The Metric Is The Accent Rule.** In prose, the number or outcome gets
-`--accent-soft`; the surrounding sentence stays `--muted`. Titles are muted at
-rest and shift to `--ink` only on hover. The eye should land on the result first.
+**The Metric Is The Accent Rule.** A page's one headline number gets the accent
+(a post's stat on the index, the `after` bar in the shipped pane, the result
+column of the CV ledger). A metric inside a bullet or paragraph is bold `--ink`,
+the sentence around it `--muted`. All-neutral read as monotone on the CV (Oct
+2026), so the one accented column stays.
+Titles are muted at rest and shift to `--ink` only on hover.
 
 ## 3. Typography
 
@@ -275,16 +279,24 @@ homepage terminal window's ambient lift, nothing else.
   affordance.
 
 ### Timeline (signature component)
-- Blog index, CV, and long-form article navigation share a vertical spine
+- Blog index, CV ledger, and long-form article navigation share the **node**; the
+  blog index and articles also share a vertical spine
   (`1px var(--line)`) with a **node** per entry: an 8–9px dot, `--bg` fill,
   `2px solid var(--faint)` ring. The **current / active** node switches its ring to
   `--accent` plus the tomato focus glow. A mono date rail sits to the left of the
   spine; body content to the right.
-- **CV date rail:** a `--rail` variable (5.75rem) drives the spine offset, the grid
-  column, and the node position together so they always line up. Each role shows the
-  end date on top (`now` in `--accent` for the current role, else month + year) and
-  the start date below, dialed down to `--muted`/`--faint` so it does not compete. On
-  mobile (≤640px) the rail collapses to one left spine with the dates inline.
+- **CV ledger (`pages/cv.astro`):** one `<details>` row per role, so the whole
+  career fits one laptop screen closed. Closed, a row is the evidence: node, mono
+  dates (`now` in accent text for the current role), company in Bricolage, title in
+  mono with a `contract` pill (ink text, `--faint` outline) where it applies, and
+  the headline result right-aligned in `--accent-text`. Open, it unfolds in
+  place (`::details-content` height and opacity, the page's one authored motion)
+  into the context line, bullets and stack tags, indented to the company column.
+  An `open all` / `close all` mono control sits on the section line, and every
+  row opens for print. Hover tint is `--panel`, pointer devices only. Below 720px
+  the row stacks dates, company, title and result with the chevron at the right.
+  The `//` kickers and section heads on the CV are `--muted`, not tomato.
+  Content is `data/cv.ts`; the pieces are `components/cv/`.
 - **Article timeline (`layouts/Post.astro`):** the third use of the spine, and it is
   in the flow of the article, not a sidebar. When a post opens with three or more
   dated `##` headings (`16 December: they move the flight`), the layout splits the

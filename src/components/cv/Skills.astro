@@ -1,0 +1,40 @@
+---
+// Skills as a compact two-column list of plain text under mono labels.
+import { skills } from "../../data/cv";
+---
+
+<section class="cv__sec" aria-labelledby="sk-h">
+  <h2 class="cv__sec-head" id="sk-h">// skills</h2>
+  <dl class="skills">
+    {skills.map((g) => (
+      <div class="skill">
+        <dt class="skill__label">{g.label}</dt>
+        <dd class="skill__items">{g.items.join(" · ")}</dd>
+      </div>
+    ))}
+  </dl>
+</section>
+
+<style>
+  /* ---------------- skills ---------------- */
+  .skills {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 1.1rem clamp(1.5rem, 4vw, 3rem);
+    margin: 0;
+  }
+  .skill__label {
+    margin: 0 0 0.2rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: var(--faint);
+  }
+  .skill__items {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+</style>
