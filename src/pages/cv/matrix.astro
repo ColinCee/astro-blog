@@ -1,0 +1,268 @@
+---
+// CV, the matrix layout: the ledger, then a skills × companies grid built from
+// each role's stack, so the reader sees which tech was used where. A company
+// column links to its ledger row and opens it.
+import Ledger from "../../components/cv/Ledger.astro";
+import Lower from "../../components/cv/Lower.astro";
+import Masthead from "../../components/cv/Masthead.astro";
+import Page from "../../components/cv/Page.astro";
+import { experience, projects, skills } from "../../data/cv";
+
+type Col = { id: string; short: string; years: string; href: string };
+const cols: Col[] = [
+  ...experience.map((r) => ({
+    id: r.id,
+    short: r.co.replace(" Energy", ""),
+    years: `${r.from.yr.slice(2)}–${r.current ? "now" : (r.to?.yr.slice(2) ?? "")}`,
+    href: `#role-${r.id}`,
+  })),
+  { id: "own", short: "Own projects", years: "", href: "#pr-h" },
+];
+
+// Which columns each stack item was used in, in the order the stacks name them.
+// "AWS Lambda" in a stack is "Lambda" in the skills list.
+const norm = (s: string) => s.toLowerCase().replace(/^aws /, "");
+const used = new Map<string, Set<string>>();
+const add = (item: string, col: string) => {
+  const s = used.get(norm(item)) ?? new Set<string>();
+  s.add(col);
+  used.set(norm(item), s);
+};
+for (const r of experience) for (const t of r.stack) add(t, r.id);
+for (const p of projects) for (const t of p.stack.split(" · ")) add(t, "own");
+
+// Rows grouped as the skills list groups them; anything a stack names that the
+// list does not goes under "also". Skills with no stack behind them are listed
+// as text under the grid, so nothing is lost.
+
+const groups = skills
+  .map((g) => ({
+    label: g.label,
+    rows: g.items.filter((it) => used.has(norm(it))),
+  }))
+  .filter((g) => g.rows.length);
+const listed = new Set(skills.flatMap((g) => g.items.map(norm)));
+const stackNames = new Map(
+  [
+    ...experience.flatMap((r) => r.stack),
+    ...projects.flatMap((p) => p.stack.split(" · ")),
+  ].map((t) => [norm(t), t]),
+);
+const also = [...used.keys()]
+  .filter((t) => !listed.has(t))
+  .map((t) => stackNames.get(t) ?? t);
+if (also.length) groups.push({ label: "also", rows: also });
+const unplaced = skills
+  .map((g) => ({
+    label: g.label,
+    items: g.items.filter((it) => !used.has(norm(it))),
+  }))
+  .filter((g) => g.items.length);
+const has = (item: string, col: string) => used.get(norm(item))?.has(col);
+---
+
+<Page
+  title="CV · Colin Cheung"
+  description="Colin Cheung, Senior Software Engineer and hands-on technical lead: nine years across TypeScript, Node.js and event-driven AWS serverless. Experience, skills, education and projects."
+>
+  <Masthead variant="matrix" />
+  <Ledger experience={experience} />
+
+  <section class="cv__sec" aria-labelledby="mx-h">
+    <h2 class="cv__sec-head" id="mx-h">// what, where</h2>
+    <div class="mx__scroll">
+      <table class="mx">
+        <thead>
+          <tr>
+            <th class="mx__corner" scope="col">
+              <span class="sr-only">Skill</span>
+            </th>
+            {cols.map((c) => (
+              <th class="mx__col" scope="col">
+                <a href={c.href} data-open-role={c.id}>
+                  <span class="mx__co">{c.short}</span>
+                  {c.years && <span class="mx__yrs">{c.years}</span>}
+                </a>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        {groups.map((g) => (
+          <tbody>
+            <tr class="mx__group">
+              <th scope="rowgroup" colspan={cols.length + 1}>
+                {g.label}
+              </th>
+            </tr>
+            {g.rows.map((item) => (
+              <tr class="mx__row">
+                <th class="mx__skill" scope="row">
+                  {item}
+                </th>
+                {cols.map((c) => (
+                  <td class:list={["mx__cell", { "is-on": has(item, c.id) }]}>
+                    {has(item, c.id) && <i aria-hidden="true" />}
+                    <span class="sr-only">
+                      {has(item, c.id) ? "yes" : "no"}
+                    </span>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        ))}
+      </table>
+    </div>
+    {unplaced.length > 0 && (
+      <dl class="mx__also">
+        {unplaced.map((g) => (
+          <div>
+            <dt>{g.label}</dt>
+            <dd>{g.items.join(" · ")}</dd>
+          </div>
+        ))}
+      </dl>
+    )}
+  </section>
+
+  <Lower />
+</Page>
+
+<script>
+  // A company column is a link to its ledger row: open the row, then let the
+  // browser jump to it.
+  document
+    .querySelectorAll<HTMLAnchorElement>("[data-open-role]")
+    .forEach((a) =>
+      a.addEventListener("click", () => {
+        const row = document.getElementById(`role-${a.dataset.openRole}`);
+        if (row instanceof HTMLDetailsElement) row.open = true;
+      }),
+    );
+</script>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .mx__scroll {
+    overflow-x: auto;
+    margin: 0 -0.5rem;
+    padding: 0 0.5rem;
+  }
+  .mx {
+    --col: 5.5rem;
+    width: 100%;
+    min-width: 40rem;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .mx th,
+  .mx td {
+    padding: 0;
+    text-align: left;
+    font-weight: 400;
+  }
+  .mx__corner {
+    width: auto;
+  }
+  .mx__col {
+    width: var(--col);
+    vertical-align: bottom;
+    padding-bottom: 0.6rem;
+  }
+  .mx__col a {
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.3rem 0.4rem;
+    margin: 0 -0.4rem;
+    border-radius: 6px;
+    transition: background-color var(--dur-fast) var(--ease);
+  }
+  .mx__col a:hover {
+    background: var(--panel);
+  }
+  .mx__co {
+    font-family: var(--grotesk);
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+  .mx__yrs {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+  }
+  .mx__group th {
+    padding: 1.1rem 0 0.35rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: var(--faint);
+    border-bottom: 1px solid var(--line);
+  }
+  tbody:first-of-type .mx__group th {
+    padding-top: 0;
+  }
+  .mx__row {
+    transition: background-color var(--dur-fast) var(--ease);
+  }
+  .mx__row:hover {
+    background: var(--panel);
+  }
+  .mx__skill {
+    padding: 0.42rem 0.5rem 0.42rem 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .mx__row:hover .mx__skill {
+    color: var(--ink);
+  }
+  .mx__cell {
+    position: relative;
+    height: 2rem;
+  }
+  .mx__cell i {
+    position: absolute;
+    left: 0.4rem;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    translate: 0 -50%;
+    border-radius: 50%;
+    background: var(--faint);
+  }
+  /* The current role's column is the one tomato. */
+  .mx__cell:nth-child(2) i {
+    background: var(--accent);
+  }
+  .mx__also {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 0.8rem clamp(1.5rem, 4vw, 3rem);
+    margin: 1.6rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+  .mx__also dt {
+    margin: 0 0 0.15rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: var(--faint);
+  }
+  .mx__also dd {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+</style>

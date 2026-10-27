@@ -1,0 +1,188 @@
+---
+// CV, the filter layout: chips above the ledger for what a reader came to
+// check (leading, AWS serverless, CI/CD, AI-assisted, observability,
+// frontend). Picking one opens the rows with a matching bullet, spotlights
+// those bullets and dims the rest; rows with nothing matching close and fade.
+import Ledger from "../../components/cv/Ledger.astro";
+import Lower from "../../components/cv/Lower.astro";
+import Masthead from "../../components/cv/Masthead.astro";
+import Page from "../../components/cv/Page.astro";
+import Skills from "../../components/cv/Skills.astro";
+import { experience, type Tag, tagLabels } from "../../data/cv";
+
+const counts = new Map<Tag, number>();
+for (const r of experience)
+  for (const p of r.points)
+    for (const t of p.tags ?? []) counts.set(t, (counts.get(t) ?? 0) + 1);
+const chips = (Object.keys(tagLabels) as Tag[])
+  .filter((t) => counts.has(t))
+  .map((t) => ({ id: t, label: tagLabels[t], n: counts.get(t) ?? 0 }));
+---
+
+<Page
+  title="CV · Colin Cheung"
+  description="Colin Cheung, Senior Software Engineer and hands-on technical lead: nine years across TypeScript, Node.js and event-driven AWS serverless. Experience, skills, education and projects."
+>
+  <Masthead variant="filter" />
+
+  <div class="chips" role="group" aria-label="Show the work on">
+    <span class="chips__label">show me</span>
+    {chips.map((c) => (
+      <button class="chip" type="button" aria-pressed="false" data-chip={c.id}>
+        {c.label}
+        <span class="chip__n">{c.n}</span>
+      </button>
+    ))}
+    <button class="chips__clear" type="button" data-chip-clear hidden>
+      clear
+    </button>
+  </div>
+
+  <Ledger experience={experience} />
+  <Skills />
+  <Lower />
+</Page>
+
+<script>
+  const chips = [
+    ...document.querySelectorAll<HTMLButtonElement>("[data-chip]"),
+  ];
+  const clear = document.querySelector<HTMLButtonElement>("[data-chip-clear]");
+  const rows = [
+    ...document.querySelectorAll<HTMLDetailsElement>("[data-cv-row]"),
+  ];
+  const points = [
+    ...document.querySelectorAll<HTMLElement>(".row__point[data-tags]"),
+  ];
+  let active: string | null = null;
+
+  const apply = () => {
+    chips.forEach((c) =>
+      c.setAttribute("aria-pressed", String(c.dataset.chip === active)),
+    );
+    if (clear) clear.hidden = !active;
+    document.body.classList.toggle("is-filtering", Boolean(active));
+    for (const row of rows) {
+      const hits = active
+        ? points.filter(
+            (p) =>
+              row.contains(p) &&
+              (p.dataset.tags ?? "").split(" ").includes(active as string),
+          )
+        : [];
+      row.querySelectorAll<HTMLElement>(".row__point").forEach((p) => {
+        p.classList.toggle("is-hit", Boolean(active) && hits.includes(p));
+        p.classList.toggle("is-miss", Boolean(active) && !hits.includes(p));
+      });
+      row.classList.toggle("is-off", Boolean(active) && hits.length === 0);
+      if (active) row.open = hits.length > 0;
+    }
+  };
+  chips.forEach((c) =>
+    c.addEventListener("click", () => {
+      active = active === c.dataset.chip ? null : (c.dataset.chip ?? null);
+      apply();
+    }),
+  );
+  clear?.addEventListener("click", () => {
+    active = null;
+    apply();
+    rows.forEach((r) => {
+      r.open = false;
+    });
+  });
+</script>
+
+<style>
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1.4rem;
+  }
+  .chips__label {
+    margin-right: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition:
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease),
+      background-color var(--dur-fast) var(--ease);
+  }
+  .chip:hover {
+    color: var(--ink);
+    border-color: var(--faint);
+  }
+  .chip[aria-pressed="true"] {
+    color: var(--accent-ink);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .chip__n {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .chip[aria-pressed="true"] .chip__n {
+    color: inherit;
+    opacity: 0.8;
+  }
+  .chips__clear {
+    margin-left: 0.3rem;
+    padding: 0.1rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--accent-line);
+    background: none;
+    font: inherit;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .chips__clear:hover {
+    color: var(--ink);
+    border-color: var(--accent);
+  }
+</style>
+
+<style is:global>
+  /* While a chip is on: hits read as ink with a tomato mark, misses recede,
+     and a row with nothing to show steps back. */
+  .is-filtering .row__point.is-hit {
+    color: var(--ink);
+  }
+  .is-filtering .row__point.is-hit::before {
+    background: var(--accent);
+    width: 3px;
+    height: 1.1em;
+    top: 0.25em;
+    left: 1px;
+    border-radius: 2px;
+  }
+  .is-filtering .row__point.is-miss {
+    opacity: 0.45;
+  }
+  .is-filtering .row.is-off {
+    opacity: 0.4;
+  }
+  .row__point {
+    transition: opacity var(--dur-fast) var(--ease);
+  }
+</style>

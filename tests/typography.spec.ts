@@ -19,7 +19,14 @@ for (const vp of viewports) {
   test.describe(vp.name, () => {
     test.use({ viewport: { width: vp.width, height: vp.height } });
 
-    for (const path of ["/", "/blog", "/cv", post]) {
+    for (const path of [
+      "/",
+      "/blog",
+      "/cv",
+      "/cv/matrix",
+      "/cv/filter",
+      post,
+    ]) {
       test(`${path} has no text under ${MIN_TEXT_PX}px`, async ({ page }) => {
         await page.goto(path);
         const tooSmall = await page.evaluate((min) => {

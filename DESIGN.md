@@ -296,6 +296,11 @@ homepage terminal window's ambient lift, nothing else.
   row opens for print. Hover tint is `--panel`, pointer devices only. Below 720px
   the row stacks dates, company, title and result with the chevron at the right.
   The `//` kickers and section heads on the CV are `--muted`, not tomato.
+  Content is `data/cv.ts`; the pieces (`components/cv/`) also compose two other
+  layouts under review (Oct 2026): `/cv/matrix/`, a skills × companies grid built
+  from each role's stack with the current role's column in tomato, and
+  `/cv/filter/`, chips that open the rows with a matching bullet and mark the
+  hits with a tomato bar. A mono `layout:` line in the masthead flips between them.
 - **Article timeline (`layouts/Post.astro`):** the third use of the spine, and it is
   in the flow of the article, not a sidebar. When a post opens with three or more
   dated `##` headings (`16 December: they move the flight`), the layout splits the
