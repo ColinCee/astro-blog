@@ -1,14 +1,8 @@
 ---
 title: "Part 3: How Jev performs on Aliens"
-subtitle: "With no training, Jev won 80% of games, holding the shoot button wins 82%."
 stat: "82% vs 80%"
 statLabel: "win rate, holding shoot vs Jev"
-figures:
-  - label: "Holding shoot"
-    value: "82%, 37 pts"
-  - label: "Jev"
-    value: "80%, 48 pts"
-pubDate: "Oct 26 2026"
+pubDate: "Oct 27 2026"
 ---
 <Fig>
   <div class="vids">
@@ -16,18 +10,15 @@ pubDate: "Oct 26 2026"
     <Clip src="/blog/gvgai/aliens-jev-warn" label="Jev playing the same game, winning with 51 points" rate={0.5} hi><b>Jev</b>: 80% wins<br />this game: won, 51 points</Clip>
   </div>
 </Fig>
-
-In [part 2](/blog/dissertation-revival-beating-2018/) my final agent needed 5M frames of practice to win 99% of Aliens games. Then TypeSafe released [Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev) (I used version 1.14, from October 2026), a new kind of AI model built for quick decisions, so I wanted to see if it could play with no training at all.
-
-It won 80% of games, about the same as just holding the shoot button, but it scored more points.
+[Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev) is a quick classifier by TypeSafe. I wanted to see it in action after seeing it play Doom, turns out it's actually pretty decent for a generalized model, though not close to models trained specifically on the game.
 
 ## What's Jev?
 
 <Fig title="Each pass, and what it outputs">
-  <Decide tokens={["The", "best", "move", "is", "left"]} choices={[{ name: "left", p: 42 }, { name: "right", p: 36 }, { name: "shoot", p: 22 }]} />
+  <Decide tokens={["{\"", "move", "\":", " \"", "left", "\"}"]} choices={[{ name: "left", p: 42 }, { name: "right", p: 36 }, { name: "shoot", p: 22 }]} />
 </Fig>
 
-An LLM runs once for every word it writes, and then you have to dig the move out of its text. Jev runs once and gives every choice you hand it a probability, in about 200 ms.
+An LLM runs once for every token it writes, so even a short structured answer like `{"move": "left"}` takes about six passes, and it gives you the move, not a probability for every choice. Jev runs once and gives every choice a probability, in about 200 ms.
 
 ## How do we ask it?
 
@@ -55,24 +46,26 @@ An LLM runs once for every word it writes, and then you have to dig the move out
 }} />
 </Fig>
 
-Jev doesn't see the screen, so every move we write out where the ship, aliens, bombs and shields are as the `state`, and ask the same question with the same three choices. It sends back a probability for each (trimmed above to the parts we use), and we play the most likely one.
+Unlike my learning agents, Jev uses a structured state instead. The above is the input call to it and we get back a structured reply with probabilities. We just select the max option each time.[^json]
 
-## It kept walking into bombs
+## One line of the prompt changed a lot
 
-<Fig>
-  <div class="vids">
-    <Clip src="/blog/gvgai/aliens-jev-loss" label="Jev moving under a falling bomb and losing with 7 points" rate={0.5}><b>Jev</b>: lost to a bomb<br />this game: 7 points</Clip>
-  </div>
+<Fig title="The line we added to the state">
+
+```text wrap
+Bombs within 2 columns of your ship: column 12 (-2 from you), 5 rows above.
+```
+
 </Fig>
 
 <Fig title="Games won, out of the same 26">
   <Cmp rows={[
-    { label: "Jev", value: 15, text: "15" },
-    { label: "Jev, told where the bombs are", value: 22, text: "22", after: true },
+    { label: "Without the line", value: 15, text: "15" },
+    { label: "With the line", value: 22, text: "22", after: true },
   ]} max={26} cols={["14rem", "2.5rem"]} />
 </Fig>
 
-Every game Jev lost was a bomb landing on it. So we added a line telling it which bombs are within 2 columns of the ship and how far up they are, and it won 22 of the same 26, and 61 of the next 78 it hadn't seen.
+Jev is very prompt dependent. Every bomb's position was already in the state, but Jev kept walking into them, so we added one line working out which bombs are close to the ship. It won 22 of the same 26 games, and 61 of the next 78 it hadn't seen.
 
 ## How does it compare?
 
@@ -81,16 +74,23 @@ Every game Jev lost was a bomb landing on it. So we added a line telling it whic
     {"name": "Holding shoot", "tag": "the baseline", "won": 82.4, "lo": 80.0, "hi": 85.0, "points": 37.3, "kind": "base"},
     {"name": "Jev 1.14", "tag": "one set of games", "won": 79.8, "lo": 79.8, "hi": 79.8, "points": 48.2, "prev": {"won": 82.4, "points": 37.3}, "real": {"won": false, "points": true}, "kind": "hi"},
     {"name": "My final agent", "tag": "5M frames of practice", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 82.4, "points": 37.3}, "real": {"won": true, "points": true}},
-  ]} note={{ href: "#user-content-fn-test", n: 2 }} />
+  ]} note={{ href: "#user-content-fn-test", n: 3 }} />
 </Fig>
 
-Jev wins about as often as holding shoot.[^one] It scores more though, 48 points against 37, because it moves around and picks its targets, and its 130 games cost $0.83. My final agent is still way ahead, 99% and 83 points.
+Jev wins about the same as [spamming shoot](/blog/dissertation-revival-beating-2018/)[^one] but it scores more. 48 points vs 37.[^test]
 
-Each bar is the win rate over 5 sets of about 100 games, the bracket is their range, and Δ is the change from holding shoot, green when a significance test[^test] says it's real.
+<Fig title="What Jev cost">
+  <Tally items={[
+    { label: "everything, ~ 340 games", value: "$2.23" },
+    { label: "1 game", value: "< $0.01" },
+    { label: "1 move", value: "~ 200 ms" },
+  ]} />
+</Fig>
 
 ## Closing remarks
 
-Even told where the bombs are, Jev still moved towards one in most of the games it lost, and it's rarely sure of a move, the one it picks averages 46%. I think it'd be great for the fuzzy decisions TypeSafe built it for, but in a game where one bad move ends it, practice still wins.
+It's kinda mid, at least for this use-case. It's cool that a generalized pre-trained model can do relatively well and it's cheap per call but this game application specifically it wasn't that great.
 
-[^one]: Jev doesn't learn, so I played it on one set of 104 games to save credit, the same games my agents were tested on. Its points are well outside holding shoot's range on all 5 sets, its win rate isn't, and I picked the bomb line after looking at its first 26 games.
-[^test]: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) on the 5 sets: a gap counts as real when p < 0.05, as in [part 2](/blog/dissertation-revival-beating-2018/).
+[^json]: I also tried sending the state as JSON, which TypeSafe's docs allow, and it did no better: 75% of the same 104 games and 41 points.
+[^one]: One set of 104 games per setup, and I picked the bomb line after seeing the first 26. Every run is in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md#jev-a-decision-model-with-no-training-aliens-26-oct-2026).
+[^test]: Jev played one set of 104 games, so a gap counts as real only when it's outside holding shoot's range over its 5 sets (36 to 38 points, 80% to 85% wins).

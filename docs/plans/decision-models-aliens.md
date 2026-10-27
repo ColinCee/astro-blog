@@ -77,6 +77,10 @@ Block 0 is the games the agents were scored on with --seed 0: 8 streams of 13 ga
 - `--rule` (no model): shoot, but step away from any bomb within 2 columns and 3 rows above, using the same positions Jev gets. Over 5 blocks of 104 games it won 99.2% (blocks 100, 96, 100, 100, 100) with 42.2 points. Holding shoot's saved 5-block baseline is 82.4% with 37.3 points (Welch t = 15 on wins, 11.7 on points).
 - So a 5-line rule on the same input wins far more often than Jev (99% against 80%), and Jev only does better on points (48 against 42). Jev's edge is in aiming, not in staying alive.
 
+### State as JSON, block 0 (jev-latest, `--warn --json --v1`, 26 Oct)
+
+The same facts and question wording as the block-0 text run, with the state sent as a JSON object (plus `can_shoot`, the text's "you cannot shoot until it lands"). Results: 78 of 104 won (75.0%), 41.3 points, 604 tokens a call. The text run on the same games: 83 of 104 (79.8%), 48.2 points, 564 tokens. The win gap could be luck (z = 0.8). Points are lower with JSON (Welch t = 4.0 per game, but games don't replay exactly). So JSON is no better, and the text state stays. $2.19 spent on scored games in total.
+
 ### jev-preview, block 1 (fixed shield wording, `--warn`)
 
 80 of 104 won (77%), 44.0 points, 584 tokens a call, 199 ms a move. All 24 losses were deaths. On the same block, the rule won 104 of 104 (42.1 points) and holding shoot's saved run won 82% (38.2 points). That's no better than jev-latest's pilot (80%, 48.2), though the model, the prompt and the block all changed together. $1.46 spent on scored games.

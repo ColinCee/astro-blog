@@ -63,6 +63,11 @@
   text-underline-offset: 0.25em;
   list-style: none;
 }
+/* Fits on one line: nothing to open. */
+.prose .json__fold[data-fits="true"] summary {
+  cursor: text;
+  text-decoration: none;
+}
 .prose .json__fold summary::-webkit-details-marker {
   display: none;
 }

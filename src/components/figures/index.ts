@@ -20,3 +20,4 @@ export { default as Runs } from "./Runs.astro";
 export { default as Split } from "./Split.astro";
 export { default as Splits } from "./Splits.astro";
 export { default as Stack } from "./Stack.astro";
+export { default as Tally } from "./Tally.astro";

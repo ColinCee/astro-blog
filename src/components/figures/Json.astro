@@ -68,3 +68,23 @@ const all = lines(value, 0, undefined, "");
     </div>
   ))}
 </div>
+
+<script>
+  // A folded line that fits on screen hides nothing: drop its underline and
+  // stop it toggling. Rechecked when the width changes (a phone cuts more).
+  const folds = document.querySelectorAll<HTMLDetailsElement>(".json__fold");
+  const check = () => {
+    for (const d of folds) {
+      if (d.open) continue;
+      const s = d.querySelector("summary");
+      if (s) d.dataset.fits = String(s.scrollWidth <= s.clientWidth);
+    }
+  };
+  for (const d of folds) {
+    d.querySelector("summary")?.addEventListener("click", (e) => {
+      if (d.dataset.fits === "true") e.preventDefault();
+    });
+  }
+  check();
+  new ResizeObserver(check).observe(document.body);
+</script>
