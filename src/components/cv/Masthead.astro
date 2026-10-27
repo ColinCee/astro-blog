@@ -1,17 +1,6 @@
 ---
-// Name, role line, lede and contact; and while the layouts are being compared,
-// a mono line to flip between them.
+// Name, role line, lede and contact.
 import { contact, lede, name, role } from "../../data/cv";
-
-interface Props {
-  variant: "ledger" | "matrix" | "filter";
-}
-const { variant } = Astro.props;
-const variants = [
-  { id: "ledger", href: "/cv/" },
-  { id: "matrix", href: "/cv/matrix/" },
-  { id: "filter", href: "/cv/filter/" },
-] as const;
 ---
 
 <header class="cv__head">
@@ -21,22 +10,12 @@ const variants = [
   <nav class="cv__contact" aria-label="Contact">
     {contact.map((c) => <a href={c.href}>{c.label}</a>)}
   </nav>
-  <nav class="cv__variants" aria-label="CV layouts">
-    <span>layout:</span>
-    {variants.map((v) =>
-      v.id === variant ? (
-        <b aria-current="page">{v.id}</b>
-      ) : (
-        <a href={v.href}>{v.id}</a>
-      ),
-    )}
-  </nav>
 </header>
 
 <style>
   /* ---------------- masthead ---------------- */
   .cv__head {
-    margin-bottom: clamp(2.2rem, 5vw, 3.5rem);
+    margin-bottom: 1.6rem;
   }
   .cv__name {
     margin: 0;
@@ -56,8 +35,8 @@ const variants = [
     color: var(--muted);
   }
   .cv__lede {
-    margin: 1.2rem 0 0;
-    max-width: 72ch;
+    margin: 1rem 0 0;
+    max-width: 86ch;
     font-family: var(--grotesk);
     font-weight: 450;
     font-size: 0.95rem;
@@ -69,7 +48,7 @@ const variants = [
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem 1.4rem;
-    margin: 1.2rem 0 0;
+    margin: 1rem 0 0;
     font-family: var(--mono);
     font-size: 0.76rem;
     letter-spacing: 0.01em;
@@ -85,28 +64,5 @@ const variants = [
   .cv__contact a:hover {
     color: var(--ink);
     border-color: var(--accent);
-  }
-
-  .cv__variants {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 0.9rem;
-    margin: 1.4rem 0 0;
-    font-family: var(--mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.04em;
-    color: var(--faint);
-  }
-  .cv__variants a {
-    color: var(--muted);
-    border-bottom: 1px solid var(--accent-line);
-  }
-  .cv__variants a:hover {
-    color: var(--ink);
-    border-color: var(--accent);
-  }
-  .cv__variants b {
-    font-weight: 500;
-    color: var(--accent-text);
   }
 </style>

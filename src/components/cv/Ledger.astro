@@ -1,8 +1,7 @@
 ---
 // The career as a ledger: one row per role (dates, company, title, headline
 // result) that opens in place for the detail, so the whole thing fits one
-// screen closed. Rows carry an id (#role-edf) and each bullet its tags, so a
-// layout can open a row from elsewhere or spotlight bullets.
+// screen closed. Each row has an id (#role-edf) so it can be linked to.
 import type { Role } from "../../data/cv";
 
 interface Props {
@@ -14,13 +13,7 @@ const { experience } = Astro.props;
 <section class="cv__sec cv__sec--ledger" aria-labelledby="xp-h">
   <div class="cv__sec-bar">
     <h2 class="cv__sec-head" id="xp-h">// experience</h2>
-    <button
-      class="cv__toggle"
-      type="button"
-      aria-pressed="false"
-      data-cv-toggle
-      hidden
-    >
+    <button class="cv__toggle" type="button" data-cv-toggle hidden>
       open all
     </button>
   </div>
@@ -32,8 +25,9 @@ const { experience } = Astro.props;
             <span class="row__node" aria-hidden="true" />
             <span class="row__when">
               {r.from.mon} {r.from.yr}
-              <span class="row__dash" aria-hidden="true">
-                –
+              <span class="row__dash">
+                <span aria-hidden="true">–</span>
+                <span class="sr-only">to</span>
               </span>
               {r.current ? (
                 <b class="row__now">now</b>
@@ -68,7 +62,7 @@ const { experience } = Astro.props;
             <p class="row__ctx">{r.ctx}</p>
             <ul class="row__points">
               {r.points.map((p) => (
-                <li class="row__point" data-tags={p.tags?.join(" ")}>
+                <li class="row__point">
                   {[p.pre, p.hl && <b class="hl">{p.hl}</b>, p.post]}
                 </li>
               ))}
@@ -97,7 +91,6 @@ const { experience } = Astro.props;
     const sync = () => {
       const all = rows.every((r) => r.open);
       toggle.textContent = all ? "close all" : "open all";
-      toggle.setAttribute("aria-pressed", String(all));
     };
     toggle.addEventListener("click", () => {
       const open = !rows.every((r) => r.open);
@@ -144,7 +137,7 @@ const { experience } = Astro.props;
     grid-template-columns: var(--col-when) minmax(0, 1fr) auto 1rem;
     align-items: center;
     gap: 0 1.25rem;
-    padding: 0.95rem 0.5rem 0.95rem 1.5rem;
+    padding: 0.7rem 0.5rem 0.7rem 1.5rem;
     margin: 0 -0.5rem;
     border-radius: var(--r-row, 7px);
     list-style: none;
@@ -196,6 +189,14 @@ const { experience } = Astro.props;
   }
   .row__dash {
     margin: 0 0.3rem;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
   .row__now {
     font-weight: 600;
@@ -262,6 +263,11 @@ const { experience } = Astro.props;
   .row[open]::details-content {
     block-size: auto;
     opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .row::details-content {
+      transition: none;
+    }
   }
   .row__body {
     padding: 0.25rem 0 1.6rem calc(var(--col-when) + 2.25rem);

@@ -1,5 +1,5 @@
-// The CV's content, shared by every layout of it under src/pages/cv*. One
-// field per fact; the PDF in Colin's notes is the other copy of these facts.
+// The CV's content, one field per fact; the page is src/pages/cv.astro and
+// the pieces src/components/cv/. the PDF in Colin's notes is the other copy of these facts.
 
 export const name = "Colin Cheung";
 export const role =
@@ -16,22 +16,7 @@ export const contact = [
   { label: "github.com/ColinCee", href: "https://github.com/ColinCee" },
 ];
 
-export type Point = { pre: string; hl?: string; post?: string; tags?: Tag[] };
-export type Tag =
-  | "leading"
-  | "serverless"
-  | "ci-cd"
-  | "ai"
-  | "observability"
-  | "frontend";
-export const tagLabels: Record<Tag, string> = {
-  leading: "leading",
-  serverless: "AWS serverless",
-  "ci-cd": "CI/CD",
-  ai: "AI-assisted",
-  observability: "observability",
-  frontend: "frontend",
-};
+export type Point = { pre: string; hl?: string; post?: string };
 export type Ym = { mon: string; yr: string };
 export type Role = {
   id: string;
@@ -60,35 +45,29 @@ export const experience: Role[] = [
     points: [
       {
         pre: "Senior engineer on the 8-person Retail/Debt team: technical lead for project sub-teams of three or four, and the team's lead on engineering standards and technical direction, on a platform processing ",
-        tags: ["leading"],
         hl: "1.6M accounts daily",
         post: ".",
       },
       {
         pre: "Initiated and led the move from service-owned staging tables and event handlers to an event-sourced shared-state model: ",
-        tags: ["leading", "serverless"],
         hl: "every account change is now auditable",
         post: ", day-to-day operations and incident investigation are simpler, and new services build on one source of truth instead of a distributed monolith.",
       },
       {
         pre: "Migrated a large monorepo from AWS CodePipeline to GitHub Actions with Turborepo, ",
-        tags: ["ci-cd"],
         hl: "cutting build and test cycles from 30 → 5 minutes",
         post: ".",
       },
       {
         pre: "Led AI-assisted development adoption (Copilot, reusable agent skills, repository instructions, PR review experiments). Proof point: a like-for-like workflow project shipped with ",
-        tags: ["ai", "leading"],
         hl: "3 engineers in 1 month; the previous one took 6 engineers 2 months",
         post: ".",
       },
       {
         pre: "Built operational visibility from scratch: business metrics and structured logs into Dynatrace with dashboards for health, resilience and failure patterns, plus a Bolt.js Slack bot reporting batch-job status in real time from the event stream.",
-        tags: ["observability", "serverless"],
       },
       {
         pre: "Raised team standards through TypeScript migration patterns, Zod runtime validation and documented examples; automated DynamoDB backup policies, ",
-        tags: ["leading", "serverless"],
         hl: "cutting storage spend",
         post: ".",
       },
@@ -108,7 +87,7 @@ export const experience: Role[] = [
   {
     id: "bbc",
     co: "BBC",
-    result: "CI-log digging −90%",
+    result: "CI-log digging, up to −90%",
     pos: "Senior Software Engineer",
     contract: true,
     from: { mon: "Nov", yr: "2022" },
@@ -117,11 +96,9 @@ export const experience: Role[] = [
     points: [
       {
         pre: "Built a serverless AWS CDK pipeline tracking build-failure statistics, giving the team data to target CI/CD improvements.",
-        tags: ["ci-cd", "serverless", "observability"],
       },
       {
         pre: "Automated pull-request coverage reporting, ",
-        tags: ["ci-cd"],
         hl: "cutting time spent digging through CI logs by up to 90%",
         post: ".",
       },
@@ -144,7 +121,6 @@ export const experience: Role[] = [
       },
       {
         pre: "Built Scala microservices handling ",
-        tags: ["observability"],
         hl: "100k+ daily requests",
         post: " with multi-tenant workflows over gRPC and Pub/Sub, plus Terraform-managed Datadog SLOs and alerts.",
       },
@@ -169,10 +145,7 @@ export const experience: Role[] = [
     ctx: "Full-stack lead in a fast-moving home-services startup.",
     points: [
       {
-        pre: "",
-        hl: "Led the React and TypeScript redesign of a business-critical checkout flow",
-        tags: ["frontend", "leading", "ci-cd", "observability"],
-        post: ", and introduced Cypress E2E testing, CloudWatch alarms, Buildkite CI/CD, RDS Proxy and MikroORM.",
+        pre: "Led the React and TypeScript redesign of a business-critical checkout flow, and introduced Cypress E2E testing, CloudWatch alarms, Buildkite CI/CD, RDS Proxy and MikroORM.",
       },
     ],
     stack: ["React", "TypeScript", "Node.js", "AWS", "Cypress", "Buildkite"],
@@ -188,7 +161,6 @@ export const experience: Role[] = [
     points: [
       {
         pre: "Built Lambda/SQS automation syncing HRMS data to Active Directory, ",
-        tags: ["serverless"],
         hl: "cutting sync time from 8 hours → 2 minutes",
         post: "; built a serverless Slack bot for interactive employee feedback.",
       },
@@ -216,7 +188,7 @@ export const experience: Role[] = [
 
 export const skills: { label: string; items: string[] }[] = [
   {
-    label: "Languages",
+    label: "Languages & runtimes",
     items: ["TypeScript", "Node.js", "Python", "Scala", "SQL"],
   },
   {
@@ -241,7 +213,6 @@ export const skills: { label: string; items: string[] }[] = [
       "Distributed workflows",
       "REST",
       "gRPC",
-      "Zod",
     ],
   },
   {
@@ -283,7 +254,7 @@ export const skills: { label: string; items: string[] }[] = [
 
 export const education = {
   school: "University of Strathclyde",
-  meta: "Glasgow, UK · 2013 - 2018",
+  meta: "Glasgow, UK · 2013–2018",
   degree: "BEng Computer & Electronic Systems",
   honours: "1st Class Honours",
   note: "Dissertation on reinforcement learning for video games: DQN, Double DQN, prioritised experience replay and dueling networks in GVGAI.",

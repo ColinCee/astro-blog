@@ -1,7 +1,6 @@
 ---
 // CV, the ledger layout: masthead, one row per role, skills, education and
 // projects. Content is src/data/cv.ts; the pieces are src/components/cv/.
-// Other layouts of the same content live in src/pages/cv/.
 import Ledger from "../components/cv/Ledger.astro";
 import Lower from "../components/cv/Lower.astro";
 import Masthead from "../components/cv/Masthead.astro";
@@ -14,7 +13,7 @@ import { experience } from "../data/cv";
   title="CV · Colin Cheung"
   description="Colin Cheung, Senior Software Engineer and hands-on technical lead: nine years across TypeScript, Node.js and event-driven AWS serverless. Experience, skills, education and projects."
 >
-  <Masthead variant="ledger" />
+  <Masthead />
   <Ledger experience={experience} />
   <Skills />
   <Lower />

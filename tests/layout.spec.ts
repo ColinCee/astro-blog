@@ -23,7 +23,7 @@ for (const vp of viewports) {
   test.describe(vp.name, () => {
     test.use({ viewport: { width: vp.width, height: vp.height } });
 
-    for (const path of ["/", "/blog", "/cv", "/cv/matrix", "/cv/filter"]) {
+    for (const path of ["/", "/blog", "/cv"]) {
       test(`${path} has a heading and no sideways scroll`, async ({ page }) => {
         await page.goto(path);
         await expect(page.locator("h1").first()).toBeVisible();
@@ -105,7 +105,7 @@ for (const scheme of ["light", "dark"] as const) {
   test.describe(`${scheme} scheme`, () => {
     test.use({ colorScheme: scheme });
 
-    for (const path of ["/", "/blog", "/cv", "/cv/matrix", "/cv/filter"]) {
+    for (const path of ["/", "/blog", "/cv"]) {
       test(`${path} background is ${scheme}`, async ({ page }) => {
         await page.goto(path);
         const lightness = await page.evaluate(() => {

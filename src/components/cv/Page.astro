@@ -36,7 +36,7 @@ const { title, description } = Astro.props;
     align-items: baseline;
     justify-content: space-between;
     gap: 1rem;
-    margin: 0 0 0.9rem;
+    margin: 0 0 0.7rem;
   }
   .cv__sec-head {
     margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
@@ -53,7 +53,7 @@ const { title, description } = Astro.props;
     margin: 0;
     padding: 0.1rem 0;
     border: 0;
-    border-bottom: 1px solid var(--accent-line);
+    border-bottom: 1px solid var(--line);
     background: none;
     font: inherit;
     font-family: var(--mono);
@@ -91,7 +91,9 @@ const { title, description } = Astro.props;
 <style is:global>
   /* Print: flip the terminal palette to ink-on-white, hide site chrome, and keep entries whole. */
   @media print {
-    :root {
+    /* :root:root outranks the dark-scheme :root block in tokens.css, which can
+       still match when printing from a dark system. */
+    :root:root {
       --bg: #ffffff;
       --panel: #ffffff;
       --pane: #ffffff;
@@ -132,6 +134,13 @@ const { title, description } = Astro.props;
     .proj__item,
     .edu {
       break-inside: avoid;
+    }
+    /* Every row prints open, JS or not, and never mid-unfold. */
+    .row::details-content {
+      transition: none;
+      block-size: auto;
+      opacity: 1;
+      content-visibility: visible;
     }
     .tag {
       border-color: #c8c8c8;
