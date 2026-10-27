@@ -75,4 +75,4 @@ Show, don't ask: build the change or two or three distinct variations, put them 
    - `pnpm check` passes.
    - An independent review is done.
 3. Merge, watch the deploy, then load the live page.
-4. For LinkedIn, make a 4:5 card in the blog's look (gameplay or the one key chart, the headline number pair, one tagline). Add a short post in his voice: what he wanted to find out, the result, one interesting aside, then the link.
+4. For LinkedIn, make a 4:5 card in the blog's look (gameplay or the one key chart, the headline number pair, one tagline). Add a short post in his voice: what he wanted to find out, the result, one interesting aside, then the link. Keep it to about five one-line paragraphs: the numbers are on the card, so the text gives the verdict in words ("It's kinda mid") and doesn't repeat them.
