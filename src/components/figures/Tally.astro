@@ -1,0 +1,17 @@
+---
+// A few headline numbers in a row, each with a small label above it, the
+// first in the accent. Styles: tally.css.
+interface Props {
+  items: { label: string; value: string }[];
+}
+const { items } = Astro.props;
+---
+
+<dl class="tally">
+  {items.map((it) => (
+    <div>
+      <dt>{it.label}</dt>
+      <dd>{it.value}</dd>
+    </div>
+  ))}
+</dl>

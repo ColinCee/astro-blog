@@ -1,0 +1,81 @@
+/* A JSON request or response (Json), like a code block, with long strings
+   folded to one line that opens in full on a click. */
+.prose .json {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--j-punct);
+}
+.prose .json__l {
+  display: flex;
+  min-width: 0;
+  padding-left: calc(var(--d) * 2ch);
+}
+/* Colours as the site's code blocks (Expressive Code's github-light and
+   github-dark): keys and numbers blue, strings dark or pale blue. */
+.prose .json {
+  --j-key: #005cc5;
+  --j-str: #032f62;
+  --j-punct: #24292e;
+}
+@media (prefers-color-scheme: dark) {
+  .prose .json {
+    --j-key: #79b8ff;
+    --j-str: #9ecbff;
+    --j-punct: #e1e4e8;
+  }
+}
+/* Flex rows: the markup's line breaks between spans don't render as spaces. */
+.prose .json__l > span,
+.prose .json__kc {
+  display: flex;
+  flex: none;
+}
+.prose .json__kc .json__p {
+  white-space: pre;
+}
+.prose .json__k,
+.prose .json__n {
+  color: var(--j-key);
+}
+.prose .json__s {
+  color: var(--j-str);
+}
+.prose .json__p {
+  color: var(--j-punct);
+}
+.prose .json__fold {
+  min-width: 0;
+  flex: 1;
+}
+/* Closed: one line, cut with an ellipsis, a dotted underline to say it opens. */
+.prose .json__fold summary {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  text-decoration: underline dotted var(--faint);
+  text-underline-offset: 0.25em;
+  list-style: none;
+}
+/* Fits on one line: nothing to open. */
+.prose .json__fold[data-fits="true"] summary {
+  cursor: text;
+  text-decoration: none;
+}
+.prose .json__fold summary::-webkit-details-marker {
+  display: none;
+}
+.prose .json__fold[open] summary {
+  white-space: normal;
+  text-decoration: none;
+}
+.prose .json__fold summary:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}

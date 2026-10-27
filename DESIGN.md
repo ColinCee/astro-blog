@@ -339,8 +339,8 @@ homepage terminal window's ambient lift, nothing else.
 
 ### Writing (homepage section)
 - `// writing`: the newest post is a lead panel (same flat surface as the
-  tiles) with a filled `latest` tag, title, subtitle and a stat
-  chip; the remaining posts are hairline rows (mono date, title, subtitle, chip)
+  tiles) with a filled `latest` tag, title, and a stat
+  chip with its `statLabel` beside it; the remaining posts are hairline rows (mono date, title, chip)
   ending in an `All posts` row.
 - **Stat chip** (`.chip`): the post's `stat` frontmatter as a mono pill on a 10%
   accent tint. Posts without a `stat` show no chip.
@@ -371,9 +371,8 @@ homepage terminal window's ambient lift, nothing else.
   `--rail` (`9rem`) plus `--rail-gap` (`3.5rem`), so timeline dates sit in the left
   margin and plain and timeline posts share one left edge. Content carries a `// writing` back-kicker, a Bricolage display title
   (`clamp(2rem, 5.5vw, 3.1rem)`, weight 800), and a mono meta line (date · N min read).
-- **Figures ledger:** optional `figures` frontmatter (label + value pairs) renders
-  under the standfirst as a hairline-ruled row of large numbers; the last one is the
-  result and takes the accent. When present it replaces the stat chip in the meta row.
+- **Headline stat:** the post's `stat` renders under the title as one large number in
+  the accent between hairlines, its `statLabel` above it in mono caps.
 - **Quotes** are excerpts on the raised surface (`--pane`, `--line`, 10px radius), so
   quoted documents read differently from narration. **Ordered lists** are numbered
   takeaways: hairline-separated rows with mono accent numerals.
@@ -398,7 +397,7 @@ homepage terminal window's ambient lift, nothing else.
   win rate and points beside it; each change from `prev` green for a real gain,
   `--loss` red for a real drop, faint when the test can't tell it from luck, by the `real` flags; the kept
   row alone in the accent; `base` stripes the 2018 baseline; one dashed line
-  for holding shoot; a key under the number columns names that line and says green / red is a real change and grey could be luck; column titles centred, linking the post's footnote on the test). `<Days then now thenLabel nowLabel>` draws time as one square a day, the `now` days lit in the accent. Recordings are `<Clip src label rate hi>` (pixelated, playing only while
+  for holding shoot; a key under the number columns names that line and says green / red is a real change and grey could be luck; there's no colour key, the rows label themselves: the striped row's tag says it's the baseline and the orange row's name is orange too (orange is the post's subject: the final agent in part 2, Jev in part 3); column titles centred, linking the post's footnote on the test). `<Days then now thenLabel nowLabel>` draws time as one square a day, the `now` days lit in the accent. `<Json value fold>` draws a JSON request or reply like a code block, each string longer than `fold` characters cut to one line with an ellipsis that opens in full on a click. `<Decide tokens choices>` is a timeline (a Gantt chart) of an LLM against a decision model: a column per pass, left to right in time, each pass a bar with its output centred on top, a token for each of the LLM's passes and every choice's probability, stacked, for the decision model's one pass, its pick in the accent. Recordings are `<Clip src label rate hi>` (pixelated, playing only while
   on screen and never on their own under reduced motion); anything inside a Clip
   is its caption, and several sit side by side in a `<div class="vids">`. A post told as numbered steps can carry `<Recipe steps until>`: a
   panel floating in the right margin (only where the margin fits it), the passed
@@ -431,9 +430,8 @@ homepage terminal window's ambient lift, nothing else.
   `.flow` (a game as a row of decision boxes shaded by score) and the `chain`,
   `reveal`, `pick` and `flow` widgets. Their styles are kept, marked, in
   `src/components/figures/`; turn each into a component when its post moves to MDX.
-- **Post header:** title, then the post's `subtitle` (when set) as a standfirst
-  (`.post__lede`, Body 500, `--muted`), a hairline, and the meta row: the `stat`
-  chip (when set), date and read time (prose words only, at 200 a minute; figures do not count). Header, prose, timeline and footer all share one measure, `--measure` (44rem),
+- **Post header:** title, then the headline stat (when set), and the meta row: date
+  and read time (prose words only, at 200 a minute; figures do not count). Header, prose, timeline and footer all share one measure, `--measure` (44rem),
   so every block on a post (text, figures, code, tables) has the same left and
   right edge. Wider "breakout" figures and code were tried and rejected (Oct 2026).
 - **Reading progress:** a 2px accent bar fixed to the top of the viewport.

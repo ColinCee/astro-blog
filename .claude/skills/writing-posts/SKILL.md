@@ -10,11 +10,11 @@ Colin is a visual reader who skims. A post is one story, results first, in his o
 ## 1. Settle the story before any figure
 
 - **One story, one comparison.** Say it in a line first ("Jest 7 min → Vitest 23 s", "73% → 99%"). Every section serves it, and anything else becomes a sentence or goes.
-- **Hook, problem, fix, in that order**, with the result scannable at the top (stat, figures, a chart or clip).
+- **Hook, problem, fix, in that order**, with the result scannable at the top (the stat, then a chart or clip).
 - **One baseline, used everywhere.** It's the first row of every chart, and every number agrees across text, charts, the card and the frontmatter. Jumping between baselines loses his trust faster than anything.
 - **Apples to apples.** Change one thing at a time against the same baseline, on the same test set. Leave out anything both sides share.
 - **Gauge depth.** Ask him (a few options) how much his readers already know about the domain before deciding how much background to give. Define jargon on first use, as a link or a one-line list item.
-- **Title short and catchy, and it says the result** ("CI faster than GitHub's"). The subtitle is one optional line, not a paragraph. Use the same words on the card, the index and the embed.
+- **Title short and catchy, and it says the result** ("CI faster than GitHub's"). The `stat` is the result and `statLabel` says what it measures, and that's all the frontmatter says about it: no subtitle. Use the same words on the card, the index and the embed.
 - **An overall limitation gets a line at the end** when the comparison isn't fully like for like, not a section.
 - **Draft the content high level first**, then the figures, then the wording.
 - **When he asks for versions, make them distinct** in opening, structure, figures and depth, on the same facts.
@@ -28,11 +28,15 @@ Write how he talks in chat and writes himself: casual, conversational British En
 - **He explains through story and scale.** He'll give a short history to set the scene (Deep Blue, then Watson, then AlphaGo in his dissertation), a comparison that makes a number land (atoms in the universe), a memory ("leave the PC running overnight"), and a question that sets up the next part ("why not have multiple agents playing at the same time?").
 - **About three sentences a paragraph, each a new fact.** Cut what the previous sentence or a figure already says, never explain what a later section covers, and end on a nudge to the next part.
 - **Headings are short**: a question ("How did we beat it?"), a plain statement ("PPO actually wins more at 1M frames"), or a date ("16 December: they move the flight") when the post is a sequence (three dated headings build the timeline in `DESIGN.md`). Only the closing section can be a plain label ("Closing remarks"). Never use report-speak like "Background" or "Results and discussion".
+- **Everyday words, not writerly ones.** "vs", not "against" ("48 points vs 37"). "spamming shoot", "pretty decent", "kinda mid", "cool". His verdict goes in straight, the way he'd say it to a friend ("It's kinda mid, at least for this use-case"). Never a polished closing line ("practice still wins") or a neat summary of what something is "great for".
+- **Only what he knows, not reasons you inferred.** Don't add a "because" he didn't measure ("because it moves around and picks its targets"), and don't stack parenthetical asides ("(I used version 1.14, from October 2026)"). A detail that matters gets its own plain sentence or a footnote.
+- **Open with the thing and why he tried it**, in his words ("I wanted to see it in action after seeing it play Doom"), not a recap of the last part. A link to the earlier part can sit later or in passing.
 - **Keep his words.** When he's written a passage, fix only facts and real grammar errors (not his missing commas or run-ons), and tell him what changed. Never "tidy" it into your prose, and never upgrade or downgrade how sure he sounds.
 - **Less is more, formatted for scanning.** Lists and tables are for things with real structure, like his dissertation's numbered "Fully Deterministic - …" definitions, not decoration. No bold lead-ins on every bullet, no restating the chart, no detail a curious reader can follow a link to.
 
 ## 3. Numbers and claims
 
+- **In figures, numbers are symbols and digits, not words:** "< $0.01", "~ 200 ms", "1 game", not "under 1¢", "about 200 ms", "a game".
 - **One way to say each number** (1.4×, not also "31% less time"), the same everywhere.
 - **Measured data only.** No estimates or demo data when the real thing can be run. If an estimate has to stay, mark it (`est`) so it draws lighter. Get his OK before any GPU run.
 - **Comparisons that could be noise get a significance test** (e.g. Welch's t-test over 5 runs, p < 0.05). Fix the decision rule before looking: a tie keeps the simpler or cheaper option. Never pick or headline the better-looking number after the fact.
