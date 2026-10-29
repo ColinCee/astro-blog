@@ -18,6 +18,7 @@ export { default as Panel } from "./Panel.astro";
 export { default as Pts } from "./Pts.astro";
 export { default as QView } from "./QView.astro";
 export { default as Recipe } from "./Recipe.astro";
+export { default as Repeats } from "./Repeats.astro";
 export { default as Runs } from "./Runs.astro";
 export { default as Split } from "./Split.astro";
 export { default as Splits } from "./Splits.astro";

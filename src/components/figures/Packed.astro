@@ -1,7 +1,9 @@
 ---
 // The finished Parquet file for a few records: a line per column chunk with
 // what it actually stores (numbers at 4 bytes, strings as a dictionary plus a
-// number a row, booleans as bits) and its bytes, then bars for the same
+// number a row, booleans as bits) and its bytes. Bits are drawn inside the
+// whole bytes they take, the unused bits as dots, since a file is stored in
+// bytes; then bars for the same
 // records as JSONL, as plain columns and encoded. Dictionary numbers use
 // Lookup's entry styles (.e0, .e1, …). Parquet's own headers and Zstandard
 // are left out. Styles: packed.css.
@@ -36,7 +38,7 @@ const chunks: Chunk[] = keys.map((key) => {
       distinct: [],
       bits: 32,
       bytes: n * 4,
-      note: "4 bytes each",
+      note: `${n} × 4 bytes`,
     };
   if (typeof values[0] === "boolean")
     return {
@@ -46,7 +48,7 @@ const chunks: Chunk[] = keys.map((key) => {
       distinct: [],
       bits: 1,
       bytes: Math.ceil(n / 8),
-      note: "1 bit each",
+      note: `${n} bits, padded to a whole byte`,
     };
   const distinct = [...new Set(values.map(String))];
   const bits = Math.max(1, Math.ceil(Math.log2(distinct.length)));
@@ -57,7 +59,7 @@ const chunks: Chunk[] = keys.map((key) => {
     distinct,
     bits,
     bytes: distinct.join("").length + Math.ceil((n * bits) / 8),
-    note: `dictionary, then ${bits} bit each`,
+    note: `${distinct.join("").length} bytes of dictionary, then ${n} × ${bits} bit, padded to a whole byte`,
   };
 });
 
@@ -79,6 +81,9 @@ const plain = records.reduce(
   keys.join("").length,
 );
 const packed = chunks.reduce((s, c) => s + c.bytes, 0);
+// The unused bits in the last byte of a chunk of n values at `bits` each.
+const pad = (bits: number) => Math.ceil((n * bits) / 8) * 8 - n * bits;
+const spare = (bits: number) => Array.from({ length: pad(bits) });
 const b = (x: number) => `${x} byte${x === 1 ? "" : "s"}`;
 ---
 
@@ -96,18 +101,24 @@ const b = (x: number) => `${x} byte${x === 1 ? "" : "s"}`;
                 {v}
               </span>
             ))}
-            <span class="packed__idx">
+            <span class="packed__byte">
               {c.values.map((v) => {
                 const i = c.distinct.indexOf(String(v));
                 return <b class={`e${i}`}>{i}</b>;
               })}
+              {spare(c.bits).map(() => (
+                <em>·</em>
+              ))}
             </span>
           </>
         )}
         {c.kind === "bits" && (
-          <span class="packed__bits">
+          <span class="packed__byte">
             {c.values.map((v) => (
               <i>{v ? 1 : 0}</i>
+            ))}
+            {spare(1).map(() => (
+              <em>·</em>
             ))}
           </span>
         )}

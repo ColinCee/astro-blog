@@ -63,9 +63,15 @@ Because a column is all one type, Parquet can store it at its real size, so a sm
 
 Our real `status` field only has 6 possible values, so that's 3 bits a row instead of a whole string.
 
-So putting it all together, here's what those 5 records look like once Parquet has encoded them:
+Last of all it runs Zstandard compression over each column. Compression works by spotting bytes it's already seen and writing "copy those again" instead, so a column where the same values sit next to each other is pretty much ideal.
 
-<Fig title="The example, encoded" caption="Before Zstandard, and Parquet's own headers are left out.">
+<Fig title="Zstandard on the status column" caption="The simplest version of the idea, on the plain text.">
+  <Repeats values={["OPEN", "OPEN", "OPEN", "OPEN", "DONE"]} />
+</Fig>
+
+So putting it all together, here's what those 5 records end up as:
+
+<Fig title="The example, encoded" caption="Zstandard is left out, 5 records is too little for it to find much. Parquet's own headers are left out too.">
   <Packed
     records={[
       { id: 1, status: "OPEN", active: true },
@@ -77,7 +83,7 @@ So putting it all together, here's what those 5 records look like once Parquet h
   />
 </Fig>
 
-Last of all it runs Zstandard compression over each column. Compression works by finding repeats, and a column of similar values has way more of them than rows of mixed fields do.
+On the real file, all of that together is what takes 4.5GB down to 221MB.
 
 ## Any downsides?
 
