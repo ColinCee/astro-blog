@@ -1,6 +1,7 @@
 -- A fake export for "A Story about Parquet". The real one can't be shared, so
 -- this is a guess at its shape: 1.5 million records and 106 fields,
---     1 id that counts up            12 timestamps, in order
+--     1 id that counts up            12 timestamps (1 in order, 11 up to
+--                                       30 days after it)
 --     5 random ids (like UUIDs)      20 small sets of values, like status
 --    15 true/false, written "TRUE"   15 numbers
 --    10 reference codes              28 mostly empty (95% null)
@@ -28,7 +29,7 @@ SELECT
   fake_uuid() AS uuid_ref_3,
   fake_uuid() AS uuid_ref_4,
   fake_uuid() AS uuid_ref_5,
-  -- timestamps, in order
+  -- timestamps: the first in order, the rest up to 30 days after it
   TIMESTAMP '2025-01-01' + to_seconds(i * 20 + floor(random() * 20)::BIGINT) AS timestamp_01,
   TIMESTAMP '2025-01-01' + to_seconds(i * 20 + floor(random() * 2592000)::BIGINT) AS timestamp_02,
   TIMESTAMP '2025-01-01' + to_seconds(i * 20 + floor(random() * 2592000)::BIGINT) AS timestamp_03,
