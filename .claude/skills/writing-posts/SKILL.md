@@ -63,6 +63,7 @@ Show, don't ask: build the change or two or three distinct variations, put them 
 - **Every mark is explained somewhere.** That covers a range bracket, a dashed reference line and a Δ. Do it once, in the key or the first chart's caption.
 - **Interaction is a bonus, never required.** Hover can fade the other rows, but nothing should force a click to understand.
 - **Check every figure at phone width and in both themes**, with nothing overflowing its box.
+- **Nothing scrolls sideways.** Colin finds horizontal scrolling terrible: no long code lines, tables or figures that need it. Pretty-print a record and show a few of its fields, or wrap the code block (`wrap` after the language).
 - **A recording, when there is one, beats a chart for the hook.** Captions are short, e.g. "73% wins / this game: won, 57 points".
 
 ## 5. Ship
