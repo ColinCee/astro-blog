@@ -14,9 +14,9 @@ pubDate: "Oct 29 2026"
   />
 </Fig>
 
-That's our simulation suite at work, 7 minutes on Jest and 23 seconds after moving to Vitest, and CI went from 16 jobs to one.[^how]
+That's our simulation suite at work, 7 minutes on Jest and 23 seconds after moving to Vitest, and CI went from 16 jobs and about an hour of runner time per run to one job and 5 minutes.[^how]
 
-Contrary to popular belief, Vitest isn't purely quicker. The speed came from something else, it was a single config option to do with isolation. Jest doesn't have it but Vitest does, but it comes with caveats.
+Contrary to popular belief, Vitest isn't purely quicker, out of the box it was actually slower than Jest. The speed came from something else, it was a single config option to do with isolation. Jest doesn't have it but Vitest does, but it comes with caveats.
 
 ## What are sim tests?
 
@@ -44,7 +44,7 @@ A sim's snapshot is just the events per day, so a six-day one looks something li
 }
 ```
 
-Days with nothing in them collapse into one entry, like the `"1-4"` there. So fundamentally it's a state machine simulator, from a start date to an end date. There's over 1,000 of them and each one is a test file that imports the engine. That's the whole story really.
+Days with nothing in them collapse into one entry, like the `"1-4"` there. So fundamentally it's a state machine simulator, from a start date to an end date. There's over 1,000 of them and each one is a test file that imports the engine.
 
 ## Why did it take 7 minutes?
 
@@ -60,7 +60,9 @@ So I profiled a run and it turns out only about 20% of the CPU was actually runn
     ]}
   />
 </Fig>
-What I didn't realise is Jest gives every test file its own copy of every module it imports, so nothing one test does can leak into the next one. Which is sensible, but our engine is hundreds of modules and they all build their rules when they load, so every file pays for that again, and there's no option in Jest to share it.[^jest] Ironically the janky script was loading it once by accident, because that's just what a for loop does.
+What I didn't realise is Jest gives every test file its own copy of every module it imports, so nothing one test does can leak into the next one. Which is sensible, but our engine is hundreds of modules and they all build their rules when they load, so every file pays for that again, and there's no built-in option in Jest to share it.[^jest] Ironically the janky script was loading it once by accident, because that's just what a for loop does.
+
+You could stay on Jest and cram the sims into a few big files with `test.each`, or use a community runner that skips the isolation like [jest-light-runner](https://www.npmjs.com/package/jest-light-runner), but Vitest has the option built in.
 
 ## The config option
 
@@ -77,11 +79,11 @@ export default defineConfig({
 });
 ```
 
-What this does is a worker keeps its modules between files, so the engine loads once per worker instead of once per file. On a 10-core laptop that's roughly 10 loads instead of 1,370, and that's basically where all the speed came from.
+What this does is a worker keeps its modules between files, so the engine loads once per worker instead of once per file. On a 10-core laptop that's roughly 10 loads instead of 1,370, and that's basically where all the speed came from. The snapshots came across byte for byte, and running a single sim by name works again too.
 
 ## Does it scale?
 
-I wanted to see the shape of this so I ran the real suite in slices on my desktop, 98, 275, 457 files and then the full 1,371, with the same 15 workers each time.[^how]
+I wanted to see the shape of this so I ran the real suite in slices on my desktop, 98, 275, 457 files and then the full 1,371, with the same 15 workers each time, so the times are different to the laptop numbers at the top.[^how]
 
 <figure class="fig">
 <p class="fig__k">Time vs test files</p>
@@ -101,11 +103,9 @@ Jest and plain Vitest both go up with every file because every file loads the en
 
 **Jest.** Each test file runs in its own Node `vm` context, which is basically a separate JavaScript realm with its own globals and its own `Array` and `Object`. Jest's runtime provides the `require` inside it and keeps a module table per context, which is why mocks can't leak between files, and also why `x instanceof Array` is sometimes false under Jest, [that one's been open since 2017](https://github.com/jestjs/jest/issues/2549). `--runInBand` gets rid of the worker processes but each file still gets its own context and reloads everything.
 
-**Vitest.** Vite strips the types without checking them, same trade as `isolatedModules`. Then the files go to a pool of workers, the default is `forks` which is a child process per file, `threads` is a worker thread per file, and the `vm*` pools behave like Jest and can't turn isolation off. With `isolate: false` on `forks` or `threads` the worker stays alive and keeps its module cache.
-
-**Caches.** Every number above was a warm run, so both runners were warm. Node 22 can also cache compiled bytecode across processes with `NODE_COMPILE_CACHE`.
+**Vitest.** The files go to a pool of workers, the default is `forks` which is a child process per file, `threads` is a worker thread per file, and the `vm*` pools behave like Jest and can't turn isolation off. With `isolate: false` on `forks` or `threads` the worker stays alive and keeps its module cache.
 
 </details>
 
 [^jest]: Someone [asked for a middle ground](https://github.com/jestjs/jest/issues/12147) in 2021. Nobody from Jest replied, and a bot closed it in 2024.
-[^how]: The headline numbers are from a 10-core laptop, hyperfine, 5 runs. The slices are from my desktop, a Ryzen 7 7800X3D on Windows 11, Node 22, two runs each, one for plain Vitest. Jest in the slices runs the same code as the Vitest run, so the only difference is the isolation.
+[^how]: The headline numbers are from a 10-core laptop, hyperfine, 5 runs. The slices are from my desktop, a Ryzen 7 7800X3D on Windows 11, Node 22, two runs each, one for plain Vitest. Both runners in the slices run the same engine code, so the only difference is the isolation.
