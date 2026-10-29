@@ -19,13 +19,7 @@ So I tried converting one to Parquet:
 
 It's the same records, and the download went from ten minutes to about 30 seconds. 
 
-## Where does 4.0GB go?
-
-JSONL is just one JSON object per line, so every line writes out every field name. With 106 fields that's 106 keys repeated 1.5 million times, which comes to `2.0GB` of nothing but keys.
-
-On top of that everything is text. A boolean is the string `"TRUE"` when it could be one bit, a timestamp is a full date and time string when it could be 8 bytes, and `null` gets spelled out millions of times. Add up the keys, quotes, colons and commas and 66% of the file is overhead.
-
-Since I can't share real data, I made a fake export with a different shape [a DuckDB script](/blog/jsonl-to-parquet-compression/make-data.sql): 1.5 million records and 106 fields. The first line starts like this:
+Since I can't share real data, I made a fake export with a different shape using [a DuckDB script](/blog/jsonl-to-parquet-compression/make-data.sql): 1.5 million records and 106 fields. The first line starts like this:
 
 ```json wrap
 {
@@ -43,6 +37,13 @@ Since I can't share real data, I made a fake export with a different shape [a Du
 ```
 
 The [first 100 lines](/blog/jsonl-to-parquet-compression/sample.jsonl) are there if you want a proper look, and every number below comes from [this script](/blog/jsonl-to-parquet-compression/measure.sql).
+
+## Where does 4.0GB go?
+
+JSONL is just one JSON object per line, so every line writes out every field name. With 106 fields that's 106 keys repeated 1.5 million times, which comes to `2.0GB` of nothing but keys.
+
+On top of that everything is text. A boolean is the string `"TRUE"` when it could be one bit, a timestamp is a full date and time string when it could be 8 bytes, and `null` gets spelled out millions of times. Add up the keys, quotes, colons and commas and 66% of the file is overhead.
+
 <Fig title="Where the 4.0 GB went" caption="The % is how much smaller than the JSONL.">
   <Cmp
     cols={["10.5rem", "7.5rem"]}
@@ -56,11 +57,11 @@ The [first 100 lines](/blog/jsonl-to-parquet-compression/sample.jsonl) are there
   />
 </Fig>
 
-In this dummy example we can see the actual data is 1.4GB, but parquet can reduce that even further with encoding and compression.
+In this dummy example we can see the actual data is 1.4GB, but Parquet can reduce that even further with encoding and compression.
 
 ## So what does storing by column do?
 
-JSONL writes a whole record, then the next record. Parquet takes all the values for one field and writes them next to each other, then does the next field. Here's the first 5 rows with 3 of the fields:
+JSONL writes a whole record, then the next record. Parquet takes all the values for one field and writes them next to each other, then does the next field. Here are the first 5 rows with 3 of the fields:
 
 <Fig caption="The first 5 rows and 3 of the fields. By column is the names once and the values as text. Tap a tab to stop it.">
   <Morph
@@ -83,7 +84,7 @@ JSONL writes a whole record, then the next record. Parquet takes all the values 
   />
 </Fig>
 
-Because a column is all one type, Parquet can store it at its real size, so a number is 8 bytes and a boolean is one bit. And because the repeated values now sit next to each other, it can use dictionary encoding, which means writing each distinct value once and then just storing which one each row has.
+Because a column is all one type, Parquet can store it at its real size, so a timestamp is 8 bytes instead of 19 characters and a boolean is one bit. And because the repeated values now sit next to each other, it can use dictionary encoding, which means writing each distinct value once and then just storing which one each row has.
 
 <Fig title="The status column" caption="The first 5 rows. The status sizes are for all 1.5 million.">
   <Lookup
@@ -104,7 +105,7 @@ Because a column is all one type, Parquet can store it at its real size, so a nu
 
 Our `status` field only has 6 possible values, so that's 3 bits a row instead of a whole string.
 
-Last of all it runs Zstandard compression over each column. Compression works by spotting bytes it's already seen and writing "copy those again" instead, so it does best where the same values sit next to each other, like a currency that's nearly always GBP.
+Last of all it runs Zstandard compression over each column. Compression works by spotting bytes it's already seen and writing "copy those again" instead, then writing the most common bytes in fewer bits. The first part does best where the same values sit next to each other, like a currency that's nearly always GBP.
 
 <Fig title="Zstandard on the currency column" caption="The first 5 rows, and the simplest version of the idea.">
   <Repeats values={["GBP", "GBP", "GBP", "GBP", "GBP"]} />
@@ -121,7 +122,7 @@ Last of all it runs Zstandard compression over each column. Compression works by
 
 ## All together
 
-<Fig title="The fake export, one step at a time" caption="Each % is how much smaller than the step before. By column is the names once and the values as text, the rest are file sizes as written by DuckDB 1.5.">
+<Fig title="The fake export, one step at a time" caption="Each % is how much smaller than the step before.">
   <Cmp
     cols={["10.5rem", "7.5rem"]}
     rows={[
@@ -132,9 +133,6 @@ Last of all it runs Zstandard compression over each column. Compression works by
     ]}
   />
 </Fig>
-
-That's 89% smaller on the fake file, against 95% on our real one. Zstandard on the JSONL by itself does pretty well too, getting it to 722MB, but Parquet with it is still smaller, and you can actually query it.
-
 ## Any downsides?
 
 The one downside is that you can't `grep` a Parquet file. But `duckdb -c "SELECT * FROM 'file.parquet'"` opens it instantly, so I haven't really missed that.

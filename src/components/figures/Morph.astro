@@ -61,5 +61,6 @@ records.forEach((r, row) => {
 
 <Frames
   cells={cells}
+  label={`${records.length} records as JSON lines, one per line, then as one line per field: ${keys.join(", ")}.`}
   tabs={[{ label: "JSONL, by row" }, { label: "Parquet, by column" }]}
 />

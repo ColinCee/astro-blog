@@ -9,8 +9,10 @@ import type { Cell, Tab } from "./frames";
 interface Props {
   cells: Cell[];
   tabs: Tab[];
+  // What the moving text shows, for screen readers.
+  label: string;
 }
-const { cells, tabs } = Astro.props;
+const { cells, tabs, label } = Astro.props;
 const lines = tabs.map(
   (_, s) =>
     Math.max(...cells.filter((c) => c.at[s].show).map((c) => c.at[s].y)) + 1,
@@ -41,7 +43,7 @@ const style = (c: Cell) =>
     ))}
     <i class="frames__timer" />
   </fieldset>
-  <div class="frames__box" aria-hidden="true">
+  <div class="frames__box" role="img" aria-label={label}>
     {cells.map((c) => (
       <span class:list={{ b: c.bold }} style={style(c)} set:text={c.ch} />
     ))}
@@ -50,7 +52,7 @@ const style = (c: Cell) =>
 
 <script>
   // Each stage holds for --hold (frames.css; the timer bar fills over it),
-  // then moves on. Hovering pauses it; a tab stops it.
+  // then moves on. Hovering or focusing it pauses it; a tab stops it.
   for (const fig of document.querySelectorAll<HTMLElement>(".frames")) {
     const tabs = [...fig.querySelectorAll<HTMLButtonElement>("button")];
     const hold =
@@ -84,9 +86,11 @@ const style = (c: Cell) =>
     for (const [ev, on] of [
       ["pointerenter", true],
       ["pointerleave", false],
+      ["focusin", true],
+      ["focusout", false],
     ] as const)
       fig.addEventListener(ev, (e) => {
-        if (e.pointerType !== "mouse") return;
+        if (e instanceof PointerEvent && e.pointerType !== "mouse") return;
         hover = on;
         loop();
       });
