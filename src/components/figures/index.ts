@@ -13,6 +13,7 @@ export { default as Ladder } from "./Ladder.astro";
 export { default as LineChart } from "./LineChart.astro";
 export { default as Lookup } from "./Lookup.astro";
 export { default as Morph } from "./Morph.astro";
+export { default as Packed } from "./Packed.astro";
 export { default as Panel } from "./Panel.astro";
 export { default as Pts } from "./Pts.astro";
 export { default as QView } from "./QView.astro";

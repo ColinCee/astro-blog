@@ -46,17 +46,18 @@
   color: var(--ink);
   font-weight: 600;
 }
-/* One neutral style per dictionary entry, the same on both sides. */
-.prose .lookup .e0 {
+/* One neutral style per dictionary entry, the same on both sides (and in
+   Packed). */
+.prose :is(.lookup, .packed) .e0 {
   background: var(--bar);
 }
-.prose .lookup .e1 {
+.prose :is(.lookup, .packed) .e1 {
   box-shadow: inset 0 0 0 1.5px var(--muted);
 }
-.prose .lookup .e2 {
+.prose :is(.lookup, .packed) .e2 {
   background: color-mix(in oklch, var(--bar) 45%, transparent);
 }
-.prose .lookup .e3 {
+.prose :is(.lookup, .packed) .e3 {
   box-shadow: inset 0 0 0 1.5px var(--muted);
   background: color-mix(in oklch, var(--bar) 45%, transparent);
 }

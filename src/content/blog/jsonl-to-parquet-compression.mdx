@@ -63,6 +63,20 @@ Because a column is all one type, Parquet can store it at its real size, so a sm
 
 Our real `status` field only has 6 possible values, so that's 3 bits a row instead of a whole string.
 
+So putting it all together, here's what those 5 records look like once Parquet has encoded them:
+
+<Fig title="The example, encoded" caption="Before Zstandard, and Parquet's own headers are left out.">
+  <Packed
+    records={[
+      { id: 1, status: "OPEN", active: true },
+      { id: 2, status: "OPEN", active: true },
+      { id: 3, status: "OPEN", active: true },
+      { id: 4, status: "OPEN", active: true },
+      { id: 5, status: "DONE", active: false },
+    ]}
+  />
+</Fig>
+
 Last of all it runs Zstandard compression over each column. Compression works by finding repeats, and a column of similar values has way more of them than rows of mixed fields do.
 
 ## Any downsides?

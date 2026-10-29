@@ -1,0 +1,76 @@
+/* The finished Parquet file (Packed): a line per column chunk, name, what it
+   stores and its bytes, then bars for the whole file three ways. */
+.prose .packed {
+  display: grid;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+.prose .packed__row {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) 4.6rem;
+  align-items: start;
+  gap: 0.8rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.prose .packed__key {
+  color: var(--faint);
+  line-height: 1.6rem;
+}
+.prose .packed__data {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.6rem;
+  color: var(--ink);
+  font-weight: 600;
+}
+.prose .packed__data i {
+  font-style: normal;
+}
+.prose .packed__data small {
+  flex-basis: 100%;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  color: var(--faint);
+}
+.prose .packed__entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.prose .packed__idx,
+.prose .packed__bits {
+  display: inline-flex;
+  gap: 0.2rem;
+}
+.prose .packed__idx {
+  padding-left: 0.6rem;
+  border-left: 1px solid var(--line);
+}
+.prose .packed b {
+  display: inline-grid;
+  place-items: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.prose .packed__bits i {
+  display: inline-grid;
+  place-items: center;
+  width: 0.9rem;
+  color: var(--ink);
+}
+.prose .packed__bytes {
+  line-height: 1.6rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.prose .packed__bars {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
