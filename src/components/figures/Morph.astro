@@ -92,11 +92,13 @@ const width = Math.max(...cells.flatMap((c) => [c.x, c.cx])) + 1;
 </div>
 
 <script>
-  // Each layout holds for HOLD ms (the timer bar fills over it), then flips.
+  // Each layout holds for --hold (morph.css; the timer bar fills over it),
+  // then flips.
   // Hovering pauses it; a tab stops it.
-  const HOLD = 3200;
   for (const fig of document.querySelectorAll<HTMLElement>(".morph")) {
     const tabs = [...fig.querySelectorAll<HTMLButtonElement>("button")];
+    const hold =
+      parseFloat(getComputedStyle(fig).getPropertyValue("--hold")) * 1000;
     let timer = 0;
     let seen = false;
     let manual = false;
@@ -115,7 +117,7 @@ const width = Math.max(...cells.flatMap((c) => [c.x, c.cx])) + 1;
       timer = window.setTimeout(() => {
         set(!fig.classList.contains("is-cols"));
         loop();
-      }, HOLD);
+      }, hold);
     };
     for (const t of tabs)
       t.addEventListener("click", () => {

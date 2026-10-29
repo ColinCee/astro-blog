@@ -2,8 +2,8 @@
    position (--x, --y) and a columns position (--cx, --cy), in characters and
    lines; .is-cols moves it. */
 .prose .morph {
-  --hold: 3.2s;
-  --move: 1.1s;
+  --hold: 6s;
+  --move: 1.4s;
   display: grid;
   gap: 1rem;
 }
