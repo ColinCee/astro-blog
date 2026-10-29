@@ -30,6 +30,9 @@ SELECT
   rows * (name_chars + 2 * fields) AS field_names,
   data,
   file - rows * (name_chars + 2 * fields) - data AS other_syntax,
+  -- Stored by column as plain text: each name once, then its values one per
+  -- line (an empty line for null), so it can be read back.
+  name_chars + fields + data + rows * fields AS by_column,
   rows * (3 + fields - 1) + rows * (name_chars + 3 * fields) + tokens = file AS adds_up
 FROM jsonl;
 

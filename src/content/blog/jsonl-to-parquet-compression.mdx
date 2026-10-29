@@ -63,7 +63,7 @@ In this dummy example we can see the actual data is 1.4GB, but Parquet can reduc
 
 JSONL writes a whole record, then the next record. Parquet takes all the values for one field and writes them next to each other, then does the next field. Here are the first 5 rows with 3 of the fields:
 
-<Fig caption="The first 5 rows and 3 of the fields. By column is the names once and the values as text. Tap a tab to stop it.">
+<Fig caption="The first 5 rows and 3 of the fields. The by column size counts each name once and each value on its own line, so it can be read back. Tap a tab to stop it.">
   <Morph
     records={[
       { id: 0, status: "CLOSED", currency: "GBP" },
@@ -79,7 +79,7 @@ JSONL writes a whole record, then the next record. Parquet takes all the values 
     cols={["10.5rem", "7.5rem"]}
     rows={[
       { label: "JSONL", value: 4030.6, text: "4.0 GB" },
-      { label: "By column", value: 1375.3, text: "1.4 GB · −66%", after: true },
+      { label: "By column", value: 1534.3, text: "1.5 GB · −62%", after: true },
     ]}
   />
 </Fig>
@@ -97,8 +97,8 @@ Because a column is all one type, Parquet can store it at its real size, so a ti
     max={4030.6}
     cols={["10.5rem", "7.5rem"]}
     rows={[
-      { label: "By column", value: 1375.3, text: "1.4 GB" },
-      { label: "Encoded", value: 934.8, text: "935 MB · −32%", after: true },
+      { label: "By column", value: 1534.3, text: "1.5 GB" },
+      { label: "Encoded", value: 934.8, text: "935 MB · −39%", after: true },
     ]}
   />
 </Fig>
@@ -127,8 +127,8 @@ Last of all it runs Zstandard compression over each column. Compression works by
     cols={["10.5rem", "7.5rem"]}
     rows={[
       { label: "JSONL", value: 4030.6, text: "4.0 GB" },
-      { label: "By column", value: 1375.3, text: "1.4 GB · −66%" },
-      { label: "Encoded", value: 934.8, text: "935 MB · −32%" },
+      { label: "By column", value: 1534.3, text: "1.5 GB · −62%" },
+      { label: "Encoded", value: 934.8, text: "935 MB · −39%" },
       { label: "Zstandard", value: 449.3, text: "449 MB · −52%", after: true },
     ]}
   />

@@ -61,6 +61,7 @@ const style = (c: Cell) =>
     let seen = false;
     let manual = false;
     let hover = false;
+    let focus = false;
     const set = (s: number) => {
       fig.dataset.s = String(s);
       for (const t of tabs)
@@ -69,7 +70,7 @@ const style = (c: Cell) =>
     const loop = () => {
       clearTimeout(timer);
       fig.classList.remove("is-playing");
-      if (manual || hover || !seen) return;
+      if (manual || hover || focus || !seen) return;
       void fig.offsetWidth; // restart the timer bar's animation
       fig.classList.add("is-playing");
       timer = window.setTimeout(() => {
@@ -86,12 +87,18 @@ const style = (c: Cell) =>
     for (const [ev, on] of [
       ["pointerenter", true],
       ["pointerleave", false],
+    ] as const)
+      fig.addEventListener(ev, (e) => {
+        if (e.pointerType !== "mouse") return;
+        hover = on;
+        loop();
+      });
+    for (const [ev, on] of [
       ["focusin", true],
       ["focusout", false],
     ] as const)
-      fig.addEventListener(ev, (e) => {
-        if (e instanceof PointerEvent && e.pointerType !== "mouse") return;
-        hover = on;
+      fig.addEventListener(ev, () => {
+        focus = on;
         loop();
       });
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) continue;
