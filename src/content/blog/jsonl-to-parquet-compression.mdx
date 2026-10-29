@@ -43,7 +43,7 @@ Since I can't share real data, I made a fake export with a different shape [a Du
 ```
 
 The [first 100 lines](/blog/jsonl-to-parquet-compression/sample.jsonl) are there if you want a proper look, and every number below comes from [this script](/blog/jsonl-to-parquet-compression/measure.sql).
-<Fig title="Where the 4.0 GB went" caption="× is how much smaller than the JSONL.">
+<Fig title="Where the 4.0 GB went" caption="The % is how much smaller than the JSONL.">
   <Cmp
     cols={["10.5rem", "7.5rem"]}
     rows={[
@@ -51,7 +51,7 @@ The [first 100 lines](/blog/jsonl-to-parquet-compression/sample.jsonl) are there
       { label: "field names", from: 4030.6, value: 2046.1, text: "−2.0 GB" },
       { label: "other JSON syntax", from: 2046.1, value: 1375.3, text: "−0.7 GB" },
       { label: "actual data", value: 1375.3, text: "1.4 GB" },
-      { label: "export.parquet", value: 449.3, text: "449 MB · 9×", after: true },
+      { label: "export.parquet", value: 449.3, text: "449 MB · −89%", after: true },
     ]}
   />
 </Fig>
@@ -78,7 +78,7 @@ JSONL writes a whole record, then the next record. Parquet takes all the values 
     cols={["10.5rem", "7.5rem"]}
     rows={[
       { label: "JSONL", value: 4030.6, text: "4.0 GB" },
-      { label: "By column", value: 1375.3, text: "1.4 GB · 2.9×", after: true },
+      { label: "By column", value: 1375.3, text: "1.4 GB · −66%", after: true },
     ]}
   />
 </Fig>
@@ -97,7 +97,7 @@ Because a column is all one type, Parquet can store it at its real size, so a nu
     cols={["10.5rem", "7.5rem"]}
     rows={[
       { label: "By column", value: 1375.3, text: "1.4 GB" },
-      { label: "Encoded", value: 934.8, text: "935 MB · 1.5×", after: true },
+      { label: "Encoded", value: 934.8, text: "935 MB · −32%", after: true },
     ]}
   />
 </Fig>
@@ -114,26 +114,26 @@ Last of all it runs Zstandard compression over each column. Compression works by
     cols={["10.5rem", "7.5rem"]}
     rows={[
       { label: "Encoded", value: 934.8, text: "935 MB" },
-      { label: "Zstandard", value: 449.3, text: "449 MB · 2.1×", after: true },
+      { label: "Zstandard", value: 449.3, text: "449 MB · −52%", after: true },
     ]}
   />
 </Fig>
 
 ## All together
 
-<Fig title="The fake export, one step at a time" caption="Each × is how much smaller than the step before. By column is the names once and the values as text, the rest are file sizes as written by DuckDB 1.5.">
+<Fig title="The fake export, one step at a time" caption="Each % is how much smaller than the step before. By column is the names once and the values as text, the rest are file sizes as written by DuckDB 1.5.">
   <Cmp
     cols={["10.5rem", "7.5rem"]}
     rows={[
       { label: "JSONL", value: 4030.6, text: "4.0 GB" },
-      { label: "By column", value: 1375.3, text: "1.4 GB · 2.9×" },
-      { label: "Encoded", value: 934.8, text: "935 MB · 1.5×" },
-      { label: "Zstandard", value: 449.3, text: "449 MB · 2.1×", after: true },
+      { label: "By column", value: 1375.3, text: "1.4 GB · −66%" },
+      { label: "Encoded", value: 934.8, text: "935 MB · −32%" },
+      { label: "Zstandard", value: 449.3, text: "449 MB · −52%", after: true },
     ]}
   />
 </Fig>
 
-That's 9× on the fake file, against 20× on our real one. Zstandard on the JSONL by itself does pretty well too, getting it to 722MB, but Parquet with it is still smaller, and you can actually query it.
+That's 89% smaller on the fake file, against 95% on our real one. Zstandard on the JSONL by itself does pretty well too, getting it to 722MB, but Parquet with it is still smaller, and you can actually query it.
 
 ## Any downsides?
 
