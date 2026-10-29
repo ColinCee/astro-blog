@@ -1,10 +1,11 @@
 ---
-// JSONL text that rearranges itself into columns: every character is placed
-// twice at build time, once where it sits in the JSON lines and once where it
-// goes in the column layout. The first record's field names become the column
-// headers, every other name and all the syntax fade out, and the values slide
-// into their column. It plays once when seen, and the button flips it back and
-// forth (the only way under reduced motion). Styles: morph.css.
+// JSONL text that rearranges itself into columns and back, on a loop while it
+// is on screen. Every character is placed twice at build time: where it sits
+// in the JSON lines, and where it goes in the column layout. The first
+// record's field names become the column headers, every other copy of a name
+// flies into its header and fades, the syntax fades where it is, and the
+// values slide into their column. The two tabs pick a layout and stop the
+// loop (the only way under reduced motion). Styles: morph.css.
 type Value = string | number | boolean;
 interface Props {
   records: Record<string, Value>[];
@@ -16,7 +17,7 @@ const text = (v: Value) =>
 
 // Column layout: a line per field, the name padded to the longest, then each
 // value padded to that field's longest value.
-const keyW = Math.max(...keys.map((k) => k.length)) + 1;
+const keyW = Math.max(...keys.map((k) => k.length)) + 2;
 const valW = keys.map((k) =>
   Math.max(...records.map((r) => text(r[k]).length)),
 );
@@ -27,8 +28,8 @@ interface Cell {
   y: number;
   cx: number;
   cy: number;
-  kind: "k" | "s" | "v";
-  keep: boolean;
+  kind: "head" | "key" | "syn" | "val";
+  f?: number;
 }
 const cells: Cell[] = [];
 records.forEach((r, row) => {
@@ -37,70 +38,98 @@ records.forEach((r, row) => {
     s: string,
     kind: Cell["kind"],
     to?: (i: number) => [number, number],
+    f?: number,
   ) => {
     for (const [i, ch] of [...s].entries()) {
       const [cx, cy] = to ? to(i) : [x, row];
-      cells.push({ ch, x, y: row, cx, cy, kind, keep: !!to });
+      cells.push({ ch, x, y: row, cx, cy, kind, f });
       x++;
     }
   };
-  put("{", "s");
+  put("{", "syn");
   keys.forEach((k, f) => {
-    const v = text(r[k]);
     const q = typeof r[k] === "number" ? "" : '"';
-    put('"', "s");
-    put(k, "k", row === 0 ? (i) => [i, f] : undefined);
-    put(`":${q}`, "s");
+    put('"', "syn");
+    put(k, row === 0 ? "head" : "key", (i) => [i, f]);
+    put(`":${q}`, "syn");
     const at = keyW + row * (valW[f] + 1);
-    put(v, "v", (i) => [at + i, f]);
-    put(q + (f < keys.length - 1 ? "," : ""), "s");
+    put(text(r[k]), "val", (i) => [at + i, f], f);
+    put(q + (f < keys.length - 1 ? "," : ""), "syn");
   });
-  put("}", "s");
+  put("}", "syn");
 });
+// What each layout holds: every character plus a newline a line, against the
+// names once and the values (the padding in the column layout isn't data).
+const rowBytes = cells.length + records.length;
+const colBytes = cells.filter(
+  (c) => c.kind === "head" || c.kind === "val",
+).length;
+const width = Math.max(...cells.flatMap((c) => [c.x, c.cx])) + 1;
 ---
 
-<div class="morph" style={`--h:${records.length};--hc:${keys.length}`}>
-  <div class="morph__head">
-    <p class="fig__k">
-      <span class="morph__rows">JSONL: one record per line</span>
-      <span class="morph__cols">Parquet: one column per line</span>
-    </p>
-    <button type="button" class="morph__btn" aria-pressed="false">
-      <span class="morph__rows">store by column →</span>
-      <span class="morph__cols">← back to rows</span>
+<div
+  class="morph"
+  style={`--h:${records.length};--hc:${keys.length};--w:${width}`}
+>
+  <div class="morph__tabs" role="group" aria-label="Layout">
+    <button type="button" data-cols="false" aria-pressed="true">
+      <span>JSONL, by row</span>
+      <b>{rowBytes} bytes</b>
     </button>
+    <button type="button" data-cols="true" aria-pressed="false">
+      <span>Parquet, by column</span>
+      <b>{colBytes} bytes</b>
+    </button>
+    <i class="morph__timer" />
   </div>
   <div class="morph__box" aria-hidden="true">
     {cells.map((c) => (
       <span
-        class:list={[c.kind, { keep: c.keep }]}
+        class:list={[c.kind, c.f !== undefined && `f${c.f}`]}
         style={`--x:${c.x};--y:${c.y};--cx:${c.cx};--cy:${c.cy}`}
-      >
-        {c.ch}
-      </span>
+        set:text={c.ch}
+      />
     ))}
   </div>
 </div>
 
 <script>
+  // Each layout holds for HOLD ms (the timer bar fills over it), then flips.
+  const HOLD = 3200;
   for (const fig of document.querySelectorAll<HTMLElement>(".morph")) {
-    const btn = fig.querySelector<HTMLButtonElement>(".morph__btn");
-    const set = (on: boolean) => {
-      fig.classList.toggle("is-cols", on);
-      btn?.setAttribute("aria-pressed", String(on));
+    const tabs = [...fig.querySelectorAll<HTMLButtonElement>("button")];
+    let timer = 0;
+    let seen = false;
+    let manual = false;
+    const set = (cols: boolean) => {
+      fig.classList.toggle("is-cols", cols);
+      for (const t of tabs)
+        t.setAttribute("aria-pressed", String(t.dataset.cols === String(cols)));
     };
-    btn?.addEventListener("click", () =>
-      set(!fig.classList.contains("is-cols")),
-    );
+    const loop = () => {
+      clearTimeout(timer);
+      fig.classList.remove("is-playing");
+      if (manual || !seen) return;
+      void fig.offsetWidth; // restart the timer bar's animation
+      fig.classList.add("is-playing");
+      timer = window.setTimeout(() => {
+        set(!fig.classList.contains("is-cols"));
+        loop();
+      }, HOLD);
+    };
+    for (const t of tabs)
+      t.addEventListener("click", () => {
+        manual = true;
+        set(t.dataset.cols === "true");
+        loop();
+      });
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) continue;
-    const io = new IntersectionObserver(
+    new IntersectionObserver(
       ([e]) => {
-        if (!e.isIntersecting) return;
-        io.disconnect();
-        setTimeout(() => set(true), 900);
+        seen = e.isIntersecting;
+        loop();
       },
-      { threshold: 0.8 },
-    );
-    io.observe(fig);
+      { threshold: 0.6 },
+    ).observe(fig);
   }
 </script>
