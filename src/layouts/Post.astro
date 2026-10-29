@@ -622,6 +622,11 @@ const last = entries[entries.length - 1];
   };
   openTarget();
   window.addEventListener("hashchange", openTarget);
+  // Clicking the same link again doesn't change the hash, so open it on click too.
+  document.addEventListener("click", (e) => {
+    const link = (e.target as Element).closest?.('a[href^="#"]');
+    if (link && link.getAttribute("href") === location.hash) openTarget();
+  });
 
   // Reading progress bar: fraction of the page scrolled, as --read.
   const readBar = document.querySelector<HTMLElement>("[data-readbar]");
