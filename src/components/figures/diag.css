@@ -42,5 +42,5 @@
    text doesn't balloon). Its viewBox is phone width, so on a phone it's 1:1. */
 .prose .diag--fill svg {
   width: 100%;
-  max-width: 30rem;
+  max-width: 22rem;
 }
