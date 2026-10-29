@@ -17,119 +17,106 @@ So I tried converting one to Parquet:
   />
 </Fig>
 
-It's the same records, and the download went from ten minutes to about 30 seconds. I wanted to know where all that space actually went, so I had a look.
+It's the same records, and the download went from ten minutes to about 30 seconds. I wanted to know where all that space actually went, but I can't share our data, so I made a fake export the same shape with [a DuckDB script](/blog/jsonl-to-parquet-compression/make-data.sql): 1.5 million records and 106 fields. I had to guess what the fields look like, so it's not exact. The first line starts like this:
 
-## Where does 4.5GB go?
+```json
+{"id":0,"uuid_ref_1":"bf48c54f-7117-2ebc-cb28-919e5a62668d","uuid_ref_2":"93c74525-2f0a-c090-4542-9febfd0eafa8","uuid_ref_3":"fdfee444-b56b-b291-e6b1-69dad989e61e","uuid_ref_4":"24e40cc5-d528-1ee6-cf8f-f6b5a484f845","uuid_ref_5":"c40a7e52-9e5e-922c-f13a-6298ab15c787","timestamp_01":"2025-01-01 00:00:07","timestamp_02":"2025-01-17 14:00:19",…
+```
 
-JSONL is just one JSON object per line, so every line writes out every field name. We have 106 fields, so that's 106 keys repeated 1.5 million times, which comes to roughly 1.9GB of nothing but keys.
+The [first 100 lines](/blog/jsonl-to-parquet-compression/sample.jsonl) are there if you want a proper look, and every number below comes from [this script](/blog/jsonl-to-parquet-compression/measure.sql).
 
-On top of that everything is text. A boolean is the string `"TRUE"` when it could be one bit, a timestamp is a full ISO string when it could be 8 bytes, and `"null"` gets spelled out millions of times. Add up the keys, quotes, colons and commas and about 66% of the file is overhead.
+## Where does 4.0GB go?
 
-<Fig title="Where the 4.5 GB went" caption="The split between field names and other syntax is approximate.">
+JSONL is just one JSON object per line, so every line writes out every field name. With 106 fields that's 106 keys repeated 1.5 million times, which comes to 2.0GB of nothing but keys.
+
+On top of that everything is text. A boolean is the string `"TRUE"` when it could be one bit, a timestamp is a full ISO string when it could be 8 bytes, and `null` gets spelled out millions of times. Add up the keys, quotes, colons and commas and 66% of the file is overhead.
+
+<Fig title="Where the 4.0 GB went">
   <Cmp
     rows={[
-      { label: "data_export.jsonl", value: 4500, text: "4.5 GB" },
-      { label: "field names", from: 4500, value: 2600, text: "−1.9 GB" },
-      { label: "other JSON syntax", from: 2600, value: 1500, text: "−1.1 GB" },
-      { label: "actual data", value: 1500, text: "~ 1.5 GB" },
-      { label: "data_export.parquet", value: 221, text: "221 MB", after: true },
+      { label: "export.jsonl", value: 4030.6, text: "4.0 GB" },
+      { label: "field names", from: 4030.6, value: 2046.1, text: "−2.0 GB" },
+      { label: "other JSON syntax", from: 2046.1, value: 1375.3, text: "−0.7 GB" },
+      { label: "actual data", value: 1375.3, text: "1.4 GB" },
+      { label: "export.parquet", value: 449.3, text: "449 MB", after: true },
     ]}
   />
 </Fig>
 
-But stripping all that only gets you to about 1.5GB, which is 3× smaller. Parquet gets another 7× out of the data itself, and that part comes from how it stores each column.
+But stripping all that only gets you to 1.4GB, which is 3× smaller. Parquet gets another 3× out of the data itself, and that part comes from how it stores each column.
 
 ## So what does storing by column do?
 
-JSONL writes a whole record, then the next record. Parquet takes all the values for one field and writes them next to each other, then does the next field. Here's a made-up example with 5 records:
+JSONL writes a whole record, then the next record. Parquet takes all the values for one field and writes them next to each other, then does the next field. Here's the first 5 rows with 3 of the fields:
 
-<Fig caption="Bytes before any encoding: the names once and the values as text. Tap a tab to stop it.">
+<Fig caption="The sizes are for the whole file, the names once and the values as text, before any encoding. Tap a tab to stop it.">
   <Morph
+    sizes={["4.0 GB", "1.4 GB"]}
     records={[
-      { id: 1, status: "OPEN", active: true },
-      { id: 2, status: "OPEN", active: true },
-      { id: 3, status: "OPEN", active: true },
-      { id: 4, status: "OPEN", active: true },
-      { id: 5, status: "DONE", active: false },
+      { id: 0, status: "CLOSED", currency: "GBP" },
+      { id: 1, status: "ACTIVE", currency: "GBP" },
+      { id: 2, status: "ACTIVE", currency: "GBP" },
+      { id: 3, status: "REVIEW", currency: "GBP" },
+      { id: 4, status: "ACTIVE", currency: "GBP" },
     ]}
   />
 </Fig>
 
 Because a column is all one type, Parquet can store it at its real size, so a small number is 4 bytes and a boolean is one bit. And because the repeated values now sit next to each other, it can use dictionary encoding, which means writing each distinct value once and then just storing which one each row has.
 
-<Fig title="The status column from that example">
-  <Lookup name="status" values={["OPEN", "OPEN", "OPEN", "OPEN", "DONE"]} />
+<Fig title="The status column" caption="The first 5 rows. The sizes are for all 1.5 million.">
+  <Lookup
+    name="status"
+    sizes={["9.7 MB", "570 KB"]}
+    values={["CLOSED", "ACTIVE", "ACTIVE", "REVIEW", "ACTIVE"]}
+  />
 </Fig>
 
-Our real `status` field only has 6 possible values, so that's 3 bits a row instead of a whole string.
+Our `status` field only has 6 possible values, so that's 3 bits a row instead of a whole string.
 
-Last of all it runs Zstandard compression over each column. Compression works by spotting bytes it's already seen and writing "copy those again" instead, so a column where the same values sit next to each other is pretty much ideal.
+Last of all it runs Zstandard compression over each column. Compression works by spotting bytes it's already seen and writing "copy those again" instead, so it does best where the same values sit next to each other, like a currency that's nearly always GBP.
 
-<Fig title="Zstandard on the status column" caption="The simplest version of the idea, on the plain text.">
-  <Repeats values={["OPEN", "OPEN", "OPEN", "OPEN", "DONE"]} />
+<Fig title="Zstandard on the currency column" caption="The first 5 rows, and the simplest version of the idea.">
+  <Repeats values={["GBP", "GBP", "GBP", "GBP", "GBP"]} />
 </Fig>
 
-So putting it all together, here's what those 5 records end up as:
+How much it helps depends a lot on the field:
 
-<Fig title="The example, encoded" caption="Zstandard is left out, 5 records is too little for it to find much. Parquet's own headers are left out too.">
-  <Packed
-    records={[
-      { id: 1, status: "OPEN", active: true },
-      { id: 2, status: "OPEN", active: true },
-      { id: 3, status: "OPEN", active: true },
-      { id: 4, status: "OPEN", active: true },
-      { id: 5, status: "DONE", active: false },
+<Fig title="How much Zstandard shrank each kind of field">
+  <Cmp
+    cols={["11rem", "3rem"]}
+    rows={[
+      { label: "id, counts up", value: 7.7, text: "7.7×" },
+      { label: "currency, nearly all GBP", value: 5.8, text: "5.8×" },
+      { label: "reference codes", value: 2.7, text: "2.7×" },
+      { label: "mostly empty", value: 2.4, text: "2.4×" },
+      { label: "numbers", value: 2.2, text: "2.2×" },
+      { label: "random ids", value: 1.9, text: "1.9×" },
+      { label: "timestamps", value: 1.5, text: "1.5×" },
+      { label: "small sets", value: 1.2, text: "1.2×" },
+      { label: "true/false", value: 1.2, text: "1.2×" },
+      { label: "status", value: 1.1, text: "1.1×" },
     ]}
   />
 </Fig>
 
-## What about something bigger?
+The id counting up and the currency being nearly always GBP give it loads to find, but status and the true/false fields are random picks in the fake data, so there's not much.
 
-5 records is a bit small to see Zstandard do anything, so I made up 1.5 million records shaped like our export and wrote them out each way. The first few lines look like this:
+## All together
 
-```json
-{"id":0,"account_id":"ACC-149440","status":"ACTIVE","active":"TRUE","flagged":"FALSE","created_at":"2025-01-01 00:00:11","amount":200.3,"currency":"GBP","region":"South","channel":"post","note":null,"external_ref":null}
-{"id":1,"account_id":"ACC-134724","status":"ACTIVE","active":"TRUE","flagged":"TRUE","created_at":"2025-01-01 00:00:35","amount":231.47,"currency":"GBP","region":"West","channel":"app","note":"manual check 624","external_ref":null}
-{"id":2,"account_id":"ACC-120781","status":"PENDING","active":"TRUE","flagged":"FALSE","created_at":"2025-01-01 00:00:54","amount":414.92,"currency":"GBP","region":"South","channel":"phone","note":null,"external_ref":null}
-```
-
-They come from [a few lines of DuckDB](/blog/jsonl-to-parquet-compression/make-data.sql), and [the first 1,000 lines](/blog/jsonl-to-parquet-compression/sample.jsonl) are there too if you want a look.
-
-<Fig title="1.5 million made-up records" caption="File sizes as written by DuckDB 1.5.">
+<Fig title="The fake export, four ways" caption="File sizes as written by DuckDB 1.5.">
   <Cmp
     cols={["10.5rem", "4.6rem"]}
     rows={[
-      { label: "JSONL", value: 342.5, text: "342 MB" },
-      { label: "JSONL + Zstandard", value: 35.1, text: "35 MB" },
-      { label: "Parquet, no Zstandard", value: 62.7, text: "63 MB" },
-      { label: "Parquet + Zstandard", value: 19.5, text: "19.5 MB", after: true },
+      { label: "JSONL", value: 4030.6, text: "4.0 GB" },
+      { label: "JSONL + Zstandard", value: 722.2, text: "722 MB" },
+      { label: "Parquet, no Zstandard", value: 934.8, text: "935 MB" },
+      { label: "Parquet + Zstandard", value: 449.3, text: "449 MB", after: true },
     ]}
   />
 </Fig>
 
-Parquet on its own is already about 5× smaller than the JSONL, and Zstandard takes it down another 3×. Zstandard on the JSONL by itself does pretty well too, but Parquet with it is still about half the size, and you can actually query it.
-
-<Fig title="How much Zstandard shrank each column">
-  <Cmp
-    cols={["7rem", "3rem"]}
-    rows={[
-      { label: "id", value: 7.7, text: "7.7×" },
-      { label: "currency", value: 5.8, text: "5.8×" },
-      { label: "account_id", value: 3.9, text: "3.9×" },
-      { label: "flagged", value: 3.4, text: "3.4×" },
-      { label: "amount", value: 3.1, text: "3.1×" },
-      { label: "note", value: 2.5, text: "2.5×" },
-      { label: "external_ref", value: 2.5, text: "2.5×" },
-      { label: "created_at", value: 2.1, text: "2.1×" },
-      { label: "active", value: 1.3, text: "1.3×" },
-      { label: "region", value: 1.3, text: "1.3×" },
-      { label: "channel", value: 1.2, text: "1.2×" },
-      { label: "status", value: 1.2, text: "1.2×" },
-    ]}
-  />
-</Fig>
-
-The ids just count up and nearly everything is GBP, so there's loads for it to find, but status, channel and region are random picks in this data so there's not much. All together that's about 18× on the made-up data, and on our real file it's what takes 4.5GB down to 221MB.
+Parquet on its own is about 4× smaller than the JSONL, and Zstandard halves it again. That's 9× on the fake file, against 20× on our real one, so my guess at the fields is clearly off somewhere. Zstandard on the JSONL by itself does pretty well too, but Parquet with it is still smaller, and you can actually query it.
 
 ## Any downsides?
 

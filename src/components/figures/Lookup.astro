@@ -7,8 +7,11 @@
 interface Props {
   name: string;
   values: string[];
+  // The sizes before and after, when the values are a few rows of a bigger
+  // column; otherwise the bytes of these values.
+  sizes?: [string, string];
 }
-const { name, values } = Astro.props;
+const { name, values, sizes } = Astro.props;
 const distinct = [...new Set(values)];
 const bits = Math.max(1, Math.ceil(Math.log2(distinct.length)));
 const before = values.join("").length;
@@ -17,7 +20,7 @@ const after = distinct.join("").length + Math.ceil((values.length * bits) / 8);
 
 <div class="lookup">
   <div class="lookup__col">
-    <p class="fig__k">{name} · {before} bytes</p>
+    <p class="fig__k">{name} · {sizes?.[0] ?? `${before} bytes`}</p>
     {values.map((v) => (
       <div class="lookup__row" data-e={distinct.indexOf(v)}>
         <span>{v}</span>
@@ -27,7 +30,9 @@ const after = distinct.join("").length + Math.ceil((values.length * bits) / 8);
     ))}
   </div>
   <div class="lookup__dict">
-    <p class="fig__k">dictionary + {bits}-bit numbers · {after} bytes</p>
+    <p class="fig__k">
+      dictionary + numbers · {sizes?.[1] ?? `${after} bytes`}
+    </p>
     {distinct.map((v, i) => (
       <div class="lookup__row" data-e={i}>
         <b class={`e${i}`}>{i}</b>

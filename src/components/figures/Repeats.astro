@@ -8,7 +8,7 @@ interface Props {
   values: string[];
 }
 const { values } = Astro.props;
-const s = values.join(" ");
+const s = values.map((v) => `${v} `).join("");
 
 type Piece = { lit: string } | { len: number; back: number };
 // Greedy: at each byte take the longest earlier match (it may overlap the

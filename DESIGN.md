@@ -384,7 +384,7 @@ homepage terminal window's ambient lift, nothing else.
   waterfall, `ref` a dashed reference line, `cols` the column widths), `<Dots>` (a
   dot plot on one axis, in titled groups), `<Stack>` (one bar split into shares,
   with a legend), `<Split>` + `<Panel title>` (panels side by side),
-  `<Morph>` (JSONL text rearranging into columns and back, built on `Frames`, text that moves between stages; on a loop while seen, hover pauses it, a tab stops it), `<Lookup>` (dictionary encoding: values pointing at numbers and the dictionary they look up, each entry's number in its own neutral style on both sides), `<Repeats>` (how Zstandard finds repeats on one column: before with the repeated stretch marked, after with it as one "repeat" chip), `<Packed>` (the finished Parquet file for a few records: a line per column chunk with what it stores and its bytes, then bars for JSONL, plain columns and encoded), `<Boxes>` (a row of
+  `<Morph>` (JSONL text rearranging into columns and back, built on `Frames`, text that moves between stages; on a loop while seen, hover pauses it, a tab stops it), `<Lookup>` (dictionary encoding: values pointing at numbers and the dictionary they look up, each entry's number in its own neutral style on both sides), `<Repeats>` (how Zstandard finds repeats on one column: before with the repeated stretch marked, after with it as one "repeat" chip), `<Boxes>` (a row of
   jobs or steps), `<Runs>` (blocks on a shared time axis: how long each run takes
   and how many fit), `<Splits>` (bars cut into parts with a key above; a part with
   no text is a sliver whose time goes after the bar; `est` rows are estimates,

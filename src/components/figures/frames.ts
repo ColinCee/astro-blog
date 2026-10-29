@@ -15,5 +15,5 @@ export interface Cell {
 }
 export interface Tab {
   label: string;
-  bytes: number;
+  size: string;
 }
