@@ -1,6 +1,6 @@
 /* Diagram (.diag): an inline SVG of boxes joined by arrows. Drawn at its
-   viewBox width in px (--vw) and never scaled up to the column, so its text
-   stays at the two figure sizes. */
+   viewBox width in px (--vw); when a phone squeezes it, --k (set in Post.astro)
+   keeps its text at the two figure sizes. */
 .prose .diag svg {
   display: block;
   width: calc(var(--vw) * 0.0625rem);
@@ -20,11 +20,11 @@
 }
 .prose .diag text {
   font-family: var(--mono);
-  font-size: 12.8px;
+  font-size: calc(12.8px * max(1, var(--k, 1)));
   fill: var(--ink);
 }
 .prose .diag text.sub {
-  font-size: 11px;
+  font-size: calc(11px * max(1, var(--k, 1)));
   fill: var(--faint);
 }
 .prose .diag text.hi {
