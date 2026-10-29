@@ -22,8 +22,10 @@ const { rows, ref, cols } = Astro.props;
 const max =
   Astro.props.max ?? Math.max(...rows.flatMap((r) => [r.value, r.from ?? 0]));
 const frac = (v: number) => (v / max).toFixed(3);
+// A variable, not grid-template-columns itself, so the phone layout in
+// cmp.css still wins on a narrow screen.
 const grid = cols
-  ? `grid-template-columns:${cols[0]} minmax(0,1fr) ${cols[1]}`
+  ? `--cmp-cols:${cols[0]} minmax(0,1fr) ${cols[1]}`
   : undefined;
 const bar = (r: Row) =>
   r.from === undefined

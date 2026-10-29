@@ -2,7 +2,7 @@
 /* Before/after bars, drawn to scale: --w is the value as a fraction of the larger. */
 .prose .cmp {
   display: grid;
-  grid-template-columns: 10.5rem minmax(0, 1fr) 4.2rem;
+  grid-template-columns: var(--cmp-cols, 10.5rem minmax(0, 1fr) 4.2rem);
   align-items: center;
   gap: 0.3rem 0.8rem;
 }
