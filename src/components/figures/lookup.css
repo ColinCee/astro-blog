@@ -16,10 +16,17 @@
   align-content: start;
   gap: 0.25rem;
 }
+.prose .lookup__dict {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
 .prose .lookup__row {
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  border-radius: 4px;
+  transition: background var(--dur-fast, 0.2s) ease;
 }
 .prose .lookup__row span {
   min-width: 5ch;
@@ -36,12 +43,27 @@
   width: 1.6rem;
   height: 1.6rem;
   border-radius: 4px;
-  background: color-mix(in oklch, var(--accent) 14%, transparent);
-  color: var(--accent-soft);
+  color: var(--ink);
   font-weight: 600;
 }
-.prose .lookup__dict {
-  padding: 0.6rem 0.8rem;
-  border: 1px solid var(--line);
-  border-radius: 6px;
+/* One neutral style per dictionary entry, the same on both sides. */
+.prose .lookup .e0 {
+  background: var(--bar);
+}
+.prose .lookup .e1 {
+  box-shadow: inset 0 0 0 1.5px var(--muted);
+}
+.prose .lookup .e2 {
+  background: color-mix(in oklch, var(--bar) 45%, transparent);
+}
+.prose .lookup .e3 {
+  box-shadow: inset 0 0 0 1.5px var(--muted);
+  background: color-mix(in oklch, var(--bar) 45%, transparent);
+}
+/* Hover a row to light up every row with the same number, and its entry. */
+.prose .lookup:has([data-e="0"]:hover) [data-e="0"],
+.prose .lookup:has([data-e="1"]:hover) [data-e="1"],
+.prose .lookup:has([data-e="2"]:hover) [data-e="2"],
+.prose .lookup:has([data-e="3"]:hover) [data-e="3"] {
+  background: color-mix(in oklch, var(--accent) 12%, transparent);
 }

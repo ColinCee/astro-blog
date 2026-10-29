@@ -1,7 +1,9 @@
 ---
 // Dictionary encoding as a still: the column's values on the left, each
 // pointing at its number, and the dictionary those numbers look up, with the
-// bytes before and after. Styles: lookup.css.
+// bytes before and after. Each entry's number has its own neutral style (.e0,
+// .e1, …) on both sides, so a row's number matches its entry; hovering one
+// lights up the rest. Styles: lookup.css.
 interface Props {
   name: string;
   values: string[];
@@ -17,18 +19,18 @@ const after = distinct.join("").length + Math.ceil((values.length * bits) / 8);
   <div class="lookup__col">
     <p class="fig__k">{name} · {before} bytes</p>
     {values.map((v) => (
-      <div class="lookup__row">
+      <div class="lookup__row" data-e={distinct.indexOf(v)}>
         <span>{v}</span>
         <i>→</i>
-        <b>{distinct.indexOf(v)}</b>
+        <b class={`e${distinct.indexOf(v)}`}>{distinct.indexOf(v)}</b>
       </div>
     ))}
   </div>
   <div class="lookup__dict">
     <p class="fig__k">dictionary + {bits}-bit numbers · {after} bytes</p>
     {distinct.map((v, i) => (
-      <div class="lookup__row">
-        <b>{i}</b>
+      <div class="lookup__row" data-e={i}>
+        <b class={`e${i}`}>{i}</b>
         <span>{v}</span>
       </div>
     ))}
