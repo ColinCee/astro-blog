@@ -56,3 +56,11 @@
     transition: none;
   }
 }
+/* A figure in the panel spans the panel's full width. */
+.prose details.more > figure.fig {
+  margin-left: 0;
+  margin-right: 0;
+  border-left: 0;
+  border-right: 0;
+  border-radius: 0;
+}
