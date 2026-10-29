@@ -17,7 +17,7 @@ So I tried converting one to Parquet:
   />
 </Fig>
 
-It's the same records, and the download went from ten minutes to about 30 seconds. I wanted to know where all that space actually went, but I can't share our data, so I made a fake export the same shape with [a DuckDB script](/blog/jsonl-to-parquet-compression/make-data.sql): 1.5 million records and 106 fields. I had to guess what the fields look like, so it's not exact. The first line starts like this:
+It's the same records, and the download went from ten minutes to about 30 seconds. I wanted to know where all that space actually went, but I can't share our data, so I made a fake export the same shape with [a DuckDB script](/blog/jsonl-to-parquet-compression/make-data.sql): 1.5 million records and 106 fields. The first line starts like this:
 
 ```json
 {"id":0,"uuid_ref_1":"bf48c54f-7117-2ebc-cb28-919e5a62668d","uuid_ref_2":"93c74525-2f0a-c090-4542-9febfd0eafa8","uuid_ref_3":"fdfee444-b56b-b291-e6b1-69dad989e61e","uuid_ref_4":"24e40cc5-d528-1ee6-cf8f-f6b5a484f845","uuid_ref_5":"c40a7e52-9e5e-922c-f13a-6298ab15c787","timestamp_01":"2025-01-01 00:00:07","timestamp_02":"2025-01-17 14:00:19",…
@@ -116,7 +116,7 @@ The id counting up and the currency being nearly always GBP give it loads to fin
   />
 </Fig>
 
-Parquet on its own is about 4× smaller than the JSONL, and Zstandard halves it again. That's 9× on the fake file, against 20× on our real one, so my guess at the fields is clearly off somewhere. Zstandard on the JSONL by itself does pretty well too, but Parquet with it is still smaller, and you can actually query it.
+Parquet on its own is about 4× smaller than the JSONL, and Zstandard halves it again. That's 9× on the fake file, against 20× on our real one. Zstandard on the JSONL by itself does pretty well too, but Parquet with it is still smaller, and you can actually query it.
 
 ## Any downsides?
 
