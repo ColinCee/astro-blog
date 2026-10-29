@@ -57,7 +57,9 @@ Show, don't ask: build the change or two or three distinct variations, put them 
   - Changes in green (real gain), red (real drop) or grey (could be luck), with a key on the chart.
   - Numbers aligned in their own columns, and even row spacing.
   - Text sizes as in `DESIGN.md`, nothing under 11px.
-- **No text jammed under a chart.** Labels go on the marks, and explanation goes in one sentence of prose before or after.
+- **No text jammed under a chart.** Labels go on the marks, and explanation goes in one sentence of prose before or after. If the chart already shows it, that sentence goes too: he cut the Jest vs Vitest post by half just by deleting prose that restated its figures.
+- **Deep detail goes in a collapsed panel**, linked from the one sentence that needs it (`[how X works](#internals)` to a `<details class="more" id="internals">`, which the post layout opens on the jump), not explained inline.
+- **In MDX an inline SVG sits on one line**, or the parser breaks it.
 - **Every mark is explained somewhere.** That covers a range bracket, a dashed reference line and a Δ. Do it once, in the key or the first chart's caption.
 - **Interaction is a bonus, never required.** Hover can fade the other rows, but nothing should force a click to understand.
 - **Check every figure at phone width and in both themes**, with nothing overflowing its box.
@@ -75,4 +77,4 @@ Show, don't ask: build the change or two or three distinct variations, put them 
    - `pnpm check` passes.
    - An independent review is done.
 3. Merge, watch the deploy, then load the live page.
-4. For LinkedIn, make a 4:5 card in the blog's look (gameplay or the one key chart, the headline number pair, one tagline). Add a short post in his voice: what he wanted to find out, the result, one interesting aside, then the link.
+4. For LinkedIn, make a 4:5 card in the blog's look (gameplay or the one key chart, the headline number pair, one tagline). Add a short post in his voice: what he wanted to find out, the result, one interesting aside, then the link. Keep it to about five one-line paragraphs: the numbers are on the card, so the text gives the verdict in words ("It's kinda mid") and doesn't repeat them.

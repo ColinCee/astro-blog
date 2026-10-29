@@ -1,0 +1,46 @@
+/* Diagram (.diag): an inline SVG of boxes joined by arrows. Drawn at its
+   viewBox width in px (--vw) and never scaled up to the column, so its text
+   stays at the two figure sizes. */
+.prose .diag svg {
+  display: block;
+  width: calc(var(--vw) * 0.0625rem);
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  overflow: visible;
+}
+.prose .diag rect {
+  fill: var(--bg);
+  stroke: var(--line);
+  stroke-width: 1.2;
+}
+.prose .diag .hi rect {
+  stroke: var(--accent);
+  stroke-width: 1.6;
+}
+.prose .diag text {
+  font-family: var(--mono);
+  font-size: 12.8px;
+  fill: var(--ink);
+}
+.prose .diag text.sub {
+  font-size: 11px;
+  fill: var(--faint);
+}
+.prose .diag text.hi {
+  fill: var(--accent-soft);
+}
+.prose .diag .arr {
+  fill: none;
+  stroke: var(--faint);
+  stroke-width: 1.2;
+}
+.prose .diag .head {
+  fill: var(--faint);
+}
+/* A diagram that fills its figure, scaling up on wide screens (capped so its
+   text doesn't balloon). Its viewBox is phone width, so on a phone it's 1:1. */
+.prose .diag--fill svg {
+  width: 100%;
+  max-width: 22rem;
+}

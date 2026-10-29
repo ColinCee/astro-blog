@@ -10,6 +10,18 @@ interface Props {
 const { idx, name, area, active = false } = Astro.props;
 ---
 
+<!-- Holds the scroll-in entrances from the first paint, before the module script
+     below runs; otherwise a short delay (the writing lines' 0.1s) can start
+     playing first and get paused part-way in. Same conditions as that script. -->
+<script is:inline>
+  if (
+    matchMedia("(max-width: 900px)").matches &&
+    !matchMedia("(prefers-reduced-motion: reduce)").matches &&
+    "IntersectionObserver" in window
+  )
+    document.documentElement.classList.add("hold-in");
+</script>
+
 <article
   class:list={["pane", `pane--${area}`, { "is-active": active }]}
   data-scroll-in
@@ -128,12 +140,15 @@ const { idx, name, area, active = false } = Astro.props;
       }
     });
   }
+  document.documentElement.classList.remove("hold-in");
 </script>
 
 <style is:global>
   /* A held animation sits on its first frame (fill: both) until released. */
   .is-held,
-  .is-held * {
+  .is-held *,
+  .hold-in [data-scroll-in],
+  .hold-in [data-scroll-in] * {
     animation-play-state: paused !important;
   }
   /* Printed, nothing waits for a scroll. */
