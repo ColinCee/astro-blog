@@ -1,0 +1,56 @@
+---
+// The order values are written to disk: a small table, then the same values
+// as one strip in row order (JSONL, every value carrying its field name) and
+// one in column order (Parquet, each name once). Each field has its own shade
+// so the interleaving shows. Styles: disk.css.
+type Value = string | number | boolean;
+interface Props {
+  records: Record<string, Value>[];
+}
+const { records } = Astro.props;
+const keys = Object.keys(records[0]);
+const text = (v: Value) =>
+  typeof v === "boolean" ? String(v).toUpperCase() : String(v);
+const rowOrder = records.flatMap((r) =>
+  keys.map((k, f) => ({ f, key: k, v: text(r[k]) })),
+);
+---
+
+<div class="disk">
+  <table class="disk__table">
+    <thead>
+      <tr>
+        {keys.map((k, f) => <th class={`f${f}`}>{k}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {records.map((r) => (
+        <tr>
+          {keys.map((k, f) => (
+            <td class={`f${f}`}>{text(r[k])}</td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <p class="fig__k">JSONL writes it a row at a time</p>
+  <div class="disk__strip">
+    {rowOrder.map((c) => (
+      <span class={`f${c.f}`}>
+        <small>{c.key}</small>
+        {c.v}
+      </span>
+    ))}
+  </div>
+  <p class="fig__k">Parquet writes it a column at a time</p>
+  <div class="disk__strip disk__strip--cols">
+    {keys.map((k, f) => (
+      <span class="disk__group">
+        <b class={`f${f}`}>{k}</b>
+        {records.map((r) => (
+          <span class={`f${f}`}>{text(r[k])}</span>
+        ))}
+      </span>
+    ))}
+  </div>
+</div>

@@ -1,0 +1,88 @@
+/* JSONL text rearranging into columns (Morph): each character has a rows
+   position (--x, --y) and a columns position (--cx, --cy), in characters and
+   lines; .is-cols moves it. */
+.prose .morph {
+  display: grid;
+  gap: 0.6rem;
+}
+.prose .morph__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.prose .morph__head .fig__k {
+  margin: 0;
+}
+.prose .morph__btn {
+  min-height: 2.75rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  cursor: pointer;
+}
+.prose .morph .morph__cols,
+.prose .morph.is-cols .morph__rows {
+  display: none;
+}
+.prose .morph.is-cols .morph__cols {
+  display: inline;
+}
+.prose .morph__box {
+  --lh: 1.6em;
+  position: relative;
+  height: calc(var(--h) * var(--lh));
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  transition: height 0.9s var(--ease-out, ease);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.prose .morph__box span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1ch;
+  line-height: var(--lh);
+  text-align: center;
+  transform: translate(calc(var(--x) * 1ch), calc(var(--y) * var(--lh)));
+  transition:
+    transform 0.9s var(--ease-out, ease) calc(var(--y) * 40ms),
+    opacity 0.5s ease,
+    color 0.5s ease;
+}
+.prose .morph .k {
+  color: var(--faint);
+  background: color-mix(in oklch, var(--bar) 55%, transparent);
+}
+.prose .morph .s {
+  color: color-mix(in oklch, var(--faint) 60%, transparent);
+}
+.prose .morph .v {
+  color: var(--ink);
+  font-weight: 600;
+}
+.prose .morph.is-cols .morph__box {
+  height: calc(var(--hc) * var(--lh));
+}
+.prose .morph.is-cols .morph__box span {
+  transform: translate(calc(var(--cx) * 1ch), calc(var(--cy) * var(--lh)));
+}
+.prose .morph.is-cols .morph__box span:not(.keep) {
+  opacity: 0;
+}
+.prose .morph.is-cols .k.keep {
+  color: var(--accent-soft);
+  background: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .prose .morph__box span {
+    transition: none;
+  }
+}

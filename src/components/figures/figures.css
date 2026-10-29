@@ -8,6 +8,9 @@
 @import "./stack.css";
 @import "./bytes.css";
 @import "./encode.css";
+@import "./btext.css";
+@import "./morph.css";
+@import "./disk.css";
 @import "./split.css";
 @import "./decide.css";
 @import "./json.css";

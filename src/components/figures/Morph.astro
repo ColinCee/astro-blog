@@ -1,0 +1,106 @@
+---
+// JSONL text that rearranges itself into columns: every character is placed
+// twice at build time, once where it sits in the JSON lines and once where it
+// goes in the column layout. The first record's field names become the column
+// headers, every other name and all the syntax fade out, and the values slide
+// into their column. It plays once when seen, and the button flips it back and
+// forth (the only way under reduced motion). Styles: morph.css.
+type Value = string | number | boolean;
+interface Props {
+  records: Record<string, Value>[];
+}
+const { records } = Astro.props;
+const keys = Object.keys(records[0]);
+const text = (v: Value) =>
+  typeof v === "boolean" ? String(v).toUpperCase() : String(v);
+
+// Column layout: a line per field, the name padded to the longest, then each
+// value padded to that field's longest value.
+const keyW = Math.max(...keys.map((k) => k.length)) + 1;
+const valW = keys.map((k) =>
+  Math.max(...records.map((r) => text(r[k]).length)),
+);
+
+interface Cell {
+  ch: string;
+  x: number;
+  y: number;
+  cx: number;
+  cy: number;
+  kind: "k" | "s" | "v";
+  keep: boolean;
+}
+const cells: Cell[] = [];
+records.forEach((r, row) => {
+  let x = 0;
+  const put = (
+    s: string,
+    kind: Cell["kind"],
+    to?: (i: number) => [number, number],
+  ) => {
+    for (const [i, ch] of [...s].entries()) {
+      const [cx, cy] = to ? to(i) : [x, row];
+      cells.push({ ch, x, y: row, cx, cy, kind, keep: !!to });
+      x++;
+    }
+  };
+  put("{", "s");
+  keys.forEach((k, f) => {
+    const v = text(r[k]);
+    const q = typeof r[k] === "number" ? "" : '"';
+    put('"', "s");
+    put(k, "k", row === 0 ? (i) => [i, f] : undefined);
+    put(`":${q}`, "s");
+    const at = keyW + row * (valW[f] + 1);
+    put(v, "v", (i) => [at + i, f]);
+    put(q + (f < keys.length - 1 ? "," : ""), "s");
+  });
+  put("}", "s");
+});
+---
+
+<div class="morph" style={`--h:${records.length};--hc:${keys.length}`}>
+  <div class="morph__head">
+    <p class="fig__k">
+      <span class="morph__rows">JSONL: one record per line</span>
+      <span class="morph__cols">Parquet: one column per line</span>
+    </p>
+    <button type="button" class="morph__btn" aria-pressed="false">
+      <span class="morph__rows">store by column →</span>
+      <span class="morph__cols">← back to rows</span>
+    </button>
+  </div>
+  <div class="morph__box" aria-hidden="true">
+    {cells.map((c) => (
+      <span
+        class:list={[c.kind, { keep: c.keep }]}
+        style={`--x:${c.x};--y:${c.y};--cx:${c.cx};--cy:${c.cy}`}
+      >
+        {c.ch}
+      </span>
+    ))}
+  </div>
+</div>
+
+<script>
+  for (const fig of document.querySelectorAll<HTMLElement>(".morph")) {
+    const btn = fig.querySelector<HTMLButtonElement>(".morph__btn");
+    const set = (on: boolean) => {
+      fig.classList.toggle("is-cols", on);
+      btn?.setAttribute("aria-pressed", String(on));
+    };
+    btn?.addEventListener("click", () =>
+      set(!fig.classList.contains("is-cols")),
+    );
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) continue;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        setTimeout(() => set(true), 900);
+      },
+      { threshold: 0.8 },
+    );
+    io.observe(fig);
+  }
+</script>

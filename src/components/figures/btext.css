@@ -1,0 +1,64 @@
+/* Records as text, one character a byte (BytesText). */
+.prose .btext {
+  display: grid;
+  gap: 0.6rem;
+}
+.prose .btext .fig__k {
+  margin: 0.4rem 0 0;
+}
+.prose .btext__code {
+  display: grid;
+  gap: 0.15rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+.prose .btext__code span {
+  white-space: pre;
+}
+.prose .btext .k {
+  color: var(--faint);
+  background: color-mix(in oklch, var(--bar) 55%, transparent);
+}
+.prose .btext .s {
+  color: color-mix(in oklch, var(--faint) 60%, transparent);
+}
+.prose .btext .v {
+  color: var(--ink);
+  font-weight: 600;
+}
+.prose .btext .z {
+  color: color-mix(in oklch, var(--faint) 60%, transparent);
+}
+.prose .btext .b {
+  color: var(--accent);
+}
+.prose .btext__key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+}
+.prose .btext__key li {
+  margin: 0;
+  padding: 0 0.2rem;
+}
+.prose .btext__col {
+  display: grid;
+  gap: 0.05rem;
+  margin-bottom: 0.4rem;
+}
+.prose .btext__col small {
+  font-size: 0.6875rem;
+  color: var(--faint);
+  white-space: normal;
+}
+.prose .btext__col b {
+  color: var(--ink);
+  font-weight: 500;
+}

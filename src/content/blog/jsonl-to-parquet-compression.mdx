@@ -43,6 +43,52 @@ But stripping all that only gets you to about 1.5GB, which is 3× smaller. Parqu
 
 JSONL writes a whole record, then the next record. Parquet takes all the values for one field and writes them next to each other, then does the next field. Here's a made-up example with 8 records, where each square is one byte:
 
+**Option A: text, one character a byte**
+
+<Fig caption="Parquet's own headers are left out because they only matter for tiny files like this one.">
+  <BytesText
+    records={[
+      { id: 1, status: "OPEN", active: true },
+      { id: 2, status: "OPEN", active: true },
+      { id: 3, status: "OPEN", active: true },
+      { id: 4, status: "OPEN", active: true },
+      { id: 5, status: "DONE", active: false },
+      { id: 6, status: "DONE", active: false },
+      { id: 7, status: "DONE", active: false },
+      { id: 8, status: "OPEN", active: true },
+    ]}
+  />
+</Fig>
+
+**Option B: the text rearranging itself**
+
+<Fig>
+  <Morph
+    records={[
+      { id: 1, status: "OPEN", active: true },
+      { id: 2, status: "OPEN", active: true },
+      { id: 3, status: "OPEN", active: true },
+      { id: 4, status: "OPEN", active: true },
+      { id: 5, status: "DONE", active: false },
+    ]}
+  />
+</Fig>
+
+**Option C: the order it hits the disk**
+
+<Fig>
+  <DiskOrder
+    records={[
+      { id: 1, status: "OPEN", active: true },
+      { id: 2, status: "OPEN", active: true },
+      { id: 3, status: "DONE", active: false },
+      { id: 4, status: "OPEN", active: true },
+    ]}
+  />
+</Fig>
+
+**Current: one square a byte**
+
 <Fig caption="Parquet's own headers are left out because they only matter for tiny files like this one.">
   <Bytes
     records={[
