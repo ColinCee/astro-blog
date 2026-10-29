@@ -1,5 +1,3 @@
-// @ts-check
-
 import { execSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import mdx from "@astrojs/mdx";
@@ -34,10 +32,10 @@ const blog = "./src/content/blog";
 const lastmod = Object.fromEntries(
   readdirSync(blog)
     .filter((f) => /\.mdx?$/.test(f))
-    .map((f) => {
+    .map((f): [string, Date | undefined] => {
       const front = readFileSync(`${blog}/${f}`, "utf8").split("---")[1] ?? "";
       // A frontmatter line such as `pubDate: "Oct 20 2026"`.
-      const date = (/** @type {string} */ key) =>
+      const date = (key: string) =>
         front
           .split("\n")
           .find((line) => line.startsWith(`${key}:`))
@@ -46,9 +44,15 @@ const lastmod = Object.fromEntries(
           .replace(/^"|"$/g, "");
       const when = date("updatedDate") ?? date("pubDate");
       const slug = f.replace(/\.mdx?$/, "");
-      return [`https://colincheung.dev/blog/${slug}/`, when && new Date(when)];
+      return [
+        `https://colincheung.dev/blog/${slug}/`,
+        when ? new Date(when) : undefined,
+      ];
     })
-    .filter(([, when]) => when && !Number.isNaN(when.valueOf())),
+    .filter(
+      (entry): entry is [string, Date] =>
+        entry[1] !== undefined && !Number.isNaN(entry[1].valueOf()),
+    ),
 );
 
 export default defineConfig({

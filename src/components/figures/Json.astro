@@ -1,0 +1,90 @@
+---
+// A JSON request or response, drawn like a code block, with long strings
+// folded: a string longer than `fold` characters shows only what fits on one
+// line, cut with an ellipsis, and opens in full on a click (a <details>, so no
+// script). Styles: json.css.
+interface Props {
+  value: unknown;
+  fold?: number;
+}
+const { value, fold = 20 } = Astro.props;
+
+interface Line {
+  depth: number;
+  key?: string;
+  text?: string;
+  str?: string;
+  num?: string;
+  comma: string;
+}
+function lines(
+  v: unknown,
+  depth: number,
+  key: string | undefined,
+  comma: string,
+): Line[] {
+  if (v && typeof v === "object") {
+    const entries = Object.entries(v as Record<string, unknown>);
+    return [
+      { depth, key, text: "{", comma: "" },
+      ...entries.flatMap(([k, c], i) =>
+        lines(c, depth + 1, k, i < entries.length - 1 ? "," : ""),
+      ),
+      { depth, text: "}", comma },
+    ];
+  }
+  if (typeof v === "string") return [{ depth, key, str: v, comma }];
+  return [{ depth, key, num: String(v), comma }];
+}
+const all = lines(value, 0, undefined, "");
+---
+
+<div class="json">
+  {all.map((l) => (
+    <div class="json__l" style={`--d:${l.depth}`}>
+      {l.key !== undefined && (
+        <span class="json__kc">
+          <span class="json__k">{`"${l.key}"`}</span>
+          <span class="json__p">{": "}</span>
+        </span>
+      )}
+      {l.num !== undefined ? (
+        <span>
+          <span class="json__n">{l.num}</span>
+          <span class="json__p">{l.comma}</span>
+        </span>
+      ) : l.str === undefined ? (
+        <span class="json__p">{`${l.text}${l.comma}`}</span>
+      ) : l.str.length > fold ? (
+        <details class="json__fold">
+          <summary class="json__s">{`"${l.str}"${l.comma}`}</summary>
+        </details>
+      ) : (
+        <span>
+          <span class="json__s">{`"${l.str}"`}</span>
+          <span class="json__p">{l.comma}</span>
+        </span>
+      )}
+    </div>
+  ))}
+</div>
+
+<script>
+  // A folded line that fits on screen hides nothing: drop its underline and
+  // stop it toggling. Rechecked when the width changes (a phone cuts more).
+  const folds = document.querySelectorAll<HTMLDetailsElement>(".json__fold");
+  const check = () => {
+    for (const d of folds) {
+      if (d.open) continue;
+      const s = d.querySelector("summary");
+      if (s) d.dataset.fits = String(s.scrollWidth <= s.clientWidth);
+    }
+  };
+  for (const d of folds) {
+    d.querySelector("summary")?.addEventListener("click", (e) => {
+      if (d.dataset.fits === "true") e.preventDefault();
+    });
+  }
+  check();
+  new ResizeObserver(check).observe(document.body);
+</script>

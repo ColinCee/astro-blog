@@ -1,0 +1,68 @@
+---
+// Name, role line, lede and contact.
+import { contact, lede, name, role } from "../../data/cv";
+---
+
+<header class="cv__head">
+  <h1 class="cv__name">{name}</h1>
+  <p class="cv__role">{role}</p>
+  <p class="cv__lede">{lede}</p>
+  <nav class="cv__contact" aria-label="Contact">
+    {contact.map((c) => <a href={c.href}>{c.label}</a>)}
+  </nav>
+</header>
+
+<style>
+  /* ---------------- masthead ---------------- */
+  .cv__head {
+    margin-bottom: 1.6rem;
+  }
+  .cv__name {
+    margin: 0;
+    font-family: var(--grotesk);
+    font-weight: 800;
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cv__role {
+    margin: 0.8rem 0 0;
+    font-family: var(--mono);
+    font-size: clamp(0.78rem, 1.4vw, 0.86rem);
+    letter-spacing: 0.03em;
+    color: var(--muted);
+  }
+  .cv__lede {
+    margin: 1rem 0 0;
+    max-width: 86ch;
+    font-family: var(--grotesk);
+    font-weight: 450;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .cv__contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    margin: 1rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.01em;
+  }
+  .cv__contact a {
+    padding-bottom: 2px;
+    color: var(--muted);
+    border-bottom: 1px solid transparent;
+    transition:
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
+  }
+  .cv__contact a:hover {
+    color: var(--ink);
+    border-color: var(--accent);
+  }
+</style>

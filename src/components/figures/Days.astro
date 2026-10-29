@@ -1,0 +1,36 @@
+---
+// Time as a grid of days, one square each: `then` days in all, the first
+// `now` of them lit in the accent (the last one part-filled), so a big
+// speed-up reads at a glance. Labels name each total. Styles: days.css.
+interface Props {
+  then: number;
+  now: number;
+  thenLabel: string;
+  nowLabel: string;
+}
+const { then, now, thenLabel, nowLabel } = Astro.props;
+const total = Math.round(then);
+const part = (i: number) => Math.max(0, Math.min(1, now - i));
+---
+
+<div class="days">
+  <p class="days__key">
+    <span class="days__k days__k--now">{nowLabel}</span>
+    <span class="days__k">{thenLabel}</span>
+  </p>
+  <div
+    class="days__grid"
+    role="img"
+    aria-label={`${nowLabel}, against ${thenLabel}`}
+  >
+    {Array.from({ length: total }, (_, i) => (
+      <i
+        class:list={{ days__on: part(i) > 0 }}
+        style={
+          part(i) > 0 && part(i) < 1 ? `--p:${part(i).toFixed(2)}` : undefined
+        }
+      />
+    ))}
+  </div>
+  <p class="days__note">one square = one day</p>
+</div>

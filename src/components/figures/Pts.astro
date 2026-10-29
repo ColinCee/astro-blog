@@ -1,0 +1,117 @@
+---
+// Win rate and average points, one row per setup: the bar is win rate (0-100%)
+// with the spread of runs as a whisker, then win rate and points with their
+// change from `prev` (what the row builds on): green when a significance test
+// calls it a real gain (`real`), red a real drop, faint when the test can't
+// tell it from luck. `base` stripes the baseline (my 2018 agent), `hi` marks
+// the option kept, in the accent. `ref` is the dashed line (holding shoot).
+// A key under the chart names that line and each change colour the chart
+// uses, with `note`'s number linking the post's footnote on the test. Hover or tap a row and the others fade.
+// Styles: pts.css.
+interface Row {
+  name: string;
+  tag?: string;
+  won: number;
+  lo: number;
+  hi: number;
+  points: number;
+  prev?: { won: number; points: number };
+  real?: { won: boolean; points: boolean };
+  kind?: "base" | "hi";
+}
+interface Props {
+  rows: Row[];
+  ref?: { at: number; label: string };
+  note?: { href: string; n: number };
+}
+const { rows, ref, note } = Astro.props;
+const f = (v: number) => (v / 100).toFixed(3);
+const pct = (w: number) =>
+  Math.abs(w - Math.round(w)) < 0.05 || w < 95
+    ? `${w.toFixed(0)}%`
+    : `${w.toFixed(1)}%`;
+const delta = (d: number, real = true) =>
+  Math.abs(d) < 1
+    ? { cls: "pts__same", text: "±0" }
+    : {
+        cls: !real ? "pts__same" : d > 0 ? "pts__plus" : "pts__minus",
+        text: d > 0 ? `+${d.toFixed(0)}` : `−${Math.abs(d).toFixed(0)}`,
+      };
+const ticks = [0, 25, 50, 75, 100];
+const changes = rows.flatMap((r) =>
+  r.prev
+    ? [
+        delta(r.won - r.prev.won, r.real?.won ?? true).cls,
+        delta(r.points - r.prev.points, r.real?.points ?? true).cls,
+      ]
+    : [],
+);
+const keys = [
+  { cls: "pts__plus", word: "green", text: "a real gain" },
+  { cls: "pts__minus", word: "red", text: "a real drop" },
+  { cls: "pts__same", word: "grey", text: "could be luck" },
+].filter((k) => changes.includes(k.cls));
+---
+
+<div class="pts" style={ref && `--r1:${f(ref.at)};`}>
+  <span class="pts__h"></span>
+  <span class="pts__h"></span>
+  <span class="pts__h pts__wh">win rate (Δ)</span>
+  <span class="pts__h pts__wh">avg points (Δ)</span>
+  {rows.map((r) => {
+    const dw = r.prev && delta(r.won - r.prev.won, r.real?.won ?? true);
+    const dp =
+      r.prev && delta(r.points - r.prev.points, r.real?.points ?? true);
+    return (
+      <div class:list={["pts__r", r.kind && `pts__r--${r.kind}`]}>
+        <span class="pts__k">
+          <b>{r.name}</b>
+          {r.tag && <small>{r.tag}</small>}
+        </span>
+        <span
+          class="pts__t"
+          style={`--a:${f(r.won)};--lo:${f(r.lo)};--hi:${f(r.hi)}`}
+        >
+          <i />
+          <s />
+        </span>
+        <em>
+          {pct(r.won)}
+          {dw && <small class={dw.cls}>{dw.text}</small>}
+        </em>
+        <em class="pts__w">
+          {r.points.toFixed(1)}
+          {dp && <small class={dp.cls}>{dp.text}</small>}
+        </em>
+      </div>
+    );
+  })}
+  <span class="pts__sp"></span>
+  <span class="pts__axis">
+    {ticks.map((t) => <span style={`--x:${t / 100}`}>{t}</span>)}
+  </span>
+  <span></span>
+  <span></span>
+  <span class="pts__sp"></span>
+  <span class="pts__h pts__xt">win rate (%)</span>
+  <p class="pts__key">
+    {ref && (
+      <span>
+        <i class="pts__dash"></i>
+        {ref.label}
+      </span>
+    )}
+    {keys.map((k, i) => (
+      <span>
+        <b class={k.cls}>{k.word} Δ</b>: {k.text}
+        {note && i === keys.length - 1 && (
+          <sup>
+            <a href={note.href} aria-label={`footnote ${note.n}: the test`}>
+              {note.n}
+            </a>
+          </sup>
+        )}
+      </span>
+    ))}
+  </p>
+</div>

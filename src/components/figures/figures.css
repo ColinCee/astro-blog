@@ -3,9 +3,15 @@
    written as HTML get them too. */
 @import "./fig.css";
 @import "./cmp.css";
+@import "./pts.css";
+@import "./recipe.css";
 @import "./stack.css";
 @import "./split.css";
+@import "./decide.css";
+@import "./json.css";
+@import "./tally.css";
 @import "./dot.css";
+@import "./days.css";
 @import "./clip.css";
 @import "./chart.css";
 @import "./ctl.css";

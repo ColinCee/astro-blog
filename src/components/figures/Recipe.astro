@@ -1,0 +1,59 @@
+---
+// The recipe so far, for a post built as numbered steps: a panel floating in
+// the margin beside the prose, one line per step. It shows from the "Step 1"
+// heading until the heading starting `until` (moved to <body>, as an ancestor's
+// transform would pin a fixed element to it); the steps passed read in ink,
+// the current one in the accent. Only where the margin fits it. Styles: recipe.css.
+interface Props {
+  steps: string[];
+  until?: string;
+}
+const { steps, until = "" } = Astro.props;
+---
+
+<aside class="recipe" aria-label="The recipe so far" data-until={until}>
+  <p class="recipe__k">recipe so far</p>
+  <ol>
+    {steps.map((s, i) => (
+      <li data-step={i + 1}>
+        <b>{i + 1}</b>
+        <span>{s}</span>
+      </li>
+    ))}
+  </ol>
+</aside>
+
+<script>
+  for (const bar of document.querySelectorAll<HTMLElement>(".recipe")) {
+    document.body.append(bar); // fixed position needs to escape the prose's transformed ancestors
+    const heads = [...document.querySelectorAll<HTMLElement>(".prose h2")];
+    const steps = heads
+      .map((h) => ({
+        h,
+        n: Number(/^Step (\d+)/.exec(h.textContent ?? "")?.[1]),
+      }))
+      .filter((s) => s.n);
+    const end = heads.find(
+      (h) => bar.dataset.until && h.textContent?.startsWith(bar.dataset.until),
+    );
+    const update = () => {
+      const line = innerHeight * 0.35;
+      const now = Math.max(
+        0,
+        ...steps
+          .filter((s) => s.h.getBoundingClientRect().top < line)
+          .map((s) => s.n),
+      );
+      for (const li of bar.querySelectorAll<HTMLElement>("li")) {
+        const n = Number(li.dataset.step);
+        li.classList.toggle("is-done", n < now);
+        li.classList.toggle("is-now", n === now);
+      }
+      const past = !!end && end.getBoundingClientRect().top < line;
+      bar.classList.toggle("is-on", now > 0 && !past);
+    };
+    addEventListener("scroll", update, { passive: true });
+    addEventListener("resize", update);
+    update();
+  }
+</script>

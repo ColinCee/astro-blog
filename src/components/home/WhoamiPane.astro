@@ -348,7 +348,7 @@ const lastLogin = `${days[at.getDay()]} ${months[at.getMonth()]} ${at.getDate()}
       outs.forEach((o) => o.classList.add("is-in"));
       rest?.classList.add("is-in");
     };
-    const failsafe = window.setTimeout(finish, 9000);
+    let failsafe = 0;
     let step = 0;
     const run = () => {
       if (step >= cmds.length) {
@@ -384,6 +384,27 @@ const lastLogin = `${days[at.getDay()]} ${months[at.getMonth()]} ${at.getDate()}
       };
       window.setTimeout(type, 220);
     };
-    run();
+    const start = () => {
+      failsafe = window.setTimeout(finish, 9000);
+      run();
+    };
+    // On a phone the terminal can start below the fold: boot when it scrolls
+    // in, at the same line where Pane releases the pane's entrance.
+    if (
+      matchMedia("(max-width: 900px)").matches &&
+      "IntersectionObserver" in window
+    ) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          io.disconnect();
+          start();
+        },
+        { rootMargin: "0px 0px -12% 0px" },
+      );
+      io.observe(session.closest(".pane") ?? session);
+    } else {
+      start();
+    }
   }
 </script>

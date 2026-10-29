@@ -1,0 +1,64 @@
+/* An LLM against a decision model as a timeline (Decide): a column per pass,
+   each pass a bar with its output centred on top of it. */
+.prose .decide {
+  display: grid;
+  grid-template-columns: 3.4rem repeat(var(--n), minmax(0, 1fr));
+  gap: 0.2rem 0.25rem;
+  align-items: end;
+  font-size: 0.78rem;
+}
+.prose .decide__k {
+  align-self: end;
+  font-size: 0.6875rem;
+  line-height: 0.55rem;
+  color: var(--faint);
+}
+/* A pass: its output on top, centred, then the bar. */
+.prose .decide__pass {
+  display: grid;
+  justify-items: center;
+  gap: 0.15rem;
+}
+.prose .decide__pass > i {
+  justify-self: stretch;
+  height: 0.55rem;
+  background: var(--bar);
+  border-radius: 2px;
+}
+.prose .decide__pass > i.decide__on {
+  background: var(--accent);
+}
+.prose .decide__pass > b {
+  font-weight: 600;
+  color: var(--ink);
+}
+/* Jev's output: a probability for every choice, stacked on its one bar and
+   centred over it even when wider than one pass (on a phone). */
+.prose .decide__pass:has(.decide__mini) {
+  position: relative;
+  padding-top: 3.4rem;
+}
+.prose .decide__mini {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  white-space: nowrap;
+  color: var(--muted);
+}
+.prose .decide__mini .decide__top {
+  font-weight: 600;
+}
+.prose .decide__mini .decide__top,
+.prose .decide__jev {
+  color: var(--accent-text);
+}
+.prose .decide__axis {
+  margin-top: 0.4rem;
+  padding-top: 0.3rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.6875rem;
+  color: var(--faint);
+}

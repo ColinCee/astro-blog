@@ -1,0 +1,154 @@
+---
+title: "Part 2: Beating my 2018 dissertation AI"
+stat: "73% → 99%"
+statLabel: "win rate, 2018 vs 2026"
+pubDate: "Oct 25 2026"
+---
+<Fig>
+  <div class="vids">
+    <Clip src="/blog/gvgai/aliens-2018-agent" label="My 2018 agent playing Aliens, winning with 57 points" rate={0.5}><b>My 2018 agent</b>: 73% wins<br />this game: won, 57 points</Clip>
+    <Clip src="/blog/gvgai/aliens-dqn-2026-best" label="The final 2026 agent playing the same game, winning with 85 points" rate={0.5} hi><b>Final 2026 agent</b>: 99% wins<br />this game: won, 85 points</Clip>
+  </div>
+</Fig>
+
+In [part 1](/blog/dissertation-revival-speed/) Claude got my 2018 code training 65× faster, so I wanted to see if today's methods could beat what I built as an undergrad.
+
+My dissertation says my agent won 82.6% of Aliens games, but that was one run, measured while it was still training.[^2018] Retrained and tested properly, it won 73% of 500 games, scoring 47 points a game on average. The final agent won 99% of games, scoring 83 points on average.
+
+## How did we beat it?
+
+<Fig title="One change at a time">
+  <Pts rows={[
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "1. Double DQN, 5M frames", "tag": "more practice", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
+    {"name": "2. + win + points ÷ 10", "tag": "a new reward", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": false}},
+    {"name": "3. + the IMPALA network", "tag": "a bigger network", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "real": {"won": false, "points": true}},
+    {"name": "4. + a move every 2 frames", "tag": "instead of every 4", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}, "kind": "hi"},
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
+</Fig>
+
+Each row adds one change, and I only kept it if a significance test[^test] over 5 runs said the gap was real, otherwise the simpler option stays.
+
+Each bar is the average win rate over 5 runs, and the thin bracket is their range. Δ is the change from the row it builds on, striped is my 2018 agent, and orange is the final agent. The dashed line is what you get by just holding the shoot button, more on that in step 1.
+
+<Recipe steps={["Double DQN, 5M frames", "win + points ÷ 10", "IMPALA", "a move every 2 frames"]} until="Conclusion" />
+
+## Step 1: which algorithm is best with more practice?
+
+Here's my agent, and the three algorithms I tried with 5 times its practice:
+
+- **My 2018 agent:** Double DQN plus [prioritised replay](https://arxiv.org/abs/1511.05952) (PER), which replays the moves it got most wrong more often.
+- **[Double DQN](https://arxiv.org/abs/1509.06461) (DDQN):** DeepMind's 2015 Atari method, [DQN](https://www.nature.com/articles/nature14236), with a fix for overestimating how good moves are.
+- **[Rainbow](https://arxiv.org/abs/1710.02298):** DQN plus 6 tricks, including my 2.
+- **[PPO](https://arxiv.org/abs/1707.06347):** learns which move to make directly, instead of scoring each one.
+
+<Fig title="Which algorithm, 5M frames?">
+  <Pts rows={[
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "Double DQN", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
+    {"name": "Rainbow", "tag": "DQN + 6 tricks", "won": 88.0, "lo": 83.0, "hi": 94.0, "points": 57.34, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
+    {"name": "PPO", "won": 69.4, "lo": 54.0, "hi": 84.0, "points": 45.24, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": false, "points": false}},
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
+</Fig>
+
+Double DQN and Rainbow beat my agent on both and tie with each other, so I kept the simpler, faster Double DQN. That's 17 minutes a run now, which would've been 2 or 3 days in 2018. I also tried putting prioritised replay back afterwards, and it didn't clearly help.[^per]
+
+### PPO actually wins more at 1M frames
+With the same 1M frames as my agent, PPO wins 82% of the time, which is about what my dissertation said my agent won. However, it turns out it was just spamming the shoot button, which is why every chart has a dashed line at 82%: anything below it is worse than holding one button.
+
+<Fig>
+  <div class="vids">
+    <Clip src="/blog/gvgai/aliens-hold-shoot" label="Holding the shoot button in Aliens, winning with 42 points" rate={0.5}><b>Holding shoot</b>: 82% wins<br />this game: won, 42 points</Clip>
+    <Clip src="/blog/gvgai/aliens-2018-agent" label="My 2018 agent playing the same game, winning with 57 points" rate={0.5} hi><b>My 2018 agent</b>: 73% wins<br />this game: won, 57 points</Clip>
+  </div>
+</Fig>
+
+## Step 2: which reward works best?
+
+So far it's just been the game's points,[^clip] which can mislead, since some GVGAI games are [built so the score tricks agents](https://arxiv.org/abs/1802.00048). I tried:
+
+- **Win only:** +1 for a win, −1 for a loss.
+- **Win + points ÷ 10:** the same, plus a bit for scoring.
+- **My 2018 reward:** points and win, plus −0.5 on every move of a lost game.
+
+<Fig title="Which reward?">
+  <Pts rows={[
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "points", "tag": "kept so far", "won": 89.0, "lo": 85.0, "hi": 92.0, "points": 56.32},
+    {"name": "win + points ÷ 10", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": false}, "kind": "hi"},
+    {"name": "win only", "won": 99.6, "lo": 99.0, "hi": 100.0, "points": 44.05, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
+    {"name": "my 2018 reward", "won": 95.8, "lo": 94.0, "hi": 98.0, "points": 48.99, "prev": {"won": 89.0, "points": 56.32}, "real": {"won": true, "points": true}},
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
+</Fig>
+
+Wins matter most, then points. Win + points ÷ 10 wins more than points alone. Win only and win + points ÷ 10 both win almost every game, a tie, so points decide it, 59 against 44.
+
+## Step 3: does a bigger network help?
+
+[IMPALA](https://arxiv.org/abs/1802.01561) is a bigger network from 2018 for turning the screen into a score for each move.
+
+<Fig title="Bigger network?">
+  <Pts rows={[
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "Standard", "tag": "kept so far, the 2015 one", "won": 98.8, "lo": 97.0, "hi": 100.0, "points": 58.93},
+    {"name": "IMPALA", "tag": "15 layers", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96, "prev": {"won": 98.8, "points": 58.93}, "real": {"won": false, "points": true}, "kind": "hi"},
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
+</Fig>
+
+The gap in wins could be luck, but the gap in points is real, so I kept IMPALA, even though it's twice as slow to train.
+
+## Step 4: how often should it move?
+
+In 2018 I wrote that holding each move for 4 frames meant my agent could never reach some states, but at 12 hours a run I couldn't afford to test it. A tree search called MCTS moves every frame and scores 78 with no training at all.[^mcts]
+
+<Fig title="How often to move?">
+  <Pts rows={[
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "Every 4 frames", "tag": "kept so far", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 61.96},
+    {"name": "Every 2 frames", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}, "kind": "hi"},
+    {"name": "Every frame", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 82.48, "prev": {"won": 100.0, "points": 61.96}, "real": {"won": false, "points": true}},
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
+</Fig>
+
+Every 2 frames added 21 points, and every frame did no better, so I kept the cheaper every 2 frames. It still loses about 1 game in 100, and replaying its 500 games lost 2, both to a bomb landing on it while it sat still and shot, which might just be reaction time.
+
+## Conclusion
+
+<Fig title="Final results">
+  <Pts rows={[
+    {"name": "My 2018 agent", "tag": "1M frames", "won": 72.8, "lo": 65.0, "hi": 82.0, "points": 46.89, "kind": "base"},
+    {"name": "MCTS", "tag": "plans every move, no training", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 77.82},
+    {"name": "Every 2 frames", "tag": "the final agent", "won": 99.0, "lo": 97.0, "hi": 100.0, "points": 82.72, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}, "kind": "hi"},
+    {"name": "Every frame", "tag": "2 to 3 hours a run", "won": 100.0, "lo": 100.0, "hi": 100.0, "points": 82.48, "prev": {"won": 72.8, "points": 46.89}, "real": {"won": true, "points": true}},
+  ]} ref={{ at: 82, label: "holding shoot 82%" }} note={{ href: "#user-content-fn-test", n: 2 }} />
+</Fig>
+
+My 2018 agent won 73% of games. The final agent wins 99% and scores 83, even outscoring MCTS,[^mcts] which my 2018 agent never got close to.
+
+So why not keep every frame, which won all 500 games? Because the test can't tell the gap between 99% and 100% from luck, and when it's a tie I keep the cheaper option.
+
+Picking the winner after looking is how you fool yourself, which is why scientists [fix their rules up front](https://en.wikipedia.org/wiki/Preregistration_%28science%29).
+
+What I learned:
+
+- Question the settings you copied: holding each move for 4 frames came from Atari and cost about 20 points here.
+- Check the dumbest baseline first: holding one button needs no training, and I never tried it in 2018.
+- Run everything more than once: my three original 2018 runs ended up to 14 percentage points apart on win rate.
+
+### Closing remarks
+
+Take a look at the massive difference in speed. While reviving my dissertation I trained various agents, not just on Aliens but on other games in the GVGAI framework, and all those runs added up to about 4 days of training.
+
+<Fig title="All 400 training runs, at 2018 speed (12 h per 1M frames) and now">
+  <Days then={606} now={4.27} thenLabel="2018 speed: 606 days" nowLabel="2026: 4 days" />
+</Fig>
+
+Feedback loops are important, and the faster you make them the more things you can experiment with. I think most of these experiments and findings would've been infeasible back then without Claude and the optimisations from [part 1](/blog/dissertation-revival-speed/).
+
+In [part 3](/blog/dissertation-revival-jev/) I tried Jev, a cheap pre-trained model, on the same games with no training at all.
+
+[^test]: [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) on the 5 runs: a gap counts as real when p < 0.05, so luck alone would give one that big less than 1 time in 20. The p-values are in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
+[^mcts]: One run of 51 games, since it doesn't learn.
+[^per]: A tie at step 1 once corrected for testing three options (p = 0.048 against p < 0.025), and 2 points worse on the final agent. The p-values are in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md).
+[^clip]: Each scoring move counts as 1, as in DeepMind's Atari setup.
+[^2018]: Counted over training games 1,500 to 2,000, while it still made 1 in 10 moves at random.

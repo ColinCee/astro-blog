@@ -1,0 +1,51 @@
+/* Time as a grid of days (Days): one square a day, the lit ones in the accent. */
+.prose .days {
+  display: grid;
+  gap: 0.6rem;
+}
+.prose .days__key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.2rem;
+  margin: 0;
+}
+.prose .days__k::before {
+  content: "";
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-right: 0.4rem;
+  vertical-align: -0.05rem;
+  border-radius: 1px;
+  background: var(--bar);
+}
+.prose .days__k--now {
+  color: var(--accent-soft);
+  font-weight: 700;
+}
+.prose .days__k--now::before {
+  background: var(--accent);
+}
+.prose .days__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(0.5rem, 1fr));
+  gap: 2px;
+}
+.prose .days__grid i {
+  aspect-ratio: 1;
+  border-radius: 1px;
+  background: var(--bar);
+}
+.prose .days__grid i.days__on {
+  background: linear-gradient(
+    90deg,
+    var(--accent) calc(var(--p, 1) * 100%),
+    var(--bar) 0
+  );
+}
+.prose .days__note {
+  margin: 0;
+  font-size: 0.6875rem;
+  color: var(--faint);
+  text-align: right;
+}

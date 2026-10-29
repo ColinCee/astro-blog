@@ -3,11 +3,14 @@
 // I shipped, what I wrote) and a status bar with the build, date and a
 // live clock.
 
+import { getCollection } from "astro:content";
 import ShippedPane from "./ShippedPane.astro";
 import WhoamiPane from "./WhoamiPane.astro";
 import WritingPane from "./WritingPane.astro";
 
 const build = __BUILD__;
+// The shipped rows play one after another, and writing waits for the last.
+const shipRows = (await getCollection("shipped")).length;
 const today = new Date().toLocaleDateString("en-CA");
 ---
 
@@ -21,7 +24,7 @@ const today = new Date().toLocaleDateString("en-CA");
     <span class="term__name">~/ColinOS - tmux</span>
   </div>
 
-  <div class="term__panes">
+  <div class="term__panes" style={`--ship-rows: ${shipRows}`}>
     <WhoamiPane />
     <ShippedPane />
     <WritingPane />

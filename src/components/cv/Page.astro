@@ -1,0 +1,156 @@
+---
+// The frame every layout of the CV sits in: the shared shell, the article
+// column, the section grammar, and the print flip. The layouts themselves are
+// src/pages/cv.astro (the ledger) and src/pages/cv/*.astro.
+import Base from "../../layouts/Base.astro";
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <article class="cv">
+    <slot />
+  </article>
+</Base>
+
+<style is:global>
+  .cv {
+    max-width: var(--w-page);
+    margin: 0 auto;
+  }
+
+  /* ---------------- section scaffold ---------------- */
+  /* ---------------- section scaffold ---------------- */
+  .cv__sec {
+    margin-top: clamp(3rem, 7vw, 5rem);
+  }
+  .cv__sec--ledger {
+    margin-top: 0;
+  }
+  .cv__sec-bar {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0 0 0.7rem;
+  }
+  .cv__sec-head {
+    margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+  .cv__sec-bar .cv__sec-head {
+    margin: 0;
+  }
+  .cv__toggle {
+    margin: 0;
+    padding: 0.1rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: none;
+    font: inherit;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    cursor: pointer;
+    transition:
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
+  }
+  .cv__toggle:hover {
+    color: var(--ink);
+    border-color: var(--accent);
+  }
+
+  /* A metric inside a bullet: bold ink. The accent is spent on the current
+     row's node, so repeating it here would bury the signal. */
+  .hl {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .tag {
+    padding: 0.18rem 0.62rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.01em;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+</style>
+
+<style is:global>
+  /* Print: flip the terminal palette to ink-on-white, hide site chrome, and keep entries whole. */
+  @media print {
+    /* :root:root outranks the dark-scheme :root block in tokens.css, which can
+       still match when printing from a dark system. */
+    :root:root {
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --pane: #ffffff;
+      --line: #d5d5d5;
+      --ink: #111111;
+      --muted: #333333;
+      --faint: #5a5a5a;
+      --accent: #0e7490;
+      --accent-soft: #0e7490;
+      --accent-text: #0e7490;
+      color-scheme: light;
+    }
+    @page {
+      margin: 1.5cm;
+    }
+    .shell {
+      min-height: 0 !important;
+      padding: 0 !important;
+      background: #fff !important;
+      color: #111 !important;
+    }
+    .nav,
+    .foot,
+    .cv__toggle,
+    .row__chev {
+      display: none !important;
+    }
+    .cv {
+      max-width: none;
+    }
+    .cv__head {
+      margin-bottom: 1.6rem;
+    }
+    .cv__sec {
+      margin-top: 1.6rem;
+    }
+    .row,
+    .proj__item,
+    .edu {
+      break-inside: avoid;
+    }
+    /* Every row prints open, JS or not, and never mid-unfold. */
+    .row::details-content {
+      transition: none;
+      block-size: auto;
+      opacity: 1;
+      content-visibility: visible;
+    }
+    .tag {
+      border-color: #c8c8c8;
+    }
+    .cv__contact a {
+      color: #0e7490;
+    }
+    * {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>
