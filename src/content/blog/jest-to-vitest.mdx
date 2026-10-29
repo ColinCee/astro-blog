@@ -1,5 +1,5 @@
 ---
-title: "Moving our tests from Jest to Vitest made them 18× quicker, but not how you think"
+title: "Migrating from Jest to Vitest made tests 18× quicker, but it's not what you think"
 stat: "428 s → 23 s"
 statLabel: "1,370 simulations"
 pubDate: "Oct 29 2026"
@@ -14,13 +14,13 @@ pubDate: "Oct 29 2026"
   />
 </Fig>
 
-That's our simulation suite at work, 7 minutes on Jest and 23 seconds after moving to Vitest, and CI went from 16 jobs and about an hour of runner time per run to one job and 5 minutes.[^how]
+Above is our sim tests, 7 minutes on Jest and 23 seconds after moving to Vitest.[^how]
 
-Contrary to popular belief, Vitest isn't purely quicker, out of the box it was actually slower than Jest. The speed came from something else, it was a single config option to do with isolation. Jest doesn't have it but Vitest does, but it comes with caveats.
+Contrary to popular belief, Vitest isn't purely quicker, in fact it was actually slower than Jest with the defaults. The speed came from a config option to do with isolation but it has its own caveats.
 
 ## What are sim tests?
 
-At work we have this concept of sim tests. Given some input for an account, we play it through our rules engine and it produces a snapshot of what the events would be per day. These are events that actually get emitted into EventBridge, and other services ingest them from there.
+At EDF we have this concept of sim tests. Given some input for an account, we play it through our rules engine and it produces a snapshot of what the events would be per day. These are events that actually get emitted into EventBridge, and other services ingest them from there.
 
 <figure class="fig diag">
 <p class="fig__k">Once a day, every account</p>
@@ -48,9 +48,7 @@ Days with nothing in them collapse into one entry, like the `"1-4"` there. So fu
 
 ## Why did it take 7 minutes?
 
-Originally the sims ran in a JavaScript script that kind of duplicated what Jest already does, but in a janky homemade solution that loops over all the sim files and runs them. So we moved them onto Jest because it's the standard runner and to be honest it should've been that way from the start. Then a full run took 7 minutes and CI got split into 16 jobs to hide it.
-
-So I profiled a run and it turns out only about 20% of the CPU was actually running the sims, the rest was loading the engine, 1,370 times, once per test file.
+Originally the sims ran in a JavaScript script that kind of duplicated what Jest already does, but in a janky homemade solution that loops over all the sim files and runs them. So we moved them onto Jest because it's the standard runner and to be honest it should've been that way from the start.
 
 <Fig title="CPU time under Jest">
   <Stack
@@ -60,13 +58,12 @@ So I profiled a run and it turns out only about 20% of the CPU was actually runn
     ]}
   />
 </Fig>
-What I didn't realise is Jest gives every test file its own copy of every module it imports, so nothing one test does can leak into the next one. Which is sensible, but our engine is hundreds of modules and they all build their rules when they load, so every file pays for that again, and there's no built-in option in Jest to share it.[^jest] Ironically the janky script was loading it once by accident, because that's just what a for loop does.
 
-You could stay on Jest and cram the sims into a few big files with `test.each`, or use a community runner that skips the isolation like [jest-light-runner](https://www.npmjs.com/package/jest-light-runner), but Vitest has the option built in.
+After profiling turns out most of the time was spent importing because each test gets its own isolated copy of modules. For the nitty gritty see [how Jest and Vitest run a file](#internals).
 
 ## The config option
 
-Vitest has the same isolation by default, the difference is it lets you turn it off.
+Vitest has the same isolation by default but the difference is that it lets you turn it off.
 
 ```ts title="vitest.simulations.config.ts"
 export default defineConfig({
@@ -79,11 +76,9 @@ export default defineConfig({
 });
 ```
 
-What this does is a worker keeps its modules between files, so the engine loads once per worker instead of once per file. On a 10-core laptop that's roughly 10 loads instead of 1,370, and that's basically where all the speed came from. The snapshots came across byte for byte, and running a single sim by name works again too.
+What this does is a worker keeps its modules between files, so the engine loads once per worker instead of once per file.
 
 ## Does it scale?
-
-I wanted to see the shape of this so I ran the real suite in slices on my desktop, 98, 275, 457 files and then the full 1,371, with the same 15 workers each time, so the times are different to the laptop numbers at the top.[^how]
 
 <figure class="fig">
 <p class="fig__k">Time vs test files</p>
@@ -92,13 +87,13 @@ I wanted to see the shape of this so I ran the real suite in slices on my deskto
 </div>
 </figure>
 
-Jest and plain Vitest both go up with every file because every file loads the engine again, and plain Vitest is actually worse, it spins up a new process per file, it took 11 minutes for the full suite. The `isolate: false` line is basically flat, going from 98 files to 1,371 only added 14 seconds. So the speed-up was all down to how many times the engine got loaded.
+Jest and plain Vitest both go up with every file because every file loads the engine again, and plain Vitest is actually worse. The `isolate: false` line is basically flat, going from 98 files to 1,371 only added 14 seconds.
 
 ## Limitations
 
 - A test that mutates something it imported now leaks into later files, so shuffle the files to catch it.
 
-<details class="more">
+<details class="more" id="internals">
 <summary>How Jest and Vitest run a file</summary>
 
 **Jest.** Each test file runs in its own Node `vm` context, which is basically a separate JavaScript realm with its own globals and its own `Array` and `Object`. Jest's runtime provides the `require` inside it and keeps a module table per context, which is why mocks can't leak between files, and also why `x instanceof Array` is sometimes false under Jest, [that one's been open since 2017](https://github.com/jestjs/jest/issues/2549). `--runInBand` gets rid of the worker processes but each file still gets its own context and reloads everything.

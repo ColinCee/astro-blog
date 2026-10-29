@@ -615,6 +615,14 @@ const last = entries[entries.length - 1];
 </style>
 
 <script>
+  // A link to a collapsed <details> (#internals) opens it before jumping.
+  const openTarget = () => {
+    const el = location.hash && document.getElementById(location.hash.slice(1));
+    if (el instanceof HTMLDetailsElement) el.open = true;
+  };
+  openTarget();
+  window.addEventListener("hashchange", openTarget);
+
   // Reading progress bar: fraction of the page scrolled, as --read.
   const readBar = document.querySelector<HTMLElement>("[data-readbar]");
   if (readBar) {
