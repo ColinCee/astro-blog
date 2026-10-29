@@ -1,20 +1,21 @@
-/* The "more" panel. Used only by the unpublished dissertation posts (Parts 2 and 3, on the
-   dissertation-revival branch), which are written as HTML; nothing published
-   uses it. Keep until they publish. */
-/* "More" panel: an optional deeper explanation, closed by default. */
+/* "More" panel: an optional deeper explanation, closed by default. A full-width
+   bar the size of a subheading with a chevron, so it reads as a section you
+   can open rather than a button. */
 .prose details.more {
-  margin: 1.2rem 0;
+  margin: 2rem 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
 }
 .prose details.more > summary {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  min-height: 2.75rem;
-  padding: 0.4rem 0.95rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  font-family: var(--mono);
-  font-size: 0.8rem;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.25rem;
+  padding: 0.75rem 1.1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: var(--ink);
   cursor: pointer;
   list-style: none;
@@ -22,15 +23,36 @@
 .prose details.more > summary::-webkit-details-marker {
   display: none;
 }
-.prose details.more > summary::before {
-  content: "+";
-  color: var(--accent-soft);
+.prose details.more > summary::after {
+  content: "";
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-right: 2px solid var(--accent-soft);
+  border-bottom: 2px solid var(--accent-soft);
+  transform: translateY(-25%) rotate(45deg);
+  transition: transform 0.2s;
 }
-.prose details.more[open] > summary::before {
-  content: "−";
+.prose details.more[open] > summary::after {
+  transform: translateY(25%) rotate(-135deg);
 }
 .prose details.more > summary:hover,
 .prose details.more > summary:focus-visible {
-  border-color: var(--accent-line);
+  color: var(--accent-soft);
   outline: none;
+}
+.prose details.more[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+.prose details.more > :not(summary) {
+  margin-left: 1.1rem;
+  margin-right: 1.1rem;
+}
+.prose details.more > :last-child {
+  margin-bottom: 1.1rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .prose details.more > summary::after {
+    transition: none;
+  }
 }

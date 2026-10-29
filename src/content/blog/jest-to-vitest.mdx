@@ -92,34 +92,18 @@ I wanted to see the shape of this so I ran the real suite in slices on my deskto
 
 Jest and plain Vitest both go up with every file because every file loads the engine again, and plain Vitest is actually worse, it spins up a new process per file and on Windows that's slow, it took 11 minutes for the full suite. The `isolate: false` line is basically flat, going from 98 files to 1,371 only added 14 seconds. So the speed-up was all down to how many times the engine got loaded.
 
-## What's the catch?
+## Limitations
 
-This is the thing Jest was protecting us from in the first place. If a test mutates something it imported, that mutation is now there for every file after it in the same worker, and whether it bites depends on the order the files ran in.
-
-<figure class="fig diag">
-<p class="fig__k">One shared engine, the threshold</p>
-<svg viewBox="0 0 300 282" style="--vw:300" role="img" aria-label="Two orders for the same two files on one shared engine. Sim 2 first: the threshold goes from 0 to 9999, then sim 4 expects 0 and fails. Sim 4 first: sim 4 expects 0 and passes, then sim 2 sets 9999 and no one checks again. Under Jest every file gets a fresh 0, so sim 4 always passes."><defs><marker id="dg-tl" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker></defs><text x="10" y="14">sim 2 first</text><g><rect x="10" y="24" width="120" height="26" rx="4"/><text x="70" y="41" text-anchor="middle">0</text></g><path class="arr" d="M70,56 V68" marker-end="url(#dg-tl)"/><text class="sub" x="70" y="84" text-anchor="middle">sim 2 sets 9999</text><path class="arr" d="M70,90 V102" marker-end="url(#dg-tl)"/><g class="hi"><rect x="10" y="106" width="120" height="26" rx="4"/><text x="70" y="123" text-anchor="middle">9999</text></g><path class="arr" d="M70,138 V150" marker-end="url(#dg-tl)"/><text class="sub" x="70" y="166" text-anchor="middle">sim 4 expects 0</text><path class="arr" d="M70,172 V184" marker-end="url(#dg-tl)"/><g class="hi"><rect x="10" y="188" width="120" height="26" rx="4"/><text x="70" y="205" text-anchor="middle">fails</text></g><text x="170" y="14">sim 4 first</text><g><rect x="170" y="24" width="120" height="26" rx="4"/><text x="230" y="41" text-anchor="middle">0</text></g><path class="arr" d="M230,56 V68" marker-end="url(#dg-tl)"/><text class="sub" x="230" y="84" text-anchor="middle">sim 4 expects 0</text><path class="arr" d="M230,90 V102" marker-end="url(#dg-tl)"/><g><rect x="170" y="106" width="120" height="26" rx="4"/><text x="230" y="123" text-anchor="middle">passes</text></g><path class="arr" d="M230,138 V150" marker-end="url(#dg-tl)"/><text class="sub" x="230" y="166" text-anchor="middle">sim 2 sets 9999</text><path class="arr" d="M230,172 V184" marker-end="url(#dg-tl)"/><g><rect x="170" y="188" width="120" height="26" rx="4"/><text x="230" y="205" text-anchor="middle">9999</text></g><text class="sub" x="230" y="232" text-anchor="middle">never rechecked</text><text class="sub" x="10" y="260">Jest: a fresh 0 per file,</text><text class="sub" x="10" y="274">so sim 4 always passes</text></svg>
-</figure>
-
-That's what the shuffle is for. The files run in a random order every time so a leaky test fails sooner or later, and Vitest prints the seed so you can replay the exact order that broke. For us it's fine, sims only read the config and anything they mutate they create themselves.
-
-## What I'd tell you
-
-1. Check where the time's going first. Vitest prints the split after every run, if `import` dwarfs `tests` this is you.
-2. Only turn isolation off where you need it, our unit tests stayed on Jest.
-3. Shuffle the files, otherwise a leak can sit there for months.
-4. Don't credit the runner, plain Vitest was slower than Jest at every size.
-
-Two smaller fixes went in with it as well, the engine config gets built once per worker instead of once per sim, which saved 62 ms a go, and a lookup that was throwing and catching an error on every call got fixed. So the 428 to 23 is all three together, but with those fixes on the Jest side too Jest still took 3.4 minutes vs Vitest's 25 seconds, so the gap is the module loading.
+- A test that mutates something it imported now leaks into later files, so shuffle the files to catch it.
+- Two smaller fixes went in too, but with them on Jest it was still 3.4 minutes vs 25 seconds.
+- The slices ran on Windows, where plain Vitest's process per file is slow.
 
 <details class="more">
-<summary>If you want the internals</summary>
+<summary>How Jest and Vitest run a file</summary>
 
 **Jest.** Each test file runs in its own Node `vm` context, which is basically a separate JavaScript realm with its own globals and its own `Array` and `Object`. Jest's runtime provides the `require` inside it and keeps a module table per context, which is why mocks can't leak between files, and also why `x instanceof Array` is sometimes false under Jest, [that one's been open since 2017](https://github.com/jestjs/jest/issues/2549). `--runInBand` gets rid of the worker processes but each file still gets its own context and reloads everything.
 
 **Vitest.** Vite strips the types without checking them, same trade as `isolatedModules`. Then the files go to a pool of workers, the default is `forks` which is a child process per file, `threads` is a worker thread per file, and the `vm*` pools behave like Jest and can't turn isolation off. With `isolate: false` on `forks` or `threads` the worker stays alive and keeps its module cache.
-
-**Windows.** Starting a process costs a lot more on Windows than on Linux or a Mac, and as far as I can tell that's where plain Vitest's 11 minutes went. It should look better on a Mac.
 
 **Caches.** Every number above was a warm run, so both runners were warm. Node 22 can also cache compiled bytecode across processes with `NODE_COMPILE_CACHE`.
 
