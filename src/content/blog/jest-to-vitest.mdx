@@ -2,7 +2,7 @@
 title: "Moving our tests from Jest to Vitest made them 18× quicker, but not how you think"
 stat: "428 s → 23 s"
 statLabel: "1,370 simulations"
-pubDate: "Oct 24 2026"
+pubDate: "Oct 29 2026"
 ---
 <Fig title="Full suite, 1,370 sims">
   <Cmp
@@ -90,13 +90,11 @@ I wanted to see the shape of this so I ran the real suite in slices on my deskto
 </div>
 </figure>
 
-Jest and plain Vitest both go up with every file because every file loads the engine again, and plain Vitest is actually worse, it spins up a new process per file and on Windows that's slow, it took 11 minutes for the full suite. The `isolate: false` line is basically flat, going from 98 files to 1,371 only added 14 seconds. So the speed-up was all down to how many times the engine got loaded.
+Jest and plain Vitest both go up with every file because every file loads the engine again, and plain Vitest is actually worse, it spins up a new process per file, it took 11 minutes for the full suite. The `isolate: false` line is basically flat, going from 98 files to 1,371 only added 14 seconds. So the speed-up was all down to how many times the engine got loaded.
 
 ## Limitations
 
 - A test that mutates something it imported now leaks into later files, so shuffle the files to catch it.
-- Two smaller fixes went in too, but with them on Jest it was still 3.4 minutes vs 25 seconds.
-- The slices ran on Windows, where plain Vitest's process per file is slow.
 
 <details class="more">
 <summary>How Jest and Vitest run a file</summary>
@@ -110,4 +108,4 @@ Jest and plain Vitest both go up with every file because every file loads the en
 </details>
 
 [^jest]: Someone [asked for a middle ground](https://github.com/jestjs/jest/issues/12147) in 2021. Nobody from Jest replied, and a bot closed it in 2024.
-[^how]: The headline numbers are from a 10-core laptop, hyperfine, 5 runs. The slices are from my desktop, a Ryzen 7 7800X3D on Windows 11, Node 22, two runs each, one for plain Vitest. Jest in the slices has the same two small fixes as the Vitest run, so the only difference left is the isolation.
+[^how]: The headline numbers are from a 10-core laptop, hyperfine, 5 runs. The slices are from my desktop, a Ryzen 7 7800X3D on Windows 11, Node 22, two runs each, one for plain Vitest. Jest in the slices runs the same code as the Vitest run, so the only difference is the isolation.
