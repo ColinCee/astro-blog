@@ -108,4 +108,4 @@ Jest and plain Vitest both go up with every file because every file loads the en
 </details>
 
 [^jest]: Someone [asked for a middle ground](https://github.com/jestjs/jest/issues/12147) in 2021. Nobody from Jest replied, and a bot closed it in 2024.
-[^how]: The headline numbers are from a 10-core laptop, hyperfine, 5 runs. The slices are from my desktop, a Ryzen 7 7800X3D on Windows 11, Node 22, two runs each, one for plain Vitest. Both runners in the slices run the same engine code, so the only difference is the isolation. The two machines differ, so the chart's times don't line up with the laptop's at the top, and its 1,371 files hold the 1,370 sims.
+[^how]: The headline numbers are from a 10-core laptop, hyperfine, 5 runs. The slices are from my desktop, a Ryzen 7 7800X3D on Windows 11, Node 22, two runs each, one for plain Vitest. Plain Vitest and `isolate: false` differ only in that one setting. The two machines differ, so the chart's times don't line up with the laptop's at the top, and its 1,371 files hold the 1,370 sims.
