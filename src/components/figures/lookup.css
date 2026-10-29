@@ -1,0 +1,47 @@
+/* Dictionary encoding as a still (Lookup): values pointing at numbers, and
+   the dictionary they look up. */
+.prose .lookup {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 1.2rem 2rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+.prose .lookup .fig__k {
+  margin: 0 0 0.4rem;
+}
+.prose .lookup__col,
+.prose .lookup__dict {
+  display: grid;
+  align-content: start;
+  gap: 0.25rem;
+}
+.prose .lookup__row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.prose .lookup__row span {
+  min-width: 5ch;
+  color: var(--ink);
+  font-weight: 600;
+}
+.prose .lookup__row i {
+  color: var(--faint);
+  font-style: normal;
+}
+.prose .lookup__row b {
+  display: inline-grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 4px;
+  background: color-mix(in oklch, var(--accent) 14%, transparent);
+  color: var(--accent-soft);
+  font-weight: 600;
+}
+.prose .lookup__dict {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}

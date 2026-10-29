@@ -1,28 +1,33 @@
-/* JSONL text rearranging into columns (Morph): each character has a rows
-   position (--x, --y) and a columns position (--cx, --cy), in characters and
-   lines; .is-cols moves it. */
-.prose .morph {
+/* Text moving between stages (Frames): each character carries its place,
+   visibility and colour per stage (--x0, --y0, --o0, --c0, …) and the
+   figure's data-s picks which apply. */
+.prose .frames {
   --hold: 7s;
   --move: 0.8s;
+  --fr-name: var(--muted);
+  --fr-syn: color-mix(in oklch, var(--faint) 55%, transparent);
+  --fr-val: var(--ink);
+  --fr-head: var(--accent-soft);
+  --fr-idx: var(--accent-soft);
   display: grid;
   gap: 1rem;
 }
 
-/* Two tabs, one per layout, with the bytes each holds; a bar under them
-   fills while the loop holds a layout. */
-.prose .morph__tabs {
+/* One tab per stage, with the bytes it holds; a bar under them fills while
+   the loop holds a stage. The last stage's bytes take the accent. */
+.prose .frames__tabs {
   position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  gap: 2px;
   min-width: 0;
   margin: 0;
-  border: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
   padding: 2px;
+  border: 0;
   border-radius: 8px;
   background: var(--line);
 }
-.prose .morph__tabs button {
+.prose .frames__tabs button {
   display: grid;
   gap: 0.1rem;
   min-height: 2.75rem;
@@ -40,19 +45,19 @@
     background var(--dur-fast, 0.2s) ease,
     color var(--dur-fast, 0.2s) ease;
 }
-.prose .morph__tabs b {
+.prose .frames__tabs b {
   font-size: 0.8rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
-.prose .morph__tabs [aria-pressed="true"] {
+.prose .frames__tabs [aria-pressed="true"] {
   background: var(--panel, var(--bg));
   color: var(--ink);
 }
-.prose .morph__tabs [data-cols="true"][aria-pressed="true"] b {
+.prose .frames__tabs button:last-of-type[aria-pressed="true"] b {
   color: var(--accent-soft);
 }
-.prose .morph__timer {
+.prose .frames__timer {
   position: absolute;
   left: 6px;
   right: 6px;
@@ -64,17 +69,17 @@
   transform-origin: left;
   opacity: 0.6;
 }
-.prose .morph.is-playing .morph__timer {
-  animation: morph-hold var(--hold) linear forwards;
+.prose .frames.is-playing .frames__timer {
+  animation: frames-hold var(--hold) linear forwards;
 }
-@keyframes morph-hold {
+@keyframes frames-hold {
   to {
     transform: scaleX(1);
   }
 }
 
 /* The characters. */
-.prose .morph__box {
+.prose .frames__box {
   --lh: 1.75em;
   --d: var(--move) cubic-bezier(0.65, 0, 0.35, 1);
   position: relative;
@@ -85,20 +90,19 @@
   transition: height var(--d) 0.1s;
 }
 @media (max-width: 34rem) {
-  .prose .morph__box {
+  .prose .frames__box {
     font-size: 0.6875rem;
   }
 }
-.prose .morph.is-cols .morph__box {
-  height: calc(var(--hc) * var(--lh));
-}
-.prose .morph__box span {
+.prose .frames__box span {
   position: absolute;
   left: 0;
   top: 0;
   width: 1ch;
   line-height: var(--lh);
   text-align: center;
+  color: var(--c);
+  opacity: var(--o);
   transform: translate(calc(var(--x) * 1ch), calc(var(--y) * var(--lh)));
   /* A wave: lower lines and later characters start a little later. */
   transition:
@@ -106,38 +110,39 @@
     opacity 0.4s ease calc(var(--y) * 30ms),
     color 0.5s ease;
 }
-.prose .morph.is-cols .morph__box span {
-  transform: translate(calc(var(--cx) * 1ch), calc(var(--cy) * var(--lh)));
-}
-/* Plain text, told apart by colour alone: names mid grey, syntax faint,
-   values in ink. */
-.prose .morph .head,
-.prose .morph .key {
-  color: var(--muted);
-}
-.prose .morph .syn {
-  color: color-mix(in oklch, var(--faint) 55%, transparent);
-}
-.prose .morph .val {
-  color: var(--ink);
+.prose .frames__box span.b {
   font-weight: 600;
 }
-/* In columns: the names that repeat fly into their header and vanish, the
-   syntax fades, and the headers take the accent. */
-.prose .morph.is-cols .key {
-  opacity: 0;
+.prose .frames[data-s="0"] {
+  --h: var(--h0);
 }
-.prose .morph.is-cols .morph__box span.syn {
-  opacity: 0;
-  transform: translate(calc(var(--x) * 1ch), calc(var(--y) * var(--lh)))
-    scale(0.4);
+.prose .frames[data-s="1"] {
+  --h: var(--h1);
 }
-.prose .morph.is-cols .head {
-  color: var(--accent-soft);
+.prose .frames[data-s="2"] {
+  --h: var(--h2);
+}
+.prose .frames[data-s="0"] .frames__box span {
+  --x: var(--x0);
+  --y: var(--y0);
+  --o: var(--o0);
+  --c: var(--c0);
+}
+.prose .frames[data-s="1"] .frames__box span {
+  --x: var(--x1);
+  --y: var(--y1);
+  --o: var(--o1);
+  --c: var(--c1);
+}
+.prose .frames[data-s="2"] .frames__box span {
+  --x: var(--x2);
+  --y: var(--y2);
+  --o: var(--o2);
+  --c: var(--c2);
 }
 @media (prefers-reduced-motion: reduce) {
-  .prose .morph__box,
-  .prose .morph__box span {
+  .prose .frames__box,
+  .prose .frames__box span {
     transition: none;
   }
 }

@@ -7,7 +7,8 @@
 @import "./recipe.css";
 @import "./stack.css";
 @import "./encode.css";
-@import "./morph.css";
+@import "./frames.css";
+@import "./lookup.css";
 @import "./split.css";
 @import "./decide.css";
 @import "./json.css";

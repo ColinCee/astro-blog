@@ -57,6 +57,20 @@ JSONL writes a whole record, then the next record. Parquet takes all the values 
 
 Because a column is all one type, Parquet can store it at its real size, so a small number is 4 bytes and a boolean is one bit. And because the repeated values now sit next to each other, it can use dictionary encoding, which means writing each distinct value once and then just storing which one each row has.
 
+**Option A: animated, like the one above**
+
+<Fig title="The status column from that example">
+  <Dict name="status" values={["OPEN", "OPEN", "OPEN", "OPEN", "DONE"]} />
+</Fig>
+
+**Option B: a lookup table**
+
+<Fig title="The status column from that example">
+  <Lookup name="status" values={["OPEN", "OPEN", "OPEN", "OPEN", "DONE"]} />
+</Fig>
+
+**Current: bars**
+
 <Fig title="The status column from that example">
   <Encode
     steps={[

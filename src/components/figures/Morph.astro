@@ -1,11 +1,11 @@
 ---
-// JSONL text that rearranges itself into columns and back, on a loop while it
-// is on screen. Every character is placed twice at build time: where it sits
-// in the JSON lines, and where it goes in the column layout. The first
-// record's field names become the column headers, every other copy of a name
-// flies into its header and fades, the syntax fades where it is, and the
-// values slide into their column. The two tabs pick a layout and stop the
-// loop (the only way under reduced motion). Styles: morph.css.
+// JSONL text that rearranges itself into columns and back (drawn by Frames).
+// The first record's field names become the column headers, every other copy
+// of a name flies into its header and fades, the syntax fades where it is,
+// and the values slide into their column.
+import Frames from "./Frames.astro";
+import type { Cell, Spot, Tone } from "./frames";
+
 type Value = string | number | boolean;
 interface Props {
   records: Record<string, Value>[];
@@ -22,25 +22,21 @@ const valW = keys.map((k) =>
   Math.max(...records.map((r) => text(r[k]).length)),
 );
 
-interface Cell {
-  ch: string;
-  x: number;
-  y: number;
-  cx: number;
-  cy: number;
-  kind: "head" | "key" | "syn" | "val";
-}
 const cells: Cell[] = [];
 records.forEach((r, row) => {
   let x = 0;
-  const put = (
-    s: string,
-    kind: Cell["kind"],
-    to?: (i: number) => [number, number],
-  ) => {
+  // `cols` gives each character's place in the column layout; without it the
+  // character fades where it is.
+  const put = (s: string, tone: Tone, cols?: (i: number) => Spot) => {
     for (const [i, ch] of [...s].entries()) {
-      const [cx, cy] = to ? to(i) : [x, row];
-      cells.push({ ch, x, y: row, cx, cy, kind });
+      cells.push({
+        ch,
+        bold: tone === "val",
+        at: [
+          { x, y: row, show: true, tone },
+          cols?.(i) ?? { x, y: row, show: false, tone },
+        ],
+      });
       x++;
     }
   };
@@ -48,10 +44,15 @@ records.forEach((r, row) => {
   keys.forEach((k, f) => {
     const q = typeof r[k] === "number" ? "" : '"';
     put('"', "syn");
-    put(k, row === 0 ? "head" : "key", (i) => [i, f]);
+    put(k, "name", (i) => ({ x: i, y: f, show: row === 0, tone: "head" }));
     put(`":${q}`, "syn");
     const at = keyW + row * (valW[f] + 1);
-    put(text(r[k]), "val", (i) => [at + i, f]);
+    put(text(r[k]), "val", (i) => ({
+      x: at + i,
+      y: f,
+      show: true,
+      tone: "val",
+    }));
     put(q + (f < keys.length - 1 ? "," : ""), "syn");
   });
   put("}", "syn");
@@ -59,88 +60,13 @@ records.forEach((r, row) => {
 // What each layout holds: every character plus a newline a line, against the
 // names once and the values (the padding in the column layout isn't data).
 const rowBytes = cells.length + records.length;
-const colBytes = cells.filter(
-  (c) => c.kind === "head" || c.kind === "val",
-).length;
-const width = Math.max(...cells.flatMap((c) => [c.x, c.cx])) + 1;
+const colBytes = cells.filter((c) => c.at[1].show).length;
 ---
 
-<div
-  class="morph"
-  style={`--h:${records.length};--hc:${keys.length};--w:${width}`}
->
-  <fieldset class="morph__tabs" aria-label="Layout">
-    <button type="button" data-cols="false" aria-pressed="true">
-      <span>JSONL, by row</span>
-      <b>{rowBytes} bytes</b>
-    </button>
-    <button type="button" data-cols="true" aria-pressed="false">
-      <span>Parquet, by column</span>
-      <b>{colBytes} bytes</b>
-    </button>
-    <i class="morph__timer" />
-  </fieldset>
-  <div class="morph__box" aria-hidden="true">
-    {cells.map((c) => (
-      <span
-        class={c.kind}
-        style={`--x:${c.x};--y:${c.y};--cx:${c.cx};--cy:${c.cy}`}
-        set:text={c.ch}
-      />
-    ))}
-  </div>
-</div>
-
-<script>
-  // Each layout holds for --hold (morph.css; the timer bar fills over it),
-  // then flips.
-  // Hovering pauses it; a tab stops it.
-  for (const fig of document.querySelectorAll<HTMLElement>(".morph")) {
-    const tabs = [...fig.querySelectorAll<HTMLButtonElement>("button")];
-    const hold =
-      parseFloat(getComputedStyle(fig).getPropertyValue("--hold")) * 1000;
-    let timer = 0;
-    let seen = false;
-    let manual = false;
-    let hover = false;
-    const set = (cols: boolean) => {
-      fig.classList.toggle("is-cols", cols);
-      for (const t of tabs)
-        t.setAttribute("aria-pressed", String(t.dataset.cols === String(cols)));
-    };
-    const loop = () => {
-      clearTimeout(timer);
-      fig.classList.remove("is-playing");
-      if (manual || hover || !seen) return;
-      void fig.offsetWidth; // restart the timer bar's animation
-      fig.classList.add("is-playing");
-      timer = window.setTimeout(() => {
-        set(!fig.classList.contains("is-cols"));
-        loop();
-      }, hold);
-    };
-    for (const t of tabs)
-      t.addEventListener("click", () => {
-        manual = true;
-        set(t.dataset.cols === "true");
-        loop();
-      });
-    for (const [ev, on] of [
-      ["pointerenter", true],
-      ["pointerleave", false],
-    ] as const)
-      fig.addEventListener(ev, (e) => {
-        if (e.pointerType !== "mouse") return;
-        hover = on;
-        loop();
-      });
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) continue;
-    new IntersectionObserver(
-      ([e]) => {
-        seen = e.isIntersecting;
-        loop();
-      },
-      { threshold: 0.6 },
-    ).observe(fig);
-  }
-</script>
+<Frames
+  cells={cells}
+  tabs={[
+    { label: "JSONL, by row", bytes: rowBytes },
+    { label: "Parquet, by column", bytes: colBytes },
+  ]}
+/>
