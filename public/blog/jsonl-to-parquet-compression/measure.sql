@@ -1,4 +1,4 @@
--- The numbers in "A Story about Parquet", from the files make-data.sql wrote.
+-- The numbers in "JSONL is a waste of space", from the files make-data.sql wrote.
 --
 --   duckdb fake.duckdb -c ".read measure.sql"
 

@@ -1,4 +1,4 @@
--- A fake export for "A Story about Parquet". The real one can't be shared, so
+-- A fake export for "JSONL is a waste of space". The real one can't be shared, so
 -- this is a guess at its shape: 1.5 million records and 106 fields,
 --     1 id that counts up            12 timestamps (1 in order, 11 up to
 --                                       30 days after it)
