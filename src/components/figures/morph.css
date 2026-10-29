@@ -2,8 +2,8 @@
    position (--x, --y) and a columns position (--cx, --cy), in characters and
    lines; .is-cols moves it. */
 .prose .morph {
-  --hold: 6s;
-  --move: 1.4s;
+  --hold: 7s;
+  --move: 0.8s;
   display: grid;
   gap: 1rem;
 }
@@ -99,8 +99,8 @@
   transform: translate(calc(var(--x) * 1ch), calc(var(--y) * var(--lh)));
   /* A wave: lower lines and later characters start a little later. */
   transition:
-    transform var(--d) calc(var(--y) * 50ms + var(--x) * 4ms),
-    opacity 0.5s ease calc(var(--y) * 50ms),
+    transform var(--d) calc(var(--y) * 30ms + var(--x) * 2ms),
+    opacity 0.4s ease calc(var(--y) * 30ms),
     color 0.5s ease;
 }
 .prose .morph.is-cols .morph__box span {
