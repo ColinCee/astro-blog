@@ -2,13 +2,10 @@
 // so a post uses them by name without importing them.
 export { default as Boxes } from "./Boxes.astro";
 export { default as Breakdown } from "./Breakdown.astro";
-export { default as Bytes } from "./Bytes.astro";
-export { default as BytesText } from "./BytesText.astro";
 export { default as Clip } from "./Clip.astro";
 export { default as Cmp } from "./Cmp.astro";
 export { default as Days } from "./Days.astro";
 export { default as Decide } from "./Decide.astro";
-export { default as DiskOrder } from "./DiskOrder.astro";
 export { default as Dots } from "./Dots.astro";
 export { default as Encode } from "./Encode.astro";
 export { default as Fig } from "./Fig.astro";

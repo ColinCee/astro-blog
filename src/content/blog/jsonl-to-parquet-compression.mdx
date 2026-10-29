@@ -41,26 +41,7 @@ But stripping all that only gets you to about 1.5GB, which is 3× smaller. Parqu
 
 ## So what does storing by column do?
 
-JSONL writes a whole record, then the next record. Parquet takes all the values for one field and writes them next to each other, then does the next field. Here's a made-up example with 8 records, where each square is one byte:
-
-**Option A: text, one character a byte**
-
-<Fig caption="Parquet's own headers are left out because they only matter for tiny files like this one.">
-  <BytesText
-    records={[
-      { id: 1, status: "OPEN", active: true },
-      { id: 2, status: "OPEN", active: true },
-      { id: 3, status: "OPEN", active: true },
-      { id: 4, status: "OPEN", active: true },
-      { id: 5, status: "DONE", active: false },
-      { id: 6, status: "DONE", active: false },
-      { id: 7, status: "DONE", active: false },
-      { id: 8, status: "OPEN", active: true },
-    ]}
-  />
-</Fig>
-
-**Option B: the text rearranging itself**
+JSONL writes a whole record, then the next record. Parquet takes all the values for one field and writes them next to each other, then does the next field. Here's a made-up example with 5 records:
 
 <Fig caption="Bytes before any encoding: the names once and the values as text. Tap a tab to stop it.">
   <Morph
@@ -74,44 +55,14 @@ JSONL writes a whole record, then the next record. Parquet takes all the values 
   />
 </Fig>
 
-**Option C: the order it hits the disk**
-
-<Fig>
-  <DiskOrder
-    records={[
-      { id: 1, status: "OPEN", active: true },
-      { id: 2, status: "OPEN", active: true },
-      { id: 3, status: "DONE", active: false },
-      { id: 4, status: "OPEN", active: true },
-    ]}
-  />
-</Fig>
-
-**Current: one square a byte**
-
-<Fig caption="Parquet's own headers are left out because they only matter for tiny files like this one.">
-  <Bytes
-    records={[
-      { id: 1, status: "OPEN", active: true },
-      { id: 2, status: "OPEN", active: true },
-      { id: 3, status: "OPEN", active: true },
-      { id: 4, status: "OPEN", active: true },
-      { id: 5, status: "DONE", active: false },
-      { id: 6, status: "DONE", active: false },
-      { id: 7, status: "DONE", active: false },
-      { id: 8, status: "OPEN", active: true },
-    ]}
-  />
-</Fig>
-
 Because a column is all one type, Parquet can store it at its real size, so a small number is 4 bytes and a boolean is one bit. And because the repeated values now sit next to each other, it can use dictionary encoding, which means writing each distinct value once and then just storing which one each row has.
 
 <Fig title="The status column from that example">
   <Encode
     steps={[
-      { label: "In JSONL", show: "\"status\":\"OPEN\",\"status\":\"OPEN\",\"status\":\"OPEN\",…", bytes: 128 },
-      { label: "As a column", show: "OPEN OPEN OPEN OPEN DONE DONE DONE OPEN", bytes: 32 },
-      { label: "Dictionary encoded", show: "OPEN DONE + 0 0 0 0 1 1 1 0", bytes: 9 },
+      { label: "In JSONL", show: "\"status\":\"OPEN\",\"status\":\"OPEN\",\"status\":\"OPEN\",…", bytes: 80 },
+      { label: "As a column", show: "OPEN OPEN OPEN OPEN DONE", bytes: 20 },
+      { label: "Dictionary encoded", show: "OPEN DONE + 0 0 0 0 1", bytes: 9 },
     ]}
   />
 </Fig>

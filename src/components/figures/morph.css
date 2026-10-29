@@ -12,6 +12,9 @@
    fills while the loop holds a layout. */
 .prose .morph__tabs {
   position: relative;
+  min-width: 0;
+  margin: 0;
+  border: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2px;

@@ -69,7 +69,7 @@ const width = Math.max(...cells.flatMap((c) => [c.x, c.cx])) + 1;
   class="morph"
   style={`--h:${records.length};--hc:${keys.length};--w:${width}`}
 >
-  <div class="morph__tabs" role="group" aria-label="Layout">
+  <fieldset class="morph__tabs" aria-label="Layout">
     <button type="button" data-cols="false" aria-pressed="true">
       <span>JSONL, by row</span>
       <b>{rowBytes} bytes</b>
@@ -79,7 +79,7 @@ const width = Math.max(...cells.flatMap((c) => [c.x, c.cx])) + 1;
       <b>{colBytes} bytes</b>
     </button>
     <i class="morph__timer" />
-  </div>
+  </fieldset>
   <div class="morph__box" aria-hidden="true">
     {cells.map((c) => (
       <span
