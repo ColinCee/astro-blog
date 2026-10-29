@@ -615,6 +615,19 @@ const last = entries[entries.length - 1];
 </style>
 
 <script>
+  // A link to a collapsed <details> (#internals) opens it before jumping.
+  const openTarget = () => {
+    const el = location.hash && document.getElementById(location.hash.slice(1));
+    if (el instanceof HTMLDetailsElement) el.open = true;
+  };
+  openTarget();
+  window.addEventListener("hashchange", openTarget);
+  // Clicking the same link again doesn't change the hash, so open it on click too.
+  document.addEventListener("click", (e) => {
+    const link = (e.target as Element).closest?.('a[href^="#"]');
+    if (link && link.getAttribute("href") === location.hash) openTarget();
+  });
+
   // Reading progress bar: fraction of the page scrolled, as --read.
   const readBar = document.querySelector<HTMLElement>("[data-readbar]");
   if (readBar) {
@@ -628,11 +641,11 @@ const last = entries[entries.length - 1];
     window.addEventListener("resize", update);
   }
 
-  // Charts: SVG text scales with the drawing, so each chart sets --k (viewBox
+  // Charts and diagrams: SVG text scales with the drawing, so each sets --k (viewBox
   // units per screen pixel) and its text is sized in screen pixels through it.
-  // Every chart's text then matches the figure text around it at any width.
+  // Their text then matches the figure text around it at any width.
   const charts = document.querySelectorAll<SVGSVGElement>(
-    ".prose .chart svg, .prose .ladder svg",
+    ".prose .chart svg, .prose .ladder svg, .prose .diag svg",
   );
   if (charts.length) {
     const fit = new ResizeObserver((entries) => {
