@@ -29,7 +29,6 @@ interface Cell {
   cx: number;
   cy: number;
   kind: "head" | "key" | "syn" | "val";
-  f?: number;
 }
 const cells: Cell[] = [];
 records.forEach((r, row) => {
@@ -38,11 +37,10 @@ records.forEach((r, row) => {
     s: string,
     kind: Cell["kind"],
     to?: (i: number) => [number, number],
-    f?: number,
   ) => {
     for (const [i, ch] of [...s].entries()) {
       const [cx, cy] = to ? to(i) : [x, row];
-      cells.push({ ch, x, y: row, cx, cy, kind, f });
+      cells.push({ ch, x, y: row, cx, cy, kind });
       x++;
     }
   };
@@ -53,7 +51,7 @@ records.forEach((r, row) => {
     put(k, row === 0 ? "head" : "key", (i) => [i, f]);
     put(`":${q}`, "syn");
     const at = keyW + row * (valW[f] + 1);
-    put(text(r[k]), "val", (i) => [at + i, f], f);
+    put(text(r[k]), "val", (i) => [at + i, f]);
     put(q + (f < keys.length - 1 ? "," : ""), "syn");
   });
   put("}", "syn");
@@ -85,7 +83,7 @@ const width = Math.max(...cells.flatMap((c) => [c.x, c.cx])) + 1;
   <div class="morph__box" aria-hidden="true">
     {cells.map((c) => (
       <span
-        class:list={[c.kind, c.f !== undefined && `f${c.f}`]}
+        class={c.kind}
         style={`--x:${c.x};--y:${c.y};--cx:${c.cx};--cy:${c.cy}`}
         set:text={c.ch}
       />
@@ -95,12 +93,14 @@ const width = Math.max(...cells.flatMap((c) => [c.x, c.cx])) + 1;
 
 <script>
   // Each layout holds for HOLD ms (the timer bar fills over it), then flips.
+  // Hovering pauses it; a tab stops it.
   const HOLD = 3200;
   for (const fig of document.querySelectorAll<HTMLElement>(".morph")) {
     const tabs = [...fig.querySelectorAll<HTMLButtonElement>("button")];
     let timer = 0;
     let seen = false;
     let manual = false;
+    let hover = false;
     const set = (cols: boolean) => {
       fig.classList.toggle("is-cols", cols);
       for (const t of tabs)
@@ -109,7 +109,7 @@ const width = Math.max(...cells.flatMap((c) => [c.x, c.cx])) + 1;
     const loop = () => {
       clearTimeout(timer);
       fig.classList.remove("is-playing");
-      if (manual || !seen) return;
+      if (manual || hover || !seen) return;
       void fig.offsetWidth; // restart the timer bar's animation
       fig.classList.add("is-playing");
       timer = window.setTimeout(() => {
@@ -121,6 +121,15 @@ const width = Math.max(...cells.flatMap((c) => [c.x, c.cx])) + 1;
       t.addEventListener("click", () => {
         manual = true;
         set(t.dataset.cols === "true");
+        loop();
+      });
+    for (const [ev, on] of [
+      ["pointerenter", true],
+      ["pointerleave", false],
+    ] as const)
+      fig.addEventListener(ev, (e) => {
+        if (e.pointerType !== "mouse") return;
+        hover = on;
         loop();
       });
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) continue;

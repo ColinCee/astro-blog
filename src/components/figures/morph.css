@@ -1,6 +1,6 @@
 /* JSONL text rearranging into columns (Morph): each character has a rows
    position (--x, --y) and a columns position (--cx, --cy), in characters and
-   lines; .is-cols moves it. .f0-.f2 shade a value by its column. */
+   lines; .is-cols moves it. */
 .prose .morph {
   --hold: 3.2s;
   --move: 1.1s;
@@ -93,8 +93,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  /* A hair wider than a character so neighbouring shades don't show seams. */
-  width: calc(1ch + 0.5px);
+  width: 1ch;
   line-height: var(--lh);
   text-align: center;
   transform: translate(calc(var(--x) * 1ch), calc(var(--y) * var(--lh)));
@@ -102,16 +101,16 @@
   transition:
     transform var(--d) calc(var(--y) * 50ms + var(--x) * 4ms),
     opacity 0.5s ease calc(var(--y) * 50ms),
-    color 0.5s ease,
-    background 0.5s ease;
+    color 0.5s ease;
 }
 .prose .morph.is-cols .morph__box span {
   transform: translate(calc(var(--cx) * 1ch), calc(var(--cy) * var(--lh)));
 }
+/* Plain text, told apart by colour alone: names mid grey, syntax faint,
+   values in ink. */
 .prose .morph .head,
 .prose .morph .key {
-  color: var(--faint);
-  background: color-mix(in oklch, var(--bar) 50%, transparent);
+  color: var(--muted);
 }
 .prose .morph .syn {
   color: color-mix(in oklch, var(--faint) 55%, transparent);
@@ -121,8 +120,7 @@
   font-weight: 600;
 }
 /* In columns: the names that repeat fly into their header and vanish, the
-   syntax fades, the headers take the accent and each value sits on its
-   column's shade. */
+   syntax fades, and the headers take the accent. */
 .prose .morph.is-cols .key {
   opacity: 0;
 }
@@ -133,19 +131,6 @@
 }
 .prose .morph.is-cols .head {
   color: var(--accent-soft);
-  background: none;
-}
-.prose .morph.is-cols .val {
-  background: color-mix(in oklch, var(--bar) var(--sh), transparent);
-}
-.prose .morph .f0 {
-  --sh: 25%;
-}
-.prose .morph .f1 {
-  --sh: 50%;
-}
-.prose .morph .f2 {
-  --sh: 80%;
 }
 @media (prefers-reduced-motion: reduce) {
   .prose .morph__box,
