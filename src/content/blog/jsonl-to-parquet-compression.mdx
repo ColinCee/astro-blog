@@ -83,7 +83,53 @@ So putting it all together, here's what those 5 records end up as:
   />
 </Fig>
 
-On the real file, all of that together is what takes 4.5GB down to 221MB.
+## What about something bigger?
+
+5 records is a bit small to see Zstandard do anything, so I made up 1.5 million records shaped like our export and wrote them out each way. The first few lines look like this:
+
+```json
+{"id":0,"account_id":"ACC-149440","status":"ACTIVE","active":"TRUE","flagged":"FALSE","created_at":"2025-01-01 00:00:11","amount":200.3,"currency":"GBP","region":"South","channel":"post","note":null,"external_ref":null}
+{"id":1,"account_id":"ACC-134724","status":"ACTIVE","active":"TRUE","flagged":"TRUE","created_at":"2025-01-01 00:00:35","amount":231.47,"currency":"GBP","region":"West","channel":"app","note":"manual check 624","external_ref":null}
+{"id":2,"account_id":"ACC-120781","status":"PENDING","active":"TRUE","flagged":"FALSE","created_at":"2025-01-01 00:00:54","amount":414.92,"currency":"GBP","region":"South","channel":"phone","note":null,"external_ref":null}
+```
+
+They come from [a few lines of DuckDB](/blog/jsonl-to-parquet-compression/make-data.sql), and [the first 1,000 lines](/blog/jsonl-to-parquet-compression/sample.jsonl) are there too if you want a look.
+
+<Fig title="1.5 million made-up records" caption="File sizes as written by DuckDB 1.5.">
+  <Cmp
+    cols={["10.5rem", "4.6rem"]}
+    rows={[
+      { label: "JSONL", value: 342.5, text: "342 MB" },
+      { label: "JSONL + Zstandard", value: 35.1, text: "35 MB" },
+      { label: "Parquet, no Zstandard", value: 62.7, text: "63 MB" },
+      { label: "Parquet + Zstandard", value: 19.5, text: "19.5 MB", after: true },
+    ]}
+  />
+</Fig>
+
+Parquet on its own is already about 5× smaller than the JSONL, and Zstandard takes it down another 3×. Zstandard on the JSONL by itself does pretty well too, but Parquet with it is still about half the size, and you can actually query it.
+
+<Fig title="How much Zstandard shrank each column">
+  <Cmp
+    cols={["7rem", "3rem"]}
+    rows={[
+      { label: "id", value: 7.7, text: "7.7×" },
+      { label: "currency", value: 5.8, text: "5.8×" },
+      { label: "account_id", value: 3.9, text: "3.9×" },
+      { label: "flagged", value: 3.4, text: "3.4×" },
+      { label: "amount", value: 3.1, text: "3.1×" },
+      { label: "note", value: 2.5, text: "2.5×" },
+      { label: "external_ref", value: 2.5, text: "2.5×" },
+      { label: "created_at", value: 2.1, text: "2.1×" },
+      { label: "active", value: 1.3, text: "1.3×" },
+      { label: "region", value: 1.3, text: "1.3×" },
+      { label: "channel", value: 1.2, text: "1.2×" },
+      { label: "status", value: 1.2, text: "1.2×" },
+    ]}
+  />
+</Fig>
+
+The ids just count up and nearly everything is GBP, so there's loads for it to find, but status, channel and region are random picks in this data so there's not much. All together that's about 18× on the made-up data, and on our real file it's what takes 4.5GB down to 221MB.
 
 ## Any downsides?
 
