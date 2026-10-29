@@ -1,0 +1,27 @@
+---
+// One column of data shrinking step by step: each step names what changed,
+// shows the bytes as they'd be written (mono), and draws its size as a bar to
+// scale against the first. The last step is the result and takes the accent.
+// Styles: encode.css.
+interface Step {
+  label: string;
+  show: string;
+  bytes: number;
+}
+interface Props {
+  steps: Step[];
+}
+const { steps } = Astro.props;
+const max = Math.max(...steps.map((s) => s.bytes));
+---
+
+<div class="encode">
+  {steps.map((s, i) => (
+    <div class:list={{ "is-last": i === steps.length - 1 }}>
+      <span>{s.label}</span>
+      <code>{s.show}</code>
+      <i style={`--w:${(s.bytes / max).toFixed(3)}`} />
+      <b>{s.bytes} bytes</b>
+    </div>
+  ))}
+</div>

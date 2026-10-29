@@ -1,0 +1,49 @@
+/* One column shrinking step by step (Encode): label and bytes on top, the bytes
+   as written under it, then a bar to scale with its size. */
+.prose .encode {
+  display: grid;
+  gap: 1rem;
+}
+.prose .encode > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 4.6rem;
+  align-items: center;
+  gap: 0.3rem 0.8rem;
+  margin: 0;
+}
+.prose .encode span {
+  grid-column: 1 / -1;
+  color: var(--ink);
+}
+.prose .encode code {
+  grid-column: 1 / -1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.6875rem;
+  color: var(--faint);
+  background: none;
+  padding: 0;
+}
+.prose .encode i {
+  display: block;
+  height: 0.7rem;
+  min-width: 3px;
+  width: calc(var(--w) * 100%);
+  background: var(--bar);
+  border-radius: 1px;
+}
+.prose .encode b {
+  font-weight: 500;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-align: right;
+}
+.prose .encode .is-last i {
+  background: var(--accent);
+}
+.prose .encode .is-last b {
+  color: var(--accent-soft);
+  font-weight: 700;
+}

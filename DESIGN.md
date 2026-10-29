@@ -384,7 +384,7 @@ homepage terminal window's ambient lift, nothing else.
   waterfall, `ref` a dashed reference line, `cols` the column widths), `<Dots>` (a
   dot plot on one axis, in titled groups), `<Stack>` (one bar split into shares,
   with a legend), `<Split>` + `<Panel title>` (panels side by side),
-  `<RowsVsColumns>` (records as JSON lines against columns), `<Boxes>` (a row of
+  `<Bytes>` (records as bytes, one square each: JSONL a line per record, Parquet a line per column), `<Encode>` (one column shrinking step by step, a bar per step), `<Boxes>` (a row of
   jobs or steps), `<Runs>` (blocks on a shared time axis: how long each run takes
   and how many fit), `<Splits>` (bars cut into parts with a key above; a part with
   no text is a sliver whose time goes after the bar; `est` rows are estimates,
