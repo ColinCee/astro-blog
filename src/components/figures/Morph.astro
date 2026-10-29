@@ -9,11 +9,8 @@ import type { Cell, Spot, Tone } from "./frames";
 type Value = string | number | boolean;
 interface Props {
   records: Record<string, Value>[];
-  // The tabs' sizes, when the records are a few rows of a bigger file;
-  // otherwise the bytes of these records.
-  sizes?: [string, string];
 }
-const { records, sizes } = Astro.props;
+const { records } = Astro.props;
 const keys = Object.keys(records[0]);
 const text = (v: Value) =>
   typeof v === "boolean" ? String(v).toUpperCase() : String(v);
@@ -60,16 +57,9 @@ records.forEach((r, row) => {
   });
   put("}", "syn");
 });
-// What each layout holds: every character plus a newline a line, against the
-// names once and the values (the padding in the column layout isn't data).
-const rowBytes = cells.length + records.length;
-const colBytes = cells.filter((c) => c.at[1].show).length;
 ---
 
 <Frames
   cells={cells}
-  tabs={[
-    { label: "JSONL, by row", size: sizes?.[0] ?? `${rowBytes} bytes` },
-    { label: "Parquet, by column", size: sizes?.[1] ?? `${colBytes} bytes` },
-  ]}
+  tabs={[{ label: "JSONL, by row" }, { label: "Parquet, by column" }]}
 />

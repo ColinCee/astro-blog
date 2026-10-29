@@ -13,8 +13,7 @@
   gap: 1rem;
 }
 
-/* One tab per stage, with the bytes it holds; a bar under them fills while
-   the loop holds a stage. The last stage's bytes take the accent. */
+/* One tab per stage; a bar under them fills while the loop holds a stage. */
 .prose .frames__tabs {
   position: relative;
   display: grid;
@@ -28,8 +27,6 @@
   background: var(--line);
 }
 .prose .frames__tabs button {
-  display: grid;
-  gap: 0.1rem;
   min-height: 2.75rem;
   padding: 0.45rem 0.8rem;
   border: 0;
@@ -45,17 +42,9 @@
     background var(--dur-fast, 0.2s) ease,
     color var(--dur-fast, 0.2s) ease;
 }
-.prose .frames__tabs b {
-  font-size: 0.8rem;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
 .prose .frames__tabs [aria-pressed="true"] {
   background: var(--panel, var(--bg));
   color: var(--ink);
-}
-.prose .frames__tabs button:last-of-type[aria-pressed="true"] b {
-  color: var(--accent-soft);
 }
 .prose .frames__timer {
   position: absolute;

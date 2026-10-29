@@ -15,5 +15,4 @@ export interface Cell {
 }
 export interface Tab {
   label: string;
-  size: string;
 }
