@@ -72,7 +72,7 @@ Run the comps: `node comps/serve.mts` (port 4390, or `PORT=4391`) and open `/ind
 
 Done and committed: the tokens (`src/styles/tokens.css` roles over the generated `scales.css`), Sora / Geist / DM Mono, dark by default with the light toggle in the nav, code blocks on the site's theme; posts (titles and headings in Sora, the stat split, flat figures, no caps labels, figure values at DM Mono 500); the hero reel; the terminal (whoami, top, weather, newest five posts); worked at; the blog index, CV, 404 and footer; the design page. `node docs/redesign/comps/shoot-site.mts home,blog,cv,blog/<slug>` shoots any page in dark, light and 375px from the dev server.
 
-Left: Projects (the picker with its five figures), `DESIGN.md` rewritten from the design page, AGENTS.md's stale colour rules, and the open points above. The comps in `docs/redesign/comps/` are the record of what was decided; review now happens on the dev server.
+Also done: Projects (the picker with its five figures; copy in `src/data/projects.json`, the radar in `src/components/home/projects/radar.ts`), `DESIGN.md`, AGENTS.md and the writing skill. Left: Colin's review of every post's charts, the open points above, and merging the branch (his call). Known: hovering a project opens it, so scrolling the page under a still cursor can open one; the radar's live recolour on a theme switch is wired but not seen. The comps in `docs/redesign/comps/` are the record of what was decided; review now happens on the dev server.
 
 ## Rules that bind any further comp
 

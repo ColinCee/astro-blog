@@ -29,9 +29,10 @@ const projects = defineCollection({
     order,
     repo: z.string(),
     href: z.url(),
+    // The short line under the name in the homepage list
     desc: z.string(),
-    // Spans two columns.
-    wide: z.boolean().optional(),
+    // The caption over the project's figure
+    caption: z.string(),
   }),
 });
 

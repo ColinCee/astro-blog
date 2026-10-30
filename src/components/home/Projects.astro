@@ -1,541 +1,910 @@
 ---
-// Side projects as quiet tiles, each with a live piece of the project under
-// its header: the dissertation agent playing, a simulated radar, the
-// homelab's stacks, a card from the deck and this site's last deploy.
-// Tile headers: src/data/projects.json.
+// The homepage's projects: a picker. The names are a plain list on the left;
+// the open one shows its figure on the right, one panel at a time (an
+// accordion on narrow screens). Each figure is a small live piece of the
+// project: the dissertation's training curve, a simulated London radar, the
+// homelab's stacks, a card from the deck and how this page got to you.
+// Projects: src/data/projects.json; stacks: homelab-stacks.json; cards:
+// anki-cards.json. The radar's simulation is projects/radar.ts.
 import { getCollection } from "astro:content";
 import ankiCards from "../../data/anki-cards.json";
-import AgentPane from "./AgentPane.astro";
-import RadarPane from "./RadarPane.astro";
+import Cloud from "./projects/Cloud.astro";
 
-const projects = (await getCollection("projects")).sort(
-  (a, b) => a.data.order - b.data.order,
-);
-const stacks = (await getCollection("homelabStacks")).sort(
-  (a, b) => a.data.order - b.data.order,
-);
-const build = __BUILD__;
+const projects = (await getCollection("projects"))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map(({ id, data }) => ({ id, ...data }));
+const stacks = (await getCollection("homelabStacks"))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map(({ id, data }) => ({ id, ...data }));
+
+// What each stack's node says instead of its service list. The two counts
+// tick up while the page is open; [data-live] keeps every copy of one in step.
+const stackNow: Record<
+  string,
+  { label: string; n: number; live: string; every: number } | string
+> = {
+  crowdsec: { label: "blocked", n: 1284, live: "blocked", every: 4000 },
+  "flight-tracker": { label: "seen today", n: 212, live: "seen", every: 7000 },
+  "home-assistant": "19.5°C inside",
+  backup: "restic, nightly at 03:00",
+};
+
+// One training run: 12 hours in 2018, 11 minutes in 2026.
+const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
 ---
 
-<section class="work" aria-label="Side projects" data-reveal>
-  <p class="work__tag">// projects</p>
-  <ul class="work__list" data-live-tiles>
-    {projects.map(({ id, data: p }, i) => (
-      <li class:list={["tile", { "tile--wide": p.wide }]} style={`--i: ${i}`}>
-        <a class="tile__head" href={p.href}>
-          <span class="proj__path tile__path">
-            <i aria-hidden="true" />
-            <span class="tile__home">~/projects/{id}</span>
-            <span class="tile__repo">{p.repo}</span>
-            <span class="proj__go" aria-hidden="true">
-              ↗
-            </span>
-          </span>
-          <span class="proj__name">{id}</span>
-          <span class="proj__desc">{p.desc}</span>
-        </a>
-        <div class="tile__live">
-          {id === "dissertation" && <AgentPane compact rate={0.3} />}
-          {id === "flight-tracker" && <RadarPane />}
-          {id === "home-lab" && (
-            <Fragment>
-              <p class="stack__cmd">
-                <span class="stack__prompt">$</span> docker compose ls
-              </p>
-              <ul class="stack">
-                {stacks.map((s, r) => (
-                  <li style={`--r: ${r}`}>
-                    <b>{s.id}</b>
-                    <span>{s.data.services}</span>
-                  </li>
-                ))}
-              </ul>
-            </Fragment>
-          )}
-          {id === "anki-chinese" && (
-            <button
-              type="button"
-              class="card"
-              data-anki
-              data-cards={JSON.stringify(ankiCards)}
-              aria-label="Flip the flashcard; flip again for another"
-            >
-              <span class="card__inner">
-                <span class="card__face card__front">
-                  <span class="card__hanzi" lang="zh-Hans" data-anki-hanzi>
+<section class="sec" id="projects" aria-labelledby="projects-h" data-reveal>
+  <h2 id="projects-h">Projects</h2>
+  <div class="pj" data-pj style={`--n: ${projects.length}`}>
+    {projects.map((p, i) => (
+      <article class:list={["pj__item", { "is-on": i === 0 }]} data-pj-item>
+        <button
+          class="pj__pick"
+          type="button"
+          aria-expanded={i === 0 ? "true" : "false"}
+          aria-controls={`pj-${i}`}
+          data-pj-pick
+        >
+          <span class="pj__name">{p.id}</span>
+          <span class="pj__sub">{p.desc}</span>
+        </button>
+        <figure class="pj__fig" id={`pj-${i}`}>
+          <figcaption class="pj__cap">{p.caption}</figcaption>
+          <div class="pj__body">
+            {p.id === "dissertation" && (
+              <div class="tr">
+                <div class="tr__plot">
+                  <span>reward</span>
+                  <div class="tr__area">
+                    <svg
+                      viewBox="38 8 274 124"
+                      role="img"
+                      aria-label="Reward over a 12 hour run: the 2026 GPU agent climbs early and plateaus high; the 2018 CPU agent climbs slowly"
+                    >
+                      <line
+                        class="grid"
+                        x1="40"
+                        y1="30"
+                        x2="310"
+                        y2="30"
+                      ></line>
+                      <line
+                        class="grid"
+                        x1="40"
+                        y1="60"
+                        x2="310"
+                        y2="60"
+                      ></line>
+                      <line
+                        class="grid"
+                        x1="40"
+                        y1="90"
+                        x2="310"
+                        y2="90"
+                      ></line>
+                      <line class="ax" x1="40" y1="8" x2="40" y2="130"></line>
+                      <line
+                        class="ax"
+                        x1="40"
+                        y1="130"
+                        x2="310"
+                        y2="130"
+                      ></line>
+                      <path
+                        class="old"
+                        d="M40 128 C80 126 110 120 150 104 S230 70 310 62"
+                      ></path>
+                      <path
+                        class="new"
+                        d="M40 128 C55 120 62 90 80 70 S120 34 170 28 S260 22 310 20"
+                      ></path>
+                    </svg>
+                    <span class="tr__lab tr__lab--new">2026 · gpu</span>
+                    <span class="tr__lab tr__lab--old">2018 · cpu</span>
+                  </div>
+                  <span class="tr__x">
+                    <span>0</span>
+                    <span>12 h</span>
+                  </span>
+                </div>
+                <div class="bars">
+                  <span class="bars__t">one training run</span>
+                  <span>2018</span>
+                  <i>
+                    <b style="--w: 100%"></b>
+                  </i>
+                  <em>12 h</em>
+                  <span>2026</span>
+                  <i class="hot">
+                    <b style={`--w: ${runNow}`}></b>
+                  </i>
+                  <em class="hot">11 min</em>
+                </div>
+              </div>
+            )}
+            {p.id === "flight-tracker" && (
+              <div class="rd">
+                <canvas
+                  data-radar
+                  role="img"
+                  aria-label="A simulated radar around Heathrow: planes circling the four holding stacks, landing and taking off"
+                ></canvas>
+                <div class="rd__nodes">
+                  <span class="node">
+                    <span class="node__k">seen today</span>
+                    <span class="node__v">
+                      <b data-n="212" data-live="seen">
+                        212
+                      </b>
+                    </span>
+                    <span class="node__s">ads-b, one antenna</span>
+                  </span>
+                  <span class="node">
+                    <span class="node__k">tracking now</span>
+                    <span class="node__v hot">
+                      <b data-n="7">7</b>
+                    </span>
+                    <span class="node__s">two with callsigns</span>
+                  </span>
+                </div>
+              </div>
+            )}
+            {p.id === "home-lab" && (
+              <div class="dg dg--lab" data-edges="internet>host">
+                <svg class="dg__edges" aria-hidden="true">
+                  <path class="e"></path>
+                  <path class="p"></path>
+                </svg>
+                <span class="node node--cloud" data-node="internet">
+                  <Cloud />
+                  <span class="node__k">internet</span>
+                  <span class="node__s">cloudflare tunnel</span>
+                </span>
+                <div class="node node--host" data-node="host">
+                  <span class="node__k">
+                    <b>mini-PC</b> · {stacks.length} compose stacks
+                  </span>
+                  <ul class="lab">
+                    {stacks.map((s) => {
+                      const now = stackNow[s.id];
+                      return (
+                        <li class="node">
+                          <span class="node__k">
+                            <i class="dot" role="img" aria-label="up"></i>
+                            {s.id}
+                          </span>
+                          <span class="node__s">
+                            {typeof now === "object" ? (
+                              <Fragment>
+                                {now.label}{" "}
+                                <b
+                                  data-n={now.n}
+                                  data-live={now.live}
+                                  data-every={now.every}
+                                >
+                                  {now.n.toLocaleString("en-GB")}
+                                </b>
+                              </Fragment>
+                            ) : (
+                              (now ?? s.services)
+                            )}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </div>
+            )}
+            {p.id === "anki-chinese" && (
+              <div class="ak">
+                <p
+                  class="ak__card"
+                  aria-live="polite"
+                  data-anki
+                  data-cards={JSON.stringify(ankiCards)}
+                >
+                  <span class="ak__hz" lang="zh-Hans" data-anki-hanzi>
                     {ankiCards[0].hanzi}
                   </span>
-                  <span class="card__hint">flip</span>
-                </span>
-                <span class="card__face card__back">
-                  <span class="card__py" data-anki-py>
-                    {ankiCards[0].pinyin}
+                  <span class="ak__py">
+                    <span data-anki-py>{ankiCards[0].pinyin}</span> ·
+                    <span data-anki-jp>{ankiCards[0].jyutping}</span>
                   </span>
-                  <span class="card__jp">
-                    <span data-anki-jp>{ankiCards[0].jyutping}</span> ·
-                    Cantonese
-                  </span>
-                  <span class="card__mean" data-anki-mean>
+                  <span class="ak__mn" data-anki-mean>
                     {ankiCards[0].meaning}
                   </span>
-                  <span class="card__hint">tap · next card</span>
-                </span>
-              </span>
-            </button>
-          )}
-          {id === "colincheung.dev" &&
-            (build.hash ? (
-              <div class="site" data-build={build.when}>
-                <ol
-                  class="pipe"
-                  aria-label="The deploy this page is running from"
-                >
-                  <li class="is-done">
-                    <b>commit</b>
-                    <a
-                      href={`https://github.com/ColinCee/astro-blog/commit/${build.hash}`}
-                    >
-                      {build.hash}
-                    </a>
-                  </li>
-                  <li class="is-done">
-                    <b>build</b>
-                    <span>astro + wrangler</span>
-                  </li>
-                  <li class="is-now">
-                    <b>live</b>
-                    <span data-build-rel>{build.when.slice(0, 10)}</span>
-                  </li>
-                </ol>
-                <p class="site__msg" title={build.subject}>
-                  “{build.subject}”
                 </p>
+                <button class="ak__next" type="button" data-anki-next>
+                  next card
+                </button>
               </div>
-            ) : (
-              <p class="site__none">built outside git</p>
-            ))}
-        </div>
-      </li>
+            )}
+            {p.id === "colincheung.dev" && (
+              <div
+                class="dg dg--deliver"
+                data-edges="repo>build,build>edge,edge>you"
+              >
+                <svg class="dg__edges" aria-hidden="true">
+                  <path class="e"></path>
+                  <path class="p"></path>
+                </svg>
+                <span class="node" data-node="repo">
+                  <span class="node__k">git push</span>
+                  <span class="node__v">main</span>
+                  <span class="node__s">github</span>
+                </span>
+                <span class="node" data-node="build">
+                  <span class="node__k">astro build</span>
+                  <span class="node__v">
+                    <b data-n="14">14</b> s
+                  </span>
+                  <span class="node__s">cloudflare workers</span>
+                </span>
+                <span class="node node--cloud" data-node="edge">
+                  <Cloud />
+                  <span class="node__k">cloudflare edge</span>
+                  <span class="node__v">
+                    <b data-n="330">330</b>
+                  </span>
+                  <span class="node__s">cities</span>
+                </span>
+                <span class="node" data-node="you">
+                  <span class="node__k">you</span>
+                  <span class="node__v hot">
+                    <b data-n="24">24</b> ms
+                  </span>
+                  <span class="node__s">first byte</span>
+                </span>
+              </div>
+            )}
+          </div>
+          <a class="pj__link" href={p.href}>
+            {p.repo} ↗
+          </a>
+        </figure>
+      </article>
     ))}
-  </ul>
+  </div>
 </section>
 
 <style>
-  .work {
+  .sec {
     max-width: var(--w-poster);
     margin: 0 auto;
     padding: clamp(2.5rem, 5vw, 4rem) 0 0;
   }
-  .work__tag {
-    font-family: var(--mono);
-    font-size: 0.74rem;
-    letter-spacing: 0.14em;
-    color: var(--muted);
-    margin: 0 0 clamp(0.9rem, 2vw, 1.3rem);
-  }
-  /* Five tiles: 1, 2 or 3 columns; the first spans two. */
-  .work__list {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: clamp(0.7rem, 1.4vw, 1rem);
-  }
-  @media (min-width: 640px) {
-    .work__list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .tile--wide {
-      grid-column: span 2;
-    }
-  }
-  @media (min-width: 1100px) {
-    .work__list {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-  /* Flat neutral tile: a header that links out, then the live part. At rest
-     the only colour is the small accent dot; hover turns the border and
-     arrow accent and swaps the home path for where the project really lives. */
-  .tile {
-    display: grid;
-    grid-template-rows: auto 1fr;
-    gap: 0.9rem;
-    padding: 1rem 1.1rem 1.1rem;
-    background: var(--pane);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    transition: border-color var(--dur-fast) var(--ease);
-  }
-  .tile:hover {
-    border-color: var(--accent);
-  }
-  .tile__head {
-    display: grid;
-    gap: 0.3rem;
-  }
-  .proj__path {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.04em;
-    color: var(--faint);
-    margin-bottom: 0.4rem;
-  }
-  .proj__path i {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background: var(--accent);
-  }
-  .proj__go {
-    margin-left: auto;
-    font-size: 0.95rem;
-    color: var(--faint);
-    transition:
-      transform var(--dur-fast) var(--ease),
-      color var(--dur-fast) var(--ease);
-  }
-  .tile:hover .proj__go {
-    color: var(--accent);
-    transform: translate(3px, -3px);
-  }
-  .proj__name {
-    font-weight: 700;
-    font-size: clamp(1.3rem, 2vw, 1.7rem);
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    color: var(--ink);
-    overflow-wrap: anywhere;
-  }
-  .proj__desc {
-    color: var(--muted);
-  }
-  .tile__path {
-    position: relative;
-  }
-  .tile__home,
-  .tile__repo {
-    transition: opacity var(--dur-fast) var(--ease);
-  }
-  .tile__repo {
-    position: absolute;
-    left: 1rem;
-    max-width: calc(100% - 2.6rem);
-    opacity: 0;
-    color: var(--muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .tile:hover .tile__home {
-    opacity: 0;
-  }
-  .tile:hover .tile__repo {
-    opacity: 1;
-  }
-  .tile__live {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  /* The live part fills the tile; AgentPane and RadarPane are their own
-     components, hence :global. */
-  .tile__live > :global(:last-child) {
-    flex: 1;
-  }
-  /* The live parts boot in once, a beat apart, when the section arrives. */
-  .work__list.is-armed .tile__live {
-    opacity: 0;
-    transform: translateY(8px);
-    transition:
-      opacity 0.5s ease-out calc(var(--i) * 90ms + 120ms),
-      transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1)
-      calc(var(--i) * 90ms + 120ms);
-  }
-  .work__list.is-armed .stack li {
-    opacity: 0;
-    transform: translateX(-4px);
-    transition:
-      opacity 0.35s ease-out calc(var(--i) * 90ms + 320ms + var(--r) * 70ms),
-      transform 0.35s ease-out calc(var(--i) * 90ms + 320ms + var(--r) * 70ms);
-  }
-  .work__list.is-armed .pipe li {
-    opacity: 0;
-    transition: opacity 0.35s ease-out
-      calc(var(--i) * 90ms + 320ms + var(--r, 0) * 160ms);
-  }
-  .work__list.is-armed .pipe li:nth-child(2) {
-    --r: 1;
-  }
-  .work__list.is-armed .pipe li:nth-child(3) {
-    --r: 2;
-  }
-  .work__list.is-armed.is-live .tile__live,
-  .work__list.is-armed.is-live .stack li,
-  .work__list.is-armed.is-live .pipe li {
-    opacity: 1;
-    transform: none;
+  h2 {
+    font-family: var(--head);
+    font-weight: 600;
+    font-size: 1.3rem;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.9rem;
   }
 
-  /* home-lab: the stacks, as a compose listing */
-  .stack__cmd {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    color: var(--muted);
-    margin-bottom: 0.4rem;
-  }
-  .stack__prompt {
-    color: var(--accent);
-    margin-right: 0.5ch;
-  }
-  .stack {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    font-family: var(--mono);
-    font-size: 0.7rem;
-  }
-  .stack li {
+  /* ---- The picker: the list in column one; the open item's figure spans
+     every row of column two. The list keeps its own spacing and the
+     figure's extra height goes to a last, empty row. ---- */
+  .pj {
     display: grid;
-    grid-template-columns: 7.2rem 1fr;
-    gap: 0.6rem;
-    align-items: baseline;
+    grid-template-columns: minmax(15rem, 0.8fr) minmax(0, 2fr);
+    grid-template-rows: repeat(var(--n), min-content) 1fr;
+    gap: 0.1rem 2.5rem;
   }
-  .stack b {
-    color: var(--ink);
-    font-weight: 500;
+  .pj__item {
+    display: contents;
   }
-  .stack span {
-    color: var(--faint);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* anki: one real card; hover or tap flips it, flipping back deals the next */
-  .card {
-    display: block;
-    width: 100%;
-    min-height: 9.5rem;
-    padding: 0;
+  .pj__pick {
+    grid-column: 1;
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.7rem 0;
     border: 0;
     background: none;
-    cursor: pointer;
-    perspective: 900px;
-    text-align: center;
     font: inherit;
+    text-align: left;
     color: inherit;
+    cursor: pointer;
   }
-  .card__inner {
+  .pj__name {
     position: relative;
-    display: block;
-    height: 100%;
-    min-height: 9.5rem;
-    transform-style: preserve-3d;
-    transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
+    font-family: var(--head);
+    font-weight: 600;
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+    color: var(--muted);
+    transition: color var(--dur-fast) var(--ease);
   }
-  .card:hover .card__inner,
-  .card:focus-visible .card__inner,
-  .card.is-flipped .card__inner {
-    transform: rotateY(180deg);
+  .pj__sub {
+    font-size: 0.875rem;
+    color: var(--faint);
   }
-  .card__face {
+  .pj__pick:hover .pj__name,
+  .is-on .pj__name {
+    color: var(--ink);
+  }
+  .is-on .pj__sub {
+    color: var(--muted);
+  }
+  /* The open project: a violet slash hanging in the margin, like the
+     slashes between the companies, so the names stay flush with the
+     heading. */
+  .is-on .pj__name::before {
+    content: "/";
+    position: absolute;
+    right: calc(100% + 0.45rem);
+    font-weight: 300;
+    color: var(--accent);
+  }
+  .pj__fig {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    display: none;
+    grid-template-rows: auto 1fr auto;
+    gap: 1rem;
+    min-width: 0;
+    min-height: 22rem;
+    margin: 0;
+    padding: 1.25rem 1.5rem 1.2rem;
+    background: var(--pane);
+    border-radius: var(--r);
+    container-type: inline-size;
+  }
+  .is-on .pj__fig {
+    display: grid;
+  }
+  .pj__cap,
+  .pj__link {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--faint);
+  }
+  .pj__body {
+    display: grid;
+    align-items: center;
+    min-width: 0;
+  }
+  .pj__link {
+    justify-self: start;
+    color: var(--muted);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 0.2em;
+  }
+  .pj__link:hover {
+    color: var(--ink);
+    text-decoration-color: currentColor;
+  }
+  /* Narrow: an accordion, each figure right under its name. */
+  @media (max-width: 56rem) {
+    .pj {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: none;
+    }
+    .pj__fig {
+      grid-column: 1;
+      grid-row: auto;
+      min-height: 0;
+      margin: 0.3rem 0 0.7rem;
+      padding: 1rem 1rem 1.1rem;
+    }
+  }
+
+  /* ---- Nodes and edges, shared by the two diagrams. Edges are drawn by
+     the script from the nodes' boxes; the dashes on top are the traffic. ---- */
+  .dg {
+    position: relative;
+    display: grid;
+    align-items: center;
+    padding-top: 1.2rem;
+  }
+  .dg__edges {
     position: absolute;
     inset: 0;
-    display: grid;
-    place-content: center;
-    gap: 0.3rem;
-    border: 1px solid var(--line);
-    border-radius: 7px;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .e {
+    fill: none;
+    stroke: var(--n7);
+    stroke-width: 1.5;
+  }
+  .p {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-dasharray: 3 15;
+    stroke-linecap: round;
+    animation: flow 7s linear infinite;
+  }
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -72;
+    }
+  }
+  .node {
+    position: relative;
+    z-index: 1;
+    display: block;
+    min-width: 0;
+    padding: 0.7rem 0.85rem 0.75rem;
     background: var(--panel);
-    backface-visibility: hidden;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-ctl);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: var(--faint);
   }
-  .card:hover .card__face {
-    border-color: color-mix(in oklch, var(--accent) 50%, var(--line));
+  .node__k,
+  .node__s {
+    display: block;
   }
-  .card__back {
-    transform: rotateY(180deg);
+  .node__s {
+    margin-top: 0.3rem;
   }
-  .card__hanzi {
+  .node__v {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 1.25rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .node b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .node__v b {
+    font-weight: 400;
+  }
+  .node__v.hot,
+  .node__v.hot b {
+    color: var(--accent-text);
+  }
+  .node--cloud {
+    padding: 1.1rem 1.5rem 0.7rem;
+    background: none;
+    border: 0;
+    text-align: center;
+  }
+  .node--host {
+    padding: 0.85rem 0.9rem 0.9rem;
+    background: var(--well);
+    border: 0;
+    border-radius: var(--r);
+  }
+  .node--host > .node__k {
+    margin-bottom: 0.6rem;
+  }
+  .dot {
+    display: inline-block;
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-right: 0.4rem;
+    border-radius: 50%;
+    background: var(--ok9);
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  /* home-lab: the internet comes in through the tunnel to the five stacks */
+  .dg--lab {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr);
+    gap: 1rem 2.5rem;
+  }
+  .lab {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+  .lab .node {
+    padding: 0.5rem 0.65rem 0.55rem;
+  }
+  .lab .node:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  /* this site: push, build, the edge, you */
+  .dg--deliver {
+    grid-template-columns: 1fr 1fr 1.2fr 1fr;
+    gap: 1rem 2rem;
+  }
+
+  /* dissertation: the reward curves, then one run's time as bars */
+  .tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 1.5rem 2.5rem;
+    align-items: center;
+  }
+  .tr__plot,
+  .bars {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--faint);
+  }
+  .tr__plot {
+    display: grid;
+    gap: 0.4rem;
+    max-width: 34rem;
+  }
+  .tr__area {
+    position: relative;
+  }
+  .tr__area svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .grid,
+  .ax {
+    stroke: var(--line);
+    vector-effect: non-scaling-stroke;
+  }
+  .ax {
+    stroke: var(--line-strong);
+  }
+  .old,
+  .new {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+  }
+  .old {
+    stroke: var(--bar);
+    stroke-width: 1.5;
+    stroke-dasharray: 3 4;
+  }
+  .new {
+    stroke: var(--accent);
+    stroke-width: 2;
+  }
+  /* The 2026 curve draws itself, left to right, each time it is shown. */
+  [data-motion] .new {
+    clip-path: inset(-4px 100% -4px -4px);
+  }
+  [data-motion] .is-drawn .new {
+    animation: draw 2.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s forwards;
+  }
+  @keyframes draw {
+    to {
+      clip-path: inset(-4px -4px -4px -4px);
+    }
+  }
+  /* Series labels sit over the plot at the curves' own coordinates. */
+  .tr__lab {
+    position: absolute;
+    transform: translateY(-100%);
+    white-space: nowrap;
+    color: var(--muted);
+  }
+  .tr__lab--new {
+    left: 55%;
+    top: 9%;
+    color: var(--accent-text);
+  }
+  .tr__lab--old {
+    left: 60%;
+    top: 56%;
+  }
+  .tr__x {
+    display: flex;
+    justify-content: space-between;
+  }
+  .bars {
+    display: grid;
+    grid-template-columns: 2.6rem minmax(0, 1fr) 3.6rem;
+    gap: 0.5rem 0.7rem;
+    align-items: center;
+  }
+  .bars__t {
+    grid-column: 1 / -1;
+  }
+  .bars i {
+    display: block;
+    height: 0.5rem;
+    background: var(--well);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .bars i b {
+    display: block;
+    width: var(--w);
+    min-width: 3px;
+    height: 100%;
+    background: var(--bar);
+  }
+  .bars i.hot b {
+    background: var(--accent);
+  }
+  .bars em {
+    font-style: normal;
+    text-align: right;
+    color: var(--muted);
+  }
+  .bars em.hot {
+    font-weight: 500;
+    color: var(--accent-text);
+  }
+
+  /* flight-tracker: the scope, and two counts beside it */
+  .rd {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 1.2rem 2rem;
+    align-items: center;
+  }
+  .rd canvas {
+    display: block;
+    justify-self: center;
+    width: 100%;
+    max-width: 20rem;
+    aspect-ratio: 1;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+  }
+  .rd__nodes {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  /* anki-chinese: one card, and a button for the next */
+  .ak {
+    display: grid;
+    justify-items: center;
+    gap: 0.9rem;
+  }
+  .ak__card {
+    display: grid;
+    justify-items: center;
+    gap: 0.25rem;
+    min-width: 13rem;
+    padding: 1.4rem 2.2rem 1.2rem;
+    background: var(--well);
+    border-radius: var(--r);
+    text-align: center;
+  }
+  .ak__hz {
     font-family: var(--cjk);
-    font-size: 3.4rem;
+    font-size: 4rem;
+    font-weight: 400;
     line-height: 1;
     color: var(--ink);
   }
-  .card__hint {
+  .ak__py {
+    margin-top: 0.5rem;
     font-family: var(--mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.06em;
-    color: var(--faint);
-  }
-  .card__back .card__hint {
-    margin-top: 0.3rem;
-  }
-  .card__py {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--accent);
-  }
-  .card__jp {
-    font-family: var(--mono);
-    font-size: 0.6875rem;
-    color: var(--faint);
-  }
-  .card__mean {
+    font-size: 0.8125rem;
     color: var(--muted);
-    font-size: 0.9rem;
-    padding: 0 0.8rem;
+  }
+  .ak__mn {
+    font-size: 0.9375rem;
+    color: var(--ink);
+  }
+  .ak__next {
+    padding: 0.35rem 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink);
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-ctl);
+    cursor: pointer;
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .ak__next:hover {
+    border-color: var(--ink);
   }
 
-  /* this site: commit → build → live, in the site's node style */
-  .site {
-    display: grid;
-    align-content: start;
-    gap: 0.2rem;
+  /* A figure narrower than its diagram stacks it; the edges then run top
+     to bottom. The extra row gap leaves room for a cloud's bumps. */
+  @container (max-width: 40rem) {
+    .tr,
+    .rd,
+    .dg--lab,
+    .dg--deliver {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .dg {
+      row-gap: 2.6rem;
+      padding-top: 1.7rem;
+    }
+    .rd__nodes {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
-  .site__none {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    color: var(--faint);
-  }
-  .pipe {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    position: relative;
-    margin: 0.3rem 0 0.9rem;
-    font-family: var(--mono);
-    font-size: 0.6875rem;
-  }
-  .pipe::before {
-    content: "";
-    position: absolute;
-    left: 0.3rem;
-    right: 0.3rem;
-    top: 0.3rem;
-    height: 1px;
-    background: var(--line);
-  }
-  .pipe li {
-    position: relative;
-    display: grid;
-    gap: 0.25rem;
-    padding-top: 0.9rem;
-    min-width: 0;
-  }
-  .pipe li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--pane);
-    border: 2px solid var(--faint);
-    box-sizing: content-box;
-    transform: translate(-1px, -2px);
-  }
-  .pipe li.is-done::before {
-    background: var(--faint);
-  }
-  .pipe li.is-now::before {
-    border-color: var(--accent);
-    background: var(--accent);
-    box-shadow: var(--ring);
-  }
-  .pipe b {
-    color: var(--faint);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-  }
-  .pipe span,
-  .pipe a {
-    color: var(--ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .pipe a {
-    color: var(--accent);
-  }
-  .pipe li.is-now span {
-    font-weight: 600;
-  }
-  .site__msg {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    color: var(--muted);
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+
+  /* A phone: the stacks one per row, so names like observability stay on
+     one line with their dot. */
+  @container (max-width: 28rem) {
+    .lab {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .card__inner {
-      transition: none;
+    .p {
+      display: none;
     }
-    .work__list.is-armed .tile__live,
-    .work__list.is-armed .stack li,
-    .work__list.is-armed .pipe li {
-      opacity: 1;
-      transform: none;
-      transition: none;
+    .dot {
+      animation: none;
     }
   }
 </style>
 
 <script>
-  import "../../scripts/build-age";
+  import { radar } from "./projects/radar";
 
-  // The tiles' live parts boot in once, a beat apart, as the section arrives.
-  const tiles = document.querySelector<HTMLElement>("[data-live-tiles]");
-  if (
-    tiles &&
-    !matchMedia("(prefers-reduced-motion: reduce)").matches &&
-    "IntersectionObserver" in window
-  ) {
-    tiles.classList.add("is-armed");
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (!e.isIntersecting) return;
-        io.disconnect();
-        tiles.classList.add("is-live");
-      },
-      { threshold: 0.15 },
-    );
-    io.observe(tiles);
-  }
+  type Card = {
+    hanzi: string;
+    pinyin: string;
+    jyutping: string;
+    meaning: string;
+  };
 
-  // A random real card from the deck. Flip to read it, flip again for another.
-  document.querySelectorAll<HTMLElement>("[data-anki]").forEach((card) => {
-    const cards = JSON.parse(card.dataset.cards || "[]") as {
-      hanzi: string;
-      pinyin: string;
-      jyutping: string;
-      meaning: string;
-    }[];
-    let at = Math.floor(Math.random() * cards.length);
-    const show = () => {
-      const c = cards[at];
-      if (!c) return;
-      card.querySelector("[data-anki-hanzi]")!.textContent = c.hanzi;
-      card.querySelector("[data-anki-py]")!.textContent = c.pinyin;
-      card.querySelector("[data-anki-jp]")!.textContent = c.jyutping;
-      card.querySelector("[data-anki-mean]")!.textContent = c.meaning;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const pj = document.querySelector<HTMLElement>("[data-pj]");
+
+  if (pj) {
+    // Without this the curve is simply drawn (no JS, or reduced motion).
+    if (!reduce) pj.dataset.motion = "";
+    const items = [...pj.querySelectorAll<HTMLElement>("[data-pj-item]")];
+    const canvas = pj.querySelector<HTMLCanvasElement>("[data-radar]");
+    const scope = canvas ? radar(canvas, reduce) : null;
+    const isOpen = (it: HTMLElement) => it.classList.contains("is-on");
+    let inView = false;
+
+    // Numbers count up from zero the first time they are shown. The live ones
+    // keep one value per name, so the radar and the home-lab agree.
+    const fmt = (v: number) => Math.round(v).toLocaleString("en-GB");
+    const live = new Map<string, number>();
+    const counted = new WeakSet<HTMLElement>();
+    const counting = new WeakSet<HTMLElement>();
+    const target = (el: HTMLElement) =>
+      el.dataset.live ? live.get(el.dataset.live)! : Number(el.dataset.n);
+    for (const el of pj.querySelectorAll<HTMLElement>("[data-live]"))
+      live.set(el.dataset.live!, Number(el.dataset.n));
+    const countUp = (el: HTMLElement) => {
+      counted.add(el);
+      if (reduce) return;
+      counting.add(el);
+      const t0 = performance.now();
+      const frame = (t: number) => {
+        const e = 1 - (1 - Math.min(1, (t - t0) / 1400)) ** 3;
+        el.textContent = fmt(target(el) * e);
+        if (e < 1) requestAnimationFrame(frame);
+        else counting.delete(el);
+      };
+      requestAnimationFrame(frame);
     };
-    show();
-    card.addEventListener("click", () => {
-      const flipped = card.classList.toggle("is-flipped");
-      if (!flipped)
-        setTimeout(() => {
-          at = (at + 1) % cards.length;
-          show();
-        }, 300);
-    });
-    card.addEventListener("mouseleave", () =>
-      card.classList.remove("is-flipped"),
-    );
-  });
+    let ticking = false;
+    const tick = () => {
+      if (ticking || reduce) return;
+      ticking = true;
+      for (const el of pj.querySelectorAll<HTMLElement>("[data-every]")) {
+        const key = el.dataset.live!;
+        setInterval(() => {
+          const v = live.get(key)! + 0.6 + Math.random() * 0.8;
+          live.set(key, v);
+          for (const o of pj.querySelectorAll<HTMLElement>(
+            `[data-live="${key}"]`,
+          ))
+            if (!counting.has(o)) o.textContent = fmt(v);
+        }, Number(el.dataset.every));
+      }
+    };
+
+    // Edges from box to box: side to side when the next node is to the right,
+    // top to bottom when the diagram is stacked.
+    const draw = (dg: HTMLElement) => {
+      const R = dg.getBoundingClientRect();
+      if (!R.width) return;
+      const svg = dg.querySelector("svg")!;
+      svg.setAttribute("viewBox", `0 0 ${R.width} ${R.height}`);
+      const box = (n: string) =>
+        dg.querySelector(`[data-node="${n}"]`)!.getBoundingClientRect();
+      let d = "";
+      for (const [a, b] of dg.dataset
+        .edges!.split(",")
+        .map((s) => s.split(">"))) {
+        const A = box(a);
+        const B = box(b);
+        if (B.left >= A.right - 1) {
+          const [x1, y1] = [A.right - R.left, A.top + A.height / 2 - R.top];
+          const [x2, y2] = [B.left - R.left, B.top + B.height / 2 - R.top];
+          const c = (x2 - x1) / 2;
+          d += `M${x1} ${y1} C${x1 + c} ${y1} ${x2 - c} ${y2} ${x2} ${y2} `;
+        } else {
+          const [x1, y1] = [A.left + A.width / 2 - R.left, A.bottom - R.top];
+          const [x2, y2] = [B.left + B.width / 2 - R.left, B.top - R.top];
+          const c = (y2 - y1) / 2;
+          d += `M${x1} ${y1} C${x1} ${y1 + c} ${x2} ${y2 - c} ${x2} ${y2} `;
+        }
+      }
+      for (const path of svg.querySelectorAll("path"))
+        path.setAttribute("d", d);
+    };
+    const drawOpen = () => {
+      const it = items.find(isOpen);
+      if (it)
+        for (const dg of it.querySelectorAll<HTMLElement>(".dg")) draw(dg);
+    };
+
+    // The radar runs only while it is open, on screen and the tab is visible.
+    const runScope = () =>
+      scope?.run(
+        inView && !document.hidden && !!items.find(isOpen)?.contains(canvas),
+      );
+
+    const show = (it: HTMLElement, replay: boolean) => {
+      const fig = it.querySelector<HTMLElement>(".pj__fig")!;
+      if (replay) {
+        fig.classList.remove("is-drawn");
+        void fig.offsetWidth;
+      }
+      fig.classList.add("is-drawn");
+      for (const el of fig.querySelectorAll<HTMLElement>("[data-n]"))
+        if (!counted.has(el)) countUp(el);
+      drawOpen();
+      runScope();
+      tick();
+    };
+    const pick = (it: HTMLElement) => {
+      if (isOpen(it)) return;
+      for (const o of items) {
+        o.classList.toggle("is-on", o === it);
+        o.querySelector("[data-pj-pick]")!.setAttribute(
+          "aria-expanded",
+          String(o === it),
+        );
+      }
+      if (inView) show(it, true);
+      else runScope();
+    };
+    for (const it of items) {
+      const b = it.querySelector("[data-pj-pick]")!;
+      for (const ev of ["click", "focus", "pointerenter"])
+        b.addEventListener(ev, () => pick(it));
+    }
+
+    new IntersectionObserver(
+      ([e]) => {
+        inView = e.isIntersecting;
+        const it = items.find(isOpen);
+        if (inView && it) show(it, false);
+        else runScope();
+      },
+      { threshold: 0.2 },
+    ).observe(pj);
+    document.addEventListener("visibilitychange", runScope);
+    new ResizeObserver(drawOpen).observe(pj);
+    document.fonts.ready.then(drawOpen);
+
+    // anki: a real card from the deck, a random one first, the next on asking.
+    const card = pj.querySelector<HTMLElement>("[data-anki]");
+    if (card) {
+      const cards = JSON.parse(card.dataset.cards!) as Card[];
+      let at = Math.floor(Math.random() * cards.length);
+      const put = () => {
+        const c = cards[at];
+        card.querySelector("[data-anki-hanzi]")!.textContent = c.hanzi;
+        card.querySelector("[data-anki-py]")!.textContent = c.pinyin;
+        card.querySelector("[data-anki-jp]")!.textContent = c.jyutping;
+        card.querySelector("[data-anki-mean]")!.textContent = c.meaning;
+      };
+      put();
+      pj.querySelector("[data-anki-next]")!.addEventListener("click", () => {
+        at = (at + 1) % cards.length;
+        put();
+      });
+    }
+  }
 </script>

@@ -17,7 +17,13 @@ if (import.meta.env.PROD) return Astro.redirect("/");
       <span class="f">the theme button is in the nav</span>
     </div>
     <h1>Grey does the structure. The accent points.</h1>
-    <p class="lede">The one reference for how the site looks, drawn with the site's own tokens and fonts. Dark is the default; light is a soft toggle. The colours come from <code>docs/redesign/comps/tokens.mts</code>; when a decision changes, this page changes in the same commit. What was tried and dropped lives in <code>docs/design-rejected.md</code>.</p>
+    <p class="lede">
+      The one reference for how the site looks, drawn with the site's own tokens
+      and fonts. Dark is the default; light is a soft toggle. The colours come
+      from <code>docs/redesign/comps/tokens.mts</code>; when a decision changes,
+      this page changes in the same commit. What was tried and dropped lives in
+      <code>docs/design-rejected.md</code>.
+    </p>
 
     <h2>Principles</h2>
     <p>What every decision comes back to.</p>
@@ -89,7 +95,10 @@ if (import.meta.env.PROD) return Astro.redirect("/");
       <div class="card">
         <h3>surfaces</h3>
         <p>dark (the default): page n1 · panel n3 · well n4</p>
-        <p>light (the toggle): page n5 · panel n3 · figures and quotes n2 · well n4, no pure white</p>
+        <p>
+          light (the toggle): page n5 · panel n3 · figures and quotes n2 · well
+          n4, no pure white
+        </p>
         <p class="m">separated by tone, never by a shadow</p>
       </div>
       <div class="card">
@@ -334,8 +343,10 @@ if (import.meta.env.PROD) return Astro.redirect("/");
         <h3>prose</h3>
         <p style="font-size:1.0625rem;line-height:1.65;margin:0 0 .5rem">
           Geist 400 at 16–17px, line-height 1.65.
-          <b style="font-weight:600">Bold</b> is 600.
-          <a href="/blog/">Links</a> are the accent with a faint underline.
+          <b style="font-weight:600">Bold</b>
+          is 600.
+          <a href="/blog/">Links</a>
+          are the accent with a faint underline.
         </p>
         <p class="f" style="margin:0">
           each
@@ -954,43 +965,31 @@ if (import.meta.env.PROD) return Astro.redirect("/");
 </style>
 
 <script>
-  // the square-a-day sample: 60 days, the last 9 lit
-  document.querySelector("[data-days]").innerHTML = Array.from(
-    { length: 60 },
-    (_, i) =>
-      '<i style="aspect-ratio:1;border-radius:1px;background:var(' +
-      (i < 9 ? "--accent-solid" : "--n6") +
-      ')"></i>',
-  ).join("");
-  // swatches drawn from the tokens, so this page can never disagree with them
-  const fill = (k, keys) =>
-    (document.querySelector('[data-sw="' + k + '"]').innerHTML = keys
-      .map(
-        (n) =>
-          '<div style="background:var(--' +
-          n +
-          ')"><span>' +
-          n.replace(/^[na](\d)/, "$1") +
-          "</span></div>",
-      )
-      .join(""));
+  // The square-a-day sample: 60 days, the last 9 lit.
+  const days = document.querySelector<HTMLElement>("[data-days]");
+  if (days)
+    days.innerHTML = Array.from(
+      { length: 60 },
+      (_, i) =>
+        `<i style="aspect-ratio:1;border-radius:1px;background:var(${i < 9 ? "--accent-solid" : "--n6"})"></i>`,
+    ).join("");
+  // Swatches drawn from the tokens, so this page can never disagree with them.
+  const fill = (k: string, keys: string[]) => {
+    const el = document.querySelector<HTMLElement>(`[data-sw="${k}"]`);
+    if (el)
+      el.innerHTML = keys
+        .map(
+          (n) =>
+            `<div style="background:var(--${n})"><span>${n.replace(/^[na](\d)/, "$1")}</span></div>`,
+        )
+        .join("");
+  };
+  const steps = (p: string) =>
+    Array.from({ length: 12 }, (_, i) => p + (i + 1));
+  fill("n", steps("n"));
+  fill("a", steps("a"));
   fill(
-    "n",
-    Array.from({ length: 12 }, (_, i) => "n" + (i + 1)),
+    "s",
+    ["ok", "warn", "danger"].flatMap((h) => [h + 3, h + 9, h + 11]),
   );
-  fill(
-    "a",
-    Array.from({ length: 12 }, (_, i) => "a" + (i + 1)),
-  );
-  fill("s", [
-    "ok3",
-    "ok9",
-    "ok11",
-    "warn3",
-    "warn9",
-    "warn11",
-    "danger3",
-    "danger9",
-    "danger11",
-  ]);
 </script>
