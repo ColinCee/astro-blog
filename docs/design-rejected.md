@@ -55,6 +55,7 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | Two-tone and gradient clouds | The outline chosen (Oct 2026). |
 | A repo count next to the Projects heading, and long project subtitles | Less text is better (Oct 2026). |
 | The picker list as padded rows with only the open one on a panel | Indented from the heading; looked strange (Oct 2026). |
+| The picker list as cards, or with no subtitles | Plain with short subtitles chosen (Oct 2026). |
 | Two time columns in `top` (since and age) plus blue on every age | One column, in ink (Oct 2026). |
 | A before/after label on every shipped bar, or a legend | Grey above, blue below is obvious enough (Oct 2026). |
 

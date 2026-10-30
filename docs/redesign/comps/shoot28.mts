@@ -18,7 +18,7 @@ const shot = async (side: string, sub: string, { dark = false, w = 1440 } = {}) 
   await p.close();
   console.log(name);
 };
-for (const side of ['plain', 'cards']) for (const sub of ['short', 'none']) await shot(side, sub);
+await shot('plain', 'short');
 await shot('plain', 'short', { dark: true });
 await shot('plain', 'short', { w: 375 });
 await b.close();

@@ -546,18 +546,13 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
 :root[data-proj="picker"] .pj__head:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
 :root[data-proj="picker"] .is-on .pj__head{background:var(--panel)}
 :root[data-proj="picker"] .pj__head span{font-size:.875rem}
-:root[data-side="plain"][data-proj="picker"] .pj{gap:.1rem 2.5rem}
-:root[data-side="plain"] .pj__head,:root[data-side="plain"] .pj__head:hover,:root[data-side="plain"] .is-on .pj__head{background:none;padding:.55rem 0;border-radius:0}
-:root[data-side="plain"] .pj__head b{color:var(--muted);font-weight:500;transition:color .15s}
-:root[data-side="plain"] .pj__head:hover b,:root[data-side="plain"] .is-on .pj__head b{color:var(--ink)}
-:root[data-side="plain"] .pj__head b{position:relative}
-:root[data-side="plain"] .is-on .pj__head b::before{content:"/";position:absolute;right:calc(100% + .45rem);color:var(--accent-solid);font-weight:300}
-:root[data-side="plain"] .pj__head span{color:var(--faint)}
-:root[data-side="cards"][data-proj="picker"] .pj{gap:.5rem 1.5rem}
-:root[data-side="cards"] .pj__head{background:var(--well);padding:.8rem 1rem}
-:root[data-side="cards"] .pj__head:hover{background:color-mix(in oklab,var(--panel) 60%,var(--well))}
-:root[data-side="cards"] .is-on .pj__head{background:var(--panel)}
-:root[data-sub="none"] .pj__head span{display:none}
+:root[data-proj="picker"] .pj{gap:.1rem 2.5rem}
+:root[data-proj="picker"] .pj__head,:root[data-proj="picker"] .pj__head:hover,:root[data-proj="picker"] .is-on .pj__head{background:none;padding:.55rem 0;border-radius:0}
+:root[data-proj="picker"] .pj__head b{position:relative;color:var(--muted);font-weight:500;transition:color .15s}
+:root[data-proj="picker"] .pj__head:hover b,:root[data-proj="picker"] .is-on .pj__head b{color:var(--ink)}
+/* the open project: a blue slash hanging in the margin, like the worked-at slashes */
+:root[data-proj="picker"] .is-on .pj__head b::before{content:"/";position:absolute;right:calc(100% + .45rem);color:var(--accent-solid);font-weight:300}
+:root[data-proj="picker"] .pj__head span{color:var(--faint)}
 /* the list keeps its own spacing; the figure's extra height goes to a last, empty row */
 :root[data-proj="picker"] .pj{grid-template-rows:repeat(5,min-content) 1fr}
 :root[data-proj="picker"] .pj__fig{grid-column:2;grid-row:1/7;display:none;background:var(--panel);border-radius:var(--r);padding:1.25rem 1.5rem 1.2rem;min-height:22rem}
@@ -781,7 +776,7 @@ const quips=["<span class=\"q-ctr\" data-flip=\"7,0\">0</span> days since the la
 
 <script>
 (()=>{const r=document.documentElement,q=new URLSearchParams(location.search);
-const opts={side:['plain','cards'],sub:['short','none']};
+const opts={};
 const get=(n)=>q.get(n)||(()=>{try{return localStorage.getItem('v8-'+n)}catch{}})()||opts[n][0];
 const set=(n,v)=>{r.dataset[n]=v;try{localStorage.setItem('v8-'+n,v)}catch{}};
 for(const n in opts)set(n,get(n));

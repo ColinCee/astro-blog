@@ -29,7 +29,7 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 25: no icons; the blue on the slashes (won), the years, or nowhere | `comps/shoot25.mts` |
 | Round 26: radar with arrows on real-looking routes; a proper cloud | `comps/shoot26.mts` |
 | Round 27: a puffier cloud the text fits in, three styles (outline won) | `comps/shoot27.mts` |
-| Round 28: the projects list, plain or cards, with or without subtitles | live page, `side` and `sub` switches; `comps/shoot28.mts` |
+| Round 28: the projects list, plain (won) or cards, with short subtitles (won) or none | `comps/shoot28.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -63,12 +63,12 @@ What every decision below comes back to (Oct 2026):
 - **Radar** (flight-tracker figure, round 26): Heathrow at the centre with runway 27 east–west and the four stacks (BNN, LAM, BIG, OCK) marked. Planes are arrows with a short fading trail, steering to waypoints at a limited turn rate: arrivals from the edge, sometimes a lap of a stack, then downwind, base and a westbound final to land; departures roll west and turn out; overflights cross. Two are blue with callsigns. Drawn at the canvas's display scale.
 - **Clouds** (the internet and Cloudflare-edge nodes): one SVG outline, five bumps on a flat base traced from overlapping circles, drawn bigger than the text box so the words sit in its body, as an outline at the diagram's line weight on the panel colour (round 27, locked).
 
-**Locked (30 Oct 2026):** `hero-line.html` has two switches left (`side`, `sub`); the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
+**Locked (30 Oct 2026):** `hero-line.html` has no switches left; the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
 
 ## What he said needs refinement (not done)
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
-- Projects list (round 28): no repo count; subtitles cut to a few words ("game AI, 2018 and 2026", "London airspace, live", "one mini-PC, five stacks", "my Mandarin deck", "this site"). Open: `side`, plain (no backgrounds, flush with the heading, the open project in ink with a blue slash hanging in the margin, the rest grey) or cards (tiles on the well, the open one white); `sub`, short subtitles or none.
+- Projects list (round 28): no repo count; subtitles cut to a few words ("game AI, 2018 and 2026", "London airspace, live", "one mini-PC, five stacks", "my Mandarin deck", "this site"). The list is plain and locked: no backgrounds, flush with the heading, the open project in ink with a blue slash hanging in the margin, the rest grey, each with its short subtitle.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go
