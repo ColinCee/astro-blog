@@ -1,0 +1,136 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The system</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* scales: one tinted neutral (hue 255), one accent (hue 262), two status hues. Same hue and chroma in both themes; only lightness moves. */
+  --n1:#fbfdff; --n2:#f8f9fb; --n3:#f1f3f5; --n4:#e9ebee; --n5:#e0e3e7; --n6:#d6d9de; --n7:#c7cbd0; --n8:#adb1b7; --n9:#81878d; --n10:#646970; --n11:#51565c; --n12:#161b22; --a1:#f8faff; --a2:#f0f5ff; --a3:#e4edff; --a4:#d2e2ff; --a5:#bed5fe; --a6:#a5c5fe; --a7:#82adfd; --a8:#528dff; --a9:#2366e9; --a10:#1256d8; --a11:#1f53b8; --a12:#0e2654; --ok3:#d9fadf; --ok9:#03a14a; --ok11:#006e30; --warn3:#feefde; --warn9:#f09c17; --warn11:#895706;
+  /* roles */
+  --bg:var(--n2); --panel:#ffffff; --well:var(--n3);
+  --line:color-mix(in oklab,var(--n12) 8%,transparent); --line-2:color-mix(in oklab,var(--n12) 5%,transparent); --line-strong:color-mix(in oklab,var(--n12) 14%,transparent);
+  --ink:var(--n12); --muted:var(--n11); --faint:var(--n10);
+  --accent:var(--a11); --accent-solid:var(--a9); --accent-wash:var(--a3);
+  --ok:var(--accent); --ok-wash:var(--accent-wash);
+  --status-ok:var(--ok9); --status-ok-text:var(--ok11); --status-ok-wash:var(--ok3);
+  --status-warn:var(--warn9); --status-warn-text:var(--warn11); --status-warn-wash:var(--warn3);
+  /* the terminal is a panel like any other */
+  --t-bg:var(--panel); --t-pane:var(--panel); --t-bar:var(--n2); --t-line:var(--line); --t-ink:var(--ink); --t-muted:var(--muted); --t-faint:var(--faint); --t-ok:var(--accent);
+  --sans:"Geist",ui-sans-serif,system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r-xs:6px; --r-s:10px; --r:16px;
+  --w-poster:90rem; --w-page:68rem; --w-prose:42rem;
+  --lift:0 1px 2px rgba(22,27,34,.04),0 8px 24px -12px rgba(22,27,34,.12);
+  --t-lift:var(--lift);
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --n1:#0c0d0f; --n2:#141516; --n3:#1c1d1f; --n4:#222426; --n5:#292b2e; --n6:#323438; --n7:#414448; --n8:#575b60; --n9:#81878d; --n10:#a0a5ac; --n11:#b2b8bf; --n12:#e8eff9; --a1:#10141b; --a2:#121927; --a3:#142139; --a4:#142953; --a5:#13316d; --a6:#133c8b; --a7:#194cb1; --a8:#2261dd; --a9:#2366e9; --a10:#3376fb; --a11:#92b8fc; --a12:#dce9fe; --ok3:#082310; --ok9:#03a14a; --ok11:#7cd591; --warn3:#321c00; --warn9:#f09c17; --warn11:#fec582;
+  --bg:var(--n1); --panel:var(--n2); --well:var(--n3);
+  --line:color-mix(in oklab,#fff 8%,transparent); --line-2:color-mix(in oklab,#fff 5%,transparent); --line-strong:color-mix(in oklab,#fff 14%,transparent);
+  --t-bar:var(--n3);
+  --lift:inset 0 1px 0 rgba(255,255,255,.05),0 0 0 1px rgba(255,255,255,.06),0 8px 24px -12px rgba(0,0,0,.6);
+  --t-lift:var(--lift);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:1rem;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+.in{max-width:68rem;margin:0 auto;padding:2.5rem clamp(1rem,4vw,3rem) 5rem}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:2.5rem}
+.top b{font-family:var(--mono);font-weight:400;font-size:.9rem}
+.tog{appearance:none;border:1px solid var(--line-strong);background:var(--panel);color:var(--ink);padding:.4rem .9rem;border-radius:999px;cursor:pointer;font:inherit;font-size:.875rem}
+h1{font-size:clamp(2.2rem,5vw,3.4rem);line-height:1;letter-spacing:-.04em;margin:0 0 .6rem;font-weight:700}
+.lede{color:var(--muted);max-width:60ch;margin:0 0 3rem;font-size:1.0625rem}
+h2{font-size:1.25rem;letter-spacing:-.025em;margin:3rem 0 .4rem;font-weight:600}
+h2+p{color:var(--muted);margin:0 0 1.2rem;max-width:64ch}
+h3{font-family:var(--mono);font-size:.75rem;font-weight:400;color:var(--faint);margin:0 0 .4rem;text-transform:uppercase;letter-spacing:.06em}
+.scale{margin-bottom:1rem}
+.sw{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.sw div{height:3rem;border-radius:var(--r-xs);display:flex;align-items:flex-end;padding:.25rem .4rem;font-family:var(--mono);font-size:.7rem;color:var(--faint);box-shadow:inset 0 0 0 1px var(--line-2)}
+.sw.three{grid-template-columns:repeat(6,6rem)}
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:1rem}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--lift);padding:1.1rem 1.2rem}
+.card h3{margin-bottom:.6rem}
+.card p{margin:0 0 .3rem;font-size:.9375rem}
+.card .m{color:var(--muted)}.card .f{color:var(--faint)}
+.well{background:var(--well);border-radius:var(--r-s);padding:.8rem 1rem;margin-top:.8rem;font-size:.9rem}
+.row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:.8rem}
+.pill{display:inline-flex;align-items:center;padding:.5rem 1rem;border-radius:999px;font-weight:500;font-size:.9375rem;border:1px solid transparent}
+.pill--ink{background:var(--ink);color:var(--bg)}
+.pill--ghost{background:var(--panel);border-color:var(--line-strong);color:var(--ink)}
+a{color:var(--accent);text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:1px}
+.stat{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.stat s{color:var(--faint);text-decoration-thickness:1px;margin-right:.4rem}
+.stat b{color:var(--accent);font-weight:500}
+.badge{display:inline-flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:.75rem;padding:.15rem .55rem;border-radius:999px}
+.badge i{width:.5em;height:.5em;border-radius:50%}
+.badge--ok{background:var(--status-ok-wash);color:var(--status-ok-text)}.badge--ok i{background:var(--status-ok)}
+.badge--warn{background:var(--status-warn-wash);color:var(--status-warn-text)}.badge--warn i{background:var(--status-warn)}
+.badge--acc{background:var(--accent-wash);color:var(--accent)}
+.type p{margin:0 0 .6rem}
+.t1{font-size:clamp(3rem,8vw,6rem);font-weight:800;letter-spacing:-.045em;line-height:.9;text-transform:uppercase}
+.t2{font-size:2.4rem;font-weight:700;letter-spacing:-.035em;line-height:1.08}
+.t3{font-size:1.25rem;font-weight:600;letter-spacing:-.025em}
+.t4{font-size:1.125rem;font-weight:500;letter-spacing:-.015em}
+.t5{font-size:1rem;letter-spacing:-.01em;color:var(--muted);max-width:60ch}
+.t6{font-family:var(--mono);font-size:.8125rem;color:var(--faint)}
+.rad{display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap}
+.rad div{background:var(--panel);border:1px solid var(--line);box-shadow:var(--lift);display:grid;place-items:center;font-family:var(--mono);font-size:.75rem;color:var(--faint)}
+.rules{display:grid;gap:.5rem;margin:0;padding:0;list-style:none}
+.rules li{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-s);padding:.8rem 1rem}
+.rules b{font-weight:600}
+</style></head><body>
+<div class="in">
+<div class="top"><b>colincheung.dev · design system</b><button class="tog" data-toggle>toggle dark</button></div>
+<h1>Grey chrome, one accent, two dots.</h1>
+<p class="lede">What the polished sites have in common is not more colour. It is a designed grey scale, borders cut from the ink, small layered shadows, and type whose tracking tightens as it grows. Colour is rationed to one hue with two jobs. This page is every token, in both themes.</p>
+
+<h2>Scales</h2>
+<p>Each step is one OKLCH value: the hue and chroma are fixed, only lightness changes between light and dark. Step 9 (the solid) is identical in both themes.</p>
+<div class="scale"><h3>neutral · hue 255</h3><div class="sw"><div style="background:var(--n1)"><span>1</span></div><div style="background:var(--n2)"><span>2</span></div><div style="background:var(--n3)"><span>3</span></div><div style="background:var(--n4)"><span>4</span></div><div style="background:var(--n5)"><span>5</span></div><div style="background:var(--n6)"><span>6</span></div><div style="background:var(--n7)"><span>7</span></div><div style="background:var(--n8)"><span>8</span></div><div style="background:var(--n9)"><span>9</span></div><div style="background:var(--n10)"><span>10</span></div><div style="background:var(--n11)"><span>11</span></div><div style="background:var(--n12)"><span>12</span></div></div></div>
+<div class="scale"><h3>accent · hue 262</h3><div class="sw"><div style="background:var(--a1)"><span>1</span></div><div style="background:var(--a2)"><span>2</span></div><div style="background:var(--a3)"><span>3</span></div><div style="background:var(--a4)"><span>4</span></div><div style="background:var(--a5)"><span>5</span></div><div style="background:var(--a6)"><span>6</span></div><div style="background:var(--a7)"><span>7</span></div><div style="background:var(--a8)"><span>8</span></div><div style="background:var(--a9)"><span>9</span></div><div style="background:var(--a10)"><span>10</span></div><div style="background:var(--a11)"><span>11</span></div><div style="background:var(--a12)"><span>12</span></div></div></div>
+<div class="scale"><h3>status · green 150, amber 70 · steps 3 / 9 / 11 only</h3><div class="sw three"><div style="background:var(--ok3)"><span>ok3</span></div><div style="background:var(--ok9)"><span>ok9</span></div><div style="background:var(--ok11)"><span>ok11</span></div><div style="background:var(--warn3)"><span>warn3</span></div><div style="background:var(--warn9)"><span>warn9</span></div><div style="background:var(--warn11)"><span>warn11</span></div></div></div>
+
+<h2>Roles</h2>
+<p>Which step does which job. The page never names a step directly; it names a role.</p>
+<div class="roles">
+  <div class="card"><h3>surfaces</h3><p>page = n2 · panel = white (dark: n2) · well = n3</p><div class="well">a well: glanced at, not read</div></div>
+  <div class="card"><h3>text</h3><p>ink = n12</p><p class="m">muted = n11, for the sentence after the title</p><p class="f">faint = n10, for dates and labels (still 4.5:1)</p></div>
+  <div class="card"><h3>edges</h3><p>line = ink at 8%, strong = 14%, faint = 5%</p><p class="m">dark mode: white at the same alphas, plus a 1px inner highlight instead of a drop shadow</p></div>
+  <div class="card"><h3>accent · two jobs</h3><p class="stat"><s>12 h</s><b>11 min</b> <span class="f">the new value</span></p><p><a href="#">a link</a> <span class="f">the other job</span></p><div class="row"><span class="badge badge--acc">a3 wash + a11 text</span></div></div>
+  <div class="card"><h3>controls are ink</h3><div class="row"><span class="pill pill--ink">Read the post</span><span class="pill pill--ghost">CV</span></div><p class="f" style="margin-top:.6rem">no blue buttons; the accent stays rare</p></div>
+  <div class="card"><h3>status · dots and badges only</h3><div class="row"><span class="badge badge--ok"><i></i>live</span><span class="badge badge--warn"><i></i>draft</span></div><p class="f" style="margin-top:.6rem">never on body text, never on a large area</p></div>
+</div>
+
+<h2>Type</h2>
+<p>Geist, with Geist Mono for data. Tracking is tied to size.</p>
+<div class="type">
+<p class="t1">Colin Cheung</p>
+<p class="t2">A post title, −0.035em</p>
+<p class="t3">A section heading, −0.025em</p>
+<p class="t4">A list title, −0.015em</p>
+<p class="t5">Body at 16–17px, −0.01em, line-height 1.55, in muted when it sits under a title.</p>
+<p class="t6">mono · dates, stats, labels · 13px</p>
+</div>
+
+<h2>Corners and depth</h2>
+<p>6px controls · 10px small cards · 16px panels · pill buttons. Shadows at 4% and 12% in light; a ring and inner highlight in dark.</p>
+<div class="rad"><div style="width:5rem;height:3rem;border-radius:var(--r-xs)">6</div><div style="width:7rem;height:4.5rem;border-radius:var(--r-s)">10</div><div style="width:10rem;height:6rem;border-radius:var(--r)">16</div><div style="width:7rem;height:2.6rem;border-radius:999px">pill</div></div>
+
+<h2>Rules</h2>
+<ul class="rules">
+<li><b>Grey chrome.</b> Surfaces, borders, icons and text are the neutral scale. If something is coloured, it is saying something.</li>
+<li><b>The accent has two jobs:</b> the new value of a result that got better, and links. Not buttons, not headings, not decoration.</li>
+<li><b>Status is a dot.</b> Green and amber appear as dots and tiny badges only, at steps 3/9/11.</li>
+<li><b>Borders are cut from the ink</b> (8% / 14%), never a solid grey hex.</li>
+<li><b>Dark is the same scale at other lightnesses.</b> No second palette; step 9 is identical in both.</li>
+<li><b>Tracking tightens with size.</b> −0.045em at the name, −0.01em in body.</li>
+<li><b>One signature effect:</b> the terminal. No gradients, glows or grain.</li>
+</ul>
+</div>
+<script>
+const r=document.documentElement,k='dir-console';
+try{const s=localStorage.getItem(k);if(s)r.dataset.theme=s}catch{}
+document.querySelector('[data-toggle]').addEventListener('click',()=>{const t=r.dataset.theme==='dark'?'light':'dark';r.dataset.theme=t;try{localStorage.setItem(k,t)}catch{}});
+</script>
+</body></html>
