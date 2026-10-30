@@ -38,7 +38,9 @@ Write how he talks in chat and writes himself: casual, conversational British En
 
 - **In figures, numbers are symbols and digits, not words:** "< $0.01", "~ 200 ms", "1 game", not "under 1¢", "about 200 ms", "a game".
 - **One way to say each number** (1.4×, not also "31% less time"), the same everywhere.
+- **A reduction is a % smaller ("−66%"), never a ×**, which reads as if it got bigger.
 - **Measured data only.** No estimates or demo data when the real thing can be run. If an estimate has to stay, mark it (`est`) so it draws lighter. Get his OK before any GPU run.
+- **When the real data is private, measure a fake one at full scale.** A few toy rows give sizes and ratios that aren't right. Make a fake dataset the same shape and size with a script (DuckDB for data), commit the script, a small sample and the measuring script, link them, and take every number after the hook from it. The real result stays as the hook. Say it's fake once, without hedging about how good the guess is, and never tune it to hit a number.
 - **Comparisons that could be noise get a significance test** (e.g. Welch's t-test over 5 runs, p < 0.05). Fix the decision rule before looking: a tie keeps the simpler or cheaper option. Never pick or headline the better-looking number after the fact.
 - **Don't overclaim.** Untested gaps say "could be luck", a single run says so, and a caveat on one claim goes in a one-line footnote.
 - **Sources sit next to the claim** as inline links. A footnote is a one-line caveat or method note, never a paragraph, and there's no separate sources section.
@@ -49,6 +51,9 @@ Write how he talks in chat and writes himself: casual, conversational British En
 Show, don't ask: build the change or two or three distinct variations, put them in front of him, then iterate. The figures in his recent posts are the standard. Numbered captions underneath ("Figure 5.1: Comparison of…", as in his dissertation) suit a report, where figures float away from the text that cites them. In a post the figure sits next to its text, so it gets a short title above and, at most, a one-line caption below for a note.
 
 - **Pick the form by the job.** Bars drawn to scale for A vs B. A step chart for sequential improvements. A dot plot for comparing options. A bridge chart for where time goes. A grid of squares for time at a glance. Trees or arrows for structure. Never plain boxes with text in them, and skip 3D or click-to-reveal unless it explains better than a still.
+- **A post in steps shows each step the same way.** Each step's figure ends with the same whole-file before → after bars, on one scale, and the closing step chart follows the post's order from the baseline, with nothing else mixed in.
+- **A mechanism is drawn on a few real rows; its sizes are the whole file's.** Animate how it works when that explains more than a still (text that rearranges itself, looping slowly: a quick move, a hold of about 7 s, hover or focus pausing it, a tab stopping it).
+- **Colour links what belongs together.** Matching neutral styles tie a value to its dictionary entry; orange everywhere ties nothing.
 - **Chart basics, every time.**
   - A short title above.
   - Axis titles with units, e.g. "win rate (%)".
@@ -63,13 +68,14 @@ Show, don't ask: build the change or two or three distinct variations, put them 
 - **Every mark is explained somewhere.** That covers a range bracket, a dashed reference line and a Δ. Do it once, in the key or the first chart's caption.
 - **Interaction is a bonus, never required.** Hover can fade the other rows, but nothing should force a click to understand.
 - **Check every figure at phone width and in both themes**, with nothing overflowing its box.
+- **Nothing scrolls sideways.** Colin finds horizontal scrolling terrible: no long code lines, tables or figures that need it. Pretty-print a record and show a few of its fields, or wrap the code block (`wrap` after the language).
 - **A recording, when there is one, beats a chart for the hook.** Captions are short, e.g. "73% wins / this game: won, 57 points".
 
 ## 5. Ship
 
 1. Branch, and show him a local preview link (the dev server on his Tailscale name works from his phone).
 2. Before merging:
-   - He has read the draft and said publish.
+   - He has read the draft and said publish. Ask it with his last content decision (a title, a final figure), so his yes to that covers publishing too.
    - `pubDate` is the publish day.
    - Series posts link to each other.
    - Work posts name nothing private.

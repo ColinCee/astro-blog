@@ -1,0 +1,128 @@
+/* Text moving between stages (Frames): each character carries its place,
+   visibility and colour per stage (--x0, --y0, --o0, --c0, …) and the
+   figure's data-s picks which apply. There are rules for two stages; add a
+   pair per further stage. */
+.prose .frames {
+  --hold: 7s;
+  --move: 0.8s;
+  --fr-name: var(--muted);
+  --fr-syn: color-mix(in oklch, var(--faint) 55%, transparent);
+  --fr-val: var(--ink);
+  --fr-head: var(--accent-soft);
+  display: grid;
+  gap: 1rem;
+}
+
+/* One tab per stage; a bar under them fills while the loop holds a stage. */
+.prose .frames__tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  gap: 2px;
+  min-width: 0;
+  margin: 0;
+  padding: 2px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--line);
+}
+.prose .frames__tabs button {
+  min-height: 2.75rem;
+  padding: 0.45rem 0.8rem;
+  border: 0;
+  border-radius: 6px;
+  background: var(--pane);
+  color: var(--faint);
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast, 0.2s) ease,
+    color var(--dur-fast, 0.2s) ease;
+}
+.prose .frames__tabs [aria-pressed="true"] {
+  background: var(--panel, var(--bg));
+  color: var(--ink);
+}
+.prose .frames__timer {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: -6px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0.6;
+}
+.prose .frames.is-playing .frames__timer {
+  animation: frames-hold var(--hold) linear forwards;
+}
+@keyframes frames-hold {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* The characters. */
+.prose .frames__box {
+  --lh: 1.75em;
+  --d: var(--move) cubic-bezier(0.65, 0, 0.35, 1);
+  position: relative;
+  height: calc(var(--h) * var(--lh));
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  overflow: hidden;
+  transition: height var(--d) 0.1s;
+}
+@media (max-width: 34rem) {
+  .prose .frames__box {
+    font-size: 0.6875rem;
+  }
+}
+.prose .frames__box span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1ch;
+  line-height: var(--lh);
+  text-align: center;
+  color: var(--c);
+  opacity: var(--o);
+  transform: translate(calc(var(--x) * 1ch), calc(var(--y) * var(--lh)));
+  /* A wave: lower lines and later characters start a little later. */
+  transition:
+    transform var(--d) calc(var(--y) * 30ms + var(--x) * 2ms),
+    opacity 0.4s ease calc(var(--y) * 30ms),
+    color 0.5s ease;
+}
+.prose .frames__box span.b {
+  font-weight: 600;
+}
+.prose .frames[data-s="0"] {
+  --h: var(--h0);
+}
+.prose .frames[data-s="1"] {
+  --h: var(--h1);
+}
+.prose .frames[data-s="0"] .frames__box span {
+  --x: var(--x0);
+  --y: var(--y0);
+  --o: var(--o0);
+  --c: var(--c0);
+}
+.prose .frames[data-s="1"] .frames__box span {
+  --x: var(--x1);
+  --y: var(--y1);
+  --o: var(--o1);
+  --c: var(--c1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .prose .frames__box,
+  .prose .frames__box span {
+    transition: none;
+  }
+}

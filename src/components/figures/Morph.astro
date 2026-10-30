@@ -1,0 +1,66 @@
+---
+// JSONL text that rearranges itself into columns and back (drawn by Frames).
+// The first record's field names become the column headers, every other copy
+// of a name flies into its header and fades, the syntax fades where it is,
+// and the values slide into their column.
+import Frames from "./Frames.astro";
+import type { Cell, Spot, Tone } from "./frames";
+
+type Value = string | number | boolean;
+interface Props {
+  records: Record<string, Value>[];
+}
+const { records } = Astro.props;
+const keys = Object.keys(records[0]);
+const text = (v: Value) =>
+  typeof v === "boolean" ? String(v).toUpperCase() : String(v);
+
+// Column layout: a line per field, the name padded to the longest, then each
+// value padded to that field's longest value.
+const keyW = Math.max(...keys.map((k) => k.length)) + 2;
+const valW = keys.map((k) =>
+  Math.max(...records.map((r) => text(r[k]).length)),
+);
+
+const cells: Cell[] = [];
+records.forEach((r, row) => {
+  let x = 0;
+  // `cols` gives each character's place in the column layout; without it the
+  // character fades where it is.
+  const put = (s: string, tone: Tone, cols?: (i: number) => Spot) => {
+    for (const [i, ch] of [...s].entries()) {
+      cells.push({
+        ch,
+        bold: tone === "val",
+        at: [
+          { x, y: row, show: true, tone },
+          cols?.(i) ?? { x, y: row, show: false, tone },
+        ],
+      });
+      x++;
+    }
+  };
+  put("{", "syn");
+  keys.forEach((k, f) => {
+    const q = typeof r[k] === "number" ? "" : '"';
+    put('"', "syn");
+    put(k, "name", (i) => ({ x: i, y: f, show: row === 0, tone: "head" }));
+    put(`":${q}`, "syn");
+    const at = keyW + row * (valW[f] + 1);
+    put(text(r[k]), "val", (i) => ({
+      x: at + i,
+      y: f,
+      show: true,
+      tone: "val",
+    }));
+    put(q + (f < keys.length - 1 ? "," : ""), "syn");
+  });
+  put("}", "syn");
+});
+---
+
+<Frames
+  cells={cells}
+  label={`${records.length} records as JSON lines, one per line, then as one line per field: ${keys.join(", ")}.`}
+  tabs={[{ label: "JSONL, by row" }, { label: "Parquet, by column" }]}
+/>

@@ -1,0 +1,43 @@
+---
+// Dictionary encoding as a still: the column's values on the left, each
+// pointing at its number, and the dictionary those numbers look up, with the
+// bytes before and after. Each entry's number has its own neutral style (.e0,
+// .e1, …) on both sides, so a row's number matches its entry; hovering one
+// lights up the rest. Styles: lookup.css.
+interface Props {
+  name: string;
+  values: string[];
+  // The sizes before and after, when the values are a few rows of a bigger
+  // column; otherwise the bytes of these values.
+  sizes?: [string, string];
+}
+const { name, values, sizes } = Astro.props;
+const distinct = [...new Set(values)];
+const bits = Math.max(1, Math.ceil(Math.log2(distinct.length)));
+const before = values.join("").length;
+const after = distinct.join("").length + Math.ceil((values.length * bits) / 8);
+---
+
+<div class="lookup">
+  <div class="lookup__col">
+    <p class="fig__k">{name} · {sizes?.[0] ?? `${before} bytes`}</p>
+    {values.map((v) => (
+      <div class="lookup__row" data-e={distinct.indexOf(v)}>
+        <span>{v}</span>
+        <i>→</i>
+        <b class={`e${distinct.indexOf(v)}`}>{distinct.indexOf(v)}</b>
+      </div>
+    ))}
+  </div>
+  <div class="lookup__dict">
+    <p class="fig__k">
+      dictionary + numbers · {sizes?.[1] ?? `${after} bytes`}
+    </p>
+    {distinct.map((v, i) => (
+      <div class="lookup__row" data-e={i}>
+        <b class={`e${i}`}>{i}</b>
+        <span>{v}</span>
+      </div>
+    ))}
+  </div>
+</div>

@@ -1,0 +1,113 @@
+---
+// Text that moves between stages, on a loop while it is on screen: one tab
+// per stage, every character sliding to its
+// place in the next stage, fading where it doesn't show. Hovering pauses the
+// loop and a tab stops it (the only way under reduced motion). Morph builds
+// the cells; see frames.ts. Styles: frames.css.
+import type { Cell, Tab } from "./frames";
+
+interface Props {
+  cells: Cell[];
+  tabs: Tab[];
+  // What the moving text shows, for screen readers.
+  label: string;
+}
+const { cells, tabs, label } = Astro.props;
+const lines = tabs.map(
+  (_, s) =>
+    Math.max(...cells.filter((c) => c.at[s].show).map((c) => c.at[s].y)) + 1,
+);
+const style = (c: Cell) =>
+  c.at
+    .map(
+      (p, s) =>
+        `--x${s}:${p.x};--y${s}:${p.y};--o${s}:${p.show ? 1 : 0};--c${s}:var(--fr-${p.tone})`,
+    )
+    .join(";");
+---
+
+<div
+  class="frames"
+  data-s="0"
+  style={`--n:${tabs.length};${lines.map((h, s) => `--h${s}:${h}`).join(";")}`}
+>
+  <fieldset class="frames__tabs" aria-label="Stage">
+    {tabs.map((t, s) => (
+      <button
+        type="button"
+        data-s={String(s)}
+        aria-pressed={s === 0 ? "true" : "false"}
+      >
+        {t.label}
+      </button>
+    ))}
+    <i class="frames__timer" />
+  </fieldset>
+  <div class="frames__box" role="img" aria-label={label}>
+    {cells.map((c) => (
+      <span class:list={{ b: c.bold }} style={style(c)} set:text={c.ch} />
+    ))}
+  </div>
+</div>
+
+<script>
+  // Each stage holds for --hold (frames.css; the timer bar fills over it),
+  // then moves on. Hovering or focusing it pauses it; a tab stops it.
+  for (const fig of document.querySelectorAll<HTMLElement>(".frames")) {
+    const tabs = [...fig.querySelectorAll<HTMLButtonElement>("button")];
+    const hold =
+      parseFloat(getComputedStyle(fig).getPropertyValue("--hold")) * 1000;
+    let timer = 0;
+    let seen = false;
+    let manual = false;
+    let hover = false;
+    let focus = false;
+    const set = (s: number) => {
+      fig.dataset.s = String(s);
+      for (const t of tabs)
+        t.setAttribute("aria-pressed", String(t.dataset.s === String(s)));
+    };
+    const loop = () => {
+      clearTimeout(timer);
+      fig.classList.remove("is-playing");
+      if (manual || hover || focus || !seen) return;
+      void fig.offsetWidth; // restart the timer bar's animation
+      fig.classList.add("is-playing");
+      timer = window.setTimeout(() => {
+        set((Number(fig.dataset.s) + 1) % tabs.length);
+        loop();
+      }, hold);
+    };
+    for (const t of tabs)
+      t.addEventListener("click", () => {
+        manual = true;
+        set(Number(t.dataset.s));
+        loop();
+      });
+    for (const [ev, on] of [
+      ["pointerenter", true],
+      ["pointerleave", false],
+    ] as const)
+      fig.addEventListener(ev, (e) => {
+        if (e.pointerType !== "mouse") return;
+        hover = on;
+        loop();
+      });
+    for (const [ev, on] of [
+      ["focusin", true],
+      ["focusout", false],
+    ] as const)
+      fig.addEventListener(ev, () => {
+        focus = on;
+        loop();
+      });
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) continue;
+    new IntersectionObserver(
+      ([e]) => {
+        seen = e.isIntersecting;
+        loop();
+      },
+      { threshold: 0.6 },
+    ).observe(fig);
+  }
+</script>

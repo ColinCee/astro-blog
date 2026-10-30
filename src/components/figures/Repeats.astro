@@ -1,0 +1,71 @@
+---
+// How Zstandard finds repeats, in its simplest form (LZ77, the first half of
+// what it does), on one column: reading left to right, any run of 4 or more
+// bytes it has already seen becomes a copy of the earlier bytes. Shown as
+// the column before, with the copied stretch marked, and after, with that
+// stretch swapped for one chip. Styles: repeats.css.
+interface Props {
+  values: string[];
+}
+const { values } = Astro.props;
+const s = values.map((v) => `${v} `).join("");
+
+type Piece = { lit: string } | { len: number; back: number };
+// Greedy: at each byte take the longest earlier match (it may overlap the
+// bytes it is copying, as LZ77 allows), else keep the byte.
+const pieces: Piece[] = [];
+for (let i = 0; i < s.length; ) {
+  let len = 0;
+  let back = 0;
+  for (let j = 0; j < i; j++) {
+    let n = 0;
+    while (i + n < s.length && s[j + n] === s[i + n]) n++;
+    if (n > len) [len, back] = [n, i - j];
+  }
+  if (len >= 4) {
+    pieces.push({ len, back });
+    i += len;
+  } else {
+    const last = pieces.at(-1);
+    if (last && "lit" in last) last.lit += s[i];
+    else pieces.push({ lit: s[i] });
+    i++;
+  }
+}
+// The same pieces as the text they stand for, for the "before" line.
+let at = 0;
+const before = pieces.map((p) => {
+  const len = "lit" in p ? p.lit.length : p.len;
+  const part = { text: s.slice(at, at + len), copied: !("lit" in p) };
+  at += len;
+  return part;
+});
+// What a copy says: a run of the last few bytes repeated, or a plain copy.
+const say = ({ len, back }: { len: number; back: number }) =>
+  len % back === 0
+    ? `repeat the last ${back} bytes ×${len / back}`
+    : `copy ${len} bytes from ${back} back`;
+const kept = pieces.reduce((t, p) => t + ("lit" in p ? p.lit.length : 0), 0);
+const copies = pieces.length - pieces.filter((p) => "lit" in p).length;
+---
+
+<div class="repeats">
+  <div class="repeats__row">
+    <span class="repeats__k">before · {s.length} bytes</span>
+    <span class="repeats__text">
+      {before.map((p) => (
+        <span class:list={{ copied: p.copied }} set:text={p.text} />
+      ))}
+    </span>
+  </div>
+  <div class="repeats__row">
+    <span class="repeats__k">
+      after · {kept} bytes + {copies} {copies === 1 ? "copy" : "copies"}
+    </span>
+    <span class="repeats__text">
+      {pieces.map((p) =>
+        "lit" in p ? <span set:text={p.lit} /> : <b set:text={say(p)} />,
+      )}
+    </span>
+  </div>
+</div>
