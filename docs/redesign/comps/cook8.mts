@@ -143,9 +143,22 @@ cut('<section class="term"', '<section class="sec">', `<section class="term" ari
   html = html.slice(0, a) + '<ol class="rows">\n      ' + posts.map(([slug, d, t, v, l]) => `<li class="row"><span class="row__date">${d}</span><a href="/blog/${slug}"><span class="row__title">${t}</span></a><span class="row__stat">${stat(v)}<small>${l}</small></span></li>`).join('\n      ') + '\n    </ol>' + html.slice(b);
   html = html.replace('<span class="mono">7 posts · blue got better</span>', `<span class="mono">${posts.length} posts</span>`); }
 
-{ const jobs = [['PodFather', '2017 – 20', 31], ['Skyscanner', '2020 – 21', 14], ['Hometree', '2021 – 22', 9], ['Hopper', '2022', 7], ['BBC', '2022 – 23', 5], ['EDF Energy', '2023 – now', 42]] as const;
-  const len = (m: number) => m < 12 ? m + ' mo' : Math.floor(m / 12) + ' y' + (m % 12 ? ' ' + (m % 12) + ' mo' : '');
-  const one = (hide: boolean) => jobs.map(([n, y, m], k) => `<span class="strip__co"${hide ? ' aria-hidden="true"' : ''} style="--m:${m};--k:${k}"><span class="co__n">${n}</span><span class="co__bar"></span><small>${y}<span class="co__len"> · ${len(m)}</span></small></span>`).join('');
+{ const ic = {
+    road: '<path d="M2 7h11v9H2z M13 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.8"/><circle cx="16.5" cy="18" r="1.8"/>',
+    travel: '<path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/>',
+    home: '<path d="M3 11 12 4l9 7v9H3z M9.5 20v-5.5h5V20"/>',
+    media: '<rect x="3" y="5" width="18" height="13" rx="2"/><path d="M10 9l5 2.5-5 2.5z"/>',
+    energy: '<path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z"/>',
+  };
+  const jobs = [
+    ['PodFather', 'road', 'logistics', '10k+ drivers'],
+    ['Skyscanner', 'travel', 'travel', '8 h sync → 2 min'],
+    ['Hometree', 'home', 'home services', 'checkout, led end to end'],
+    ['Hopper', 'travel', 'travel', '100k+ requests a day'],
+    ['BBC', 'media', 'media', 'CI-log digging, up to −90%'],
+    ['EDF Energy', 'energy', 'energy', '1.6M accounts a day'],
+  ] as const;
+  const one = (hide: boolean) => jobs.map(([n, i, sec, r]) => `<span class="strip__co"${hide ? ' aria-hidden="true"' : ''}><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true">${ic[i]}</svg>${n}</span><small class="co__r">${r}</small><small class="co__sec">${sec}</small></span>`).join('');
   const a = html.indexOf('<div class="strip__track">'), b = html.indexOf('</div>', a);
   html = html.slice(0, a) + '<div class="strip__track">\n        ' + one(false) + '\n        ' + one(true) + '\n      ' + html.slice(b); }
 
@@ -246,25 +259,18 @@ ${faceCss}
 :root[data-worked="still"] .strip__co:nth-child(6)::before{background:var(--accent-solid)}
 @media(max-width:40rem){:root[data-worked="still"] .strip__track{display:grid;grid-template-columns:1fr 1fr;row-gap:1.6rem}:root[data-worked="still"] .strip__track::before,:root[data-worked="still"] .strip__co::before{display:none}}
 
-/* worked at, under each name (round 20). none: name and years. tenure: a bar
-   as long as the job, grey, the current one blue, with the length in the years
-   line. ramp: the same bars stepping through the blue scale, palest in 2017 */
-.strip__co{flex-direction:column;align-items:flex-start;gap:.35rem}
-.co__bar{display:none;height:6px;width:calc(var(--m) * .3rem);min-width:.6rem;border-radius:3px;background:var(--n6)}
-.co__len{display:none}
-:root[data-mark="tenure"] .co__bar,:root[data-mark="ramp"] .co__bar{display:block}
-:root[data-mark="tenure"] .co__len,:root[data-mark="ramp"] .co__len{display:inline}
-:root[data-mark="tenure"] .strip__co:nth-child(6n) .co__bar{background:var(--accent-solid)}
-:root[data-mark="ramp"] .strip__co:nth-child(6n+1) .co__bar{background:var(--a4)}
-:root[data-mark="ramp"] .strip__co:nth-child(6n+2) .co__bar{background:var(--a5)}
-:root[data-mark="ramp"] .strip__co:nth-child(6n+3) .co__bar{background:var(--a6)}
-:root[data-mark="ramp"] .strip__co:nth-child(6n+4) .co__bar{background:var(--a7)}
-:root[data-mark="ramp"] .strip__co:nth-child(6n+5) .co__bar{background:var(--a8)}
-:root[data-mark="ramp"] .strip__co:nth-child(6n) .co__bar{background:var(--a9)}
-/* the bars grow in once, when the strip comes on screen */
-.strip.seen .co__bar{animation:co-grow 1.2s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--k) * 90ms)}
-@keyframes co-grow{from{width:0;min-width:0}}
-@media(prefers-reduced-motion:reduce){.strip.seen .co__bar{animation:none}}
+/* worked at, under each name (round 21). No years: lengths read as job-hopping.
+   impact: the job's headline result in DM Mono. industry: a small line icon in
+   blue before the name, the industry under it. both: the icon and the result */
+.strip__co{flex-direction:column;align-items:flex-start;gap:.3rem}
+.co__n{display:inline-flex;align-items:center;gap:.6rem}
+.co__ic{display:none;width:1.15rem;height:1.15rem;flex:none;fill:none;stroke:var(--accent-solid);stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+.strip__co small{font-size:.75rem;color:var(--faint)}
+.co__r,.co__sec{display:none}
+:root[data-mark="impact"] .co__r,:root[data-mark="both"] .co__r{display:block}
+:root[data-mark="industry"] .co__sec{display:block}
+:root[data-mark="industry"] .co__ic,:root[data-mark="both"] .co__ic{display:block}
+:root[data-mark="industry"] .co__sec,:root[data-mark="both"] .co__r{padding-left:1.75rem}
 
 /* terminal: two panes, whoami / top / weather and shipped */
 .term__panes{grid-template-areas:"who right"}
@@ -338,7 +344,7 @@ html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
 html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term" data-worked="thin">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={mark:['tenure','ramp','none']};");
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={mark:['both','impact','industry']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 
@@ -402,8 +408,6 @@ document.fonts.ready.then(drawAll);
 // weather: Glasgow now, from open-meteo (no key)
 const wx=document.querySelector('[data-wx]');if(wx)fetch('https://api.open-meteo.com/v1/forecast?latitude=55.86&longitude=-4.25&current=temperature_2m,weather_code').then(r=>r.json()).then(d=>{const c=d.current.weather_code,t=Math.round(d.current.temperature_2m);
  const w=c===0?'clear':c<=2?'some cloud':c===3?'overcast':c<=48?'fog':c<=57?'drizzle':c<=67?'rain':c<=77?'snow':c<=82?'showers':c<=86?'snow showers':'thunder';wx.textContent='Glasgow · '+t+'°C, '+w}).catch(()=>{});
-// worked at: bars grow in once seen
-const strip=document.querySelector('.strip');if(strip)new IntersectionObserver((es,o)=>es.forEach(x=>{if(x.isIntersecting){strip.classList.add('seen');o.disconnect()}}),{threshold:.3}).observe(strip);
 // anki: a card at a time, only when asked
 const cards=${JSON.stringify(ankiCards.map((c: any)=>[c.hanzi,c.pinyin+' · '+c.jyutping,c.meaning]))};
 let ck=0;const card=document.querySelector('[data-anki]');document.querySelector('[data-anki-next]').addEventListener('click',()=>{ck=(ck+1)%cards.length;const [h,p,m]=cards[ck];card.innerHTML='<span class="ak__hz" lang="zh">'+h+'</span><span class="ak__py">'+p+'</span><span class="ak__mn">'+m+'</span>'});

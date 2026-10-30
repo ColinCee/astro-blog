@@ -21,7 +21,8 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 17: the terminal, locked | `comps/shoot17.mts` |
 | Round 18: writing in the terminal (won), or a compact section | `comps/shoot18.mts` |
 | Round 19: worked at, thin marquee (won) or still | `comps/shoot19.mts` |
-| Round 20: a tenure bar under each company, grey or a blue ramp | live page, `mark` switch; `comps/shoot20.mts` |
+| Round 20: a tenure bar under each company, grey or a blue ramp (dropped) | `comps/shoot20.mts` |
+| Round 21: the headline result or the industry (with an icon) under each company | live page, `mark` switch; `comps/shoot21.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -57,7 +58,7 @@ What every decision below comes back to (Oct 2026):
 ## What he said needs refinement (not done)
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
-- Worked at: the thin marquee is locked (Sora 200 names, DM Mono years, no grey band, 70 s loop with an even gap at the seam). Under each name (round 20, `mark` switch): `tenure`, a bar as long as the job (from the CV dates) with the length in the years line, grey with the current job blue; `ramp`, the same bars stepping through the blue scale, palest in 2017; or `none`. The bars grow in once when the strip comes on screen.
+- Worked at: the thin marquee is locked (Sora 200 names, DM Mono years, no grey band, 70 s loop with an even gap at the seam). No years or job lengths under the names: they read as job-hopping. Under each name (round 21, `mark` switch): `impact`, the job's headline result from the CV in DM Mono; `industry`, a small blue line icon before the name and the industry under it; or `both`, the icon and the result. Logos were asked about: see below.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go

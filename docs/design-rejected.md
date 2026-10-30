@@ -38,6 +38,7 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | The worked-at marquee as bold names on a grey band | "Needs some love" (Oct 2026). |
 | Worked at as a still line of names with a dot each | The thin marquee won (Oct 2026). |
 | The thin marquee with nothing under the names | "A bit too bare" (Oct 2026). |
+| Years or a tenure bar under each company | Highlighting job lengths makes him look like a job hopper (Oct 2026). |
 | Two time columns in `top` (since and age) plus blue on every age | One column, in ink (Oct 2026). |
 | A before/after label on every shipped bar, or a legend | Grey above, blue below is obvious enough (Oct 2026). |
 
