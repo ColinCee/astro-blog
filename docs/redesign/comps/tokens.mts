@@ -9,13 +9,14 @@ const lum=h=>{const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=
 const cr=(a,b)=>{const [x,y]=[lum(a),lum(b)].sort((p,q)=>q-p);return (x+.05)/(y+.05)};
 
 const NH=255, AH=262, OKH=150, WH=70, DH=25;
-// accent candidates (round 29): the same lightness and chroma profile at other hues, none near the status hues
-const ACCENTS={blue:262,indigo:278,violet:298,magenta:340,sky:235,teal:195};
+// accent candidates (round 29): the same lightness and chroma profile at other hues. Teal and magenta were
+// dropped: each sat 45° from a status hue (research/status-accent-research.md). Keep any accent outside h20-180.
+const ACCENTS={blue:262,indigo:278,violet:298,sky:235};
 // neutral: [L light, L dark, chroma]
 const N=[[.993,.16,.003],[.982,.195,.003],[.962,.23,.004],[.94,.26,.005],[.915,.29,.006],[.885,.325,.007],[.84,.385,.008],[.76,.47,.010],[.62,.62,.012],[.52,.72,.012],[.45,.78,.012],[.22,.95,.015]];
 const A=[[.985,.19,.015],[.97,.215,.03],[.945,.25,.05],[.91,.29,.08],[.87,.33,.11],[.82,.38,.14],[.75,.45,.17],[.66,.53,.20],[.55,.55,.21],[.50,.60,.21],[.47,.78,.17],[.28,.93,.09]];
 // status: green ok, amber warn, red danger (round 29), each at steps 3 (wash) / 9 (dot) / 11 (text)
-const S={ok:[OKH,[[.955,.23,.05],[.62,.62,.17],[.47,.80,.13]]],warn:[WH,[[.96,.25,.06],[.76,.76,.16],[.50,.86,.13]]],danger:[DH,[[.955,.24,.04],[.60,.62,.20],[.50,.80,.15]]]};
+const S={ok:[OKH,[[.955,.23,.05],[.62,.62,.17],[.47,.80,.13]]],warn:[WH,[[.96,.25,.06],[.64,.76,.16],[.50,.86,.13]]],danger:[DH,[[.955,.24,.04],[.60,.62,.20],[.50,.80,.15]]]};
 const out={light:{},dark:{}};
 N.forEach(([l,d,c],i)=>{out.light['n'+(i+1)]=hex(l,c,NH);out.dark['n'+(i+1)]=hex(d,c,NH)});
 A.forEach(([l,d,c],i)=>{out.light['a'+(i+1)]=hex(l,c,AH);out.dark['a'+(i+1)]=hex(d,c,AH)});

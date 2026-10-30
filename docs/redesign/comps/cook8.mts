@@ -368,7 +368,7 @@ html = html.replace('</style>', css + '</style>');
 // switches: only this round's choices; his earlier picks are fixed
 html = html.replace('</head>', '<!-- colour scales from tokens.mts (node tokens.mts) -->\n<link rel="stylesheet" href="scales.css">\n</head>');
 html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term" data-worked="thin">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={accent:['blue','indigo','violet','magenta','sky','teal']};");
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={accent:['blue','indigo','violet','sky']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 

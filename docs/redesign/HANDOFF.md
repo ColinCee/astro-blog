@@ -30,9 +30,9 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 26: radar with arrows on real-looking routes; a proper cloud | `comps/shoot26.mts` |
 | Round 27: a puffier cloud the text fits in, three styles (outline won) | `comps/shoot27.mts` |
 | Round 28: the projects list, plain (won) or cards, with short subtitles (won) or none | `comps/shoot28.mts` |
-| Round 29: red joins status; six accent candidates; controls at 6px | `comps/round29.html`, live page `accent` switch, `system.html` swatches; `comps/shoot29.mts` |
+| Round 29: red joins status; accent candidates (teal and magenta dropped after research, four left); controls at 6px; amber dot darkened to 3.4:1 | `comps/round29.html`, live page `accent` switch, `system.html` swatches; `comps/shoot29.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
-| Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
+| Research: what polished tool sites and craft portfolios do; status colours, accent hues and control corners in eight design systems | `research/polish-research.md`, `research/palette-research.md`, `research/status-accent-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
 | Screenshots of the current state | `shots/` |
 

@@ -18,10 +18,10 @@ img{display:block;width:100%;height:auto;border-radius:4px}
 </head>
 <body>
 <h1>Round 29: the accent, six ways</h1>
-<p>Same lightness and saturation profile, only the hue changes, and every one passes contrast for text in both themes. None sits near the status colours (green, amber, red). Live: <a href="hero-line.html">hero-line.html</a> (accent switch) and <a href="system.html">system.html</a> (swatches top right).</p>
+<p>Same lightness and saturation profile, only the hue changes, and every one passes contrast for text in both themes. Teal and magenta were dropped after the research: each sat 45° from a status colour. Live: <a href="hero-line.html">hero-line.html</a> (accent switch) and <a href="system.html">system.html</a> (swatches top right).</p>
 <div class="grid">
 <script>
-for (const [k, d] of [['blue','262 · today'],['indigo','278 · Linear-like'],['violet','298 · Stripe-like'],['magenta','340'],['sky','235 · cooler, calmer'],['teal','195']])
+for (const [k, d] of [['blue','262 · today'],['indigo','278 · Linear-like'],['violet','298 · Stripe-like'],['sky','235 · cooler, calmer']])
   for (const t of ['', '-dark']) document.write(`<figure><figcaption><b>${k}</b> · hue ${d}${t ? ' · dark' : ''}</figcaption><img src="/shots/39-accent-${k}${t}.png" alt=""></figure>`);
 </script>
 </div>
