@@ -382,10 +382,12 @@ const quips = [
     let i = 0;
     let timers: number[] = [];
 
-    // Start the opt-in behaviours of the line now showing.
+    // Start the opt-in behaviours of the line now showing; under reduced
+    // motion the line stays at rest.
     const animate = (el: HTMLElement) => {
       timers.forEach((t) => window.clearTimeout(t));
       timers = [];
+      if (reduce) return;
       const flip = el.querySelector<HTMLElement>("[data-flip]");
       if (flip) {
         const [from, to] = (flip.dataset.flip || "").split(",");
