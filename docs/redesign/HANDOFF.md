@@ -13,6 +13,7 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 8: one-liner right, figures moved into Projects (bare / panel / reel; cards / picker) | `comps/round8.html` (screenshots), `comps/hero-line.html` (live, built by `comps/cook8.mts`, shot by `comps/shoot8.mts`) |
 | Round 9: the reel with only the next line, in nine light typefaces | `comps/round9.html` (shot by `comps/shoot9.mts`); same live page, `face` switch |
 | Round 10: font pairings next to Sora (mono face; name in Geist or Sora) | `comps/round10.html` (shot by `comps/shoot10.mts`); live page, `pair` switch |
+| Round 11: the terminal cleaned up | live page, `term` switch; `comps/shoot11.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -23,7 +24,8 @@ Run the comps: `node comps/serve.mts` (`PORT=4391` to pick another port) then op
 ## Decisions Colin has made
 
 - **Colour**: grey chrome; one indigo-blue accent with two jobs (the new value of a result that got better, and links); green and amber only as dots and tiny badges; borders cut from the ink at 8% / 14%; dark mode is the same OKLCH scales at other lightnesses. All in `system.html`.
-- **Type**: Geist and Geist Mono. Name at 600, sentence case, 2.6–4.25rem, −0.04em. No big uppercase name, no slogan headline. The one-liners are in **Sora 200**, punchline at 400, −0.03em (round 9; heavier weights were "a bit thick"). The line under the name is only "Senior Software Engineer". Locked in on 30 Oct 2026.
+- **Type**: Geist and Geist Mono. Name at 600, sentence case, 2.6–4.25rem, −0.04em. No big uppercase name, no slogan headline. The one-liners are in **Sora 200**, punchline at 400, −0.03em (round 9; heavier weights were "a bit thick"). The line under the name is only "Senior Software Engineer". Locked in on 30 Oct 2026. Name and headings in **Sora 600** (−0.05em on the name), body in Geist, everything mono in **DM Mono** (round 10; Geist Mono clashed with Sora).
+- **Terminal** (round 11, `term=clean`): two panes only. Left: `top -u colin` with one time column in ink, then `cat now.md` and the cursor. Right: shipped, before → after. Title `~/ColinOS`. Everything else is in `design-rejected.md`.
 - **His switch picks**: corners 8px, depth flat (no borders or shadows on panels; surfaces by tone), density airy, list as a white panel. The terminal follows the theme (white window on the light page).
 - **Layout**: name, role and links left; the one-liners right, as a **reel**: the current one, the next one faint underneath, no previous line. One every 5 s, hover pauses, click skips, a thin bar shows the time left (round 8–9). The terminal below with a real gap; worked-at strip, writing list, projects.
 - **The figures**, in the diagram style he liked (HTML boxes with one padding rule, edges drawn between boxes from the DOM, slow traffic on the edges, numbers that count up then tick, a cloud shape for "the internet"), left the hero and joined their projects: training → dissertation, radar → flight-tracker, homelab → home-lab, delivery → colincheung.dev, a real Anki card → anki-chinese. Weather and factory are cut. Picker (list left, one figure right) or cards is not decided yet; picker keeps one accent per glance.
@@ -33,7 +35,6 @@ Run the comps: `node comps/serve.mts` (`PORT=4391` to pick another port) then op
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
 - Projects: picker or cards (see above).
-- What sits next to Sora: Geist Mono clashes with it in the terminal. Round 10 (`comps/round10.html`, `pair` switch) tries DM Mono, Azeret Mono and Martian Mono, with the name and headings in Geist or Sora 600; body stays Geist. Recommended: Sora 600 name and headings + DM Mono.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go

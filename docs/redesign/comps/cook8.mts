@@ -87,6 +87,21 @@ cut('<section class="sec">\n    <div class="sec__head"><h2>Projects</h2>', '<sec
 
   `);
 
+// the terminal: mark what the clean version drops (round 11)
+for (const [a, b] of [
+  ['<p class="cmd">whoami</p>', '<p class="cmd x">whoami</p>'],
+  ['<p class="who__name">', '<p class="who__name x">'],
+  ['<p class="out who__sub">', '<p class="out who__sub x">'],
+  ['<p class="cmd">top -u colin</p>', '<p class="cmd cmd--top">top -u colin</p>'],
+  ['<span class="h">SINCE</span>', '<span class="h x">SINCE</span>'],
+  ['<p class="cmd">weather</p>', '<p class="cmd x">weather</p>'],
+  ['<p class="out">Glasgow', '<p class="out x">Glasgow'],
+  ['<p class="cmd">ls ~/contact</p>', '<p class="cmd x">ls ~/contact</p>'],
+  ['<div class="who__links">', '<div class="who__links x">'],
+  ['<span class="term__name">~/ColinOS - tmux</span>', '<span class="term__name">~/ColinOS<span class="x"> - tmux</span></span>'],
+  ['<span>shipped</span><span>before → after</span>', '<span>shipped</span><span class="x">before → after</span>'],
+]) { if (!html.includes(a)) throw new Error('terminal marker: ' + a); html = html.replace(a, b); }
+
 // the old rotator drove [data-quip]; the new one lives in the round-8 script
 cut('const q=document.querySelector', 'const c=document.querySelector', '');
 
@@ -171,6 +186,16 @@ ${faceCss}
 :root[data-pair^="sora"] .hero__copy .who__name{letter-spacing:-.05em;font-weight:600}
 :root[data-pair^="sora"] .who__name,:root[data-pair^="sora"] .row__title,:root[data-pair^="sora"] .sec h2{letter-spacing:-.03em}
 
+/* terminal, clean: no login line, no whoami (the hero says it), no weather,
+   no contact (the hero has the icons), no writing pane (the list is below),
+   no tmux status bar, one time column in ink */
+:root[data-term="clean"] .term .x,:root[data-term="clean"] .who__login,:root[data-term="clean"] .pane--writing,:root[data-term="clean"] .term__status,:root[data-term="clean"] .mon .out{display:none}
+:root[data-term="clean"] .term__panes{grid-template-areas:"who ship"}
+:root[data-term="clean"] .cmd--top{margin-top:0}
+:root[data-term="clean"] .mon{grid-template-columns:1fr 4rem}
+:root[data-term="clean"] .mon .ptime{color:var(--t-ink)}
+@media(max-width:56rem){:root[data-term="clean"] .term__panes{grid-template-areas:"who" "ship"}}
+
 /* projects: each figure joins its project */
 .pj{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
 .pj__item{background:var(--panel);border-radius:var(--r);padding:1.25rem 1.5rem 1.2rem;display:grid;grid-template-rows:auto 1fr;gap:1.1rem;min-width:0}
@@ -225,7 +250,7 @@ html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
 html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel">');
-html = html.replace(/const opts=\{[^}]*\};/, `const opts={hero:['reel','bare','panel'],face:[${faces.map((f) => "'" + f[0] + "'").join(',')}],proj:['picker','cards'],pair:['geist','dm-mono','azeret','martian','sora-dm-mono','sora-azeret','sora-martian']};`);
+html = html.replace(/const opts=\{[^}]*\};/, `const opts={hero:['reel','bare','panel'],face:[${faces.map((f) => "'" + f[0] + "'").join(',')}],proj:['picker','cards'],pair:['sora-dm-mono','geist','dm-mono','azeret','martian','sora-azeret','sora-martian'],term:['clean','full']};`);
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 

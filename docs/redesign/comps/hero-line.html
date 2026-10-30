@@ -453,6 +453,16 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
 :root[data-pair^="sora"] .hero__copy .who__name{letter-spacing:-.05em;font-weight:600}
 :root[data-pair^="sora"] .who__name,:root[data-pair^="sora"] .row__title,:root[data-pair^="sora"] .sec h2{letter-spacing:-.03em}
 
+/* terminal, clean: no login line, no whoami (the hero says it), no weather,
+   no contact (the hero has the icons), no writing pane (the list is below),
+   no tmux status bar, one time column in ink */
+:root[data-term="clean"] .term .x,:root[data-term="clean"] .who__login,:root[data-term="clean"] .pane--writing,:root[data-term="clean"] .term__status,:root[data-term="clean"] .mon .out{display:none}
+:root[data-term="clean"] .term__panes{grid-template-areas:"who ship"}
+:root[data-term="clean"] .cmd--top{margin-top:0}
+:root[data-term="clean"] .mon{grid-template-columns:1fr 4rem}
+:root[data-term="clean"] .mon .ptime{color:var(--t-ink)}
+@media(max-width:56rem){:root[data-term="clean"] .term__panes{grid-template-areas:"who" "ship"}}
+
 /* projects: each figure joins its project */
 .pj{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
 .pj__item{background:var(--panel);border-radius:var(--r);padding:1.25rem 1.5rem 1.2rem;display:grid;grid-template-rows:auto 1fr;gap:1.1rem;min-width:0}
@@ -536,16 +546,16 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
   </section>
 
   <section class="term" aria-label="Colin at a glance, as a terminal session">
-    <div class="term__bar"><span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="term__name">~/ColinOS - tmux</span></div>
+    <div class="term__bar"><span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="term__name">~/ColinOS<span class="x"> - tmux</span></span></div>
     <div class="term__panes">
       <div class="pane pane--who">
         <p class="who__login">Last login: Tue Oct 27 12:26 on ttys001</p>
-        <p class="cmd">whoami</p>
-        <p class="who__name">Colin Cheung <span class="cjk" lang="zh-Hant">張志權</span></p>
-        <p class="out who__sub">Open to remote · UK-based</p>
-        <p class="cmd">top -u colin</p>
+        <p class="cmd x">whoami</p>
+        <p class="who__name x">Colin Cheung <span class="cjk" lang="zh-Hant">張志權</span></p>
+        <p class="out who__sub x">Open to remote · UK-based</p>
+        <p class="cmd cmd--top">top -u colin</p>
         <div class="mon">
-          <span class="h">COMMAND</span><span class="h">SINCE</span><span class="h">TIME+</span>
+          <span class="h">COMMAND</span><span class="h x">SINCE</span><span class="h">TIME+</span>
           <span class="pname">react</span><span class="out">2017</span><span class="ptime">9y</span>
           <span class="pname">typescript</span><span class="out">2018</span><span class="ptime">8y</span>
           <span class="pname">aws</span><span class="out">2019</span><span class="ptime">7y</span>
@@ -554,14 +564,14 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
         </div>
         <p class="cmd">cat now.md</p>
         <p class="out">Tech lead @ EDF Energy, leading AI adoption across the team.</p>
-        <p class="cmd">weather</p>
-        <p class="out">Glasgow · 9°C, light rain</p>
-        <p class="cmd">ls ~/contact</p>
-        <div class="who__links"><a href="https://github.com/ColinCee">github.com/ColinCee</a><a href="https://www.linkedin.com/in/colin-cheung/">linkedin.com/in/colin-cheung</a></div>
+        <p class="cmd x">weather</p>
+        <p class="out x">Glasgow · 9°C, light rain</p>
+        <p class="cmd x">ls ~/contact</p>
+        <div class="who__links x"><a href="https://github.com/ColinCee">github.com/ColinCee</a><a href="https://www.linkedin.com/in/colin-cheung/">linkedin.com/in/colin-cheung</a></div>
         <p class="cmd rest"></p>
       </div>
       <div class="pane pane--ship">
-        <p class="pane__head"><span>shipped</span><span>before → after</span></p>
+        <p class="pane__head"><span>shipped</span><span class="x">before → after</span></p>
         <ul class="ship">
           <li><span class="ship__head">Data-lake export, as Parquet <small>Post · Sep 2025</small></span>
             <span class="ship__bar"><span>before</span><span class="ship__track"><i style="--w:100%"></i></span><b>4.5 GB</b></span>
@@ -714,7 +724,7 @@ const c=document.querySelector('[data-clock]');setInterval(()=>{c.textContent=ne
 
 <script>
 (()=>{const r=document.documentElement,q=new URLSearchParams(location.search);
-const opts={hero:['reel','bare','panel'],face:['sora','geist-mono','geist','inter','instrument-sans','plex-mono','jetbrains-mono','dm-mono','fragment-mono','instrument-serif','geist-200','manrope','outfit','space-grotesk','mona-wide','unbounded','fraunces','newsreader','martian-mono','azeret-mono'],proj:['picker','cards'],pair:['geist','dm-mono','azeret','martian','sora-dm-mono','sora-azeret','sora-martian']};
+const opts={hero:['reel','bare','panel'],face:['sora','geist-mono','geist','inter','instrument-sans','plex-mono','jetbrains-mono','dm-mono','fragment-mono','instrument-serif','geist-200','manrope','outfit','space-grotesk','mona-wide','unbounded','fraunces','newsreader','martian-mono','azeret-mono'],proj:['picker','cards'],pair:['sora-dm-mono','geist','dm-mono','azeret','martian','sora-azeret','sora-martian'],term:['clean','full']};
 const get=(n)=>q.get(n)||(()=>{try{return localStorage.getItem('v8-'+n)}catch{}})()||opts[n][0];
 const set=(n,v)=>{r.dataset[n]=v;try{localStorage.setItem('v8-'+n,v)}catch{}};
 for(const n in opts)set(n,get(n));

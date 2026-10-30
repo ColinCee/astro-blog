@@ -20,6 +20,15 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | The one-liner reel showing the previous line above the current one | Noisy; only the next one shows (Oct 2026). |
 | One-liners at weight 500–600 | "A bit thick"; lighter, cleaner type tried instead (Oct 2026). |
 
+## Terminal
+
+| Idea | Why it was dropped |
+|---|---|
+| The tmux status bar (window list, build time, commit, live clock) | Noise (Oct 2026). |
+| Login line, `whoami`, `weather` and `ls ~/contact` | The hero already says the name and links; the rest is noise (Oct 2026). |
+| A writing pane in the terminal | The Writing list is just below (Oct 2026). |
+| Two time columns in `top` (since and age) plus blue on every age | One column, in ink (Oct 2026). |
+
 ## Colour and chrome
 
 | Idea | Why it was dropped |
