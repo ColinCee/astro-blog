@@ -99,23 +99,28 @@ for (const vp of viewports) {
   });
 }
 
-// Theme follows the system setting. Guards against a page hardcoding one
-// scheme: the page background must be light in light mode and dark in dark.
-for (const scheme of ["light", "dark"] as const) {
-  test.describe(`${scheme} scheme`, () => {
-    test.use({ colorScheme: scheme });
+// Dark unless the visitor chose light (the nav button, saved as "theme"), on
+// any system setting. Guards against a page hardcoding one theme.
+for (const theme of ["dark", "light"] as const) {
+  test.describe(`${theme} theme`, () => {
+    test.use({ colorScheme: theme === "dark" ? "light" : "dark" });
 
     for (const path of ["/", "/blog", "/cv"]) {
-      test(`${path} background is ${scheme}`, async ({ page }) => {
+      test(`${path} background is ${theme}`, async ({ page }) => {
+        if (theme === "light")
+          await page.addInitScript(() =>
+            localStorage.setItem("theme", "light"),
+          );
         await page.goto(path);
-        const lightness = await page.evaluate(() => {
-          const bg = getComputedStyle(document.documentElement)
-            .getPropertyValue("--bg")
-            .trim();
-          return Number(bg.match(/oklch\(\s*([\d.]+)/)?.[1]);
+        const luminance = await page.evaluate(() => {
+          const rgb = getComputedStyle(document.querySelector(".shell")!)
+            .backgroundColor.match(/[\d.]+/g)!
+            .slice(0, 3)
+            .map(Number);
+          return (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) / 255;
         });
-        if (scheme === "light") expect(lightness).toBeGreaterThan(0.8);
-        else expect(lightness).toBeLessThan(0.3);
+        if (theme === "light") expect(luminance).toBeGreaterThan(0.6);
+        else expect(luminance).toBeLessThan(0.15);
       });
     }
   });

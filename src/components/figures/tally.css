@@ -7,17 +7,15 @@
 }
 .prose .tally dt {
   font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--faint);
 }
 .prose .tally dd {
   margin: 0.2rem 0 0;
-  font-family: var(--grotesk);
+  font-family: var(--head);
   font-size: clamp(1.4rem, 3vw, 1.8rem);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
 }

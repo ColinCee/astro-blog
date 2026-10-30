@@ -39,7 +39,7 @@
 .prose .gain--hi span,
 .prose .gain--hi em b {
   color: var(--ink);
-  font-weight: 700;
+  font-weight: 500;
 }
 .prose .gain--hi i {
   background: var(--accent);

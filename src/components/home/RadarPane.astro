@@ -392,13 +392,11 @@ const demo = "https://flight-tracker-at-home.pages.dev";
       resize();
       draw(performance.now());
     }).observe(canvas);
-    matchMedia("(prefers-color-scheme: dark)").addEventListener(
-      "change",
-      () => {
-        colors();
-        draw(performance.now());
-      },
-    );
+    // the nav button announces a theme change
+    addEventListener("themechange", () => {
+      colors();
+      draw(performance.now());
+    });
     const update = () => {
       const was = visible;
       visible = inView && !document.hidden && !reduce;

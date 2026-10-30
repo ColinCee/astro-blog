@@ -31,7 +31,7 @@
 .prose .lookup__row span {
   min-width: 5ch;
   color: var(--ink);
-  font-weight: 600;
+  font-weight: 500;
 }
 .prose .lookup__row i {
   color: var(--faint);
@@ -44,7 +44,7 @@
   height: 1.6rem;
   border-radius: 4px;
   color: var(--ink);
-  font-weight: 600;
+  font-weight: 500;
 }
 /* One neutral style per dictionary entry, the same on both sides. */
 .prose .lookup .e0 {

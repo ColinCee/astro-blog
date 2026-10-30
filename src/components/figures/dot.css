@@ -41,7 +41,7 @@
 }
 .prose .dot--after b {
   color: var(--accent-soft);
-  font-weight: 700;
+  font-weight: 500;
 }
 @media (max-width: 34rem) {
   .prose .dot {

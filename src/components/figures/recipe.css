@@ -34,8 +34,6 @@
 .recipe__k {
   margin: 0;
   color: var(--faint);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
 }
 .recipe ol {
   display: grid;
@@ -64,5 +62,5 @@
   color: var(--accent-soft);
 }
 .recipe li.is-now b {
-  font-weight: 700;
+  font-weight: 500;
 }

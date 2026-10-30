@@ -597,14 +597,12 @@ const quips = [
       resize();
       kick();
     }).observe(bg);
-    matchMedia("(prefers-color-scheme: dark)").addEventListener(
-      "change",
-      () => {
-        colors();
-        drawn = false;
-        kick();
-      },
-    );
+    // the nav button announces a theme change
+    addEventListener("themechange", () => {
+      colors();
+      drawn = false;
+      kick();
+    });
     // Only draw while the hero is on screen and the tab is visible.
     const setVisible = (v: boolean) => {
       visible = v && !document.hidden;

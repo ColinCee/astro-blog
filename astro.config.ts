@@ -63,8 +63,12 @@ export default defineConfig({
   },
   integrations: [
     expressiveCode({
-      // Light and dark variants; Expressive Code switches on the system setting.
-      themes: ["github-light", "github-dark"],
+      // Dark and light variants, switched with the site's own theme (data-theme on
+      // <html>, dark unless the visitor chose light), not the system setting.
+      themes: ["github-dark", "github-light"],
+      useDarkModeMediaQuery: false,
+      themeCssSelector: (theme) =>
+        theme.type === "dark" ? ":root" : ':root[data-theme="light"]',
       // Sit code blocks on the site's raised surface instead of pure white/black.
       styleOverrides: {
         codeBackground: "var(--pane)",

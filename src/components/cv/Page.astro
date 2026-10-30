@@ -91,9 +91,8 @@ const { title, description } = Astro.props;
 <style is:global>
   /* Print: flip the terminal palette to ink-on-white, hide site chrome, and keep entries whole. */
   @media print {
-    /* :root:root outranks the dark-scheme :root block in tokens.css, which can
-       still match when printing from a dark system. */
-    :root:root {
+    /* Outranks both theme blocks in tokens.css, so the CV always prints light. */
+    :root:root:root {
       --bg: #ffffff;
       --panel: #ffffff;
       --pane: #ffffff;

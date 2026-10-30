@@ -1,7 +1,7 @@
 ---
 // The shell every page sits in: the shared head, nav and footer around the
-// page's content, on the site's surface, following the system light/dark
-// setting. `home` widens the frame to the poster width for the homepage.
+// page's content, on the site's surface, dark unless the visitor chose light
+// (Head.astro sets it before paint, the nav button toggles it). `home` widens the frame to the poster width for the homepage.
 import "../styles/tokens.css";
 import Footer from "../components/site/Footer.astro";
 import Head from "../components/site/Head.astro";

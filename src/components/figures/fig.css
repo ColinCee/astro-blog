@@ -9,8 +9,7 @@
   grid-template-columns: minmax(0, 1fr);
   gap: 0.75rem;
   background: var(--pane);
-  border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--r);
   font-family: var(--mono);
   font-size: 0.8rem;
   line-height: 1.5;
@@ -23,7 +22,5 @@
 .prose .fig__k {
   margin: 0 0 0.45rem;
   font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--faint);
 }

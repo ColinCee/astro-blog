@@ -35,7 +35,7 @@
 }
 .prose .pick-panel > b {
   color: var(--ink);
-  font-weight: 600;
+  font-weight: 500;
 }
 .prose .pick-panel p {
   margin: 0;

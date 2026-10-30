@@ -51,7 +51,15 @@ const schema = article
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="dark light">
+<!-- The theme: dark unless the visitor chose light (the nav button). Set here,
+     before any stylesheet, so a light page never flashes dark or the reverse. -->
+<script is:inline>
+  try {
+    if (localStorage.getItem("theme") === "light")
+      document.documentElement.dataset.theme = "light";
+  } catch {}
+</script>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <!-- Fonts: linked here, not imported from a stylesheet, so the browser asks
      for them as soon as it reads the head. -->
@@ -59,7 +67,7 @@ const schema = article
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link
   rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"
+  href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Sora:wght@200..600&amp;family=DM+Mono:wght@300;400;500&amp;display=swap"
 >
 <meta name="generator" content={Astro.generator}>
 

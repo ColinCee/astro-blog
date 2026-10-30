@@ -100,7 +100,7 @@
     color 0.5s ease;
 }
 .prose .frames__box span.b {
-  font-weight: 600;
+  font-weight: 500;
 }
 .prose .frames[data-s="0"] {
   --h: var(--h0);

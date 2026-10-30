@@ -79,7 +79,7 @@
 }
 .prose .chart text.hi {
   fill: var(--accent-soft);
-  font-weight: 700;
+  font-weight: 500;
 }
 .prose .chart text.ink {
   fill: var(--ink);

@@ -106,7 +106,7 @@
 }
 .prose .peek .fig__k b {
   color: var(--accent-soft);
-  font-weight: 700;
+  font-weight: 500;
 }
 .prose .peek__seen {
   display: grid;
