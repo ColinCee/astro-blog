@@ -472,20 +472,13 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
    on the name's line (round 23) */
 .strip__co{position:relative}
 .strip__co::after{content:"/";position:absolute;top:var(--sep-y,1.45rem);right:-2.25rem;transform:translate(50%,-50%);font-family:var(--head);font-weight:200;font-size:2rem;line-height:1;color:var(--n7)}
-/* the year (round 24). row: beside the name, on its baseline, so each cell is
-   one line. under: under the name, tucked closer */
-:root[data-year="row"] .strip__co{flex-direction:row;align-items:baseline;gap:.7rem}
-:root[data-year="row"] .strip__co small{padding-left:0}
-:root[data-year="row"]{--sep-y:50%}
-:root[data-year="under"] .strip__co{gap:0}
-:root[data-year="under"] .strip__co small{margin-top:-.15rem}
-:root[data-year="under"]{--sep-y:1.3rem}
-/* worked at: a blue line icon for the industry, the name in Sora 200, the
-   start year under the name */
-.strip__co{flex-direction:column;align-items:flex-start;gap:.3rem}
-.co__n{display:inline-flex;align-items:center;gap:.6rem}
-.co__ic{width:1.15rem;height:1.15rem;flex:none;fill:none;stroke:var(--accent-solid);stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
-.strip__co small{font-size:.75rem;color:var(--faint);padding-left:1.75rem}
+/* the year sits beside the name, on its baseline (round 24) */
+.strip__co{flex-direction:row;align-items:baseline;gap:.7rem}
+.strip__co small{font-size:.75rem;color:var(--faint)}
+.strip__co::after{top:50%}
+/* where the blue goes (round 25): the slashes, the years, or nowhere */
+:root[data-tint="slash"] .strip__co::after{color:var(--accent-solid)}
+:root[data-tint="year"] .strip__co small{color:var(--accent)}
 
 /* terminal: two panes, whoami / top / weather and shipped */
 .term__panes{grid-template-areas:"who right"}
@@ -638,8 +631,8 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
     <div class="sec__head"><h2>Worked at</h2><span class="mono">2017 → now</span></div>
     <div class="strip" aria-label="Companies, 2017 to now">
       <div class="strip__track">
-        <span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 7h11v9H2z M13 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.8"/><circle cx="16.5" cy="18" r="1.8"/></svg>PodFather</span><small>2017</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/></svg>Skyscanner</span><small>2020</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9H3z M9.5 20v-5.5h5V20"/></svg>Hometree</span><small>2021</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/></svg>Hopper</span><small>2022</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M10 9l5 2.5-5 2.5z"/></svg>BBC</span><small>2022</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>EDF Energy</span><small>2023</small></span>
-        <span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 7h11v9H2z M13 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.8"/><circle cx="16.5" cy="18" r="1.8"/></svg>PodFather</span><small>2017</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/></svg>Skyscanner</span><small>2020</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9H3z M9.5 20v-5.5h5V20"/></svg>Hometree</span><small>2021</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/></svg>Hopper</span><small>2022</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M10 9l5 2.5-5 2.5z"/></svg>BBC</span><small>2022</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>EDF Energy</span><small>2023</small></span>
+        <span class="strip__co"><span class="co__n">PodFather</span><small>2017</small></span><span class="strip__co"><span class="co__n">Skyscanner</span><small>2020</small></span><span class="strip__co"><span class="co__n">Hometree</span><small>2021</small></span><span class="strip__co"><span class="co__n">Hopper</span><small>2022</small></span><span class="strip__co"><span class="co__n">BBC</span><small>2022</small></span><span class="strip__co"><span class="co__n">EDF Energy</span><small>2023</small></span>
+        <span class="strip__co" aria-hidden="true"><span class="co__n">PodFather</span><small>2017</small></span><span class="strip__co" aria-hidden="true"><span class="co__n">Skyscanner</span><small>2020</small></span><span class="strip__co" aria-hidden="true"><span class="co__n">Hometree</span><small>2021</small></span><span class="strip__co" aria-hidden="true"><span class="co__n">Hopper</span><small>2022</small></span><span class="strip__co" aria-hidden="true"><span class="co__n">BBC</span><small>2022</small></span><span class="strip__co" aria-hidden="true"><span class="co__n">EDF Energy</span><small>2023</small></span>
       </div>
     </div>
   </section>
@@ -758,7 +751,7 @@ const quips=["<span class=\"q-ctr\" data-flip=\"7,0\">0</span> days since the la
 
 <script>
 (()=>{const r=document.documentElement,q=new URLSearchParams(location.search);
-const opts={year:['row','under']};
+const opts={tint:['slash','year','none']};
 const get=(n)=>q.get(n)||(()=>{try{return localStorage.getItem('v8-'+n)}catch{}})()||opts[n][0];
 const set=(n,v)=>{r.dataset[n]=v;try{localStorage.setItem('v8-'+n,v)}catch{}};
 for(const n in opts)set(n,get(n));

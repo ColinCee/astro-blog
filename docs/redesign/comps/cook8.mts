@@ -143,24 +143,18 @@ cut('<section class="term"', '<section class="sec">', `<section class="term" ari
   html = html.slice(0, a) + '<ol class="rows">\n      ' + posts.map(([slug, d, t, v, l]) => `<li class="row"><span class="row__date">${d}</span><a href="/blog/${slug}"><span class="row__title">${t}</span></a><span class="row__stat">${stat(v)}<small>${l}</small></span></li>`).join('\n      ') + '\n    </ol>' + html.slice(b);
   html = html.replace('<span class="mono">7 posts · blue got better</span>', `<span class="mono">${posts.length} posts</span>`); }
 
-// the strip, locked (round 22): an industry icon before each name, the year he
-// started under it; no lengths (they read as job-hopping)
-{ const ic = {
-    road: '<path d="M2 7h11v9H2z M13 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.8"/><circle cx="16.5" cy="18" r="1.8"/>',
-    travel: '<path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/>',
-    home: '<path d="M3 11 12 4l9 7v9H3z M9.5 20v-5.5h5V20"/>',
-    media: '<rect x="3" y="5" width="18" height="13" rx="2"/><path d="M10 9l5 2.5-5 2.5z"/>',
-    energy: '<path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z"/>',
-  };
+// the strip (round 25): the name and the year he started, a slash between; no
+// icons, no lengths (they read as job-hopping)
+{
   const jobs = [
-    ['PodFather', 'road', '2017'],
-    ['Skyscanner', 'travel', '2020'],
-    ['Hometree', 'home', '2021'],
-    ['Hopper', 'travel', '2022'],
-    ['BBC', 'media', '2022'],
-    ['EDF Energy', 'energy', '2023'],
+    ['PodFather', '2017'],
+    ['Skyscanner', '2020'],
+    ['Hometree', '2021'],
+    ['Hopper', '2022'],
+    ['BBC', '2022'],
+    ['EDF Energy', '2023'],
   ] as const;
-  const one = (hide: boolean) => jobs.map(([n, i, y]) => `<span class="strip__co"${hide ? ' aria-hidden="true"' : ''}><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true">${ic[i]}</svg>${n}</span><small>${y}</small></span>`).join('');
+  const one = (hide: boolean) => jobs.map(([n, y]) => `<span class="strip__co"${hide ? ' aria-hidden="true"' : ''}><span class="co__n">${n}</span><small>${y}</small></span>`).join('');
   const a = html.indexOf('<div class="strip__track">'), b = html.indexOf('</div>', a);
   html = html.slice(0, a) + '<div class="strip__track">\n        ' + one(false) + '\n        ' + one(true) + '\n      ' + html.slice(b); }
 
@@ -266,20 +260,13 @@ ${faceCss}
    on the name's line (round 23) */
 .strip__co{position:relative}
 .strip__co::after{content:"/";position:absolute;top:var(--sep-y,1.45rem);right:-2.25rem;transform:translate(50%,-50%);font-family:var(--head);font-weight:200;font-size:2rem;line-height:1;color:var(--n7)}
-/* the year (round 24). row: beside the name, on its baseline, so each cell is
-   one line. under: under the name, tucked closer */
-:root[data-year="row"] .strip__co{flex-direction:row;align-items:baseline;gap:.7rem}
-:root[data-year="row"] .strip__co small{padding-left:0}
-:root[data-year="row"]{--sep-y:50%}
-:root[data-year="under"] .strip__co{gap:0}
-:root[data-year="under"] .strip__co small{margin-top:-.15rem}
-:root[data-year="under"]{--sep-y:1.3rem}
-/* worked at: a blue line icon for the industry, the name in Sora 200, the
-   start year under the name */
-.strip__co{flex-direction:column;align-items:flex-start;gap:.3rem}
-.co__n{display:inline-flex;align-items:center;gap:.6rem}
-.co__ic{width:1.15rem;height:1.15rem;flex:none;fill:none;stroke:var(--accent-solid);stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
-.strip__co small{font-size:.75rem;color:var(--faint);padding-left:1.75rem}
+/* the year sits beside the name, on its baseline (round 24) */
+.strip__co{flex-direction:row;align-items:baseline;gap:.7rem}
+.strip__co small{font-size:.75rem;color:var(--faint)}
+.strip__co::after{top:50%}
+/* where the blue goes (round 25): the slashes, the years, or nowhere */
+:root[data-tint="slash"] .strip__co::after{color:var(--accent-solid)}
+:root[data-tint="year"] .strip__co small{color:var(--accent)}
 
 /* terminal: two panes, whoami / top / weather and shipped */
 .term__panes{grid-template-areas:"who right"}
@@ -353,7 +340,7 @@ html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
 html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term" data-worked="thin">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={year:['row','under']};");
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={tint:['slash','year','none']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 
