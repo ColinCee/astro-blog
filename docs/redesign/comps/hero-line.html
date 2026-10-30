@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term">
+<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term" data-worked="thin">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -467,6 +467,26 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
 :root[data-worked="still"] .strip__co:nth-child(6)::before{background:var(--accent-solid)}
 @media(max-width:40rem){:root[data-worked="still"] .strip__track{display:grid;grid-template-columns:1fr 1fr;row-gap:1.6rem}:root[data-worked="still"] .strip__track::before,:root[data-worked="still"] .strip__co::before{display:none}}
 
+/* worked at, under each name (round 20). none: name and years. tenure: a bar
+   as long as the job, grey, the current one blue, with the length in the years
+   line. ramp: the same bars stepping through the blue scale, palest in 2017 */
+.strip__co{flex-direction:column;align-items:flex-start;gap:.35rem}
+.co__bar{display:none;height:6px;width:calc(var(--m) * .3rem);min-width:.6rem;border-radius:3px;background:var(--n6)}
+.co__len{display:none}
+:root[data-mark="tenure"] .co__bar,:root[data-mark="ramp"] .co__bar{display:block}
+:root[data-mark="tenure"] .co__len,:root[data-mark="ramp"] .co__len{display:inline}
+:root[data-mark="tenure"] .strip__co:nth-child(6n) .co__bar{background:var(--accent-solid)}
+:root[data-mark="ramp"] .strip__co:nth-child(6n+1) .co__bar{background:var(--a4)}
+:root[data-mark="ramp"] .strip__co:nth-child(6n+2) .co__bar{background:var(--a5)}
+:root[data-mark="ramp"] .strip__co:nth-child(6n+3) .co__bar{background:var(--a6)}
+:root[data-mark="ramp"] .strip__co:nth-child(6n+4) .co__bar{background:var(--a7)}
+:root[data-mark="ramp"] .strip__co:nth-child(6n+5) .co__bar{background:var(--a8)}
+:root[data-mark="ramp"] .strip__co:nth-child(6n) .co__bar{background:var(--a9)}
+/* the bars grow in once, when the strip comes on screen */
+.strip.seen .co__bar{animation:co-grow 1.2s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--k) * 90ms)}
+@keyframes co-grow{from{width:0;min-width:0}}
+@media(prefers-reduced-motion:reduce){.strip.seen .co__bar{animation:none}}
+
 /* terminal: two panes, whoami / top / weather and shipped */
 .term__panes{grid-template-areas:"who right"}
 .pane--ship,.pane--now{grid-area:right}
@@ -618,8 +638,8 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
     <div class="sec__head"><h2>Worked at</h2><span class="mono">2017 → now</span></div>
     <div class="strip" aria-label="Companies, 2017 to now">
       <div class="strip__track">
-        <span class="strip__co">PodFather <small>2017</small></span><span class="strip__co">Skyscanner <small>2020</small></span><span class="strip__co">Hometree <small>2021</small></span><span class="strip__co">Hopper <small>2022</small></span><span class="strip__co">BBC <small>2022</small></span><span class="strip__co">EDF Energy <small>2023</small></span>
-        <span class="strip__co" aria-hidden="true">PodFather <small>2017</small></span><span class="strip__co" aria-hidden="true">Skyscanner <small>2020</small></span><span class="strip__co" aria-hidden="true">Hometree <small>2021</small></span><span class="strip__co" aria-hidden="true">Hopper <small>2022</small></span><span class="strip__co" aria-hidden="true">BBC <small>2022</small></span><span class="strip__co" aria-hidden="true">EDF Energy <small>2023</small></span>
+        <span class="strip__co" style="--m:31;--k:0"><span class="co__n">PodFather</span><span class="co__bar"></span><small>2017 – 20<span class="co__len"> · 2 y 7 mo</span></small></span><span class="strip__co" style="--m:14;--k:1"><span class="co__n">Skyscanner</span><span class="co__bar"></span><small>2020 – 21<span class="co__len"> · 1 y 2 mo</span></small></span><span class="strip__co" style="--m:9;--k:2"><span class="co__n">Hometree</span><span class="co__bar"></span><small>2021 – 22<span class="co__len"> · 9 mo</span></small></span><span class="strip__co" style="--m:7;--k:3"><span class="co__n">Hopper</span><span class="co__bar"></span><small>2022<span class="co__len"> · 7 mo</span></small></span><span class="strip__co" style="--m:5;--k:4"><span class="co__n">BBC</span><span class="co__bar"></span><small>2022 – 23<span class="co__len"> · 5 mo</span></small></span><span class="strip__co" style="--m:42;--k:5"><span class="co__n">EDF Energy</span><span class="co__bar"></span><small>2023 – now<span class="co__len"> · 3 y 6 mo</span></small></span>
+        <span class="strip__co" aria-hidden="true" style="--m:31;--k:0"><span class="co__n">PodFather</span><span class="co__bar"></span><small>2017 – 20<span class="co__len"> · 2 y 7 mo</span></small></span><span class="strip__co" aria-hidden="true" style="--m:14;--k:1"><span class="co__n">Skyscanner</span><span class="co__bar"></span><small>2020 – 21<span class="co__len"> · 1 y 2 mo</span></small></span><span class="strip__co" aria-hidden="true" style="--m:9;--k:2"><span class="co__n">Hometree</span><span class="co__bar"></span><small>2021 – 22<span class="co__len"> · 9 mo</span></small></span><span class="strip__co" aria-hidden="true" style="--m:7;--k:3"><span class="co__n">Hopper</span><span class="co__bar"></span><small>2022<span class="co__len"> · 7 mo</span></small></span><span class="strip__co" aria-hidden="true" style="--m:5;--k:4"><span class="co__n">BBC</span><span class="co__bar"></span><small>2022 – 23<span class="co__len"> · 5 mo</span></small></span><span class="strip__co" aria-hidden="true" style="--m:42;--k:5"><span class="co__n">EDF Energy</span><span class="co__bar"></span><small>2023 – now<span class="co__len"> · 3 y 6 mo</span></small></span>
       </div>
     </div>
   </section>
@@ -738,7 +758,7 @@ const quips=["<span class=\"q-ctr\" data-flip=\"7,0\">0</span> days since the la
 
 <script>
 (()=>{const r=document.documentElement,q=new URLSearchParams(location.search);
-const opts={worked:['thin','still']};
+const opts={mark:['tenure','ramp','none']};
 const get=(n)=>q.get(n)||(()=>{try{return localStorage.getItem('v8-'+n)}catch{}})()||opts[n][0];
 const set=(n,v)=>{r.dataset[n]=v;try{localStorage.setItem('v8-'+n,v)}catch{}};
 for(const n in opts)set(n,get(n));
@@ -803,6 +823,8 @@ document.fonts.ready.then(drawAll);
 // weather: Glasgow now, from open-meteo (no key)
 const wx=document.querySelector('[data-wx]');if(wx)fetch('https://api.open-meteo.com/v1/forecast?latitude=55.86&longitude=-4.25&current=temperature_2m,weather_code').then(r=>r.json()).then(d=>{const c=d.current.weather_code,t=Math.round(d.current.temperature_2m);
  const w=c===0?'clear':c<=2?'some cloud':c===3?'overcast':c<=48?'fog':c<=57?'drizzle':c<=67?'rain':c<=77?'snow':c<=82?'showers':c<=86?'snow showers':'thunder';wx.textContent='Glasgow · '+t+'°C, '+w}).catch(()=>{});
+// worked at: bars grow in once seen
+const strip=document.querySelector('.strip');if(strip)new IntersectionObserver((es,o)=>es.forEach(x=>{if(x.isIntersecting){strip.classList.add('seen');o.disconnect()}}),{threshold:.3}).observe(strip);
 // anki: a card at a time, only when asked
 const cards=[["蒸","zhēng · zing1","to evaporate, to steam"],["更","gèng · gang3","more, even more"],["垃","lā · laap6","in 垃圾: trash"],["傻","shǎ · so4","foolish; silly"],["若","ruò · joek6","if, to seem, like"],["吉","jí · gat1","lucky"],["御","yù · jyu6","imperial; as in 御花园"],["带","dài · daai3","belt; to bring"]];
 let ck=0;const card=document.querySelector('[data-anki]');document.querySelector('[data-anki-next]').addEventListener('click',()=>{ck=(ck+1)%cards.length;const [h,p,m]=cards[ck];card.innerHTML='<span class="ak__hz" lang="zh">'+h+'</span><span class="ak__py">'+p+'</span><span class="ak__mn">'+m+'</span>'});

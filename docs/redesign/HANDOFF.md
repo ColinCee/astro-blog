@@ -20,7 +20,8 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 15–16: the CV in the terminal's right pane, as a timeline or a list (dropped) | `comps/shoot15.mts` |
 | Round 17: the terminal, locked | `comps/shoot17.mts` |
 | Round 18: writing in the terminal (won), or a compact section | `comps/shoot18.mts` |
-| Round 19: worked at, thin marquee or still | live page, `worked` switch; `comps/shoot19.mts` |
+| Round 19: worked at, thin marquee (won) or still | `comps/shoot19.mts` |
+| Round 20: a tenure bar under each company, grey or a blue ramp | live page, `mark` switch; `comps/shoot20.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -51,12 +52,12 @@ What every decision below comes back to (Oct 2026):
 - **The figures**, in the diagram style he liked (HTML boxes with one padding rule, edges drawn between boxes from the DOM, slow traffic on the edges, numbers that count up then tick, a cloud shape for "the internet"), left the hero and joined their projects: training → dissertation, radar → flight-tracker, homelab → home-lab, delivery → colincheung.dev, a real Anki card → anki-chinese. Weather and factory are cut. Projects is the **picker** (list left, one figure right; locked 30 Oct 2026).
 - **The one-liners** (18 of them, with inline drawings, flip counter and odometer) stay.
 
-**Locked (30 Oct 2026):** `hero-line.html` now has only the open choice as a switch (`worked`); the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
+**Locked (30 Oct 2026):** `hero-line.html` now has only the open choice as a switch (`mark`); the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
 
 ## What he said needs refinement (not done)
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
-- Worked at (round 19, `worked` switch): `thin`, the marquee in Sora 200 with no grey band, slower, an even gap at the seam; or `still`, no motion, the six names along one hairline with a dot each, the current one blue.
+- Worked at: the thin marquee is locked (Sora 200 names, DM Mono years, no grey band, 70 s loop with an even gap at the seam). Under each name (round 20, `mark` switch): `tenure`, a bar as long as the job (from the CV dates) with the length in the years line, grey with the current job blue; `ramp`, the same bars stepping through the blue scale, palest in 2017; or `none`. The bars grow in once when the strip comes on screen.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go
