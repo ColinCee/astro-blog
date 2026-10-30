@@ -5,6 +5,6 @@
 - **Posts about work stay high level.** This repo is public and work code is private: no repo, product, package, file or colleague names, and no work code or config. Counts, timings and the general idea are fine. That applies to plan and draft files here too.
 - **One tomato per glance.** Colin found the CV "really hard to read with so much orange" (Oct 2026). The rule is DESIGN.md's Metric Is The Accent Rule.
 - **Cloudflare's bot detection stays on.** Its injected script costs the Lighthouse best-practices score about 20 points; that score doesn't matter, so don't chase it.
-- **During the redesign, `docs/redesign/comps/system.html` is the design system** (colours from `docs/redesign/comps/tokens.mts`). Colin wants it kept current: change it in the same commit as any design decision, and read it before proposing one.
+- **During the redesign, `src/pages/design.astro` (`/design/` on the dev server, not built) is the design system** (colours from `docs/redesign/comps/tokens.mts`, which writes `src/styles/scales.css`). Colin wants it kept current: change it in the same commit as any design decision, and read it before proposing one.
 - **Writing or reviewing a post:** follow `.claude/skills/writing-posts/SKILL.md` (story, his voice, numbers, figures, shipping). Figure components and tokens are in `DESIGN.md`.
 - **A PR that changes how a page looks or moves shows it**, so Colin can see it before merging: follow `.claude/skills/pr-visuals/SKILL.md`.

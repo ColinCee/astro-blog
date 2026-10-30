@@ -6,7 +6,7 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 
 | What | Where |
 |---|---|
-| The design system (principles, tokens, roles, type, shape, marks), the living reference | `comps/system.html` |
+| The design system (principles, tokens, roles, type, shape, marks, the posts kit), the living reference | `src/pages/design.astro`, at `/design/` on the dev server (dev only) |
 | The token generator (OKLCH scales, contrast check) | `comps/tokens.mts` → `comps/scales.json` |
 | The current hero comp: name left, cycling figures right | `comps/hero-figures.html` (built by `comps/cook7.mts` from `comps/console-v3.html`) |
 | The whole home page in the new system, with the switches | `comps/console-v3.html` |
@@ -39,15 +39,15 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
 | Screenshots of the current state | `shots/` |
 
-Run the comps: `node comps/serve.mts` (port 4390, or `PORT=4391`) and open `/index.html`, which links every round; `/system.html` is the design system and `/hero-line.html` the home page. Pages reload themselves when a file in `comps/` changes, and saving `cook8.mts` or `tokens.mts` reruns it first. `node comps/shootNN.mts` takes headless screenshots with the repo's Playwright; `node comps/hang.mts <url>` tells you if a page has hung. The `.mts` files are scratch tooling; delete them when the hero is built.
+Run the comps: `node comps/serve.mts` (port 4390, or `PORT=4391`) and open `/index.html`, which links every round; `/hero-line.html` is the home page as it was decided (the design system moved into the site, `/design/`). Pages reload themselves when a file in `comps/` changes, and saving `cook8.mts` or `tokens.mts` reruns it first. `node comps/shootNN.mts` takes headless screenshots with the repo's Playwright; `node comps/hang.mts <url>` tells you if a page has hung. The `.mts` files are scratch tooling; delete them when the hero is built.
 
 ## Design system
 
-`comps/system.html` is the design system: the principles, colour scales and roles, type, shape, marks and motion. Colours come from `comps/tokens.mts` (`node comps/tokens.mts` writes `scales.css` and `scales.json`); every comp links `scales.css`. Update it in the same change as any decision below.
+`src/pages/design.astro` (`/design/` on the blog dev server; it redirects home in a build) is the design system: the principles, colour scales and roles, type, shape, marks and motion, and the posts kit. Colours come from `comps/tokens.mts` (`node comps/tokens.mts` writes `src/styles/scales.css` for the site, and `scales.css` / `scales.json` for the comps). Update it in the same change as any decision below.
 
 ## Decisions Colin has made
 
-- **Colour**: grey chrome from one cool-tinted neutral scale (12 steps); one **violet** accent scale (hue 298, 12 steps; chosen 30 Oct over blue, indigo, sky, tomato and orange) with three jobs: the new value of a result that got better, links, and small marks that point at the one thing (the slashes, the open project, the labelled planes, the one-liner drawings, the prompt). Never a surface or a large area; controls are ink, not blue. Green and amber only as dots and tiny badges; borders cut from the ink at 8% / 14%; dark mode is the same OKLCH scales at other lightnesses. Scales and roles in `system.html` (its type and corner sections are older than the decisions here).
+- **Colour**: grey chrome from one cool-tinted neutral scale (12 steps); one **violet** accent scale (hue 298, 12 steps; chosen 30 Oct over blue, indigo, sky, tomato and orange) with three jobs: the new value of a result that got better, links, and small marks that point at the one thing (the slashes, the open project, the labelled planes, the one-liner drawings, the prompt). Never a surface or a large area; controls are ink, not blue. Green and amber only as dots and tiny badges; borders cut from the ink at 8% / 14%; dark mode is the same OKLCH scales at other lightnesses. Scales and roles on the design page.
 - **Type**: Geist and Geist Mono. Name at 600, sentence case, 2.6–4.25rem, −0.04em. No big uppercase name, no slogan headline. The one-liners are in **Sora 200**, punchline at 400, −0.03em (round 9; heavier weights were "a bit thick"). The line under the name is only "Senior Software Engineer". Locked in on 30 Oct 2026. Name and headings in **Sora 600** (−0.05em on the name), body in Geist, everything mono in **DM Mono** (round 10; Geist Mono clashed with Sora).
 - **Terminal** (rounds 11–16): title `~/ColinOS`, no tmux bar. Left: `whoami` (Colin Cheung 張志權, nothing else), `top -u colin` with one time column in ink, `weather` (live from open-meteo), the cursor. Right pane: `ls -t ~/writing`, the latest five posts (date, title in Geist 400, stat: old struck grey, new blue, plain comparisons in ink) and "all 8 posts →"; posts come from each post's frontmatter. The writing section below is gone, and so are the shipped bars (the Parquet result is a post; the EDF and BBC results are on the CV). Locked 30 Oct 2026.
 - **Worked at**: the thin marquee (Sora 200 names, DM Mono years, no grey band, 70 s loop with an even gap at the seam). Each name with the year he started beside it in DM Mono, a thin blue slash in Sora between names; no icons, no job lengths, which read as job-hopping, and no logos (brand rules, mixed availability, off-palette). Locked 30 Oct 2026.
@@ -68,17 +68,11 @@ Run the comps: `node comps/serve.mts` (port 4390, or `PORT=4391`) and open `/ind
 - Posts (round 33): two open points. `Pts` in the dissertation posts uses orange for "the post's subject" and green / red for a real gain / drop; in the new system the subject is the accent (violet) and gain / drop are the status green and red. Expressive Code's code theme (`github-light` / `github-dark`) and its red tab marker are a build setting; pick a theme that sits with violet when building.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
-## Building it into the site, when he says go
+## Building it into the site (started 30 Oct 2026, on `redesign-figures`)
 
-1. `src/styles/tokens.css`: replace with the scales and roles from `system.html` (one `:root` block light, one `[data-theme="dark"]`). Keep the typography test rules (16–19px body, 1.5–1.8 line height, 45–90ch, 11px minimum, rem units).
-2. `src/components/site/Head.astro`: load Geist and Geist Mono instead of Bricolage and JetBrains.
-3. A theme toggle in `Nav.astro` writing `data-theme` on `<html>` and localStorage; dark by default, set in the HTML so there is no flash.
-4. `Hero.astro`: the two-column hero; keep the one-liner script and drawings as they are; port the figures from `hero-figures.html` as small components reading `src/data/*.json` (shipped, homelab-stacks, skills, anki-cards). The edge-drawing and number-ticking script is ~40 lines; keep it one script.
-4b. Posts: `comps/post-reskin.css` is the token remap and post rules, rehearsed; move its values into `tokens.css` (with the dark-default switch replacing `prefers-color-scheme`) and its rules into `prose.css`, `Post.astro` and `fig.css`. `Post.astro` splits `stat` on "→" into the struck old value and the accent new value.
-5. `Terminal.astro` and panes: drop the always-dark palette; use the page tokens; 8px corners; flat.
-6. Writing list: stat variant B (old value struck in grey, new value in the accent; plain comparisons stay ink).
-7. Rewrite `DESIGN.md` from `system.html`, and update `AGENTS.md`: the "One tomato per glance" rule and DESIGN.md's Metric Is The Accent Rule go stale.
-8. Reduced motion: no edge traffic, no ticking, no cycling; the first figure static.
+Done and committed: the tokens (`src/styles/tokens.css` roles over the generated `scales.css`), Sora / Geist / DM Mono, dark by default with the light toggle in the nav, code blocks on the site's theme; posts (titles and headings in Sora, the stat split, flat figures, no caps labels, figure values at DM Mono 500); the hero reel; the terminal (whoami, top, weather, newest five posts); worked at; the blog index, CV, 404 and footer; the design page. `node docs/redesign/comps/shoot-site.mts home,blog,cv,blog/<slug>` shoots any page in dark, light and 375px from the dev server.
+
+Left: Projects (the picker with its five figures), `DESIGN.md` rewritten from the design page, AGENTS.md's stale colour rules, and the open points above. The comps in `docs/redesign/comps/` are the record of what was decided; review now happens on the dev server.
 
 ## Rules that bind any further comp
 
