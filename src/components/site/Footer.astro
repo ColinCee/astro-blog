@@ -11,9 +11,9 @@ const build = __BUILD__;
 ---
 
 <footer class:list={["foot", { "foot--home": home }]}>
-  <span class="foot__name">COLIN CHEUNG</span>
+  <span class="foot__name">Colin Cheung</span>
   <span class="foot__meta">
-    © {year} · BUILT IN GLASGOW
+    © {year} · built in Glasgow
     {home && build.hash && (
       <Fragment>
         {" "}
@@ -23,7 +23,7 @@ const build = __BUILD__;
           href={`https://github.com/ColinCee/astro-blog/commit/${build.hash}`}
           title={build.subject}
         >
-          LAST DEPLOY {build.hash}
+          last deploy {build.hash}
         </a>
       </Fragment>
     )}
@@ -43,8 +43,7 @@ const build = __BUILD__;
     padding-top: 1.4rem;
     border-top: 1px solid var(--line);
     font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.06em;
+    font-size: 0.75rem;
     color: var(--muted);
   }
   .foot__meta {

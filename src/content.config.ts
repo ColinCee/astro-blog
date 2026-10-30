@@ -41,23 +41,6 @@ const companies = defineCollection({
   schema: z.object({ order, name: z.string(), year: z.string() }),
 });
 
-// The terminal's shipped pane, newest first. `before` and `after` are the
-// labels; `scale` holds the two numbers the bars are drawn from (after ÷
-// before), in any one unit.
-const shipped = defineCollection({
-  loader: file("src/data/shipped.json"),
-  schema: z.object({
-    order,
-    what: z.string(),
-    where: z.string(),
-    when: z.string(),
-    href: z.string(),
-    before: z.string(),
-    after: z.string(),
-    scale: z.object({ before: z.number().positive(), after: z.number() }),
-  }),
-});
-
 // The whoami pane's `top`: each skill and the year I started using it.
 const skills = defineCollection({
   loader: file("src/data/skills.json"),
@@ -74,7 +57,6 @@ export const collections = {
   blog,
   projects,
   companies,
-  shipped,
   skills,
   homelabStacks,
 };

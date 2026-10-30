@@ -1,17 +1,9 @@
 ---
-// The homepage's set piece: a tmux window with three panes (who I am, what
-// I shipped, what I wrote) and a status bar with the build, date and a
-// live clock.
-
-import { getCollection } from "astro:content";
-import ShippedPane from "./ShippedPane.astro";
+// The homepage's set piece: a terminal window with two panes, who I am (the
+// two names, skills, live weather) and what I wrote (the newest posts and
+// their results). No tmux bar: nothing on it said anything new.
 import WhoamiPane from "./WhoamiPane.astro";
 import WritingPane from "./WritingPane.astro";
-
-const build = __BUILD__;
-// The shipped rows play one after another, and writing waits for the last.
-const shipRows = (await getCollection("shipped")).length;
-const today = new Date().toLocaleDateString("en-CA");
 ---
 
 <section class="term" aria-label="Colin at a glance, as a terminal session">
@@ -21,42 +13,22 @@ const today = new Date().toLocaleDateString("en-CA");
       <i></i>
       <i></i>
     </span>
-    <span class="term__name">~/ColinOS - tmux</span>
+    <span class="term__name">~/ColinOS</span>
   </div>
 
-  <div class="term__panes" style={`--ship-rows: ${shipRows}`}>
+  <div class="term__panes">
     <WhoamiPane />
-    <ShippedPane />
     <WritingPane />
-  </div>
-
-  <div class="term__status" aria-hidden="true">
-    <span class="term__tabs">
-      <b>[colin]</b>
-      0:whoami <em>1:shipped*</em> 2:writing
-    </span>
-    <span class="term__ticker">
-      {build.hash && (
-        <span class="term__build" title={build.subject} data-build={build.when}>
-          built <span data-build-rel>{build.when.slice(0, 10)}</span> ·{" "}
-          <b>{build.hash}</b>
-        </span>
-      )}
-      <span data-date>{today}</span>
-      <span class="term__clock" data-clock> --:--:-- </span>
-    </span>
   </div>
 </section>
 
 <style>
   .term {
     max-width: var(--w-poster);
-    margin: clamp(1rem, 3vw, 2rem) auto 0;
+    margin: clamp(1.5rem, 4vw, 3rem) auto 0;
     background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: var(--r);
     overflow: hidden;
-    box-shadow: var(--lift);
     animation: rise var(--dur-slow) var(--ease-out) 0.08s both;
   }
   .term__bar {
@@ -64,9 +36,8 @@ const today = new Date().toLocaleDateString("en-CA");
     align-items: center;
     gap: 0.7rem;
     padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--line);
     font-family: var(--mono);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     color: var(--muted);
   }
   .term__dots {
@@ -77,82 +48,24 @@ const today = new Date().toLocaleDateString("en-CA");
     width: 11px;
     height: 11px;
     border-radius: 50%;
-    background: var(--line);
+    background: var(--n6);
   }
   .term__dots i:first-child {
-    background: color-mix(in oklch, var(--accent) 70%, var(--line));
+    background: var(--accent-solid);
   }
-  .term__name {
-    flex: 1;
-  }
-
   .term__panes {
     display: grid;
     gap: 1px;
     background: var(--line);
     grid-template-columns: 1fr 1fr;
-    /* biome-ignore lint/correctness/noInvalidGridAreas: both rows have two cells; Biome misreads strings in .astro styles */
-    grid-template-areas: "who hl" "who writing";
+    /* biome-ignore lint/correctness/noInvalidGridAreas: one row of two cells; Biome misreads strings in .astro styles */
+    grid-template-areas: "who writing";
   }
   @media (max-width: 900px) {
     .term__panes {
       grid-template-columns: 1fr;
       /* biome-ignore lint/correctness/noInvalidGridAreas: one cell per row; Biome misreads strings in .astro styles */
-      grid-template-areas: "who" "hl" "writing";
+      grid-template-areas: "who" "writing";
     }
   }
-
-  .term__status {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem 1rem;
-    padding: 0.55rem 1rem;
-    border-top: 1px solid var(--line);
-    background: color-mix(in oklch, var(--accent) 12%, var(--panel));
-    font-family: var(--mono);
-    font-size: 0.6875rem;
-    color: var(--ink);
-  }
-  .term__tabs b {
-    color: var(--accent-text);
-  }
-  .term__tabs em {
-    color: var(--accent-text);
-    font-style: normal;
-    font-weight: 700;
-  }
-  .term__ticker {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 0.3rem 0.9rem;
-    color: var(--muted);
-  }
-  .term__clock {
-    color: var(--ink);
-    font-variant-numeric: tabular-nums;
-  }
-  .term__build b {
-    color: var(--ink);
-    font-weight: 500;
-  }
 </style>
-
-<script>
-  import "../../scripts/build-age";
-
-  // Live date and clock in the status bar.
-  const clocks = document.querySelectorAll<HTMLElement>("[data-clock]");
-  const dates = document.querySelectorAll<HTMLElement>("[data-date]");
-  const tickClock = () => {
-    const now = new Date();
-    const time = now.toLocaleTimeString("en-GB", { hour12: false });
-    clocks.forEach((c) => (c.textContent = time));
-    const date = now.toLocaleDateString("en-CA");
-    dates.forEach((d) => (d.textContent = date));
-  };
-  tickClock();
-  if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
-    setInterval(tickClock, 1000);
-</script>
