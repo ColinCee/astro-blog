@@ -6,7 +6,7 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 
 | What | Where |
 |---|---|
-| The design system (tokens, roles, type, corners, rules), as a page | `comps/system.html` |
+| The design system (principles, tokens, roles, type, shape, marks), the living reference | `comps/system.html` |
 | The token generator (OKLCH scales, contrast check) | `comps/tokens.mts` → `comps/scales.json` |
 | The current hero comp: name left, cycling figures right | `comps/hero-figures.html` (built by `comps/cook7.mts` from `comps/console-v3.html`) |
 | The whole home page in the new system, with the switches | `comps/console-v3.html` |
@@ -30,6 +30,7 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 26: radar with arrows on real-looking routes; a proper cloud | `comps/shoot26.mts` |
 | Round 27: a puffier cloud the text fits in, three styles (outline won) | `comps/shoot27.mts` |
 | Round 28: the projects list, plain (won) or cards, with short subtitles (won) or none | `comps/shoot28.mts` |
+| Round 29: red joins status; six accent candidates; controls at 6px | `comps/round29.html`, live page `accent` switch, `system.html` swatches; `comps/shoot29.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -37,18 +38,9 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 
 Run the comps: `node comps/serve.mts` (`PORT=4391` to pick another port) then open http://localhost:4390/index.html (the index links every round). `node comps/shoot.mts` takes headless screenshots with the repo's Playwright; `node comps/hang.mts <url>` tells you if a page has hung. The `.mts` files are scratch tooling; delete them when the hero is built.
 
-## Design philosophy
+## Design system
 
-What every decision below comes back to (Oct 2026):
-
-1. **One thing per glance.** The name leads; one thing moves on the first screen (the one-liner); one blue, for the value that got better and for links.
-2. **Real over decorative.** Real numbers, live weather, real posts and roles; a slogan or a placeholder figure gets cut.
-3. **Personality in the content, not the chrome.** The one-liners, 張志權 and the homelab carry the character; surfaces stay grey, flat and 8px.
-4. **Light type.** Sora 200 for the voice, Sora 600 for names, Geist for reading, DM Mono for data. Anything that reads thick gets lighter.
-5. **The terminal shows, it does not ask.** Real-looking commands with real output, nothing to type, nothing that repeats the page around it.
-6. **Each fact once.** If it is in the hero, the CV or a post, it does not appear again (whoami is the exception, for the Chinese name).
-7. **Motion has a cause.** Slow, pauses on hover, off with reduced motion.
-8. **Fewer options.** Once he picks, the comp loses the switch; what was dropped goes in `design-rejected.md`.
+`comps/system.html` is the design system: the principles, colour scales and roles, type, shape, marks and motion. Colours come from `comps/tokens.mts` (`node comps/tokens.mts` writes `scales.css` and `scales.json`); every comp links `scales.css`. Update it in the same change as any decision below.
 
 ## Decisions Colin has made
 
