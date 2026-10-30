@@ -19,7 +19,8 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 14: commands only, across the width or in one column (dropped) | `comps/shoot14.mts` |
 | Round 15–16: the CV in the terminal's right pane, as a timeline or a list (dropped) | `comps/shoot15.mts` |
 | Round 17: the terminal, locked | `comps/shoot17.mts` |
-| Round 18: writing in the terminal, or a compact section | live page, `writing` switch; `comps/shoot18.mts` |
+| Round 18: writing in the terminal (won), or a compact section | `comps/shoot18.mts` |
+| Round 19: worked at, thin marquee or still | live page, `worked` switch; `comps/shoot19.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -27,22 +28,35 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 
 Run the comps: `node comps/serve.mts` (`PORT=4391` to pick another port) then open http://localhost:4390/index.html (the index links every round). `node comps/shoot.mts` takes headless screenshots with the repo's Playwright; `node comps/hang.mts <url>` tells you if a page has hung. The `.mts` files are scratch tooling; delete them when the hero is built.
 
+## Design philosophy
+
+What every decision below comes back to (Oct 2026):
+
+1. **One thing per glance.** The name leads; one thing moves on the first screen (the one-liner); one blue, for the value that got better and for links.
+2. **Real over decorative.** Real numbers, live weather, real posts and roles; a slogan or a placeholder figure gets cut.
+3. **Personality in the content, not the chrome.** The one-liners, 張志權 and the homelab carry the character; surfaces stay grey, flat and 8px.
+4. **Light type.** Sora 200 for the voice, Sora 600 for names, Geist for reading, DM Mono for data. Anything that reads thick gets lighter.
+5. **The terminal shows, it does not ask.** Real-looking commands with real output, nothing to type, nothing that repeats the page around it.
+6. **Each fact once.** If it is in the hero, the CV or a post, it does not appear again (whoami is the exception, for the Chinese name).
+7. **Motion has a cause.** Slow, pauses on hover, off with reduced motion.
+8. **Fewer options.** Once he picks, the comp loses the switch; what was dropped goes in `design-rejected.md`.
+
 ## Decisions Colin has made
 
 - **Colour**: grey chrome; one indigo-blue accent with two jobs (the new value of a result that got better, and links); green and amber only as dots and tiny badges; borders cut from the ink at 8% / 14%; dark mode is the same OKLCH scales at other lightnesses. All in `system.html`.
 - **Type**: Geist and Geist Mono. Name at 600, sentence case, 2.6–4.25rem, −0.04em. No big uppercase name, no slogan headline. The one-liners are in **Sora 200**, punchline at 400, −0.03em (round 9; heavier weights were "a bit thick"). The line under the name is only "Senior Software Engineer". Locked in on 30 Oct 2026. Name and headings in **Sora 600** (−0.05em on the name), body in Geist, everything mono in **DM Mono** (round 10; Geist Mono clashed with Sora).
-- **Terminal** (rounds 11–16): title `~/ColinOS`, no tmux bar. Left: `whoami` (Colin Cheung 張志權, nothing else), `top -u colin` with one time column in ink, `weather` (live from open-meteo), the cursor. Right pane: shipped, bars without labels (grey above is before, blue below is after), the Parquet item marked EDF Energy with its title linking to the post, and "the full cv →" under it. The worked-at strip stays below. Locked 30 Oct 2026.
+- **Terminal** (rounds 11–16): title `~/ColinOS`, no tmux bar. Left: `whoami` (Colin Cheung 張志權, nothing else), `top -u colin` with one time column in ink, `weather` (live from open-meteo), the cursor. Right pane: `ls -t ~/writing`, the latest five posts (date, title in Geist 400, stat: old struck grey, new blue, plain comparisons in ink) and "all 8 posts →"; posts come from each post's frontmatter. The writing section below is gone, and so are the shipped bars (the Parquet result is a post; the EDF and BBC results are on the CV). Locked 30 Oct 2026.
 - **His switch picks**: corners 8px, depth flat (no borders or shadows on panels; surfaces by tone), density airy, list as a white panel. The terminal follows the theme (white window on the light page).
 - **Layout**: name, role and links left; the one-liners right, as a **reel**: the current one, the next one faint underneath, no previous line. One every 5 s, hover pauses, click skips, a thin bar shows the time left (round 8–9). The terminal below with a real gap; worked-at strip, writing list, projects.
 - **The figures**, in the diagram style he liked (HTML boxes with one padding rule, edges drawn between boxes from the DOM, slow traffic on the edges, numbers that count up then tick, a cloud shape for "the internet"), left the hero and joined their projects: training → dissertation, radar → flight-tracker, homelab → home-lab, delivery → colincheung.dev, a real Anki card → anki-chinese. Weather and factory are cut. Projects is the **picker** (list left, one figure right; locked 30 Oct 2026).
 - **The one-liners** (18 of them, with inline drawings, flip counter and odometer) stay.
 
-**Locked (30 Oct 2026):** `hero-line.html` now has only the open choice as a switch (`writing`); the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
+**Locked (30 Oct 2026):** `hero-line.html` now has only the open choice as a switch (`worked`); the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
 
 ## What he said needs refinement (not done)
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
-- Writing (round 18, `writing` switch; he finds the section "too big and not that cool"): `term`, the latest five posts in the terminal's right pane in place of shipped (`ls -t ~/writing`, date, title, stat; "all 8 posts →"), and no writing section; or `compact`, shipped stays and the section becomes two columns of title and stat, no panel or dates. Posts come from each post's frontmatter.
+- Worked at (round 19, `worked` switch): `thin`, the marquee in Sora 200 with no grey band, slower, an even gap at the seam; or `still`, no motion, the six names along one hairline with a dot each, the current one blue.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go

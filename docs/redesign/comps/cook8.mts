@@ -207,7 +207,7 @@ ${faceCss}
 .wr{list-style:none;margin:0;padding:0;display:grid;gap:.15rem}
 .wr a{display:grid;grid-template-columns:3.4rem 1fr auto;gap:1rem;align-items:baseline;padding:.4rem 0;color:var(--t-ink)}
 .wr__d{color:var(--t-faint);font-size:.75rem;white-space:nowrap}
-.wr__t{font-family:var(--sans);font-size:.9375rem;font-weight:500;letter-spacing:-.01em;line-height:1.3}
+.wr__t{font-family:var(--sans);font-size:.9375rem;font-weight:400;letter-spacing:-.01em;line-height:1.3}
 .wr a:hover .wr__t{text-decoration:underline;text-underline-offset:.2em}
 .wr__s{white-space:nowrap;text-align:right}
 .wr__s s,.row__stat s{color:var(--t-faint);text-decoration-thickness:1px;margin-right:.4rem}
@@ -220,6 +220,25 @@ ${faceCss}
 :root[data-writing="compact"] #writing .row__date,:root[data-writing="compact"] #writing .row__stat small{display:none}
 :root[data-writing="compact"] #writing .row__title{font-size:1rem}
 @media(max-width:40rem){.wr a{grid-template-columns:1fr auto}.wr__d{display:none}:root[data-writing="compact"] #writing .rows{grid-template-columns:1fr}}
+
+/* worked at (round 19). Both: names in thin Sora like the one-liners, years in
+   DM Mono, no grey band. thin: the marquee, slower, with an even gap at the seam
+   (each name carries its own right margin, so -50% lands exactly). still: no
+   motion; the six names spread along one hairline, oldest to now, a dot each,
+   the current one in blue */
+:root[data-worked] .strip{background:transparent;border-radius:0;padding:.4rem 0}
+:root[data-worked] .strip__co{font-weight:200;font-size:clamp(1.6rem,2.6vw,2.1rem);letter-spacing:-.03em;color:var(--ink)}
+:root[data-worked] .strip__co small{font-size:.75rem;letter-spacing:0;color:var(--faint)}
+:root[data-worked="thin"] .strip__track{gap:0;padding:0;animation-duration:70s}
+:root[data-worked="thin"] .strip__co{margin-right:4.5rem}
+:root[data-worked="still"] .strip{overflow:visible;mask:none;-webkit-mask:none;padding:0;margin-top:1.4rem}
+:root[data-worked="still"] .strip__track{animation:none;width:auto;padding:1.4rem 0 0;gap:1rem;justify-content:space-between;position:relative}
+:root[data-worked="still"] .strip__track::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--line-strong)}
+:root[data-worked="still"] .strip__co[aria-hidden]{display:none}
+:root[data-worked="still"] .strip__co{flex-direction:column;gap:.2rem;position:relative;font-size:clamp(1.25rem,2vw,1.6rem)}
+:root[data-worked="still"] .strip__co::before{content:"";position:absolute;left:0;top:calc(-1.4rem - 3px);width:7px;height:7px;border-radius:50%;background:var(--n7)}
+:root[data-worked="still"] .strip__co:nth-child(6)::before{background:var(--accent-solid)}
+@media(max-width:40rem){:root[data-worked="still"] .strip__track{display:grid;grid-template-columns:1fr 1fr;row-gap:1.6rem}:root[data-worked="still"] .strip__track::before,:root[data-worked="still"] .strip__co::before{display:none}}
 
 /* terminal: two panes, whoami / top / weather and shipped */
 .term__panes{grid-template-areas:"who right"}
@@ -292,8 +311,8 @@ ${faceCss}
 html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
-html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={writing:['term','compact']};");
+html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term">');
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={worked:['thin','still']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 
