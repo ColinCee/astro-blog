@@ -52,6 +52,9 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | Radar planes as dots bouncing at random | Not believable; arrows on real approach and departure patterns instead (Oct 2026). |
 | A cloud made of CSS-masked circles with an outline | "Doesn't look much like a cloud"; an SVG cloud filled by tone instead (Oct 2026). |
 | A three-bump flat-filled cloud the size of its text box | "A bit flat", and the text did not fit (Oct 2026). |
+| Two-tone and gradient clouds | The outline chosen (Oct 2026). |
+| A repo count next to the Projects heading, and long project subtitles | Less text is better (Oct 2026). |
+| The picker list as padded rows with only the open one on a panel | Indented from the heading; looked strange (Oct 2026). |
 | Two time columns in `top` (since and age) plus blue on every age | One column, in ink (Oct 2026). |
 | A before/after label on every shipped bar, or a legend | Grey above, blue below is obvious enough (Oct 2026). |
 

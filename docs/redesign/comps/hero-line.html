@@ -508,8 +508,8 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
 :root[data-theme="dark"]{--cl-top:var(--n6);--cl-base:var(--n4)}
 .cl__top{fill:var(--cl-top)}
 .cl__under{fill:var(--cl-base)}
-:root[data-cloud="line"] .cl__under{display:none}
-:root[data-cloud="line"] .cl__top{fill:var(--panel);stroke:var(--n8);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.cl__under{display:none}
+.cl__top{fill:var(--panel);stroke:var(--n8);stroke-width:1.5;vector-effect:non-scaling-stroke}
 :root[data-cloud="soft"] .cl__under{display:none}
 :root[data-cloud="soft"] .cl__top{fill:var(--cl-grad)}
 
@@ -546,7 +546,21 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
 :root[data-proj="picker"] .pj__head:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
 :root[data-proj="picker"] .is-on .pj__head{background:var(--panel)}
 :root[data-proj="picker"] .pj__head span{font-size:.875rem}
-:root[data-proj="picker"] .pj__fig{grid-column:2;grid-row:1/span 5;display:none;background:var(--panel);border-radius:var(--r);padding:1.25rem 1.5rem 1.2rem;min-height:22rem}
+:root[data-side="plain"][data-proj="picker"] .pj{gap:.1rem 2.5rem}
+:root[data-side="plain"] .pj__head,:root[data-side="plain"] .pj__head:hover,:root[data-side="plain"] .is-on .pj__head{background:none;padding:.55rem 0;border-radius:0}
+:root[data-side="plain"] .pj__head b{color:var(--muted);font-weight:500;transition:color .15s}
+:root[data-side="plain"] .pj__head:hover b,:root[data-side="plain"] .is-on .pj__head b{color:var(--ink)}
+:root[data-side="plain"] .pj__head b{position:relative}
+:root[data-side="plain"] .is-on .pj__head b::before{content:"/";position:absolute;right:calc(100% + .45rem);color:var(--accent-solid);font-weight:300}
+:root[data-side="plain"] .pj__head span{color:var(--faint)}
+:root[data-side="cards"][data-proj="picker"] .pj{gap:.5rem 1.5rem}
+:root[data-side="cards"] .pj__head{background:var(--well);padding:.8rem 1rem}
+:root[data-side="cards"] .pj__head:hover{background:color-mix(in oklab,var(--panel) 60%,var(--well))}
+:root[data-side="cards"] .is-on .pj__head{background:var(--panel)}
+:root[data-sub="none"] .pj__head span{display:none}
+/* the list keeps its own spacing; the figure's extra height goes to a last, empty row */
+:root[data-proj="picker"] .pj{grid-template-rows:repeat(5,min-content) 1fr}
+:root[data-proj="picker"] .pj__fig{grid-column:2;grid-row:1/7;display:none;background:var(--panel);border-radius:var(--r);padding:1.25rem 1.5rem 1.2rem;min-height:22rem}
 :root[data-proj="picker"] .is-on .pj__fig{display:grid}
 :root[data-proj="picker"] .pj .rd canvas{max-width:20rem}
 :root[data-proj="picker"] .pj .tr svg{max-width:30rem}
@@ -559,6 +573,7 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
   :root[data-hero="bare"] .ql{border-left:0;padding-left:0;border-top:1px solid var(--line-strong);padding-top:1.2rem}
   .pj{grid-template-columns:1fr}
   :root[data-proj="picker"] .pj{grid-template-columns:1fr}
+  :root[data-proj="picker"] .pj{grid-template-rows:none}
   :root[data-proj="picker"] .pj__fig{grid-column:1;grid-row:auto;min-height:0}
 }
 @media(prefers-reduced-motion:reduce){.ql__reel .track.go,.ql__reel li{transition:none}.ql__bar{display:none}}
@@ -667,10 +682,10 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
   </section>
 
   <section class="sec" id="projects">
-    <div class="sec__head"><h2>Projects</h2><span class="mono">5 repos</span></div>
+    <div class="sec__head"><h2>Projects</h2></div>
     <div class="pj" data-pj>
     <article class="pj__item is-on" data-pj-item>
-      <button class="pj__head" type="button" data-pj-pick><b>dissertation</b><span>game-playing agents, trained in 2018 and again in 2026</span></button>
+      <button class="pj__head" type="button" data-pj-pick><b>dissertation</b><span>game AI, 2018 and 2026</span></button>
       <figure class="pj__fig"><p class="pj__cap">reward over time, same model</p><div class="pj__body"><div class="tr">
     <svg viewBox="0 0 320 150" aria-label="Reward over time, 2018 versus now">
       <line class="grid" x1="40" y1="30" x2="310" y2="30"/><line class="grid" x1="40" y1="60" x2="310" y2="60"/><line class="grid" x1="40" y1="90" x2="310" y2="90"/><line class="grid" x1="40" y1="120" x2="310" y2="120"/>
@@ -684,14 +699,14 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
   </div></div><a class="pj__link" href="https://github.com/ColinCee/GVGAI-Dissertation">github.com/ColinCee/GVGAI-Dissertation ↗</a></figure>
     </article>
     <article class="pj__item" data-pj-item>
-      <button class="pj__head" type="button" data-pj-pick><b>flight-tracker</b><span>the London airspace; the real one is live</span></button>
+      <button class="pj__head" type="button" data-pj-pick><b>flight-tracker</b><span>London airspace, live</span></button>
       <figure class="pj__fig"><p class="pj__cap">london airspace · simulated here</p><div class="pj__body"><div class="rd"><canvas data-radar width="560" height="560"></canvas>
     <div><span class="node"><span class="node__k">seen today</span><span class="node__v" data-n="212" data-tick="1" data-every="7000">212</span><span class="node__s">ads-b, one antenna</span></span>
       <div style="height:.6rem"></div><span class="node"><span class="node__k">tracking now</span><span class="node__v hot" data-n="7">7</span><span class="node__s">two with callsigns</span></span></div>
   </div></div><a class="pj__link" href="https://flight-tracker-at-home.pages.dev">flight-tracker-at-home.pages.dev ↗</a></figure>
     </article>
     <article class="pj__item" data-pj-item>
-      <button class="pj__head" type="button" data-pj-pick><b>home-lab</b><span>one mini-PC, five Compose stacks</span></button>
+      <button class="pj__head" type="button" data-pj-pick><b>home-lab</b><span>one mini-PC, five stacks</span></button>
       <figure class="pj__fig"><p class="pj__cap">what runs on it</p><div class="pj__body"><div class="dg dg--lab" data-edges="internet>host"><svg class="dg__edges"></svg>
     <span class="node node--cloud" id="internet"><svg class="cl" viewBox="20 4 214 108" preserveAspectRatio="none" aria-hidden="true" style="--cl-grad:url(#cl-soft-1)"><defs><linearGradient id="cl-soft-1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--cl-top)"/><stop offset="1" style="stop-color:var(--cl-base)"/></linearGradient></defs><path class="cl__under" d="M50 104A24 24 0 1 1 58 57.4A30 30 0 0 1 100.5 30.7A36 36 0 0 1 168.5 33.7A28 28 0 0 1 205.7 56.1A24 24 0 0 1 204 104Z" transform="translate(0 5)"/><path class="cl__top" d="M50 104A24 24 0 1 1 58 57.4A30 30 0 0 1 100.5 30.7A36 36 0 0 1 168.5 33.7A28 28 0 0 1 205.7 56.1A24 24 0 0 1 204 104Z"/></svg><span class="node__k">internet</span><span class="node__s">cloudflare tunnel</span></span>
     <div class="node node--host" id="host"><span class="node__k"><b>mini-PC</b> · 5 compose stacks</span>
@@ -705,14 +720,14 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
   </div></div><a class="pj__link" href="https://github.com/ColinCee/homelab">github.com/ColinCee/homelab ↗</a></figure>
     </article>
     <article class="pj__item" data-pj-item>
-      <button class="pj__head" type="button" data-pj-pick><b>anki-chinese</b><span>the Mandarin deck I'm learning from</span></button>
+      <button class="pj__head" type="button" data-pj-pick><b>anki-chinese</b><span>my Mandarin deck</span></button>
       <figure class="pj__fig"><p class="pj__cap">a card from the deck</p><div class="pj__body"><div class="ak">
     <div class="ak__card" data-anki><span class="ak__hz" lang="zh">蒸</span><span class="ak__py">zhēng · zing1</span><span class="ak__mn">to evaporate, to steam</span></div>
     <button class="ak__next" type="button" data-anki-next>next card</button>
   </div></div><a class="pj__link" href="https://github.com/ColinCee/anki-chinese">github.com/ColinCee/anki-chinese ↗</a></figure>
     </article>
     <article class="pj__item" data-pj-item>
-      <button class="pj__head" type="button" data-pj-pick><b>colincheung.dev</b><span>this site, deployed from every commit</span></button>
+      <button class="pj__head" type="button" data-pj-pick><b>colincheung.dev</b><span>this site</span></button>
       <figure class="pj__fig"><p class="pj__cap">how this page reached you · sample</p><div class="pj__body"><div class="dg dg--deliver" data-edges="repo>build,build>edge,edge>you"><svg class="dg__edges"></svg>
     <span class="node" id="repo"><span class="node__k">git push</span><span class="node__v">main</span><span class="node__s">github</span></span>
     <span class="node" id="build"><span class="node__k">astro build</span><span class="node__v" data-n="14">14 s</span><span class="node__s">cloudflare pages</span></span>
@@ -766,7 +781,7 @@ const quips=["<span class=\"q-ctr\" data-flip=\"7,0\">0</span> days since the la
 
 <script>
 (()=>{const r=document.documentElement,q=new URLSearchParams(location.search);
-const opts={cloud:['tone','line','soft']};
+const opts={side:['plain','cards'],sub:['short','none']};
 const get=(n)=>q.get(n)||(()=>{try{return localStorage.getItem('v8-'+n)}catch{}})()||opts[n][0];
 const set=(n,v)=>{r.dataset[n]=v;try{localStorage.setItem('v8-'+n,v)}catch{}};
 for(const n in opts)set(n,get(n));

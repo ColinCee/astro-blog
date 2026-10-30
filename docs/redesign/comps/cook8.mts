@@ -68,18 +68,18 @@ const deliver = `<div class="dg dg--deliver" data-edges="repo>build,build>edge,e
   </div>`;
 
 const projects = [
-  ['dissertation', 'game-playing agents, trained in 2018 and again in 2026', 'github.com/ColinCee/GVGAI-Dissertation', 'reward over time, same model', train],
-  ['flight-tracker', 'the London airspace; the real one is live', 'flight-tracker-at-home.pages.dev', 'london airspace · simulated here', radar],
-  ['home-lab', 'one mini-PC, five Compose stacks', 'github.com/ColinCee/homelab', 'what runs on it', lab],
-  ['anki-chinese', "the Mandarin deck I'm learning from", 'github.com/ColinCee/anki-chinese', 'a card from the deck', anki],
-  ['colincheung.dev', 'this site, deployed from every commit', 'github.com/ColinCee/astro-blog', 'how this page reached you · sample', deliver],
+  ['dissertation', 'game AI, 2018 and 2026', 'github.com/ColinCee/GVGAI-Dissertation', 'reward over time, same model', train],
+  ['flight-tracker', 'London airspace, live', 'flight-tracker-at-home.pages.dev', 'london airspace · simulated here', radar],
+  ['home-lab', 'one mini-PC, five stacks', 'github.com/ColinCee/homelab', 'what runs on it', lab],
+  ['anki-chinese', 'my Mandarin deck', 'github.com/ColinCee/anki-chinese', 'a card from the deck', anki],
+  ['colincheung.dev', 'this site', 'github.com/ColinCee/astro-blog', 'how this page reached you · sample', deliver],
 ] as const;
 const items = projects.map(([name, desc, repo, cap, fig], k) => `<article class="pj__item${k === 0 ? ' is-on' : ''}" data-pj-item>
       <button class="pj__head" type="button" data-pj-pick><b>${name}</b><span>${desc}</span></button>
       <figure class="pj__fig"><p class="pj__cap">${cap}</p><div class="pj__body">${fig}</div><a class="pj__link" href="https://${repo}">${repo} ↗</a></figure>
     </article>`).join('\n    ');
 cut('<section class="sec">\n    <div class="sec__head"><h2>Projects</h2>', '<section class="sec" id="post">', `<section class="sec" id="projects">
-    <div class="sec__head"><h2>Projects</h2><span class="mono">5 repos</span></div>
+    <div class="sec__head"><h2>Projects</h2></div>
     <div class="pj" data-pj>
     ${items}
     </div>
@@ -296,8 +296,8 @@ ${faceCss}
 :root[data-theme="dark"]{--cl-top:var(--n6);--cl-base:var(--n4)}
 .cl__top{fill:var(--cl-top)}
 .cl__under{fill:var(--cl-base)}
-:root[data-cloud="line"] .cl__under{display:none}
-:root[data-cloud="line"] .cl__top{fill:var(--panel);stroke:var(--n8);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.cl__under{display:none}
+.cl__top{fill:var(--panel);stroke:var(--n8);stroke-width:1.5;vector-effect:non-scaling-stroke}
 :root[data-cloud="soft"] .cl__under{display:none}
 :root[data-cloud="soft"] .cl__top{fill:var(--cl-grad)}
 
@@ -334,7 +334,21 @@ ${faceCss}
 :root[data-proj="picker"] .pj__head:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
 :root[data-proj="picker"] .is-on .pj__head{background:var(--panel)}
 :root[data-proj="picker"] .pj__head span{font-size:.875rem}
-:root[data-proj="picker"] .pj__fig{grid-column:2;grid-row:1/span 5;display:none;background:var(--panel);border-radius:var(--r);padding:1.25rem 1.5rem 1.2rem;min-height:22rem}
+:root[data-side="plain"][data-proj="picker"] .pj{gap:.1rem 2.5rem}
+:root[data-side="plain"] .pj__head,:root[data-side="plain"] .pj__head:hover,:root[data-side="plain"] .is-on .pj__head{background:none;padding:.55rem 0;border-radius:0}
+:root[data-side="plain"] .pj__head b{color:var(--muted);font-weight:500;transition:color .15s}
+:root[data-side="plain"] .pj__head:hover b,:root[data-side="plain"] .is-on .pj__head b{color:var(--ink)}
+:root[data-side="plain"] .pj__head b{position:relative}
+:root[data-side="plain"] .is-on .pj__head b::before{content:"/";position:absolute;right:calc(100% + .45rem);color:var(--accent-solid);font-weight:300}
+:root[data-side="plain"] .pj__head span{color:var(--faint)}
+:root[data-side="cards"][data-proj="picker"] .pj{gap:.5rem 1.5rem}
+:root[data-side="cards"] .pj__head{background:var(--well);padding:.8rem 1rem}
+:root[data-side="cards"] .pj__head:hover{background:color-mix(in oklab,var(--panel) 60%,var(--well))}
+:root[data-side="cards"] .is-on .pj__head{background:var(--panel)}
+:root[data-sub="none"] .pj__head span{display:none}
+/* the list keeps its own spacing; the figure's extra height goes to a last, empty row */
+:root[data-proj="picker"] .pj{grid-template-rows:repeat(5,min-content) 1fr}
+:root[data-proj="picker"] .pj__fig{grid-column:2;grid-row:1/7;display:none;background:var(--panel);border-radius:var(--r);padding:1.25rem 1.5rem 1.2rem;min-height:22rem}
 :root[data-proj="picker"] .is-on .pj__fig{display:grid}
 :root[data-proj="picker"] .pj .rd canvas{max-width:20rem}
 :root[data-proj="picker"] .pj .tr svg{max-width:30rem}
@@ -347,6 +361,7 @@ ${faceCss}
   :root[data-hero="bare"] .ql{border-left:0;padding-left:0;border-top:1px solid var(--line-strong);padding-top:1.2rem}
   .pj{grid-template-columns:1fr}
   :root[data-proj="picker"] .pj{grid-template-columns:1fr}
+  :root[data-proj="picker"] .pj{grid-template-rows:none}
   :root[data-proj="picker"] .pj__fig{grid-column:1;grid-row:auto;min-height:0}
 }
 @media(prefers-reduced-motion:reduce){.ql__reel .track.go,.ql__reel li{transition:none}.ql__bar{display:none}}
@@ -355,7 +370,7 @@ html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
 html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term" data-worked="thin">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={cloud:['tone','line','soft']};");
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={side:['plain','cards'],sub:['short','none']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 
