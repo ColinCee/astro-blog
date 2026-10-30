@@ -43,6 +43,7 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | A hairline or a dot between the worked-at names | The slash chosen (Oct 2026). |
 | Industry icons before the worked-at names | Dropped (Oct 2026). |
 | The worked-at year under the name | Beside it, so each name is one line (Oct 2026). |
+| Blue years, or no blue, in the worked-at strip | Blue slashes chosen (Oct 2026). |
 | Two time columns in `top` (since and age) plus blue on every age | One column, in ink (Oct 2026). |
 | A before/after label on every shipped bar, or a legend | Grey above, blue below is obvious enough (Oct 2026). |
 

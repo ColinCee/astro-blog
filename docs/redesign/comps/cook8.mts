@@ -264,9 +264,8 @@ ${faceCss}
 .strip__co{flex-direction:row;align-items:baseline;gap:.7rem}
 .strip__co small{font-size:.75rem;color:var(--faint)}
 .strip__co::after{top:50%}
-/* where the blue goes (round 25): the slashes, the years, or nowhere */
-:root[data-tint="slash"] .strip__co::after{color:var(--accent-solid)}
-:root[data-tint="year"] .strip__co small{color:var(--accent)}
+/* the slashes carry the blue (round 25) */
+.strip__co::after{color:var(--accent-solid)}
 
 /* terminal: two panes, whoami / top / weather and shipped */
 .term__panes{grid-template-areas:"who right"}
@@ -340,7 +339,7 @@ html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
 html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term" data-worked="thin">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={tint:['slash','year','none']};");
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 
