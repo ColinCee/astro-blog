@@ -10,29 +10,31 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | The token generator (OKLCH scales, contrast check) | `comps/tokens.mts` → `comps/scales.json` |
 | The current hero comp: name left, cycling figures right | `comps/hero-figures.html` (built by `comps/cook7.mts` from `comps/console-v3.html`) |
 | The whole home page in the new system, with the switches | `comps/console-v3.html` |
+| Round 8: one-liner right, figures moved into Projects (bare / panel / reel; cards / picker) | `comps/round8.html` (screenshots), `comps/hero-line.html` (live, built by `comps/cook8.mts`, shot by `comps/shoot8.mts`) |
+| Round 9: the reel with only the next line, in nine light typefaces | `comps/round9.html` (shot by `comps/shoot9.mts`); same live page, `face` switch |
+| Round 10: font pairings next to Sora (mono face; name in Geist or Sora) | `comps/round10.html` (shot by `comps/shoot10.mts`); live page, `pair` switch |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
 | Screenshots of the current state | `shots/` |
 
-Run the comps: `node comps/serve.mts` then open http://localhost:4390/index.html (the index links every round). `node comps/shoot.mts` takes headless screenshots with the repo's Playwright; `node comps/hang.mts <url>` tells you if a page has hung. The `.mts` files are scratch tooling; delete them when the hero is built.
+Run the comps: `node comps/serve.mts` (`PORT=4391` to pick another port) then open http://localhost:4390/index.html (the index links every round). `node comps/shoot.mts` takes headless screenshots with the repo's Playwright; `node comps/hang.mts <url>` tells you if a page has hung. The `.mts` files are scratch tooling; delete them when the hero is built.
 
 ## Decisions Colin has made
 
 - **Colour**: grey chrome; one indigo-blue accent with two jobs (the new value of a result that got better, and links); green and amber only as dots and tiny badges; borders cut from the ink at 8% / 14%; dark mode is the same OKLCH scales at other lightnesses. All in `system.html`.
-- **Type**: Geist and Geist Mono. Name at 600, sentence case, 2.6–4.25rem, −0.04em. No big uppercase name, no slogan headline.
+- **Type**: Geist and Geist Mono. Name at 600, sentence case, 2.6–4.25rem, −0.04em. No big uppercase name, no slogan headline. The one-liners are in **Sora 200**, punchline at 400, −0.03em (round 9; heavier weights were "a bit thick"). The line under the name is only "Senior Software Engineer". Locked in on 30 Oct 2026.
 - **His switch picks**: corners 8px, depth flat (no borders or shadows on panels; surfaces by tone), density airy, list as a white panel. The terminal follows the theme (white window on the light page).
-- **Layout**: name and role left, the one-liner and links under them, one object right (the "fan layout"); the terminal below with a real gap; worked-at strip, writing list, projects as before.
-- **The object**: a panel of figures in the diagram style he liked: HTML boxes with one padding rule, edges drawn between boxes from the DOM, slow traffic on the edges, numbers that count up then tick, every box a link, a cloud shape for anything that is "the internet". Figures cycle every 9 s with a dot strip; hover pauses.
-- **The one-liners** (18 of them, with inline drawings, flip counter and odometer) stay. Options built: left under the name (today), bigger in ink, or as "fig. 0" in the rotation.
+- **Layout**: name, role and links left; the one-liners right, as a **reel**: the current one, the next one faint underneath, no previous line. One every 5 s, hover pauses, click skips, a thin bar shows the time left (round 8–9). The terminal below with a real gap; worked-at strip, writing list, projects.
+- **The figures**, in the diagram style he liked (HTML boxes with one padding rule, edges drawn between boxes from the DOM, slow traffic on the edges, numbers that count up then tick, a cloud shape for "the internet"), left the hero and joined their projects: training → dissertation, radar → flight-tracker, homelab → home-lab, delivery → colincheung.dev, a real Anki card → anki-chinese. Weather and factory are cut. Picker (list left, one figure right) or cards is not decided yet; picker keeps one accent per glance.
+- **The one-liners** (18 of them, with inline drawings, flip counter and odometer) stay.
 
 ## What he said needs refinement (not done)
 
-- Weather figure: the text is too long. Cut to temperature and one line.
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
-- The one-liner rotates every 4 s and the figures every 9 s; with 18 one-liners and 7 figures the two rhythms will fight. Decide one rhythm (for example: the one-liner only changes when fig. 0 is shown, or the one-liner stays on the left and does not get a slide).
-- Factory figures (tokens, PRs, deploys, review wait) are placeholders marked "sample figures". Wire to real data or cut the figure. Pipeline, homelab, training and radar numbers are real or already labelled simulated.
-- Weather should read from open-meteo at build or on the client; the page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
+- Projects: picker or cards (see above).
+- What sits next to Sora: Geist Mono clashes with it in the terminal. Round 10 (`comps/round10.html`, `pair` switch) tries DM Mono, Azeret Mono and Martian Mono, with the name and headings in Geist or Sora 600; body stays Geist. Recommended: Sora 600 name and headings + DM Mono.
+- The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go
 

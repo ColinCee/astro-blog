@@ -17,6 +17,8 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | A slogan headline ("I make systems boring on purpose") | He does not want a tagline that is not his. |
 | A commit → build → test → deploy pipeline figure with a travelling dot | "Kinda sucks"; the before/after bars said it already. |
 | Fanned cards copied from ooting.app, handwritten note and all | Best layout so far (name and tagline left, one object right), but a straight copy. Keep the layout, replace the object. |
+| The one-liner reel showing the previous line above the current one | Noisy; only the next one shows (Oct 2026). |
+| One-liners at weight 500–600 | "A bit thick"; lighter, cleaner type tried instead (Oct 2026). |
 
 ## Colour and chrome
 
