@@ -9,7 +9,7 @@ import Pane from "./Pane.astro";
 const all = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
-// A result that got better ("428 s → 23 s") shows the old value struck and the
+// A result that got better ("428 s → 23 s") shows the old value in grey and the
 // new one in the accent; a plain comparison or a single figure stays as it is.
 const posts = all.slice(0, 5).map((p) => {
   const [before, after] = (p.data.stat ?? "").split("→").map((s) => s.trim());
@@ -37,7 +37,7 @@ const posts = all.slice(0, 5).map((p) => {
           <span class="wr__title">{p.title}</span>
           {p.after && (
             <span class:list={["wr__stat", { "wr__stat--flat": p.flat }]}>
-              {p.before && <s>{p.before}</s>}
+              {p.before && <span class="wr__was">{p.before} →</span>}
               <b>{p.after}</b>
             </span>
           )}
@@ -105,10 +105,9 @@ const posts = all.slice(0, 5).map((p) => {
     text-align: right;
     white-space: nowrap;
   }
-  .wr__stat s {
+  .wr__was {
     margin-right: 0.4rem;
     color: var(--faint);
-    text-decoration-thickness: 1px;
   }
   .wr__stat b {
     font-weight: 500;

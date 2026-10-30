@@ -185,7 +185,7 @@ two themes.
 
 ### Named Rules
 **The Accent Points Rule.** The accent has three jobs and no others: the new value
-of a result that got better (the old value struck in `--faint`, a plain
+of a result that got better (the old value in `--faint` before an arrow, a plain
 comparison like "82% vs 80%" stays ink), links, and small marks at the one thing
 (the slashes, the prompt, the open project, a chart's result, the current node).
 Never a surface, a large area, a heading or a button. If two things are violet in
@@ -289,7 +289,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 - **Blog index (`pages/blog/index.astro`):** a `// writing` kicker and a Sora
   lede, then one row per post from its frontmatter: year, month and read time in
   the rail; the title in Geist 400, `--muted`, ink on hover; under it the stat in
-  mono (old value struck `--faint`, new one `--accent-soft`, a `vs` comparison in
+  mono (old value `--faint`, new one `--accent-soft`, a `vs` comparison in
   ink) and its `statLabel` in `--faint`.
 - **CV ledger (`pages/cv.astro`):** one `<details>` row per role, so the whole
   career fits one laptop screen closed. Closed, a row is the evidence: node, mono
@@ -341,7 +341,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   and the caret are the accent. It types itself out on load (on phones, when it
   scrolls in); without JS or with reduced motion the finished session shows.
 - **Right, `WritingPane`:** `ls -t ~/writing`, the newest five posts from the blog
-  collection (date, title in Geist 400, stat with the old value struck and the
+  collection (date, title in Geist 400, stat with the old value in grey and the
   new one in `--accent-text`, a `vs` comparison in ink), then `all N posts →`.
   Publishing a post updates it on its own; never hard-code the list.
 
@@ -391,7 +391,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em), and a mono meta line (date · N min read).
 - **Headline stat:** the post's `stat` renders under the title between hairlines,
   its `statLabel` above it in 11px mono `--faint`, the value in Sora 600. A result
-  that got better shows the old value struck in `--faint` and the new one in
+  that got better shows the old value in `--faint`, an arrow, and the new one in
   `--accent-soft`; a `vs` comparison stays ink.
 - **Quotes** are excerpts on the raised surface (`--pane`, 8px, no border or rule),
   so quoted documents read differently from narration. **Ordered lists** are

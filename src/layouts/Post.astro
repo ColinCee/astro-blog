@@ -140,7 +140,7 @@ const span =
 const first = entries[0];
 const last = entries[entries.length - 1];
 // A stat like "428 s → 23 s" is a result that got better: split it so the
-// old value can be struck and the new one take the accent.
+// old value can go grey and the new one take the accent.
 const statParts = stat?.includes("→")
   ? (stat.split("→").map((x) => x.trim()) as [string, string])
   : undefined;
@@ -166,7 +166,7 @@ const statParts = stat?.includes("→")
             {statLabel && <dt>{statLabel}</dt>}
             {statParts ? (
               <dd>
-                <s>{statParts[0]}</s>
+                <span class="figs__was">{statParts[0]}</span>
                 <span class="figs__to">→</span>
                 <b>{statParts[1]}</b>
               </dd>
@@ -357,12 +357,11 @@ const statParts = stat?.includes("→")
     font-variant-numeric: tabular-nums;
     color: var(--accent-soft);
   }
-  /* A result that got better: the old value struck in grey, the new one in the
+  /* A result that got better: the old value in grey, the new one in the
      accent. A plain comparison ("82% vs 80%") stays ink. */
-  .figs dd s {
+  .figs__was {
     color: var(--faint);
     font-weight: 400;
-    text-decoration-thickness: 2px;
   }
   .figs__to {
     margin: 0 0.3em;

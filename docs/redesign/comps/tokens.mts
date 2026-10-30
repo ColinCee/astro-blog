@@ -14,12 +14,13 @@ const NH=255, AH=298, OKH=150, WH=70, DH=25;
 const ACCENTS={};
 // neutral: [L light, L dark, chroma]
 const N=[[.993,.16,.003],[.982,.195,.003],[.962,.23,.004],[.94,.26,.005],[.915,.29,.006],[.885,.325,.007],[.84,.385,.008],[.76,.47,.010],[.62,.62,.012],[.52,.72,.012],[.45,.78,.012],[.22,.95,.015]];
-const A=[[.985,.19,.015],[.97,.215,.03],[.945,.25,.05],[.91,.29,.08],[.87,.33,.11],[.82,.38,.14],[.75,.45,.17],[.66,.53,.20],[.55,.55,.21],[.50,.60,.21],[.47,.78,.17],[.28,.93,.09]];
+// dark 9-11 brighter and fuller (30 Oct 2026: violet on posts read dim at L .60); the 4th number is the dark chroma where it differs
+const A=[[.985,.19,.015],[.97,.215,.03],[.945,.25,.05],[.91,.29,.08],[.87,.33,.11],[.82,.38,.14],[.75,.45,.17],[.66,.53,.20],[.55,.60,.21,.25],[.50,.67,.21,.24],[.47,.76,.17,.19],[.28,.93,.09]];
 // status: green ok, amber warn, red danger (round 29), each at steps 3 (wash) / 9 (dot) / 11 (text)
 const S={ok:[OKH,[[.955,.23,.05],[.62,.62,.17],[.47,.80,.13]]],warn:[WH,[[.96,.25,.06],[.64,.76,.16],[.50,.86,.13]]],danger:[DH,[[.955,.24,.04],[.60,.62,.20],[.50,.80,.15]]]};
 const out={light:{},dark:{}};
 N.forEach(([l,d,c],i)=>{out.light['n'+(i+1)]=hex(l,c,NH);out.dark['n'+(i+1)]=hex(d,c,NH)});
-A.forEach(([l,d,c],i)=>{out.light['a'+(i+1)]=hex(l,c,AH);out.dark['a'+(i+1)]=hex(d,c,AH)});
+A.forEach(([l,d,c,cd=c],i)=>{out.light["a"+(i+1)]=hex(l,c,AH);out.dark["a"+(i+1)]=hex(d,cd,AH)});
 out.accents={};for(const [name,h] of Object.entries(ACCENTS)){const t={light:{},dark:{}};A.forEach(([l,d,c],i)=>{t.light['a'+(i+1)]=hex(l,c,h);t.dark['a'+(i+1)]=hex(d,c,h)});out.accents[name]=t}
 for(const [k,[h,steps]] of Object.entries(S)){[3,9,11].forEach((s,i)=>{const [l,d,c]=steps[i];out.light[k+s]=hex(l,c,h);out.dark[k+s]=hex(d,c,h)})}
 // checks

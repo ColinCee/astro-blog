@@ -73,3 +73,4 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | Green as the one accent | Reads as pass/fail; indigo-blue chosen. |
 | Pill-shaped buttons and 16–20px corners | "Overly rounded"; 8px chosen. |
 | Four-hue palette, stronger spacing scale, wider breakout figures | See DESIGN.md, where each is noted at the rule it informed. |
+| Striking through the old value of a stat ("~~428 s~~ → 23 s") | The arrow already says it changed; the strike read as an error. Old value grey instead. |

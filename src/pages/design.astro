@@ -115,7 +115,8 @@ if (import.meta.env.PROD) return Astro.redirect("/");
       <div class="card">
         <h3>accent · three jobs</h3>
         <p class="stat">
-          <s>12 h</s><b>11 min</b> <span class="f">the better value</span>
+          <span class="was">12 h →</span><b>11 min</b>
+          <span class="f">the better value</span>
         </p>
         <p>
           <a href="/blog/">a link to the writing</a>
@@ -331,10 +332,8 @@ if (import.meta.env.PROD) return Astro.redirect("/");
         <p
           style="font-family:var(--head);font-weight:600;font-size:1.6rem;letter-spacing:-.04em;margin:0"
         >
-          <s
-            style="color:var(--faint);font-weight:400;text-decoration-thickness:2px"
-            >26 s</s
-          > <span class="f" style="font-weight:300">→</span>
+          <span style="color:var(--faint);font-weight:400">26 s</span>
+          <span class="f" style="font-weight:300">→</span>
           <span style="color:var(--accent)">20 s</span>
         </p>
         <p class="t-mono">Oct 16, 2026 · 4 min read</p>
@@ -842,9 +841,8 @@ if (import.meta.env.PROD) return Astro.redirect("/");
     font-family: var(--mono);
     font-variant-numeric: tabular-nums;
   }
-  .ds .stat s {
+  .ds .stat .was {
     color: var(--faint);
-    text-decoration-thickness: 1px;
     margin-right: 0.4rem;
   }
   .ds .stat b {

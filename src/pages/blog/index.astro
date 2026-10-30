@@ -18,7 +18,7 @@ const entries = posts.map((post) => {
     mon: post.data.pubDate.toLocaleDateString("en-US", { month: "short" }),
     read: readMinutes(post.body),
     metric: post.data.stat ?? null,
-    // "428 s → 23 s" splits so the old value can be struck; "82% vs 80%" stays ink
+    // "428 s → 23 s" splits so the old value can go grey; "82% vs 80%" stays ink
     parts: post.data.stat?.includes("→")
       ? post.data.stat.split("→").map((x) => x.trim())
       : null,
@@ -60,7 +60,8 @@ const entries = posts.map((post) => {
                 >
                   {e.parts ? (
                     <Fragment>
-                      <s>{e.parts[0]}</s> → <b>{e.parts[1]}</b>
+                      <span class="log__was">{e.parts[0]}</span> →{" "}
+                      <b>{e.parts[1]}</b>
                     </Fragment>
                   ) : (
                     <b>{e.metric}</b>
@@ -217,9 +218,8 @@ const entries = posts.map((post) => {
     color: var(--faint);
     font-variant-numeric: tabular-nums;
   }
-  .log__sig s {
+  .log__was {
     color: var(--faint);
-    text-decoration-thickness: 1px;
   }
   .log__sig b {
     font-weight: 500;
