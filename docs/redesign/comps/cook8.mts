@@ -31,7 +31,7 @@ const hero = `<section class="hero" aria-label="Colin Cheung">
 cut('<section class="hero"', '<section class="term"', hero);
 
 const lab = `<div class="dg dg--lab" data-edges="internet>host"><svg class="dg__edges"></svg>
-    <span class="node node--cloud" id="internet"><svg class="cl" viewBox="0 0 220 100" preserveAspectRatio="none" aria-hidden="true"><rect x="22" y="52" width="176" height="42" rx="21"/><circle cx="72" cy="54" r="30"/><circle cx="122" cy="42" r="38"/><circle cx="166" cy="60" r="25"/></svg><span class="node__k">internet</span><span class="node__s">cloudflare tunnel</span></span>
+    <span class="node node--cloud" id="internet"><svg class="cl" viewBox="20 4 214 108" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="cl-soft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--cl-top)"/><stop offset="1" style="stop-color:var(--cl-base)"/></linearGradient></defs><path class="cl__under" d="M50 104A24 24 0 1 1 58 57.4A30 30 0 0 1 100.5 30.7A36 36 0 0 1 168.5 33.7A28 28 0 0 1 205.7 56.1A24 24 0 0 1 204 104Z" transform="translate(0 5)"/><path class="cl__top" d="M50 104A24 24 0 1 1 58 57.4A30 30 0 0 1 100.5 30.7A36 36 0 0 1 168.5 33.7A28 28 0 0 1 205.7 56.1A24 24 0 0 1 204 104Z"/></svg><span class="node__k">internet</span><span class="node__s">cloudflare tunnel</span></span>
     <div class="node node--host" id="host"><span class="node__k"><b>mini-PC</b> · 5 compose stacks</span>
       <div class="lab__grid">
         <span class="node"><span class="node__k"><span class="dot"></span>observability</span><span class="node__s">grafana · loki</span></span>
@@ -63,7 +63,7 @@ const anki = `<div class="ak">
 const deliver = `<div class="dg dg--deliver" data-edges="repo>build,build>edge,edge>you"><svg class="dg__edges"></svg>
     <span class="node" id="repo"><span class="node__k">git push</span><span class="node__v">main</span><span class="node__s">github</span></span>
     <span class="node" id="build"><span class="node__k">astro build</span><span class="node__v" data-n="14">14 s</span><span class="node__s">cloudflare pages</span></span>
-    <span class="node node--cloud" id="edge"><svg class="cl" viewBox="0 0 220 100" preserveAspectRatio="none" aria-hidden="true"><rect x="22" y="52" width="176" height="42" rx="21"/><circle cx="72" cy="54" r="30"/><circle cx="122" cy="42" r="38"/><circle cx="166" cy="60" r="25"/></svg><span class="node__k">cloudflare edge</span><span class="node__v" data-n="330">330</span><span class="node__s">cities</span></span>
+    <span class="node node--cloud" id="edge"><svg class="cl" viewBox="20 4 214 108" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="cl-soft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--cl-top)"/><stop offset="1" style="stop-color:var(--cl-base)"/></linearGradient></defs><path class="cl__under" d="M50 104A24 24 0 1 1 58 57.4A30 30 0 0 1 100.5 30.7A36 36 0 0 1 168.5 33.7A28 28 0 0 1 205.7 56.1A24 24 0 0 1 204 104Z" transform="translate(0 5)"/><path class="cl__top" d="M50 104A24 24 0 1 1 58 57.4A30 30 0 0 1 100.5 30.7A36 36 0 0 1 168.5 33.7A28 28 0 0 1 205.7 56.1A24 24 0 0 1 204 104Z"/></svg><span class="node__k">cloudflare edge</span><span class="node__v" data-n="330">330</span><span class="node__s">cities</span></span>
     <span class="node" id="you"><span class="node__k">you</span><span class="node__v hot" data-n="24">24 ms</span><span class="node__s">first byte</span></span>
   </div>`;
 
@@ -285,11 +285,21 @@ ${faceCss}
 .ship__bar--after{margin-top:.2rem}
 @media(max-width:56rem){.term__panes{grid-template-areas:"who" "right"}}
 
-/* the cloud node: an SVG cloud filled by tone behind the text (round 26) */
-.node--cloud{padding:1.5rem 1.4rem .9rem}
+/* the cloud node (round 27): five bumps on a flat base, drawn bigger than the
+   text box so the words sit in its body. tone: a lighter cloud on a darker copy
+   of itself 5 units lower, depth by tone and no shadow. line: an outline in the
+   diagram's line weight. soft: a fill fading from light at the top to the base */
+.node--cloud{padding:1.1rem 1.5rem .7rem}
 .node--cloud::before{display:none}
-.node--cloud .cl{position:absolute;inset:0;width:100%;height:100%;z-index:-1;fill:var(--n3);overflow:visible}
-:root[data-theme="dark"] .node--cloud .cl{fill:var(--n5)}
+.node--cloud .cl{position:absolute;left:-.9rem;right:-.9rem;top:-1.7rem;bottom:-.5rem;width:calc(100% + 1.8rem);height:calc(100% + 2.2rem);z-index:-1;overflow:visible}
+:root{--cl-top:var(--n3);--cl-base:var(--n5)}
+:root[data-theme="dark"]{--cl-top:var(--n6);--cl-base:var(--n4)}
+.cl__top{fill:var(--cl-top)}
+.cl__under{fill:var(--cl-base)}
+:root[data-cloud="line"] .cl__under{display:none}
+:root[data-cloud="line"] .cl__top{fill:var(--panel);stroke:var(--n8);stroke-width:1.5;vector-effect:non-scaling-stroke}
+:root[data-cloud="soft"] .cl__under{display:none}
+:root[data-cloud="soft"] .cl__top{fill:var(--cl-grad)}
 
 /* projects: each figure joins its project */
 .pj{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
@@ -345,7 +355,7 @@ html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
 html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term" data-worked="thin">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={};");
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={cloud:['tone','line','soft']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 
@@ -454,5 +464,7 @@ const cards=${JSON.stringify(ankiCards.map((c: any)=>[c.hanzi,c.pinyin+' · '+c.
 let ck=0;const card=document.querySelector('[data-anki]');document.querySelector('[data-anki-next]').addEventListener('click',()=>{ck=(ck+1)%cards.length;const [h,p,m]=cards[ck];card.innerHTML='<span class="ak__hz" lang="zh">'+h+'</span><span class="ak__py">'+p+'</span><span class="ak__mn">'+m+'</span>'});
 ${radarJs}})();</script>` + html.slice(e);
 
+// each cloud gets its own gradient id: a gradient inside a hidden figure does not paint
+{ let n = 0; html = html.replace(/<svg class="cl" ([^>]*)><defs><linearGradient id="cl-soft"/g, (_m, a) => { n++; return `<svg class="cl" ${a} style="--cl-grad:url(#cl-soft-${n})"><defs><linearGradient id="cl-soft-${n}"`; }); }
 writeFileSync(here('hero-line.html'), html);
 console.log('hero-line.html', html.length);

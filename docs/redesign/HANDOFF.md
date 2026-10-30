@@ -28,6 +28,7 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 24: the worked-at year beside (won) or under the name | `comps/shoot24.mts` |
 | Round 25: no icons; the blue on the slashes (won), the years, or nowhere | `comps/shoot25.mts` |
 | Round 26: radar with arrows on real-looking routes; a proper cloud | `comps/shoot26.mts` |
+| Round 27: a puffier cloud the text fits in, three styles | live page, `cloud` switch; `comps/shoot27.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -59,13 +60,14 @@ What every decision below comes back to (Oct 2026):
 - **The figures**, in the diagram style he liked (HTML boxes with one padding rule, edges drawn between boxes from the DOM, slow traffic on the edges, numbers that count up then tick, a cloud shape for "the internet"), left the hero and joined their projects: training → dissertation, radar → flight-tracker, homelab → home-lab, delivery → colincheung.dev, a real Anki card → anki-chinese. Weather and factory are cut. Projects is the **picker** (list left, one figure right; locked 30 Oct 2026).
 - **The one-liners** (18 of them, with inline drawings, flip counter and odometer) stay.
 - **Radar** (flight-tracker figure, round 26): Heathrow at the centre with runway 27 east–west and the four stacks (BNN, LAM, BIG, OCK) marked. Planes are arrows with a short fading trail, steering to waypoints at a limited turn rate: arrivals from the edge, sometimes a lap of a stack, then downwind, base and a westbound final to land; departures roll west and turn out; overflights cross. Two are blue with callsigns. Drawn at the canvas's display scale.
-- **Clouds** (the internet and Cloudflare-edge nodes): an SVG cloud, three bumps on a flat base, filled by tone with no outline (round 26).
+- **Clouds** (the internet and Cloudflare-edge nodes): one SVG outline, five bumps on a flat base traced from overlapping circles, drawn bigger than the text box so the words sit in its body (round 27).
 
-**Locked (30 Oct 2026):** `hero-line.html` has no switches left; the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
+**Locked (30 Oct 2026):** `hero-line.html` has one switch left (`cloud`); the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
 
 ## What he said needs refinement (not done)
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
+- Cloud style (round 27, `cloud` switch): `tone`, a light cloud on a darker copy 5 units lower (depth by tone, no shadow); `line`, an outline at the diagram's line weight; `soft`, a fill fading from light at the top to the base.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go
