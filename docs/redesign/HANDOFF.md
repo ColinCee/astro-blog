@@ -31,7 +31,8 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 27: a puffier cloud the text fits in, three styles (outline won) | `comps/shoot27.mts` |
 | Round 28: the projects list, plain (won) or cards, with short subtitles (won) or none | `comps/shoot28.mts` |
 | Round 29: red joins status; accent candidates (teal and magenta dropped after research, four left); controls at 6px; amber dot darkened to 3.4:1 | `comps/round29.html`, live page `accent` switch, `system.html` swatches; `comps/shoot29.mts` |
-| Round 30: warm accents (tomato, orange) with the status dots folded into the accent | live page `accent` switch, `system.html` swatches; `comps/shoot30.mts` |
+| Round 30: warm accents (tomato, orange) with the status dots folded into the accent | `comps/shoot30.mts` |
+| Round 31: violet locked; light mode bright (white panels) or soft (mid-grey page, off-white panels), against dark | live page `light` switch; `comps/shoot31.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do; status colours, accent hues and control corners in eight design systems | `research/polish-research.md`, `research/palette-research.md`, `research/status-accent-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -45,7 +46,7 @@ Run the comps: `node comps/serve.mts` (port 4390, or `PORT=4391`) and open `/ind
 
 ## Decisions Colin has made
 
-- **Colour**: grey chrome from one cool-tinted neutral scale (12 steps); one indigo-blue accent scale (12 steps) with three jobs: the new value of a result that got better, links, and small marks that point at the one thing (the slashes, the open project, the labelled planes, the one-liner drawings, the prompt). Never a surface or a large area; controls are ink, not blue. Green and amber only as dots and tiny badges; borders cut from the ink at 8% / 14%; dark mode is the same OKLCH scales at other lightnesses. Scales and roles in `system.html` (its type and corner sections are older than the decisions here).
+- **Colour**: grey chrome from one cool-tinted neutral scale (12 steps); one **violet** accent scale (hue 298, 12 steps; chosen 30 Oct over blue, indigo, sky, tomato and orange) with three jobs: the new value of a result that got better, links, and small marks that point at the one thing (the slashes, the open project, the labelled planes, the one-liner drawings, the prompt). Never a surface or a large area; controls are ink, not blue. Green and amber only as dots and tiny badges; borders cut from the ink at 8% / 14%; dark mode is the same OKLCH scales at other lightnesses. Scales and roles in `system.html` (its type and corner sections are older than the decisions here).
 - **Type**: Geist and Geist Mono. Name at 600, sentence case, 2.6–4.25rem, −0.04em. No big uppercase name, no slogan headline. The one-liners are in **Sora 200**, punchline at 400, −0.03em (round 9; heavier weights were "a bit thick"). The line under the name is only "Senior Software Engineer". Locked in on 30 Oct 2026. Name and headings in **Sora 600** (−0.05em on the name), body in Geist, everything mono in **DM Mono** (round 10; Geist Mono clashed with Sora).
 - **Terminal** (rounds 11–16): title `~/ColinOS`, no tmux bar. Left: `whoami` (Colin Cheung 張志權, nothing else), `top -u colin` with one time column in ink, `weather` (live from open-meteo), the cursor. Right pane: `ls -t ~/writing`, the latest five posts (date, title in Geist 400, stat: old struck grey, new blue, plain comparisons in ink) and "all 8 posts →"; posts come from each post's frontmatter. The writing section below is gone, and so are the shipped bars (the Parquet result is a post; the EDF and BBC results are on the CV). Locked 30 Oct 2026.
 - **Worked at**: the thin marquee (Sora 200 names, DM Mono years, no grey band, 70 s loop with an even gap at the seam). Each name with the year he started beside it in DM Mono, a thin blue slash in Sora between names; no icons, no job lengths, which read as job-hopping, and no logos (brand rules, mixed availability, off-palette). Locked 30 Oct 2026.
@@ -56,12 +57,13 @@ Run the comps: `node comps/serve.mts` (port 4390, or `PORT=4391`) and open `/ind
 - **Radar** (flight-tracker figure, round 26): Heathrow at the centre with runway 27 east–west and the four stacks (BNN, LAM, BIG, OCK) marked. Planes are arrows with a short fading trail, steering to waypoints at a limited turn rate: arrivals from the edge, sometimes a lap of a stack, then downwind, base and a westbound final to land; departures roll west and turn out; overflights cross. Two are blue with callsigns. Drawn at the canvas's display scale.
 - **Clouds** (the internet and Cloudflare-edge nodes): one SVG outline, five bumps on a flat base traced from overlapping circles, drawn bigger than the text box so the words sit in its body, as an outline at the diagram's line weight on the panel colour (round 27, locked).
 
-**Locked (30 Oct 2026):** `hero-line.html` has no switches left; the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
+**Locked (30 Oct 2026):** `hero-line.html` has one switch left (`light`, see below); the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
 
 ## What he said needs refinement (not done)
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
 - Projects list (round 28): no repo count; subtitles cut to a few words ("game AI, 2018 and 2026", "London airspace, live", "one mini-PC, five stacks", "my Mandarin deck", "this site"). The list is plain and locked: no backgrounds, flush with the heading, the open project in ink with a blue slash hanging in the margin, the rest grey, each with its short subtitle.
+- Light mode (round 31): he finds bright light "a flashbang" and asked whether to keep it. `light` switch: bright (white panels on a pale page) or soft (mid-grey page, off-white panels, no pure white). Open: dark by default with a soft light toggle, or dark only.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go
