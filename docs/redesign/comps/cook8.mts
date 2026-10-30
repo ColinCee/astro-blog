@@ -143,6 +143,8 @@ cut('<section class="term"', '<section class="sec">', `<section class="term" ari
   html = html.slice(0, a) + '<ol class="rows">\n      ' + posts.map(([slug, d, t, v, l]) => `<li class="row"><span class="row__date">${d}</span><a href="/blog/${slug}"><span class="row__title">${t}</span></a><span class="row__stat">${stat(v)}<small>${l}</small></span></li>`).join('\n      ') + '\n    </ol>' + html.slice(b);
   html = html.replace('<span class="mono">7 posts · blue got better</span>', `<span class="mono">${posts.length} posts</span>`); }
 
+// the strip, locked (round 22): an industry icon before each name, the year he
+// started under it; no lengths (they read as job-hopping)
 { const ic = {
     road: '<path d="M2 7h11v9H2z M13 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.8"/><circle cx="16.5" cy="18" r="1.8"/>',
     travel: '<path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/>',
@@ -151,14 +153,14 @@ cut('<section class="term"', '<section class="sec">', `<section class="term" ari
     energy: '<path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z"/>',
   };
   const jobs = [
-    ['PodFather', 'road', 'logistics', '10k+ drivers'],
-    ['Skyscanner', 'travel', 'travel', '8 h sync → 2 min'],
-    ['Hometree', 'home', 'home services', 'checkout, led end to end'],
-    ['Hopper', 'travel', 'travel', '100k+ requests a day'],
-    ['BBC', 'media', 'media', 'CI-log digging, up to −90%'],
-    ['EDF Energy', 'energy', 'energy', '1.6M accounts a day'],
+    ['PodFather', 'road', '2017'],
+    ['Skyscanner', 'travel', '2020'],
+    ['Hometree', 'home', '2021'],
+    ['Hopper', 'travel', '2022'],
+    ['BBC', 'media', '2022'],
+    ['EDF Energy', 'energy', '2023'],
   ] as const;
-  const one = (hide: boolean) => jobs.map(([n, i, sec, r]) => `<span class="strip__co"${hide ? ' aria-hidden="true"' : ''}><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true">${ic[i]}</svg>${n}</span><small class="co__r">${r}</small><small class="co__sec">${sec}</small></span>`).join('');
+  const one = (hide: boolean) => jobs.map(([n, i, y]) => `<span class="strip__co"${hide ? ' aria-hidden="true"' : ''}><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true">${ic[i]}</svg>${n}</span><small>${y}</small></span>`).join('');
   const a = html.indexOf('<div class="strip__track">'), b = html.indexOf('</div>', a);
   html = html.slice(0, a) + '<div class="strip__track">\n        ' + one(false) + '\n        ' + one(true) + '\n      ' + html.slice(b); }
 
@@ -259,18 +261,13 @@ ${faceCss}
 :root[data-worked="still"] .strip__co:nth-child(6)::before{background:var(--accent-solid)}
 @media(max-width:40rem){:root[data-worked="still"] .strip__track{display:grid;grid-template-columns:1fr 1fr;row-gap:1.6rem}:root[data-worked="still"] .strip__track::before,:root[data-worked="still"] .strip__co::before{display:none}}
 
-/* worked at, under each name (round 21). No years: lengths read as job-hopping.
-   impact: the job's headline result in DM Mono. industry: a small line icon in
-   blue before the name, the industry under it. both: the icon and the result */
+.vc:empty{display:none}
+/* worked at: a blue line icon for the industry, the name in Sora 200, the
+   start year under the name */
 .strip__co{flex-direction:column;align-items:flex-start;gap:.3rem}
 .co__n{display:inline-flex;align-items:center;gap:.6rem}
-.co__ic{display:none;width:1.15rem;height:1.15rem;flex:none;fill:none;stroke:var(--accent-solid);stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
-.strip__co small{font-size:.75rem;color:var(--faint)}
-.co__r,.co__sec{display:none}
-:root[data-mark="impact"] .co__r,:root[data-mark="both"] .co__r{display:block}
-:root[data-mark="industry"] .co__sec{display:block}
-:root[data-mark="industry"] .co__ic,:root[data-mark="both"] .co__ic{display:block}
-:root[data-mark="industry"] .co__sec,:root[data-mark="both"] .co__r{padding-left:1.75rem}
+.co__ic{width:1.15rem;height:1.15rem;flex:none;fill:none;stroke:var(--accent-solid);stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+.strip__co small{font-size:.75rem;color:var(--faint);padding-left:1.75rem}
 
 /* terminal: two panes, whoami / top / weather and shipped */
 .term__panes{grid-template-areas:"who right"}
@@ -344,7 +341,7 @@ html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
 html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term" data-worked="thin">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={mark:['both','impact','industry']};");
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 

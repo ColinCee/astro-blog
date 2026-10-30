@@ -467,18 +467,13 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
 :root[data-worked="still"] .strip__co:nth-child(6)::before{background:var(--accent-solid)}
 @media(max-width:40rem){:root[data-worked="still"] .strip__track{display:grid;grid-template-columns:1fr 1fr;row-gap:1.6rem}:root[data-worked="still"] .strip__track::before,:root[data-worked="still"] .strip__co::before{display:none}}
 
-/* worked at, under each name (round 21). No years: lengths read as job-hopping.
-   impact: the job's headline result in DM Mono. industry: a small line icon in
-   blue before the name, the industry under it. both: the icon and the result */
+.vc:empty{display:none}
+/* worked at: a blue line icon for the industry, the name in Sora 200, the
+   start year under the name */
 .strip__co{flex-direction:column;align-items:flex-start;gap:.3rem}
 .co__n{display:inline-flex;align-items:center;gap:.6rem}
-.co__ic{display:none;width:1.15rem;height:1.15rem;flex:none;fill:none;stroke:var(--accent-solid);stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
-.strip__co small{font-size:.75rem;color:var(--faint)}
-.co__r,.co__sec{display:none}
-:root[data-mark="impact"] .co__r,:root[data-mark="both"] .co__r{display:block}
-:root[data-mark="industry"] .co__sec{display:block}
-:root[data-mark="industry"] .co__ic,:root[data-mark="both"] .co__ic{display:block}
-:root[data-mark="industry"] .co__sec,:root[data-mark="both"] .co__r{padding-left:1.75rem}
+.co__ic{width:1.15rem;height:1.15rem;flex:none;fill:none;stroke:var(--accent-solid);stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+.strip__co small{font-size:.75rem;color:var(--faint);padding-left:1.75rem}
 
 /* terminal: two panes, whoami / top / weather and shipped */
 .term__panes{grid-template-areas:"who right"}
@@ -631,8 +626,8 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
     <div class="sec__head"><h2>Worked at</h2><span class="mono">2017 → now</span></div>
     <div class="strip" aria-label="Companies, 2017 to now">
       <div class="strip__track">
-        <span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 7h11v9H2z M13 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.8"/><circle cx="16.5" cy="18" r="1.8"/></svg>PodFather</span><small class="co__r">10k+ drivers</small><small class="co__sec">logistics</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/></svg>Skyscanner</span><small class="co__r">8 h sync → 2 min</small><small class="co__sec">travel</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9H3z M9.5 20v-5.5h5V20"/></svg>Hometree</span><small class="co__r">checkout, led end to end</small><small class="co__sec">home services</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/></svg>Hopper</span><small class="co__r">100k+ requests a day</small><small class="co__sec">travel</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M10 9l5 2.5-5 2.5z"/></svg>BBC</span><small class="co__r">CI-log digging, up to −90%</small><small class="co__sec">media</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>EDF Energy</span><small class="co__r">1.6M accounts a day</small><small class="co__sec">energy</small></span>
-        <span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 7h11v9H2z M13 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.8"/><circle cx="16.5" cy="18" r="1.8"/></svg>PodFather</span><small class="co__r">10k+ drivers</small><small class="co__sec">logistics</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/></svg>Skyscanner</span><small class="co__r">8 h sync → 2 min</small><small class="co__sec">travel</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9H3z M9.5 20v-5.5h5V20"/></svg>Hometree</span><small class="co__r">checkout, led end to end</small><small class="co__sec">home services</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/></svg>Hopper</span><small class="co__r">100k+ requests a day</small><small class="co__sec">travel</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M10 9l5 2.5-5 2.5z"/></svg>BBC</span><small class="co__r">CI-log digging, up to −90%</small><small class="co__sec">media</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>EDF Energy</span><small class="co__r">1.6M accounts a day</small><small class="co__sec">energy</small></span>
+        <span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 7h11v9H2z M13 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.8"/><circle cx="16.5" cy="18" r="1.8"/></svg>PodFather</span><small>2017</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/></svg>Skyscanner</span><small>2020</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9H3z M9.5 20v-5.5h5V20"/></svg>Hometree</span><small>2021</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/></svg>Hopper</span><small>2022</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M10 9l5 2.5-5 2.5z"/></svg>BBC</span><small>2022</small></span><span class="strip__co"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>EDF Energy</span><small>2023</small></span>
+        <span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 7h11v9H2z M13 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.8"/><circle cx="16.5" cy="18" r="1.8"/></svg>PodFather</span><small>2017</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/></svg>Skyscanner</span><small>2020</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9H3z M9.5 20v-5.5h5V20"/></svg>Hometree</span><small>2021</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5 21 5l-7.5 16-2.5-6.5z"/></svg>Hopper</span><small>2022</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M10 9l5 2.5-5 2.5z"/></svg>BBC</span><small>2022</small></span><span class="strip__co" aria-hidden="true"><span class="co__n"><svg class="co__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>EDF Energy</span><small>2023</small></span>
       </div>
     </div>
   </section>
@@ -751,7 +746,7 @@ const quips=["<span class=\"q-ctr\" data-flip=\"7,0\">0</span> days since the la
 
 <script>
 (()=>{const r=document.documentElement,q=new URLSearchParams(location.search);
-const opts={mark:['both','impact','industry']};
+const opts={};
 const get=(n)=>q.get(n)||(()=>{try{return localStorage.getItem('v8-'+n)}catch{}})()||opts[n][0];
 const set=(n,v)=>{r.dataset[n]=v;try{localStorage.setItem('v8-'+n,v)}catch{}};
 for(const n in opts)set(n,get(n));
