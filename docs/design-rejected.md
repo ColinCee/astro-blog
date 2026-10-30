@@ -25,9 +25,10 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | Idea | Why it was dropped |
 |---|---|
 | The tmux status bar (window list, build time, commit, live clock) | Noise (Oct 2026). |
-| Login line, `whoami`, `weather` and `ls ~/contact` | The hero already says the name and links; the rest is noise (Oct 2026). |
+| Login line and `ls ~/contact` | Noise; the hero has the links (Oct 2026). `whoami` (with 張志權) and `weather` were cut too, then brought back: the terminal felt empty. |
 | A writing pane in the terminal | The Writing list is just below (Oct 2026). |
 | Two time columns in `top` (since and age) plus blue on every age | One column, in ink (Oct 2026). |
+| A before/after label on every shipped bar, or a legend | Grey above, blue below is obvious enough (Oct 2026). |
 
 ## Colour and chrome
 

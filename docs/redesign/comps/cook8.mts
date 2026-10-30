@@ -87,23 +87,48 @@ cut('<section class="sec">\n    <div class="sec__head"><h2>Projects</h2>', '<sec
 
   `);
 
-// the terminal: mark what the clean version drops (round 11)
-for (const [a, b] of [
-  ['<p class="cmd">whoami</p>', '<p class="cmd x">whoami</p>'],
-  ['<p class="who__name">', '<p class="who__name x">'],
-  ['<p class="out who__sub">', '<p class="out who__sub x">'],
-  ['<p class="cmd">top -u colin</p>', '<p class="cmd cmd--top">top -u colin</p>'],
-  ['<span class="h">SINCE</span>', '<span class="h x">SINCE</span>'],
-  ['<p class="cmd">weather</p>', '<p class="cmd x">weather</p>'],
-  ['<p class="out">Glasgow', '<p class="out x">Glasgow'],
-  ['<p class="cmd">ls ~/contact</p>', '<p class="cmd x">ls ~/contact</p>'],
-  ['<div class="who__links">', '<div class="who__links x">'],
-  ['<span class="term__name">~/ColinOS - tmux</span>', '<span class="term__name">~/ColinOS<span class="x"> - tmux</span></span>'],
-  ['<span>shipped</span><span>before → after</span>', '<span>shipped</span><span class="x">before → after</span><span class="ship__legend" aria-hidden="true"><i></i>before<i class="hot"></i>after</span>'],
-]) { if (!html.includes(a)) throw new Error('terminal marker: ' + a); html = html.replace(a, b); }
+// the terminal (round 13): whoami with the Chinese name and a live weather line
+// come back; no login line, contact, tmux bar or writing pane. The right side
+// is the open question: shipped, a now list, or both.
+const shipped = html.slice(html.indexOf('<ul class="ship">'), html.indexOf('</ul>', html.indexOf('<ul class="ship">')) + 5);
+const skills = [['react', '9y'], ['typescript', '8y'], ['aws', '7y'], ['distributed-sys', '6y'], ['ai-development', '2y']];
+cut('<section class="term"', '<section class="sec">', `<section class="term" aria-label="Colin at a glance, as a terminal session">
+    <div class="term__bar"><span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="term__name">~/ColinOS</span></div>
+    <div class="term__panes">
+      <div class="pane pane--who">
+        <p class="cmd">whoami</p>
+        <p class="who__name">Colin Cheung <span class="cjk" lang="zh-Hant">張志權</span></p>
+        <p class="out who__sub">Glasgow, UK · open to remote</p>
+        <p class="cmd">top -u colin</p>
+        <div class="mon"><span class="h">COMMAND</span><span class="h">TIME+</span>
+          ${skills.map(([k, t]) => `<span class="pname">${k}</span><span class="ptime">${t}</span>`).join('\n          ')}
+        </div>
+        <div class="v-rich"><p class="cmd">cat now.md</p><p class="out">Tech lead @ EDF Energy, leading AI adoption across the team.</p></div>
+        <p class="cmd">weather</p>
+        <p class="out" data-wx>Glasgow · 9°C, light rain</p>
+        <p class="cmd rest"></p>
+      </div>
+      <div class="pane pane--ship v-ship">
+        <p class="pane__head"><span>shipped</span></p>
+        ${shipped}
+      </div>
+      <div class="pane pane--now v-now">
+        <p class="cmd">cat now.md</p>
+        <dl class="now">
+          <dt>work</dt><dd>Tech lead at EDF Energy, leading AI adoption across the team</dd>
+          <dt>learning</dt><dd>Mandarin, one Anki card a day · today <span class="now__hz" lang="zh">${ankiCards[0].hanzi}</span> ${ankiCards[0].pinyin}</dd>
+          <dt>running</dt><dd>a homelab: one mini-PC, five Compose stacks</dd>
+          <dt>writing</dt><dd><a href="#post">Part 3: How Jev performs on Aliens</a></dd>
+        </dl>
+      </div>
+    </div>
+  </section>
 
-// the old rotator drove [data-quip]; the new one lives in the round-8 script
-cut('const q=document.querySelector', 'const c=document.querySelector', '');
+  `);
+
+// the old rotator drove [data-quip]; the new one lives in the round-8 script.
+// The status-bar clock is gone with the bar.
+cut('const q=document.querySelector', '</script>', '');
 
 // Locked 30 Oct 2026: one-liners in Sora 200 (punchline 400), name and headings in
 // Sora 600, body in Geist, mono in DM Mono. Rounds 9-10 compared the others.
@@ -157,24 +182,29 @@ ${faceCss}
 .hero__copy .who__name{letter-spacing:-.05em;font-weight:600}
 .who__name,.row__title,.sec h2{letter-spacing:-.03em}
 
-/* terminal, clean: no login line, no whoami (the hero says it), no weather,
-   no contact (the hero has the icons), no writing pane (the list is below),
-   no tmux status bar, one time column in ink */
-:root[data-term="clean"] .term .x,:root[data-term="clean"] .who__login,:root[data-term="clean"] .pane--writing,:root[data-term="clean"] .term__status,:root[data-term="clean"] .mon .out{display:none}
-:root[data-term="clean"] .term__panes{grid-template-areas:"who ship"}
-:root[data-term="clean"] .cmd--top{margin-top:0}
-:root[data-term="clean"] .mon{grid-template-columns:1fr 4rem}
-:root[data-term="clean"] .mon .ptime{color:var(--t-ink)}
-@media(max-width:56rem){:root[data-term="clean"] .term__panes{grid-template-areas:"who" "ship"}}
-
-/* shipped bars: a label on every bar, one legend in the pane head, or nothing */
-.ship__legend{display:none;align-items:center;gap:.4rem}
-.ship__legend i{width:.9rem;height:.4rem;border-radius:2px;background:var(--n8)}
-.ship__legend i.hot{background:var(--t-ok);margin-left:.5rem}
-:root[data-ship="legend"] .ship__legend{display:inline-flex}
-:root:not([data-ship="labels"]) .ship__bar{grid-template-columns:1fr 5.5rem}
-:root:not([data-ship="labels"]) .ship__bar > span:first-child{display:none}
-:root:not([data-ship="labels"]) .ship__bar--after{margin-top:.2rem}
+/* terminal (round 13): two panes; the right one is the open question */
+.term__panes{grid-template-areas:"who right"}
+.pane--ship,.pane--now{grid-area:right}
+:root:not([data-term="shipped"]) .v-ship,:root:not([data-term="now"]) .v-now{display:none}
+:root:not([data-term="shipped"]) .v-rich{display:none}
+:root[data-term="both"] .v-ship,:root[data-term="both"] .v-now{display:block}
+:root[data-term="both"] .term__panes{grid-template-areas:"who ship" "who now"}
+:root[data-term="both"] .pane--ship{grid-area:ship}:root[data-term="both"] .pane--now{grid-area:now}
+.mon{grid-template-columns:1fr 4rem}
+.v-rich .cmd{margin-top:1rem}
+.mon .ptime{color:var(--t-ink)}
+/* shipped bars: no labels, grey above is before, blue below is after */
+.ship__bar{grid-template-columns:1fr 5.5rem}
+.ship__bar > span:first-child{display:none}
+.ship__bar--after{margin-top:.2rem}
+/* now: a short list, the label in faint mono */
+.now{display:grid;grid-template-columns:5.5rem 1fr;gap:.55rem 1rem;margin:0}
+.now dt{color:var(--t-faint)}
+.now dd{margin:0;color:var(--t-ink)}
+.now a{text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:.2em}
+.now a:hover{text-decoration-color:var(--t-ink)}
+.now__hz{font-family:var(--sans);font-size:1.05em;margin:0 .15em}
+@media(max-width:56rem){.term__panes,:root[data-term="both"] .term__panes{grid-template-areas:"who" "right"}:root[data-term="both"] .term__panes{grid-template-areas:"who" "ship" "now"}}
 
 /* projects: each figure joins its project */
 .pj{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
@@ -229,8 +259,8 @@ ${faceCss}
 html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
-html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-term="clean">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={proj:['picker','cards'],ship:['labels','legend','none']};");
+html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel">');
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={term:['shipped','now','both'],proj:['picker','cards']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 
@@ -291,6 +321,9 @@ const pick=(it)=>{if(it.classList.contains('is-on'))return;items.forEach(o=>o.cl
 items.forEach(it=>{const h=it.querySelector('[data-pj-pick]');['click','focus','pointerenter'].forEach(ev=>h.addEventListener(ev,()=>pick(it)))});
 new ResizeObserver(drawAll).observe(document.querySelector('[data-pj]'));
 document.fonts.ready.then(drawAll);
+// weather: Glasgow now, from open-meteo (no key)
+const wx=document.querySelector('[data-wx]');if(wx)fetch('https://api.open-meteo.com/v1/forecast?latitude=55.86&longitude=-4.25&current=temperature_2m,weather_code').then(r=>r.json()).then(d=>{const c=d.current.weather_code,t=Math.round(d.current.temperature_2m);
+ const w=c===0?'clear':c<=2?'some cloud':c===3?'overcast':c<=48?'fog':c<=57?'drizzle':c<=67?'rain':c<=77?'snow':c<=82?'showers':c<=86?'snow showers':'thunder';wx.textContent='Glasgow · '+t+'°C, '+w}).catch(()=>{});
 // anki: a card at a time, only when asked
 const cards=${JSON.stringify(ankiCards.map((c: any)=>[c.hanzi,c.pinyin+' · '+c.jyutping,c.meaning]))};
 let ck=0;const card=document.querySelector('[data-anki]');document.querySelector('[data-anki-next]').addEventListener('click',()=>{ck=(ck+1)%cards.length;const [h,p,m]=cards[ck];card.innerHTML='<span class="ak__hz" lang="zh">'+h+'</span><span class="ak__py">'+p+'</span><span class="ak__mn">'+m+'</span>'});
