@@ -53,13 +53,13 @@ Show, don't ask: build the change or two or three distinct variations, put them 
 - **Pick the form by the job.** Bars drawn to scale for A vs B. A step chart for sequential improvements. A dot plot for comparing options. A bridge chart for where time goes. A grid of squares for time at a glance. Trees or arrows for structure. Never plain boxes with text in them, and skip 3D or click-to-reveal unless it explains better than a still.
 - **A post in steps shows each step the same way.** Each step's figure ends with the same whole-file before → after bars, on one scale, and the closing step chart follows the post's order from the baseline, with nothing else mixed in.
 - **A mechanism is drawn on a few real rows; its sizes are the whole file's.** Animate how it works when that explains more than a still (text that rearranges itself, looping slowly: a quick move, a hold of about 7 s, hover or focus pausing it, a tab stopping it).
-- **Colour links what belongs together.** Matching neutral styles tie a value to its dictionary entry; orange everywhere ties nothing.
+- **Colour links what belongs together.** Matching neutral styles tie a value to its dictionary entry; the accent everywhere ties nothing.
 - **Chart basics, every time.**
   - A short title above.
   - Axis titles with units, e.g. "win rate (%)".
   - The baseline first and striped.
-  - One accent (`--accent`, tomato) for the result or the option kept.
-  - Changes in green (real gain), red (real drop) or grey (could be luck), with a key on the chart.
+  - One accent (`--accent`, violet) for the result or the option kept.
+  - Changes in green (`--gain`, real gain), red (`--loss`, real drop) or grey (could be luck), with a key on the chart.
   - Numbers aligned in their own columns, and even row spacing.
   - Text sizes as in `DESIGN.md`, nothing under 11px.
 - **No text jammed under a chart.** Labels go on the marks, and explanation goes in one sentence of prose before or after. If the chart already shows it, that sentence goes too: he cut the Jest vs Vitest post by half just by deleting prose that restated its figures.

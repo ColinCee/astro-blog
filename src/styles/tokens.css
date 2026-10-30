@@ -5,7 +5,7 @@
   scales.css, generated from docs/redesign/comps/tokens.mts: a 12-step cool grey
   (n1-n12), a 12-step violet accent (a1-a12) and the status colours (ok, warn,
   danger at steps 3, 9, 11). The rules for using them, with samples, are in
-  docs/redesign/comps/system.html.
+  src/pages/design.astro (/design/ on the dev server).
 
   Dark is the default. Light is a toggle (data-theme="light" on <html>, set by
   the nav button and by an inline script in Head.astro before anything paints),
