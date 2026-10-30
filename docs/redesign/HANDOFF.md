@@ -37,7 +37,7 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
 | Screenshots of the current state | `shots/` |
 
-Run the comps: `node comps/serve.mts` (`PORT=4391` to pick another port) then open http://localhost:4390/index.html (the index links every round). `node comps/shoot.mts` takes headless screenshots with the repo's Playwright; `node comps/hang.mts <url>` tells you if a page has hung. The `.mts` files are scratch tooling; delete them when the hero is built.
+Run the comps: `node comps/serve.mts` (port 4390, or `PORT=4391`) and open `/index.html`, which links every round; `/system.html` is the design system and `/hero-line.html` the home page. Pages reload themselves when a file in `comps/` changes, and saving `cook8.mts` or `tokens.mts` reruns it first. `node comps/shootNN.mts` takes headless screenshots with the repo's Playwright; `node comps/hang.mts <url>` tells you if a page has hung. The `.mts` files are scratch tooling; delete them when the hero is built.
 
 ## Design system
 
