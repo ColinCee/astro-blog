@@ -24,6 +24,7 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 20: a tenure bar under each company, grey or a blue ramp (dropped) | `comps/shoot20.mts` |
 | Round 21: the headline result or the industry (with an icon) under each company | `comps/shoot21.mts` |
 | Round 22: worked at, locked (icon + start year) | `comps/shoot22.mts` |
+| Round 23: separators between the worked-at names | live page, `sep` switch; `comps/shoot23.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -55,11 +56,12 @@ What every decision below comes back to (Oct 2026):
 - **The figures**, in the diagram style he liked (HTML boxes with one padding rule, edges drawn between boxes from the DOM, slow traffic on the edges, numbers that count up then tick, a cloud shape for "the internet"), left the hero and joined their projects: training → dissertation, radar → flight-tracker, homelab → home-lab, delivery → colincheung.dev, a real Anki card → anki-chinese. Weather and factory are cut. Projects is the **picker** (list left, one figure right; locked 30 Oct 2026).
 - **The one-liners** (18 of them, with inline drawings, flip counter and odometer) stay.
 
-**Locked (30 Oct 2026):** `hero-line.html` has no switches left; the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
+**Locked (30 Oct 2026):** `hero-line.html` has one switch left (`sep`); the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
 
 ## What he said needs refinement (not done)
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
+- Worked at, between names (round 23, `sep` switch): a hairline the height of name and year, a small grey dot, or a thin slash.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go

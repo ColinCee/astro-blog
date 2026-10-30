@@ -262,6 +262,13 @@ ${faceCss}
 @media(max-width:40rem){:root[data-worked="still"] .strip__track{display:grid;grid-template-columns:1fr 1fr;row-gap:1.6rem}:root[data-worked="still"] .strip__track::before,:root[data-worked="still"] .strip__co::before{display:none}}
 
 .vc:empty{display:none}
+/* worked at, between names (round 23): a hairline the height of name and year, or
+   a dot or a slash on the name's line, centred in the 4.5rem gap */
+.strip__co{position:relative}
+.strip__co::after{content:"";position:absolute;top:1.45rem;right:-2.25rem;transform:translate(50%,-50%)}
+:root[data-sep="line"] .strip__co::after{top:.3rem;bottom:.1rem;width:1px;transform:translateX(50%);background:var(--line-strong)}
+:root[data-sep="dot"] .strip__co::after{width:5px;height:5px;border-radius:50%;background:var(--n7)}
+:root[data-sep="slash"] .strip__co::after{content:"/";font-family:var(--head);font-weight:200;font-size:2rem;line-height:1;color:var(--n7)}
 /* worked at: a blue line icon for the industry, the name in Sora 200, the
    start year under the name */
 .strip__co{flex-direction:column;align-items:flex-start;gap:.3rem}
@@ -341,7 +348,7 @@ html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
 html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term" data-worked="thin">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={};");
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={sep:['line','dot','slash']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 
