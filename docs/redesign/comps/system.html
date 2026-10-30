@@ -71,7 +71,7 @@ code{font-family:var(--mono);font-size:.85em;background:var(--well);padding:.05e
 </style></head><body>
 <div class="in">
 <div class="top"><span>colincheung.dev · design system</span>
-  <span class="row" style="margin:0"><span class="f">accent</span><span class="acc" data-acc></span><button class="ctl" data-toggle>light / dark</button></span></div>
+  <button class="ctl" data-toggle>light / dark</button></div>
 <h1>Grey does the structure. The accent points.</h1>
 <p class="lede">The one reference for how the site looks. Every comp and every build reads its colours from <code>tokens.mts</code> and its rules from this page; when a decision changes, this page changes in the same commit. What was tried and dropped lives in <code>docs/design-rejected.md</code>.</p>
 
@@ -91,7 +91,7 @@ code{font-family:var(--mono);font-size:.85em;background:var(--well);padding:.05e
 <h2>Colour</h2>
 <p>Three kinds of colour and nothing else: one grey scale, one accent scale, three status colours. Each step is one OKLCH value; only lightness changes between light and dark, so dark mode is the same palette, not a second one.</p>
 <div class="scale"><h3>neutral · hue 255, barely tinted cool · 12 steps</h3><div class="sw" data-sw="n"></div></div>
-<div class="scale"><h3>accent · one hue · 12 steps</h3><div class="sw" data-sw="a"></div></div>
+<div class="scale"><h3>accent · violet, hue 298 · 12 steps</h3><div class="sw" data-sw="a"></div></div>
 <div class="scale"><h3>status · green ok, amber warn, red danger · steps 3 (wash), 9 (dot), 11 (text) only</h3><div class="sw three" data-sw="s"></div></div>
 
 <div class="grid" style="margin-top:1.4rem">
@@ -132,15 +132,11 @@ code{font-family:var(--mono);font-size:.85em;background:var(--well);padding:.05e
 </div>
 <script>
 const r=document.documentElement;
-try{const s=localStorage.getItem('ds-theme');if(s)r.dataset.theme=s;const a=localStorage.getItem('ds-accent');if(a)r.dataset.accent=a}catch{}
+try{const s=localStorage.getItem('ds-theme');if(s)r.dataset.theme=s;}catch{}
 document.querySelector('[data-toggle]').addEventListener('click',()=>{const t=r.dataset.theme==='dark'?'light':'dark';r.dataset.theme=t;try{localStorage.setItem('ds-theme',t)}catch{}});
 // swatches drawn from the tokens, so this page can never disagree with them
 const fill=(k,keys)=>document.querySelector('[data-sw="'+k+'"]').innerHTML=keys.map(n=>'<div style="background:var(--'+n+')"><span>'+n.replace(/^[na](\d)/,'$1')+'</span></div>').join('');
 fill('n',Array.from({length:12},(_,i)=>'n'+(i+1)));fill('a',Array.from({length:12},(_,i)=>'a'+(i+1)));
 fill('s',['ok3','ok9','ok11','warn3','warn9','warn11','danger3','danger9','danger11']);
-// accent candidates (round 29): compare them here; the chosen one becomes the default in tokens.mts
-const acc=document.querySelector('[data-acc]'),names={blue:'#2366e9',indigo:'#5c58e8',violet:'#8448d9',sky:'#0d7baa',tomato:'#c83507',orange:'#aa580b'};
-for(const [n,c] of Object.entries(names)){const b=document.createElement('button');b.title=n;b.style.background=c;b.setAttribute('aria-pressed',String((r.dataset.accent||'blue')===n));
- b.onclick=()=>{r.dataset.accent=n;try{localStorage.setItem('ds-accent',n)}catch{}acc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))};acc.appendChild(b)}
 </script>
 </body></html>
