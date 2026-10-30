@@ -75,7 +75,7 @@ Show, don't ask: build the change or two or three distinct variations, put them 
 
 1. Branch, and show him a local preview link (the dev server on his Tailscale name works from his phone).
 2. Before merging:
-   - He has read the draft and said publish.
+   - He has read the draft and said publish. Ask it with his last content decision (a title, a final figure), so his yes to that covers publishing too.
    - `pubDate` is the publish day.
    - Series posts link to each other.
    - Work posts name nothing private.
