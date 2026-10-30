@@ -29,7 +29,8 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | A writing pane in the terminal | The Writing list is just below (Oct 2026). |
 | `cat now.md` (a line, or a work / learning / running / writing list) | He is open to roles, so the "now" goes stale; dropped (Oct 2026). |
 | A location line under `whoami` | `whoami` returns the two names only (Oct 2026). |
-| A commands-only terminal (one column, or laid across) | Plain; the right pane carries the CV instead (Oct 2026). |
+| A commands-only terminal (one column, or laid across) | Plain (Oct 2026). |
+| The CV in the terminal's right pane, as a rotating timeline or a list | Shipped is better; it links to the CV instead (Oct 2026). |
 | Two time columns in `top` (since and age) plus blue on every age | One column, in ink (Oct 2026). |
 | A before/after label on every shipped bar, or a legend | Grey above, blue below is obvious enough (Oct 2026). |
 

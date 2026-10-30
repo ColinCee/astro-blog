@@ -87,41 +87,12 @@ cut('<section class="sec">\n    <div class="sec__head"><h2>Projects</h2>', '<sec
 
   `);
 
-// the terminal (round 13): whoami with the Chinese name and a live weather line
-// come back; no login line, contact, tmux bar or writing pane. The right side
-// is the open question: shipped, a now list, or both.
-const shipped = html.slice(html.indexOf('<ul class="ship">'), html.indexOf('</ul>', html.indexOf('<ul class="ship">')) + 5);
-// the roles, newest first, from the site's CV data (src/data/cv.ts)
-const roles = [
-  { co: 'EDF Energy', pos: 'Senior Software Engineer', when: 'Apr 2023 – now', from: [2023, 4], to: [2026, 10], result: '1.6M accounts a day' },
-  { co: 'BBC', pos: 'Senior Software Engineer', when: 'Nov 2022 – Apr 2023', from: [2022, 11], to: [2023, 4], result: 'CI-log digging, up to −90%' },
-  { co: 'Hopper', pos: 'Senior Software Engineer', when: 'Mar – Oct 2022', from: [2022, 3], to: [2022, 10], result: '100k+ requests a day' },
-  { co: 'Hometree', pos: 'Senior Software Engineer', when: 'Jun 2021 – Mar 2022', from: [2021, 6], to: [2022, 3], result: 'checkout flow, led end to end' },
-  { co: 'Skyscanner', pos: 'Software Engineer', when: 'Feb 2020 – Apr 2021', from: [2020, 2], to: [2021, 4], result: '8 h sync → 2 min' },
-  { co: 'PodFather', pos: 'Software Engineer', when: 'Jul 2017 – Feb 2020', from: [2017, 7], to: [2020, 2], result: '10k+ drivers' },
-];
-const m = ([y, mo]: number[]) => (y - 2017) * 12 + mo - 7, span = m([2026, 10]);
-const pct = (v: number) => (v / span * 100).toFixed(2) + '%';
-const segs = roles.map((r, k) => `<button class="tl__seg${k === 0 ? ' is-on' : ''}" type="button" style="left:${pct(m(r.from))};width:calc(${pct(m(r.to) - m(r.from))} - 2px)" aria-label="${r.co}, ${r.when}"></button>`).join('');
-const ticks = [2018, 2020, 2022, 2024, 2026].map((y) => `<span style="left:${pct(m([y, 1]))}">${y}</span>`).join('');
-const tlPane = `<div class="pane pane--tl v-tl">
-        <p class="cmd">cv --timeline</p>
-        <div class="tl" data-tl data-roles='${JSON.stringify(roles.map(({ co, pos, when, result }) => ({ co, pos, when, result }))).replace(/'/g, '&#39;')}'>
-          <div class="tl__bar">${segs}</div>
-          <div class="tl__ticks" aria-hidden="true">${ticks}</div>
-          <div class="tl__card" data-tl-card><p class="tl__co">EDF Energy</p><p class="tl__pos">Senior Software Engineer · Apr 2023 – now</p><p class="tl__r">1.6M accounts a day</p></div>
-        </div>
-        <p class="out cv__more"><a href="/cv">the full cv →</a></p>
-      </div>`;
-// one line a role
-const cvRows = [
-  ['2023 – now', 'EDF Energy', '1.6M accounts a day'],
-  ['2022 – 23', 'BBC', 'CI-log digging, up to −90%'],
-  ['2022', 'Hopper', '100k+ requests a day'],
-  ['2021 – 22', 'Hometree', 'checkout flow, led end to end'],
-  ['2020 – 21', 'Skyscanner', '8 h sync → 2 min'],
-  ['2017 – 20', 'PodFather', '10k+ drivers'],
-].map(([y, c, r], k) => `<span class="cv__y" style="--r:${k}">${y}</span><span class="cv__co" style="--r:${k}">${c}</span><span class="cv__r" style="--r:${k}">${r}</span>`).join('\n          ');
+// the terminal, locked 30 Oct 2026 (rounds 11-17): whoami is the two names, top has
+// one time column, weather is live; the right pane is shipped, and links to the CV.
+// The Parquet export was at EDF and is also a post, so its title links there.
+const shipped = html.slice(html.indexOf('<ul class="ship">'), html.indexOf('</ul>', html.indexOf('<ul class="ship">')) + 5)
+  .replace('Data-lake export, as Parquet <small>Post · Sep 2025</small>', '<a href="/blog/jsonl-to-parquet-compression">Data-lake export, as Parquet</a> <small>EDF Energy · Sep 2025</small>');
+if (!shipped.includes('EDF Energy · Sep 2025')) throw new Error('parquet line');
 const skills = [['react', '9y'], ['typescript', '8y'], ['aws', '7y'], ['distributed-sys', '6y'], ['ai-development', '2y']];
 cut('<section class="term"', '<section class="sec">', `<section class="term" aria-label="Colin at a glance, as a terminal session">
     <div class="term__bar"><span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="term__name">~/ColinOS</span></div>
@@ -137,17 +108,10 @@ cut('<section class="term"', '<section class="sec">', `<section class="term" ari
         <p class="out" data-wx>Glasgow · 9°C, light rain</p>
         <p class="cmd rest"></p></div>
       </div>
-      <div class="pane pane--cv v-cv">
-        <p class="cmd">cv --short</p>
-        <div class="cv">
-          ${cvRows}
-        </div>
-        <p class="out cv__more"><a href="/cv">the full cv →</a></p>
-      </div>
-      ${tlPane}
-      <div class="pane pane--ship v-ship">
+      <div class="pane pane--ship">
         <p class="pane__head"><span>shipped</span></p>
         ${shipped}
+        <p class="out cv__more"><a href="/cv">the full cv →</a></p>
       </div>
     </div>
   </section>
@@ -211,45 +175,17 @@ ${faceCss}
 .hero__copy .who__name{letter-spacing:-.05em;font-weight:600}
 .who__name,.row__title,.sec h2{letter-spacing:-.03em}
 
-/* terminal (round 13): two panes; the right one is the open question */
+/* terminal: two panes, whoami / top / weather and shipped */
 .term__panes{grid-template-areas:"who right"}
 .pane--ship,.pane--now{grid-area:right}
-:root:not([data-term="shipped"]) .v-ship,:root:not([data-term="cv"]) .v-cv{display:none}
+
 .mon{grid-template-columns:1fr 4rem}
 .blk + .blk{margin-top:1rem}
-/* the timeline pane (round 16): one bar, a segment per role in proportion to
-   its length, the current one in blue; the role under it changes every 6 s,
-   hover or click picks one */
-.pane--tl{grid-area:right}
-.tl__bar{position:relative;height:.7rem;background:var(--n3);border-radius:3px;margin:.9rem 0 .35rem}
-.tl__seg{position:absolute;top:0;bottom:0;margin-left:1px;border:0;padding:0;background:var(--n6);border-radius:2px;cursor:pointer;transition:background .3s}
-.tl__seg:hover{background:var(--n8)}
-.tl__seg.is-on{background:var(--t-ok)}
-.tl__ticks{position:relative;height:1.1rem;font-size:.7rem;color:var(--t-faint)}
-.tl__ticks span{position:absolute;transform:translateX(-50%)}
-.tl__card{margin-top:1.3rem;min-height:6.5rem;transition:opacity .2s}
-.tl__card p{margin:0}
-.tl__co{font-family:var(--head);font-size:1.5rem;font-weight:600;letter-spacing:-.03em;color:var(--t-ink);line-height:1.2}
-.tl__pos{color:var(--t-faint);font-size:.75rem;margin-top:.2rem!important}
-.tl__r{color:var(--t-ink);margin-top:.7rem!important}
-:root:not([data-term="timeline"]) .v-tl{display:none}
-:root[data-term="timeline"] .sec--worked,:root[data-term="cv"] .sec--worked{display:none}
-/* the cv list types in, a row at a time, once it is on screen */
-.pane--cv .cv > span{opacity:0}
-.pane--cv.seen .cv > span{animation:cv-in .35s ease forwards;animation-delay:calc(var(--r) * 110ms)}
-@keyframes cv-in{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
-@media(prefers-reduced-motion:reduce){.pane--cv .cv > span{opacity:1}.pane--cv.seen .cv > span{animation:none}}
-
-/* the cv pane (round 15): years faint, company in ink, the result muted */
-.pane--cv{grid-area:right}
-.cv{display:grid;grid-template-columns:auto auto 1fr;gap:.5rem 1.4rem;align-items:baseline}
-.cv__y{color:var(--t-faint);font-size:.75rem;white-space:nowrap}
-.cv__co{color:var(--t-ink);white-space:nowrap}
-.cv__r{color:var(--t-muted)}
+.ship__head a:hover{text-decoration:underline;text-underline-offset:.2em}
 .cv__more{margin-top:1rem}
 .cv__more a{color:var(--t-muted);text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:.2em}
 .cv__more a:hover{color:var(--t-ink)}
-@media(max-width:40rem){.cv{grid-template-columns:auto 1fr}.cv__r{grid-column:2;margin-top:-.35rem;font-size:.75rem}}
+
 .mon .ptime{color:var(--t-ink)}
 /* shipped bars: no labels, grey above is before, blue below is after */
 .ship__bar{grid-template-columns:1fr 5.5rem}
@@ -311,7 +247,7 @@ html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
 html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={term:['timeline','cv','shipped'],proj:['picker','cards']};");
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={proj:['picker','cards']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 
@@ -375,14 +311,6 @@ document.fonts.ready.then(drawAll);
 // weather: Glasgow now, from open-meteo (no key)
 const wx=document.querySelector('[data-wx]');if(wx)fetch('https://api.open-meteo.com/v1/forecast?latitude=55.86&longitude=-4.25&current=temperature_2m,weather_code').then(r=>r.json()).then(d=>{const c=d.current.weather_code,t=Math.round(d.current.temperature_2m);
  const w=c===0?'clear':c<=2?'some cloud':c===3?'overcast':c<=48?'fog':c<=57?'drizzle':c<=67?'rain':c<=77?'snow':c<=82?'showers':c<=86?'snow showers':'thunder';wx.textContent='Glasgow · '+t+'°C, '+w}).catch(()=>{});
-// cv list: rows type in once seen
-const cvp=document.querySelector('.pane--cv');if(cvp)new IntersectionObserver((es,o)=>es.forEach(x=>{if(x.isIntersecting){cvp.classList.add('seen');o.disconnect()}}),{threshold:.3}).observe(cvp);
-// timeline: one role at a time, newest first; hover or click picks one
-const tl=document.querySelector('[data-tl]');if(tl){const rs=JSON.parse(tl.dataset.roles),segs=[...tl.querySelectorAll('.tl__seg')],card=tl.querySelector('[data-tl-card]');let k=0,tt;
- const show=(n)=>{if(n===k)return;k=(n+rs.length)%rs.length;segs.forEach((x,j)=>x.classList.toggle('is-on',j===k));const r=rs[k];card.style.opacity='0';
-  setTimeout(()=>{card.innerHTML='<p class="tl__co">'+r.co+'</p><p class="tl__pos">'+r.pos+' · '+r.when+'</p><p class="tl__r">'+r.result+'</p>';card.style.opacity='1'},200)};
- const go=()=>{clearInterval(tt);if(!reduce)tt=setInterval(()=>{if(!tl.matches(':hover'))show(k+1)},6000)};
- segs.forEach((x,j)=>{x.addEventListener('click',()=>{show(j);go()});x.addEventListener('pointerenter',()=>show(j))});go()}
 // anki: a card at a time, only when asked
 const cards=${JSON.stringify(ankiCards.map((c: any)=>[c.hanzi,c.pinyin+' · '+c.jyutping,c.meaning]))};
 let ck=0;const card=document.querySelector('[data-anki]');document.querySelector('[data-anki-next]').addEventListener('click',()=>{ck=(ck+1)%cards.length;const [h,p,m]=cards[ck];card.innerHTML='<span class="ak__hz" lang="zh">'+h+'</span><span class="ak__py">'+p+'</span><span class="ak__mn">'+m+'</span>'});
