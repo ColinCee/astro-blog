@@ -11,7 +11,9 @@ const cr=(a,b)=>{const [x,y]=[lum(a),lum(b)].sort((p,q)=>q-p);return (x+.05)/(y+
 const NH=255, AH=262, OKH=150, WH=70, DH=25;
 // accent candidates (round 29): the same lightness and chroma profile at other hues. Teal and magenta were
 // dropped: each sat 45° from a status hue (research/status-accent-research.md). Keep any accent outside h20-180.
-const ACCENTS={blue:262,indigo:278,violet:298,sky:235};
+const ACCENTS={blue:262,indigo:278,violet:298,sky:235,
+  // warm candidates (round 30): only if the traffic lights fold into the accent, since status is rare on the site
+  tomato:35,orange:55};
 // neutral: [L light, L dark, chroma]
 const N=[[.993,.16,.003],[.982,.195,.003],[.962,.23,.004],[.94,.26,.005],[.915,.29,.006],[.885,.325,.007],[.84,.385,.008],[.76,.47,.010],[.62,.62,.012],[.52,.72,.012],[.45,.78,.012],[.22,.95,.015]];
 const A=[[.985,.19,.015],[.97,.215,.03],[.945,.25,.05],[.91,.29,.08],[.87,.33,.11],[.82,.38,.14],[.75,.45,.17],[.66,.53,.20],[.55,.55,.21],[.50,.60,.21],[.47,.78,.17],[.28,.93,.09]];

@@ -139,7 +139,7 @@ const fill=(k,keys)=>document.querySelector('[data-sw="'+k+'"]').innerHTML=keys.
 fill('n',Array.from({length:12},(_,i)=>'n'+(i+1)));fill('a',Array.from({length:12},(_,i)=>'a'+(i+1)));
 fill('s',['ok3','ok9','ok11','warn3','warn9','warn11','danger3','danger9','danger11']);
 // accent candidates (round 29): compare them here; the chosen one becomes the default in tokens.mts
-const acc=document.querySelector('[data-acc]'),names={blue:'#2366e9',indigo:'#5c58e8',violet:'#8448d9',sky:'#0d7baa'};
+const acc=document.querySelector('[data-acc]'),names={blue:'#2366e9',indigo:'#5c58e8',violet:'#8448d9',sky:'#0d7baa',tomato:'#c83507',orange:'#aa580b'};
 for(const [n,c] of Object.entries(names)){const b=document.createElement('button');b.title=n;b.style.background=c;b.setAttribute('aria-pressed',String((r.dataset.accent||'blue')===n));
  b.onclick=()=>{r.dataset.accent=n;try{localStorage.setItem('ds-accent',n)}catch{}acc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))};acc.appendChild(b)}
 </script>
