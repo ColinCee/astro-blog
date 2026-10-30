@@ -16,7 +16,8 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 11: the terminal cleaned up | `comps/shoot11.mts` |
 | Round 12: shipped bars with a label on each bar, one legend, or nothing (none won) | `comps/shoot12.mts` |
 | Round 13: whoami and weather back; the right pane as shipped, now list or both | live page, `term` switch; `comps/shoot13.mts` |
-| Round 14: commands only, across the width or in one column | live page, `term` switch; `comps/shoot14.mts` |
+| Round 14: commands only, across the width or in one column (dropped) | `comps/shoot14.mts` |
+| Round 15–16: the CV in the terminal's right pane, as a timeline or a list | live page, `term` switch; `comps/shoot15.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -28,7 +29,7 @@ Run the comps: `node comps/serve.mts` (`PORT=4391` to pick another port) then op
 
 - **Colour**: grey chrome; one indigo-blue accent with two jobs (the new value of a result that got better, and links); green and amber only as dots and tiny badges; borders cut from the ink at 8% / 14%; dark mode is the same OKLCH scales at other lightnesses. All in `system.html`.
 - **Type**: Geist and Geist Mono. Name at 600, sentence case, 2.6–4.25rem, −0.04em. No big uppercase name, no slogan headline. The one-liners are in **Sora 200**, punchline at 400, −0.03em (round 9; heavier weights were "a bit thick"). The line under the name is only "Senior Software Engineer". Locked in on 30 Oct 2026. Name and headings in **Sora 600** (−0.05em on the name), body in Geist, everything mono in **DM Mono** (round 10; Geist Mono clashed with Sora).
-- **Terminal** (rounds 11–13): title `~/ColinOS`, no tmux bar. Left: `whoami` (name + 張志權, "Glasgow, UK · open to remote"), `top -u colin` with one time column in ink, `weather` (live from open-meteo), the cursor. Shipped bars have no labels: grey above is before, blue below is after. The right side is open: shipped, a `cat now.md` list (work, learning, running, writing), or both (`term` switch).
+- **Terminal** (rounds 11–16): title `~/ColinOS`, no tmux bar. Left: `whoami` (Colin Cheung 張志權, nothing else), `top -u colin` with one time column in ink, `weather` (live from open-meteo), the cursor. The right pane carries the CV, which replaces the worked-at strip below (open: timeline or list). Shipped bars, if they stay anywhere, have no labels.
 - **His switch picks**: corners 8px, depth flat (no borders or shadows on panels; surfaces by tone), density airy, list as a white panel. The terminal follows the theme (white window on the light page).
 - **Layout**: name, role and links left; the one-liners right, as a **reel**: the current one, the next one faint underneath, no previous line. One every 5 s, hover pauses, click skips, a thin bar shows the time left (round 8–9). The terminal below with a real gap; worked-at strip, writing list, projects.
 - **The figures**, in the diagram style he liked (HTML boxes with one padding rule, edges drawn between boxes from the DOM, slow traffic on the edges, numbers that count up then tick, a cloud shape for "the internet"), left the hero and joined their projects: training → dissertation, radar → flight-tracker, homelab → home-lab, delivery → colincheung.dev, a real Anki card → anki-chinese. Weather and factory are cut. Picker (list left, one figure right) or cards is not decided yet; picker keeps one accent per glance.
@@ -40,7 +41,7 @@ Run the comps: `node comps/serve.mts` (`PORT=4391` to pick another port) then op
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
 - Projects: picker or cards (see above).
-- Terminal: commands only, laid across the width (`row`, round 14: whoami and now.md / top / weather and the cursor; the whole first screen is hero plus terminal), commands in one column (`solo`), or with a side pane (shipped, now list, both; round 13). Without the side pane the shipped bars leave the home page; the post results stay in the Writing list. The now list's Anki card should pick by date when built.
+- Terminal right pane (`term` switch): `cv --timeline`, one bar with a segment per role in proportion to its length, the role under it changing every 6 s (hover or click picks one), or `cv --short`, one line a role with its headline result, typing in once on screen. Either way the worked-at strip goes. Watch the timeline's 6 s against the one-liner's 5 s: both are on the first screen.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go
