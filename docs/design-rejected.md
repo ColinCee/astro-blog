@@ -44,6 +44,8 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | Industry icons before the worked-at names | Dropped (Oct 2026). |
 | The worked-at year under the name | Beside it, so each name is one line (Oct 2026). |
 | Blue years, or no blue, in the worked-at strip | Blue slashes chosen (Oct 2026); they are violet now, with the accent. |
+| A bright light mode (white panels on a pale page), or light first | "A flashbang"; dark is the default and light is soft (Oct 2026). |
+| Dark only | A soft light toggle kept for daylight reading (Oct 2026). |
 | Blue, indigo, sky, teal, magenta, tomato or orange as the accent | Violet chosen: it looked best in dark (Oct 2026). Teal and magenta sat too close to status colours; tomato made improved numbers read as errors. |
 
 ## Figures

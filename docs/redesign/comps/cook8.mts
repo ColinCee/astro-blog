@@ -256,9 +256,9 @@ ${faceCss}
 @media(max-width:40rem){:root[data-worked="still"] .strip__track{display:grid;grid-template-columns:1fr 1fr;row-gap:1.6rem}:root[data-worked="still"] .strip__track::before,:root[data-worked="still"] .strip__co::before{display:none}}
 
 .vc:empty{display:none}
-/* light mode, softer (round 31): bright white panels on a pale page read as a flashbang. soft: a mid-grey
-   page, off-white panels, no pure white anywhere */
-:root[data-depth][data-light="soft"]:not([data-theme="dark"]){--bg:var(--n5);--panel:var(--n2);--well:var(--n4)}
+/* dark is the default; light is the toggle, and soft (round 31-32): bright white panels on a pale page read
+   as a flashbang, so a mid-grey page, off-white panels, no pure white anywhere */
+:root[data-depth]:not([data-theme="dark"]){--bg:var(--n5);--panel:var(--n2);--well:var(--n4)}
 /* controls (theme toggle, icon links) at 6px; panels stay 8px (round 29) */
 :root[data-corners]{--r-pill:6px}
 /* worked at, between names: a thin slash in Sora, centred in the 4.5rem gap and
@@ -370,8 +370,8 @@ html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
 html = html.replace('</head>', '<!-- colour scales from tokens.mts (node tokens.mts) -->\n<link rel="stylesheet" href="scales.css">\n</head>');
-html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term" data-worked="thin">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={light:['soft','bright']};");
+html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term" data-worked="thin" data-theme="dark">');
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 

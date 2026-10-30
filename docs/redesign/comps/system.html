@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Design system</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Sora:wght@200..600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -7,7 +7,7 @@
 <style>
 /* roles: the page names a role, never a step */
 :root{
-  --bg:var(--n3); --panel:#fff; --well:var(--n4);
+  --bg:var(--n5); --panel:var(--n2); --well:var(--n4);
   --line:color-mix(in oklab,var(--n12) 8%,transparent); --line-strong:color-mix(in oklab,var(--n12) 14%,transparent); --line-2:color-mix(in oklab,var(--n12) 5%,transparent);
   --ink:var(--n12); --muted:var(--n11); --faint:var(--n10);
   --accent:var(--a11); --accent-solid:var(--a9); --accent-wash:var(--a3);
@@ -73,7 +73,7 @@ code{font-family:var(--mono);font-size:.85em;background:var(--well);padding:.05e
 <div class="top"><span>colincheung.dev · design system</span>
   <button class="ctl" data-toggle>light / dark</button></div>
 <h1>Grey does the structure. The accent points.</h1>
-<p class="lede">The one reference for how the site looks. Every comp and every build reads its colours from <code>tokens.mts</code> and its rules from this page; when a decision changes, this page changes in the same commit. What was tried and dropped lives in <code>docs/design-rejected.md</code>.</p>
+<p class="lede">The one reference for how the site looks. Dark is the default; light is a soft toggle. Every comp and every build reads its colours from <code>tokens.mts</code> and its rules from this page; when a decision changes, this page changes in the same commit. What was tried and dropped lives in <code>docs/design-rejected.md</code>.</p>
 
 <h2>Principles</h2>
 <p>What every decision comes back to.</p>
@@ -95,7 +95,7 @@ code{font-family:var(--mono);font-size:.85em;background:var(--well);padding:.05e
 <div class="scale"><h3>status · green ok, amber warn, red danger · steps 3 (wash), 9 (dot), 11 (text) only</h3><div class="sw three" data-sw="s"></div></div>
 
 <div class="grid" style="margin-top:1.4rem">
-  <div class="card"><h3>surfaces</h3><p>page = n3 · panel = white (dark: n3 on n1) · well = n4</p><p class="m">separated by tone, never by a shadow</p></div>
+  <div class="card"><h3>surfaces</h3><p>dark (the default): page n1 · panel n3 · well n4</p><p>light (the toggle): page n5 · panel n2 · well n4, no pure white</p><p class="m">separated by tone, never by a shadow</p></div>
   <div class="card"><h3>text</h3><p>ink = n12 · for titles and values</p><p class="m">muted = n11 · the line under a title</p><p class="f">faint = n10 · dates, labels, captions (4.5:1)</p></div>
   <div class="card"><h3>edges</h3><p>line = ink at 8% · strong = 14% · faint = 5%</p><p class="m">dark: white at the same alphas</p></div>
   <div class="card"><h3>accent · three jobs</h3><p class="stat"><s>12 h</s><b>11 min</b> <span class="f">the better value</span></p><p><a href="#">a link</a> <span class="f">where it goes</span></p><p><span class="slash" style="margin-left:0">/</span><span class="f">a small mark at the one thing</span></p><p class="f">never a surface, a heading or a button. It also stands for "info": there is no separate blue status colour.</p></div>

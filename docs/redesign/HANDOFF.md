@@ -32,7 +32,7 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 28: the projects list, plain (won) or cards, with short subtitles (won) or none | `comps/shoot28.mts` |
 | Round 29: red joins status; accent candidates (teal and magenta dropped after research, four left); controls at 6px; amber dot darkened to 3.4:1 | `comps/round29.html`, live page `accent` switch, `system.html` swatches; `comps/shoot29.mts` |
 | Round 30: warm accents (tomato, orange) with the status dots folded into the accent | `comps/shoot30.mts` |
-| Round 31: violet locked; light mode bright (white panels) or soft (mid-grey page, off-white panels), against dark | live page `light` switch; `comps/shoot31.mts` |
+| Round 31–32: violet locked; dark by default, soft light as the toggle | `comps/shoot31.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do; status colours, accent hues and control corners in eight design systems | `research/polish-research.md`, `research/palette-research.md`, `research/status-accent-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -50,6 +50,7 @@ Run the comps: `node comps/serve.mts` (port 4390, or `PORT=4391`) and open `/ind
 - **Type**: Geist and Geist Mono. Name at 600, sentence case, 2.6–4.25rem, −0.04em. No big uppercase name, no slogan headline. The one-liners are in **Sora 200**, punchline at 400, −0.03em (round 9; heavier weights were "a bit thick"). The line under the name is only "Senior Software Engineer". Locked in on 30 Oct 2026. Name and headings in **Sora 600** (−0.05em on the name), body in Geist, everything mono in **DM Mono** (round 10; Geist Mono clashed with Sora).
 - **Terminal** (rounds 11–16): title `~/ColinOS`, no tmux bar. Left: `whoami` (Colin Cheung 張志權, nothing else), `top -u colin` with one time column in ink, `weather` (live from open-meteo), the cursor. Right pane: `ls -t ~/writing`, the latest five posts (date, title in Geist 400, stat: old struck grey, new blue, plain comparisons in ink) and "all 8 posts →"; posts come from each post's frontmatter. The writing section below is gone, and so are the shipped bars (the Parquet result is a post; the EDF and BBC results are on the CV). Locked 30 Oct 2026.
 - **Worked at**: the thin marquee (Sora 200 names, DM Mono years, no grey band, 70 s loop with an even gap at the seam). Each name with the year he started beside it in DM Mono, a thin blue slash in Sora between names; no icons, no job lengths, which read as job-hopping, and no logos (brand rules, mixed availability, off-palette). Locked 30 Oct 2026.
+- **Theme** (round 32): dark is the default; light is a toggle, and soft: page n5, panels n2, well n4, no pure white (bright white panels read as "a flashbang"). A saved choice wins over the default.
 - **His switch picks**: corners 8px, depth flat (no borders or shadows on panels; surfaces by tone), density airy, list as a white panel. The terminal follows the theme (white window on the light page).
 - **Layout**: name, role and links left; the one-liners right, as a **reel**: the current one, the next one faint underneath, no previous line. One every 5 s, hover pauses, click skips, a thin bar shows the time left (round 8–9). The terminal below with a real gap; worked-at strip, writing list, projects.
 - **The figures**, in the diagram style he liked (HTML boxes with one padding rule, edges drawn between boxes from the DOM, slow traffic on the edges, numbers that count up then tick, a cloud shape for "the internet"), left the hero and joined their projects: training → dissertation, radar → flight-tracker, homelab → home-lab, delivery → colincheung.dev, a real Anki card → anki-chinese. Weather and factory are cut. Projects is the **picker** (list left, one figure right; locked 30 Oct 2026).
@@ -57,20 +58,19 @@ Run the comps: `node comps/serve.mts` (port 4390, or `PORT=4391`) and open `/ind
 - **Radar** (flight-tracker figure, round 26): Heathrow at the centre with runway 27 east–west and the four stacks (BNN, LAM, BIG, OCK) marked. Planes are arrows with a short fading trail, steering to waypoints at a limited turn rate: arrivals from the edge, sometimes a lap of a stack, then downwind, base and a westbound final to land; departures roll west and turn out; overflights cross. Two are blue with callsigns. Drawn at the canvas's display scale.
 - **Clouds** (the internet and Cloudflare-edge nodes): one SVG outline, five bumps on a flat base traced from overlapping circles, drawn bigger than the text box so the words sit in its body, as an outline at the diagram's line weight on the panel colour (round 27, locked).
 
-**Locked (30 Oct 2026):** `hero-line.html` has one switch left (`light`, see below); the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
+**Locked (30 Oct 2026):** `hero-line.html` has no switches left; the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
 
 ## What he said needs refinement (not done)
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
 - Projects list (round 28): no repo count; subtitles cut to a few words ("game AI, 2018 and 2026", "London airspace, live", "one mini-PC, five stacks", "my Mandarin deck", "this site"). The list is plain and locked: no backgrounds, flush with the heading, the open project in ink with a blue slash hanging in the margin, the rest grey, each with its short subtitle.
-- Light mode (round 31): he finds bright light "a flashbang" and asked whether to keep it. `light` switch: bright (white panels on a pale page) or soft (mid-grey page, off-white panels, no pure white). Open: dark by default with a soft light toggle, or dark only.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go
 
 1. `src/styles/tokens.css`: replace with the scales and roles from `system.html` (one `:root` block light, one `[data-theme="dark"]`). Keep the typography test rules (16–19px body, 1.5–1.8 line height, 45–90ch, 11px minimum, rem units).
 2. `src/components/site/Head.astro`: load Geist and Geist Mono instead of Bricolage and JetBrains.
-3. A theme toggle in `Nav.astro` writing `data-theme` on `<html>` and localStorage, light first.
+3. A theme toggle in `Nav.astro` writing `data-theme` on `<html>` and localStorage; dark by default, set in the HTML so there is no flash.
 4. `Hero.astro`: the two-column hero; keep the one-liner script and drawings as they are; port the figures from `hero-figures.html` as small components reading `src/data/*.json` (shipped, homelab-stacks, skills, anki-cards). The edge-drawing and number-ticking script is ~40 lines; keep it one script.
 5. `Terminal.astro` and panes: drop the always-dark palette; use the page tokens; 8px corners; flat.
 6. Writing list: stat variant B (old value struck in grey, new value in the accent; plain comparisons stay ink).
