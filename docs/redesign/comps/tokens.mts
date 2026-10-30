@@ -8,20 +8,26 @@ function hex(L,C,h){let c=C;for(let i=0;i<60;i++){const rgb=oklch2rgb(L,c,h);if(
 const lum=h=>{const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:((v+.055)/1.055)**2.4);return .2126*c[0]+.7152*c[1]+.0722*c[2]};
 const cr=(a,b)=>{const [x,y]=[lum(a),lum(b)].sort((p,q)=>q-p);return (x+.05)/(y+.05)};
 
-const NH=255, AH=262, OKH=150, WH=70;
+const NH=255, AH=262, OKH=150, WH=70, DH=25;
+// accent candidates (round 29): the same lightness and chroma profile at other hues, none near the status hues
+const ACCENTS={blue:262,indigo:278,violet:298,magenta:340,sky:235,teal:195};
 // neutral: [L light, L dark, chroma]
 const N=[[.993,.16,.003],[.982,.195,.003],[.962,.23,.004],[.94,.26,.005],[.915,.29,.006],[.885,.325,.007],[.84,.385,.008],[.76,.47,.010],[.62,.62,.012],[.52,.72,.012],[.45,.78,.012],[.22,.95,.015]];
 const A=[[.985,.19,.015],[.97,.215,.03],[.945,.25,.05],[.91,.29,.08],[.87,.33,.11],[.82,.38,.14],[.75,.45,.17],[.66,.53,.20],[.55,.55,.21],[.50,.60,.21],[.47,.78,.17],[.28,.93,.09]];
-const S={ok:[OKH,[[.955,.23,.05],[.62,.62,.17],[.47,.80,.13]]],warn:[WH,[[.96,.25,.06],[.76,.76,.16],[.50,.86,.13]]]};
+// status: green ok, amber warn, red danger (round 29), each at steps 3 (wash) / 9 (dot) / 11 (text)
+const S={ok:[OKH,[[.955,.23,.05],[.62,.62,.17],[.47,.80,.13]]],warn:[WH,[[.96,.25,.06],[.76,.76,.16],[.50,.86,.13]]],danger:[DH,[[.955,.24,.04],[.60,.62,.20],[.50,.80,.15]]]};
 const out={light:{},dark:{}};
 N.forEach(([l,d,c],i)=>{out.light['n'+(i+1)]=hex(l,c,NH);out.dark['n'+(i+1)]=hex(d,c,NH)});
 A.forEach(([l,d,c],i)=>{out.light['a'+(i+1)]=hex(l,c,AH);out.dark['a'+(i+1)]=hex(d,c,AH)});
+out.accents={};for(const [name,h] of Object.entries(ACCENTS)){const t={light:{},dark:{}};A.forEach(([l,d,c],i)=>{t.light['a'+(i+1)]=hex(l,c,h);t.dark['a'+(i+1)]=hex(d,c,h)});out.accents[name]=t}
 for(const [k,[h,steps]] of Object.entries(S)){[3,9,11].forEach((s,i)=>{const [l,d,c]=steps[i];out.light[k+s]=hex(l,c,h);out.dark[k+s]=hex(d,c,h)})}
 // checks
 const chk=[];
 for(const m of ['light','dark']){const t=out[m];
- chk.push([m,'n12 on n1',cr(t.n12,t.n1)],[m,'n11 on n2',cr(t.n11,t.n2)],[m,'n11 on n3',cr(t.n11,t.n3)],[m,'n10 on n1',cr(t.n10,t.n1)],[m,'n10 on n3',cr(t.n10,t.n3)],[m,'a11 on n1',cr(t.a11,t.n1)],[m,'a11 on n3',cr(t.a11,t.n3)],[m,'a11 on a3',cr(t.a11,t.a3)],[m,'ok11 on ok3',cr(t.ok11,t.ok3)],[m,'ok11 on n1',cr(t.ok11,t.n1)],[m,'warn11 on warn3',cr(t.warn11,t.warn3)],[m,'warn11 on n1',cr(t.warn11,t.n1)],[m,'white on a9',cr('#ffffff',t.a9)]);}
+ chk.push([m,'n12 on n1',cr(t.n12,t.n1)],[m,'n11 on n2',cr(t.n11,t.n2)],[m,'n11 on n3',cr(t.n11,t.n3)],[m,'n10 on n1',cr(t.n10,t.n1)],[m,'n10 on n3',cr(t.n10,t.n3)],[m,'a11 on n1',cr(t.a11,t.n1)],[m,'a11 on n3',cr(t.a11,t.n3)],[m,'a11 on a3',cr(t.a11,t.a3)],[m,'ok11 on ok3',cr(t.ok11,t.ok3)],[m,'ok11 on n1',cr(t.ok11,t.n1)],[m,'warn11 on warn3',cr(t.warn11,t.warn3)],[m,'warn11 on n1',cr(t.warn11,t.n1)],[m,'danger11 on danger3',cr(t.danger11,t.danger3)],[m,'danger11 on n1',cr(t.danger11,t.n1)],[m,'white on a9',cr('#ffffff',t.a9)]);}
+for(const [name,t] of Object.entries(out.accents))for(const m of ['light','dark'])chk.push([m,name+' a11 on n1',cr(t[m].a11,out[m].n1)],[m,name+' white on a9',cr('#ffffff',t[m].a9)]);
 chk.forEach(([m,n,v])=>console.log((v>=4.5?'ok  ':'FAIL')+' '+m.padEnd(5)+n.padEnd(16)+v.toFixed(2)));
 const vars=(t)=>Object.entries(t).map(([k,v])=>`--${k}:${v}`).join(';');
-const css=`:root{${vars(out.light)};color-scheme:light}\n:root[data-theme="dark"]{${vars(out.dark)};color-scheme:dark}`;
+const css=`:root{${vars(out.light)};color-scheme:light}\n:root[data-theme="dark"]{${vars(out.dark)};color-scheme:dark}`
+  +Object.entries(out.accents).map(([n,t])=>`\n:root[data-accent="${n}"]{${vars(t.light)}}\n:root[data-accent="${n}"][data-theme="dark"]{${vars(t.dark)}}`).join('');
 import('node:fs').then(fs=>{fs.writeFileSync('scales.css',css);fs.writeFileSync('scales.json',JSON.stringify(out,null,1));console.log('written');});

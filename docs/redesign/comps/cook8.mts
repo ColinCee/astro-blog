@@ -256,6 +256,8 @@ ${faceCss}
 @media(max-width:40rem){:root[data-worked="still"] .strip__track{display:grid;grid-template-columns:1fr 1fr;row-gap:1.6rem}:root[data-worked="still"] .strip__track::before,:root[data-worked="still"] .strip__co::before{display:none}}
 
 .vc:empty{display:none}
+/* controls (theme toggle, icon links) at 6px; panels stay 8px (round 29) */
+:root[data-corners]{--r-pill:6px}
 /* worked at, between names: a thin slash in Sora, centred in the 4.5rem gap and
    on the name's line (round 23) */
 .strip__co{position:relative}
@@ -364,8 +366,9 @@ ${faceCss}
 html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
+html = html.replace('</head>', '<!-- colour scales from tokens.mts (node tokens.mts) -->\n<link rel="stylesheet" href="scales.css">\n</head>');
 html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker" data-writing="term" data-worked="thin">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={};");
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={accent:['blue','indigo','violet','magenta','sky','teal']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 
