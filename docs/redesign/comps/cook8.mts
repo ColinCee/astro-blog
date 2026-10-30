@@ -93,6 +93,26 @@ cut('<section class="sec">\n    <div class="sec__head"><h2>Projects</h2>', '<sec
 const shipped = html.slice(html.indexOf('<ul class="ship">'), html.indexOf('</ul>', html.indexOf('<ul class="ship">')) + 5)
   .replace('Data-lake export, as Parquet <small>Post · Sep 2025</small>', '<a href="/blog/jsonl-to-parquet-compression">Data-lake export, as Parquet</a> <small>EDF Energy · Sep 2025</small>');
 if (!shipped.includes('EDF Energy · Sep 2025')) throw new Error('parquet line');
+const posts = [
+  ['jest-to-vitest', 'Oct 29 2026', "Migrating from Jest to Vitest made tests 18× quicker, but it's not what you think", '428 s → 23 s', '1,370 simulations'],
+  ['dissertation-revival-jev', 'Oct 27 2026', 'Part 3: How Jev performs on Aliens', '82% vs 80%', 'win rate, holding shoot vs Jev'],
+  ['dissertation-revival-beating-2018', 'Oct 25 2026', 'Part 2: Beating my 2018 dissertation AI', '73% → 99%', 'win rate, 2018 vs 2026'],
+  ['dissertation-revival-speed', 'Oct 20 2026', 'Part 1: How Claude made my 2018 RL training 65x faster', '12 h → 11 min', 'per training run'],
+  ['private-ci-in-firecracker-microvms', 'Oct 16 2026', "CI Faster Than GitHub's, for Free", '26 s → 20 s', 'vs GitHub'],
+  ['i-sued-easyjet-and-won', 'Aug 24 2026', 'I Sued easyJet and Won', '£127 → £826.61', 'one hearing'],
+  ['jsonl-to-parquet-compression', 'Sep 03 2025', 'JSONL is a waste of space', '4.5 GB → 221 MB', '95% smaller'],
+  ['saving-time-in-ts-jest', 'Apr 03 2025', 'Slash Your ts-jest Test Times', '−10 min', 'off CI'],
+];
+// a stat that got better: old value struck in grey, new value blue; a plain comparison stays ink
+const stat = (v: string) => v.includes('→') ? `<s>${v.split(' → ')[0]}</s><b>${v.split(' → ')[1]}</b>` : v.includes(' vs ') ? `<b class="flat">${v}</b>` : `<b>${v}</b>`;
+const short = (d: string) => d.slice(0, 6);
+const wrPane = `<div class="pane pane--wr">
+        <p class="cmd">ls -t ~/writing</p>
+        <ul class="wr">
+          ${posts.slice(0, 5).map(([slug, d, t, v]) => `<li><a href="/blog/${slug}"><span class="wr__d">${short(d)}</span><span class="wr__t">${t}</span><span class="wr__s">${stat(v)}</span></a></li>`).join('\n          ')}
+        </ul>
+        <p class="out cv__more"><a href="/blog">all ${posts.length} posts →</a></p>
+      </div>`;
 const skills = [['react', '9y'], ['typescript', '8y'], ['aws', '7y'], ['distributed-sys', '6y'], ['ai-development', '2y']];
 cut('<section class="term"', '<section class="sec">', `<section class="term" aria-label="Colin at a glance, as a terminal session">
     <div class="term__bar"><span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="term__name">~/ColinOS</span></div>
@@ -108,6 +128,7 @@ cut('<section class="term"', '<section class="sec">', `<section class="term" ari
         <p class="out" data-wx>Glasgow · 9°C, light rain</p>
         <p class="cmd rest"></p></div>
       </div>
+      ${wrPane}
       <div class="pane pane--ship">
         <p class="pane__head"><span>shipped</span></p>
         ${shipped}
@@ -117,6 +138,10 @@ cut('<section class="term"', '<section class="sec">', `<section class="term" ari
   </section>
 
   `);
+
+{ const a = html.indexOf('<ol class="rows">'), b = html.indexOf('</ol>', a) + 5;
+  html = html.slice(0, a) + '<ol class="rows">\n      ' + posts.map(([slug, d, t, v, l]) => `<li class="row"><span class="row__date">${d}</span><a href="/blog/${slug}"><span class="row__title">${t}</span></a><span class="row__stat">${stat(v)}<small>${l}</small></span></li>`).join('\n      ') + '\n    </ol>' + html.slice(b);
+  html = html.replace('<span class="mono">7 posts · blue got better</span>', `<span class="mono">${posts.length} posts</span>`); }
 
 // the old rotator drove [data-quip]; the new one lives in the round-8 script.
 // The status-bar clock is gone with the bar.
@@ -174,6 +199,27 @@ ${faceCss}
 .hero__copy .who__name,.who__name,.sec h2,.row__title,.post h1,.post h2,.pj__head b,.strip__co{font-family:var(--head)}
 .hero__copy .who__name{letter-spacing:-.05em;font-weight:600}
 .who__name,.row__title,.sec h2{letter-spacing:-.03em}
+
+/* writing (round 18). term: the latest five in the terminal instead of shipped,
+   and no writing section. compact: shipped stays; the section is two columns
+   of title and stat, no panel, no dates */
+.pane--wr{grid-area:right}
+.wr{list-style:none;margin:0;padding:0;display:grid;gap:.15rem}
+.wr a{display:grid;grid-template-columns:3.4rem 1fr auto;gap:1rem;align-items:baseline;padding:.4rem 0;color:var(--t-ink)}
+.wr__d{color:var(--t-faint);font-size:.75rem;white-space:nowrap}
+.wr__t{font-family:var(--sans);font-size:.9375rem;font-weight:500;letter-spacing:-.01em;line-height:1.3}
+.wr a:hover .wr__t{text-decoration:underline;text-underline-offset:.2em}
+.wr__s{white-space:nowrap;text-align:right}
+.wr__s s,.row__stat s{color:var(--t-faint);text-decoration-thickness:1px;margin-right:.4rem}
+.wr__s b{font-weight:500;color:var(--t-ok)}
+.wr__s b.flat{color:var(--t-ink)}
+:root[data-writing="term"] .pane--ship,:root[data-writing="term"] #writing,:root[data-writing="compact"] .pane--wr{display:none}
+:root[data-writing="compact"] #writing .rows{background:transparent;padding:0;display:grid;grid-template-columns:1fr 1fr;column-gap:3rem}
+:root[data-writing="compact"] #writing .row{grid-template-columns:1fr auto;gap:1rem;padding:.7rem 0;border-top:1px solid var(--line-2)}
+:root[data-writing="compact"] #writing .row:nth-child(2){border-top:1px solid var(--line-2)}
+:root[data-writing="compact"] #writing .row__date,:root[data-writing="compact"] #writing .row__stat small{display:none}
+:root[data-writing="compact"] #writing .row__title{font-size:1rem}
+@media(max-width:40rem){.wr a{grid-template-columns:1fr auto}.wr__d{display:none}:root[data-writing="compact"] #writing .rows{grid-template-columns:1fr}}
 
 /* terminal: two panes, whoami / top / weather and shipped */
 .term__panes{grid-template-areas:"who right"}
@@ -246,8 +292,8 @@ ${faceCss}
 html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
-html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={proj:['picker','cards']};");
+html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker">');
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={writing:['term','compact']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel">
+<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-proj="picker">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -427,6 +427,27 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
 .hero__copy .who__name{letter-spacing:-.05em;font-weight:600}
 .who__name,.row__title,.sec h2{letter-spacing:-.03em}
 
+/* writing (round 18). term: the latest five in the terminal instead of shipped,
+   and no writing section. compact: shipped stays; the section is two columns
+   of title and stat, no panel, no dates */
+.pane--wr{grid-area:right}
+.wr{list-style:none;margin:0;padding:0;display:grid;gap:.15rem}
+.wr a{display:grid;grid-template-columns:3.4rem 1fr auto;gap:1rem;align-items:baseline;padding:.4rem 0;color:var(--t-ink)}
+.wr__d{color:var(--t-faint);font-size:.75rem;white-space:nowrap}
+.wr__t{font-family:var(--sans);font-size:.9375rem;font-weight:500;letter-spacing:-.01em;line-height:1.3}
+.wr a:hover .wr__t{text-decoration:underline;text-underline-offset:.2em}
+.wr__s{white-space:nowrap;text-align:right}
+.wr__s s,.row__stat s{color:var(--t-faint);text-decoration-thickness:1px;margin-right:.4rem}
+.wr__s b{font-weight:500;color:var(--t-ok)}
+.wr__s b.flat{color:var(--t-ink)}
+:root[data-writing="term"] .pane--ship,:root[data-writing="term"] #writing,:root[data-writing="compact"] .pane--wr{display:none}
+:root[data-writing="compact"] #writing .rows{background:transparent;padding:0;display:grid;grid-template-columns:1fr 1fr;column-gap:3rem}
+:root[data-writing="compact"] #writing .row{grid-template-columns:1fr auto;gap:1rem;padding:.7rem 0;border-top:1px solid var(--line-2)}
+:root[data-writing="compact"] #writing .row:nth-child(2){border-top:1px solid var(--line-2)}
+:root[data-writing="compact"] #writing .row__date,:root[data-writing="compact"] #writing .row__stat small{display:none}
+:root[data-writing="compact"] #writing .row__title{font-size:1rem}
+@media(max-width:40rem){.wr a{grid-template-columns:1fr auto}.wr__d{display:none}:root[data-writing="compact"] #writing .rows{grid-template-columns:1fr}}
+
 /* terminal: two panes, whoami / top / weather and shipped */
 .term__panes{grid-template-areas:"who right"}
 .pane--ship,.pane--now{grid-area:right}
@@ -545,6 +566,17 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
         <p class="out" data-wx>Glasgow · 9°C, light rain</p>
         <p class="cmd rest"></p></div>
       </div>
+      <div class="pane pane--wr">
+        <p class="cmd">ls -t ~/writing</p>
+        <ul class="wr">
+          <li><a href="/blog/jest-to-vitest"><span class="wr__d">Oct 29</span><span class="wr__t">Migrating from Jest to Vitest made tests 18× quicker, but it's not what you think</span><span class="wr__s"><s>428 s</s><b>23 s</b></span></a></li>
+          <li><a href="/blog/dissertation-revival-jev"><span class="wr__d">Oct 27</span><span class="wr__t">Part 3: How Jev performs on Aliens</span><span class="wr__s"><b class="flat">82% vs 80%</b></span></a></li>
+          <li><a href="/blog/dissertation-revival-beating-2018"><span class="wr__d">Oct 25</span><span class="wr__t">Part 2: Beating my 2018 dissertation AI</span><span class="wr__s"><s>73%</s><b>99%</b></span></a></li>
+          <li><a href="/blog/dissertation-revival-speed"><span class="wr__d">Oct 20</span><span class="wr__t">Part 1: How Claude made my 2018 RL training 65x faster</span><span class="wr__s"><s>12 h</s><b>11 min</b></span></a></li>
+          <li><a href="/blog/private-ci-in-firecracker-microvms"><span class="wr__d">Oct 16</span><span class="wr__t">CI Faster Than GitHub's, for Free</span><span class="wr__s"><s>26 s</s><b>20 s</b></span></a></li>
+        </ul>
+        <p class="out cv__more"><a href="/blog">all 8 posts →</a></p>
+      </div>
       <div class="pane pane--ship">
         <p class="pane__head"><span>shipped</span></p>
         <ul class="ship">
@@ -574,15 +606,16 @@ footer .in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;pa
   </section>
 
   <section class="sec" id="writing">
-    <div class="sec__head"><h2>Writing</h2><span class="mono">7 posts · blue got better</span></div>
+    <div class="sec__head"><h2>Writing</h2><span class="mono">8 posts</span></div>
     <ol class="rows">
-      <li class="row"><span class="row__date">Oct 26 2026</span><a href="#post"><span class="row__title">Part 3: How Jev performs on Aliens</span></a><span class="row__stat"><b class="flat">82% vs 80%</b><small>win rate, holding shoot vs Jev</small></span></li>
-      <li class="row"><span class="row__date">Oct 25 2026</span><a href="#"><span class="row__title">Beating my 2018 dissertation AI</span></a><span class="row__stat"><s>73%</s><b>99%</b><small>win rate, 2018 vs 2026</small></span></li>
-      <li class="row"><span class="row__date">Oct 20 2026</span><a href="#"><span class="row__title">How Claude made my 2018 RL training 65x faster</span></a><span class="row__stat"><s>12 h</s><b>11 min</b><small>per training run</small></span></li>
-      <li class="row"><span class="row__date">Oct 16 2026</span><a href="#"><span class="row__title">CI Faster Than GitHub's, for Free</span></a><span class="row__stat"><s>26 s</s><b>20 s</b><small>vs GitHub</small></span></li>
-      <li class="row"><span class="row__date">Aug 24 2026</span><a href="#"><span class="row__title">I Sued easyJet and Won</span></a><span class="row__stat"><s>£127</s><b>£826.61</b><small>one hearing</small></span></li>
-      <li class="row"><span class="row__date">Sep 03 2025</span><a href="#"><span class="row__title">A Story about Parquet</span></a><span class="row__stat"><s>4.5 GB</s><b>221 MB</b><small>95% smaller</small></span></li>
-      <li class="row"><span class="row__date">Apr 03 2025</span><a href="#"><span class="row__title">Slash Your ts-jest Test Times</span></a><span class="row__stat"><b>−10 min</b><small>off CI</small></span></li>
+      <li class="row"><span class="row__date">Oct 29 2026</span><a href="/blog/jest-to-vitest"><span class="row__title">Migrating from Jest to Vitest made tests 18× quicker, but it's not what you think</span></a><span class="row__stat"><s>428 s</s><b>23 s</b><small>1,370 simulations</small></span></li>
+      <li class="row"><span class="row__date">Oct 27 2026</span><a href="/blog/dissertation-revival-jev"><span class="row__title">Part 3: How Jev performs on Aliens</span></a><span class="row__stat"><b class="flat">82% vs 80%</b><small>win rate, holding shoot vs Jev</small></span></li>
+      <li class="row"><span class="row__date">Oct 25 2026</span><a href="/blog/dissertation-revival-beating-2018"><span class="row__title">Part 2: Beating my 2018 dissertation AI</span></a><span class="row__stat"><s>73%</s><b>99%</b><small>win rate, 2018 vs 2026</small></span></li>
+      <li class="row"><span class="row__date">Oct 20 2026</span><a href="/blog/dissertation-revival-speed"><span class="row__title">Part 1: How Claude made my 2018 RL training 65x faster</span></a><span class="row__stat"><s>12 h</s><b>11 min</b><small>per training run</small></span></li>
+      <li class="row"><span class="row__date">Oct 16 2026</span><a href="/blog/private-ci-in-firecracker-microvms"><span class="row__title">CI Faster Than GitHub's, for Free</span></a><span class="row__stat"><s>26 s</s><b>20 s</b><small>vs GitHub</small></span></li>
+      <li class="row"><span class="row__date">Aug 24 2026</span><a href="/blog/i-sued-easyjet-and-won"><span class="row__title">I Sued easyJet and Won</span></a><span class="row__stat"><s>£127</s><b>£826.61</b><small>one hearing</small></span></li>
+      <li class="row"><span class="row__date">Sep 03 2025</span><a href="/blog/jsonl-to-parquet-compression"><span class="row__title">JSONL is a waste of space</span></a><span class="row__stat"><s>4.5 GB</s><b>221 MB</b><small>95% smaller</small></span></li>
+      <li class="row"><span class="row__date">Apr 03 2025</span><a href="/blog/saving-time-in-ts-jest"><span class="row__title">Slash Your ts-jest Test Times</span></a><span class="row__stat"><b>−10 min</b><small>off CI</small></span></li>
     </ol>
   </section>
 
@@ -686,7 +719,7 @@ const quips=["<span class=\"q-ctr\" data-flip=\"7,0\">0</span> days since the la
 
 <script>
 (()=>{const r=document.documentElement,q=new URLSearchParams(location.search);
-const opts={proj:['picker','cards']};
+const opts={writing:['term','compact']};
 const get=(n)=>q.get(n)||(()=>{try{return localStorage.getItem('v8-'+n)}catch{}})()||opts[n][0];
 const set=(n,v)=>{r.dataset[n]=v;try{localStorage.setItem('v8-'+n,v)}catch{}};
 for(const n in opts)set(n,get(n));

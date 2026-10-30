@@ -19,6 +19,7 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 14: commands only, across the width or in one column (dropped) | `comps/shoot14.mts` |
 | Round 15–16: the CV in the terminal's right pane, as a timeline or a list (dropped) | `comps/shoot15.mts` |
 | Round 17: the terminal, locked | `comps/shoot17.mts` |
+| Round 18: writing in the terminal, or a compact section | live page, `writing` switch; `comps/shoot18.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -33,15 +34,15 @@ Run the comps: `node comps/serve.mts` (`PORT=4391` to pick another port) then op
 - **Terminal** (rounds 11–16): title `~/ColinOS`, no tmux bar. Left: `whoami` (Colin Cheung 張志權, nothing else), `top -u colin` with one time column in ink, `weather` (live from open-meteo), the cursor. Right pane: shipped, bars without labels (grey above is before, blue below is after), the Parquet item marked EDF Energy with its title linking to the post, and "the full cv →" under it. The worked-at strip stays below. Locked 30 Oct 2026.
 - **His switch picks**: corners 8px, depth flat (no borders or shadows on panels; surfaces by tone), density airy, list as a white panel. The terminal follows the theme (white window on the light page).
 - **Layout**: name, role and links left; the one-liners right, as a **reel**: the current one, the next one faint underneath, no previous line. One every 5 s, hover pauses, click skips, a thin bar shows the time left (round 8–9). The terminal below with a real gap; worked-at strip, writing list, projects.
-- **The figures**, in the diagram style he liked (HTML boxes with one padding rule, edges drawn between boxes from the DOM, slow traffic on the edges, numbers that count up then tick, a cloud shape for "the internet"), left the hero and joined their projects: training → dissertation, radar → flight-tracker, homelab → home-lab, delivery → colincheung.dev, a real Anki card → anki-chinese. Weather and factory are cut. Picker (list left, one figure right) or cards is not decided yet; picker keeps one accent per glance.
+- **The figures**, in the diagram style he liked (HTML boxes with one padding rule, edges drawn between boxes from the DOM, slow traffic on the edges, numbers that count up then tick, a cloud shape for "the internet"), left the hero and joined their projects: training → dissertation, radar → flight-tracker, homelab → home-lab, delivery → colincheung.dev, a real Anki card → anki-chinese. Weather and factory are cut. Projects is the **picker** (list left, one figure right; locked 30 Oct 2026).
 - **The one-liners** (18 of them, with inline drawings, flip counter and odometer) stay.
 
-**Locked (30 Oct 2026):** `hero-line.html` now has only the open choice as a switch (`proj`); the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
+**Locked (30 Oct 2026):** `hero-line.html` now has only the open choice as a switch (`writing`); the reel, Sora, the pairing and the clean terminal are fixed in it. Rounds 8–11 pages keep the screenshots of what was compared.
 
 ## What he said needs refinement (not done)
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
-- Projects: picker or cards (see above).
+- Writing (round 18, `writing` switch; he finds the section "too big and not that cool"): `term`, the latest five posts in the terminal's right pane in place of shipped (`ls -t ~/writing`, date, title, stat; "all 8 posts →"), and no writing section; or `compact`, shipped stays and the section becomes two columns of title and stat, no panel or dates. Posts come from each post's frontmatter.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go

@@ -31,6 +31,8 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | A location line under `whoami` | `whoami` returns the two names only (Oct 2026). |
 | A commands-only terminal (one column, or laid across) | Plain (Oct 2026). |
 | The CV in the terminal's right pane, as a rotating timeline or a list | Shipped is better; it links to the CV instead (Oct 2026). |
+| Projects as a grid of cards, each with its figure | Picker chosen: one figure at a time (Oct 2026). |
+| The writing list as a big white panel of rows with dates | "Too big and not that cool" (Oct 2026). |
 | Two time columns in `top` (since and age) plus blue on every age | One column, in ink (Oct 2026). |
 | A before/after label on every shipped bar, or a legend | Grey above, blue below is obvious enough (Oct 2026). |
 
