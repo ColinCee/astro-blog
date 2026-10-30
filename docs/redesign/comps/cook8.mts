@@ -96,17 +96,17 @@ cut('<section class="term"', '<section class="sec">', `<section class="term" ari
     <div class="term__bar"><span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="term__name">~/ColinOS</span></div>
     <div class="term__panes">
       <div class="pane pane--who">
-        <p class="cmd">whoami</p>
+        <div class="blk blk--who"><p class="cmd">whoami</p>
         <p class="who__name">Colin Cheung <span class="cjk" lang="zh-Hant">張志權</span></p>
-        <p class="out who__sub">Glasgow, UK · open to remote</p>
-        <p class="cmd">top -u colin</p>
+        <p class="out who__sub">Glasgow, UK · open to remote</p></div>
+        <div class="blk blk--top"><p class="cmd">top -u colin</p>
         <div class="mon"><span class="h">COMMAND</span><span class="h">TIME+</span>
           ${skills.map(([k, t]) => `<span class="pname">${k}</span><span class="ptime">${t}</span>`).join('\n          ')}
-        </div>
-        <div class="v-rich"><p class="cmd">cat now.md</p><p class="out">Tech lead @ EDF Energy, leading AI adoption across the team.</p></div>
-        <p class="cmd">weather</p>
+        </div></div>
+        <div class="blk blk--now v-rich"><p class="cmd">cat now.md</p><p class="out">Tech lead @ EDF Energy, leading AI adoption across the team.</p></div>
+        <div class="blk blk--wx"><p class="cmd">weather</p>
         <p class="out" data-wx>Glasgow · 9°C, light rain</p>
-        <p class="cmd rest"></p>
+        <p class="cmd rest"></p></div>
       </div>
       <div class="pane pane--ship v-ship">
         <p class="pane__head"><span>shipped</span></p>
@@ -186,12 +186,20 @@ ${faceCss}
 .term__panes{grid-template-areas:"who right"}
 .pane--ship,.pane--now{grid-area:right}
 :root:not([data-term="shipped"]) .v-ship,:root:not([data-term="now"]) .v-now{display:none}
-:root:not([data-term="shipped"]) .v-rich{display:none}
+:root[data-term="now"] .v-rich,:root[data-term="both"] .v-rich{display:none}
 :root[data-term="both"] .v-ship,:root[data-term="both"] .v-now{display:block}
 :root[data-term="both"] .term__panes{grid-template-areas:"who ship" "who now"}
 :root[data-term="both"] .pane--ship{grid-area:ship}:root[data-term="both"] .pane--now{grid-area:now}
 .mon{grid-template-columns:1fr 4rem}
-.v-rich .cmd{margin-top:1rem}
+.blk + .blk{margin-top:1rem}
+/* commands only (round 14): no side pane. solo: one column. row: the same
+   blocks across the width, whoami and now.md / top / weather and the cursor */
+:root[data-term="solo"] .pane--ship,:root[data-term="solo"] .pane--now,:root[data-term="row"] .pane--ship,:root[data-term="row"] .pane--now{display:none}
+:root[data-term="solo"] .term__panes,:root[data-term="row"] .term__panes{grid-template-columns:1fr;grid-template-areas:"who"}
+:root[data-term="row"] .pane--who{display:grid;grid-template-columns:1.3fr 1fr 1fr;grid-template-areas:"who top wx" "now top wx";gap:1rem 3rem;align-content:start}
+:root[data-term="row"] .blk + .blk{margin-top:0}
+:root[data-term="row"] .blk--who{grid-area:who}:root[data-term="row"] .blk--top{grid-area:top}:root[data-term="row"] .blk--now{grid-area:now}:root[data-term="row"] .blk--wx{grid-area:wx}
+@media(max-width:56rem){:root[data-term="row"] .pane--who{grid-template-columns:1fr;grid-template-areas:"who" "now" "top" "wx"}}
 .mon .ptime{color:var(--t-ink)}
 /* shipped bars: no labels, grey above is before, blue below is after */
 .ship__bar{grid-template-columns:1fr 5.5rem}
@@ -260,7 +268,7 @@ html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
 html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel">');
-html = html.replace(/const opts=\{[^}]*\};/, "const opts={term:['shipped','now','both'],proj:['picker','cards']};");
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={term:['row','solo','shipped','now','both'],proj:['picker','cards']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 

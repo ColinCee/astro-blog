@@ -16,6 +16,7 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 11: the terminal cleaned up | `comps/shoot11.mts` |
 | Round 12: shipped bars with a label on each bar, one legend, or nothing (none won) | `comps/shoot12.mts` |
 | Round 13: whoami and weather back; the right pane as shipped, now list or both | live page, `term` switch; `comps/shoot13.mts` |
+| Round 14: commands only, across the width or in one column | live page, `term` switch; `comps/shoot14.mts` |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do | `research/polish-research.md`, `research/palette-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -39,7 +40,7 @@ Run the comps: `node comps/serve.mts` (`PORT=4391` to pick another port) then op
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
 - Projects: picker or cards (see above).
-- Terminal right side: shipped, now list, or both (round 13). The now list's Anki card should pick by date when built.
+- Terminal: commands only, laid across the width (`row`, round 14: whoami and now.md / top / weather and the cursor; the whole first screen is hero plus terminal), commands in one column (`solo`), or with a side pane (shipped, now list, both; round 13). Without the side pane the shipped bars leave the home page; the post results stay in the Writing list. The now list's Anki card should pick by date when built.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go
