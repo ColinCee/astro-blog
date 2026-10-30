@@ -44,6 +44,13 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | Industry icons before the worked-at names | Dropped (Oct 2026). |
 | The worked-at year under the name | Beside it, so each name is one line (Oct 2026). |
 | Blue years, or no blue, in the worked-at strip | Blue slashes chosen (Oct 2026). |
+
+## Figures
+
+| Idea | Why it was dropped |
+|---|---|
+| Radar planes as dots bouncing at random | Not believable; arrows on real approach and departure patterns instead (Oct 2026). |
+| A cloud made of CSS-masked circles with an outline | "Doesn't look much like a cloud"; an SVG cloud filled by tone instead (Oct 2026). |
 | Two time columns in `top` (since and age) plus blue on every age | One column, in ink (Oct 2026). |
 | A before/after label on every shipped bar, or a legend | Grey above, blue below is obvious enough (Oct 2026). |
 
