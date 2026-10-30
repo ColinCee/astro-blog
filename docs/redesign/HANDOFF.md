@@ -33,6 +33,7 @@ State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on.
 | Round 29: red joins status; accent candidates (teal and magenta dropped after research, four left); controls at 6px; amber dot darkened to 3.4:1 | `comps/round29.html`, live page `accent` switch, `system.html` swatches; `comps/shoot29.mts` |
 | Round 30: warm accents (tomato, orange) with the status dots folded into the accent | `comps/shoot30.mts` |
 | Round 31–32: violet locked; dark by default, soft light as the toggle | `comps/shoot31.mts` |
+| Round 33: real posts in the new system (the site's tokens remapped by `comps/post-reskin.css` over the dev server), and a Posts section in `system.html`: layout, header, figure anatomy, chart palette, the kit, blocks | `comps/shoot33.mts` (needs `blog-dev` on 4331) |
 | Stat-line variants, the earlier right-side objects | `comps/stats.html`, `comps/hero-right.html` |
 | Research: what polished tool sites and craft portfolios do; status colours, accent hues and control corners in eight design systems | `research/polish-research.md`, `research/palette-research.md`, `research/status-accent-research.md` |
 | Every idea tried and dropped, one line each | `../design-rejected.md` (read it before proposing anything) |
@@ -64,6 +65,7 @@ Run the comps: `node comps/serve.mts` (port 4390, or `PORT=4391`) and open `/ind
 
 - Footers: most figures have a mono footer line; "sometimes no text is better". Drop footers that only restate the figure.
 - Projects list (round 28): no repo count; subtitles cut to a few words ("game AI, 2018 and 2026", "London airspace, live", "one mini-PC, five stacks", "my Mandarin deck", "this site"). The list is plain and locked: no backgrounds, flush with the heading, the open project in ink with a blue slash hanging in the margin, the rest grey, each with its short subtitle.
+- Posts (round 33): two open points. `Pts` in the dissertation posts uses orange for "the post's subject" and green / red for a real gain / drop; in the new system the subject is the accent (violet) and gain / drop are the status green and red. Expressive Code's code theme (`github-light` / `github-dark`) and its red tab marker are a build setting; pick a theme that sits with violet when building.
 - The page-delivery figure's numbers (build time, bytes on the wire, edge count) can come from the build.
 
 ## Building it into the site, when he says go
@@ -72,6 +74,7 @@ Run the comps: `node comps/serve.mts` (port 4390, or `PORT=4391`) and open `/ind
 2. `src/components/site/Head.astro`: load Geist and Geist Mono instead of Bricolage and JetBrains.
 3. A theme toggle in `Nav.astro` writing `data-theme` on `<html>` and localStorage; dark by default, set in the HTML so there is no flash.
 4. `Hero.astro`: the two-column hero; keep the one-liner script and drawings as they are; port the figures from `hero-figures.html` as small components reading `src/data/*.json` (shipped, homelab-stacks, skills, anki-cards). The edge-drawing and number-ticking script is ~40 lines; keep it one script.
+4b. Posts: `comps/post-reskin.css` is the token remap and post rules, rehearsed; move its values into `tokens.css` (with the dark-default switch replacing `prefers-color-scheme`) and its rules into `prose.css`, `Post.astro` and `fig.css`. `Post.astro` splits `stat` on "→" into the struck old value and the accent new value.
 5. `Terminal.astro` and panes: drop the always-dark palette; use the page tokens; 8px corners; flat.
 6. Writing list: stat variant B (old value struck in grey, new value in the accent; plain comparisons stay ink).
 7. Rewrite `DESIGN.md` from `system.html`, and update `AGENTS.md`: the "One tomato per glance" rule and DESIGN.md's Metric Is The Accent Rule go stale.
