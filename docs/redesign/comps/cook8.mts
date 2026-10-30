@@ -99,40 +99,16 @@ for (const [a, b] of [
   ['<p class="cmd">ls ~/contact</p>', '<p class="cmd x">ls ~/contact</p>'],
   ['<div class="who__links">', '<div class="who__links x">'],
   ['<span class="term__name">~/ColinOS - tmux</span>', '<span class="term__name">~/ColinOS<span class="x"> - tmux</span></span>'],
-  ['<span>shipped</span><span>before → after</span>', '<span>shipped</span><span class="x">before → after</span>'],
+  ['<span>shipped</span><span>before → after</span>', '<span>shipped</span><span class="x">before → after</span><span class="ship__legend" aria-hidden="true"><i></i>before<i class="hot"></i>after</span>'],
 ]) { if (!html.includes(a)) throw new Error('terminal marker: ' + a); html = html.replace(a, b); }
 
 // the old rotator drove [data-quip]; the new one lives in the round-8 script
 cut('const q=document.querySelector', 'const c=document.querySelector', '');
 
-const faces = [
-  // Sora 200 is his pick (Oct 2026); the rest stay to compare
-  ['sora', '"Sora"', 200, 400, '-.03em', 1, 'family=Sora:wght@200..600'],
-  ['geist-mono', '"Geist Mono"', 300, 500, '-.02em', 1, 'family=Geist+Mono:wght@300;400;500'],
-  ['geist', '"Geist"', 300, 500, '-.025em', 1.08, 'family=Geist:wght@300;400;500;600'],
-  ['inter', '"Inter"', 400, 500, '-.02em', 1.06, 'family=Inter:wght@300;400;500'],
-  ['instrument-sans', '"Instrument Sans"', 400, 500, '-.02em', 1.08, 'family=Instrument+Sans:wght@400;500'],
-  ['plex-mono', '"IBM Plex Mono"', 300, 500, '-.015em', 1, 'family=IBM+Plex+Mono:wght@300;400;500'],
-  ['jetbrains-mono', '"JetBrains Mono"', 300, 500, '-.02em', 1, 'family=JetBrains+Mono:wght@300;400;500'],
-  ['dm-mono', '"DM Mono"', 300, 500, '-.02em', 1, 'family=DM+Mono:wght@300;400;500'],
-  ['fragment-mono', '"Fragment Mono"', 400, 400, '-.02em', 1, 'family=Fragment+Mono'],
-  ['instrument-serif', '"Instrument Serif"', 400, 400, '-.01em', 1.35, 'family=Instrument+Serif:ital@0;1'],
-  // round 9b: thinner faces with more character
-  ['geist-200', '"Geist"', 200, 400, '-.025em', 1.1, 'family=Geist'],
-  ['manrope', '"Manrope"', 200, 500, '-.02em', 1.06, 'family=Manrope:wght@200..500'],
-  ['outfit', '"Outfit"', 200, 400, '-.015em', 1.1, 'family=Outfit:wght@200..500'],
-  ['space-grotesk', '"Space Grotesk"', 300, 500, '-.02em', 1.06, 'family=Space+Grotesk:wght@300..500'],
-  ['mona-wide', '"Mona Sans"', 200, 400, '-.01em', .94, 'family=Mona+Sans:wdth,wght@125,200;125,400'],
-  ['unbounded', '"Unbounded"', 200, 400, '-.02em', .86, 'family=Unbounded:wght@200..500'],
-  ['fraunces', '"Fraunces"', 200, 400, '-.015em', 1.12, 'family=Fraunces:ital,opsz,wght@0,9..144,200..500;1,9..144,200..500'],
-  ['newsreader', '"Newsreader"', 200, 400, '-.015em', 1.18, 'family=Newsreader:ital,opsz,wght@0,6..72,200..500;1,6..72,200..500'],
-  ['martian-mono', '"Martian Mono"', 200, 400, '-.03em', .82, 'family=Martian+Mono:wdth,wght@75..112.5,200..500'],
-  ['azeret-mono', '"Azeret Mono"', 200, 400, '-.03em', .94, 'family=Azeret+Mono:wght@200..500'],
-] as const;
-const faceCss = faces.map(([k, f, w, b, t, z], n) => `${n === 0 ? ':root,' : ''}:root[data-face="${k}"]{--q-font:${f},var(--mono);--q-w:${w};--q-b:${b};--q-track:${t};--q-size:${z}}`).join('\n')
-  + '\n:root[data-face="instrument-serif"] .ql b,:root[data-face="fraunces"] .ql b,:root[data-face="newsreader"] .ql b{font-style:italic}'
-  + '\n:root[data-face="mona-wide"] .ql__line,:root[data-face="mona-wide"] .ql__reel li{font-stretch:125%}';
-html = html.replace(/<link href="https:\/\/fonts.googleapis.com\/css2[^"]*"/, (m) => m.replace('&display=swap', '&' + faces.map((f) => f[6]).filter((g) => !g.startsWith('family=Geist')).join('&') + '&display=swap').replace('Geist+Mono:wght@400;500', 'Geist+Mono:wght@300;400;500').replace('Geist:wght@400', 'Geist:wght@200;300;400'));
+// Locked 30 Oct 2026: one-liners in Sora 200 (punchline 400), name and headings in
+// Sora 600, body in Geist, mono in DM Mono. Rounds 9-10 compared the others.
+const faceCss = ':root{--q-font:"Sora",var(--sans);--q-w:200;--q-b:400;--q-track:-.03em;--q-size:1}';
+html = html.replace(/<link href="https:\/\/fonts.googleapis.com\/css2[^"]*"/, '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Sora:wght@200..600&family=DM+Mono:wght@300;400;500&display=swap"');
 const css = `
 /* ---------- round 8 ---------- */
 .hero{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);min-height:24rem}
@@ -175,16 +151,11 @@ ${faceCss}
 .ql__reel li.gone{opacity:0;transition-duration:.35s}
 :root[data-hero="reel"] .ql__bar{max-width:12rem}
 
-/* pairings: what the rest of the page uses next to the Sora one-liners */
-:root{--head:var(--sans)}
+/* type: Sora for the name and headings, DM Mono for everything mono */
+:root{--mono:"DM Mono",ui-monospace,monospace;--head:"Sora",var(--sans)}
 .hero__copy .who__name,.who__name,.sec h2,.row__title,.post h1,.post h2,.pj__head b,.strip__co{font-family:var(--head)}
-:root[data-pair="dm-mono"],:root[data-pair="sora-dm-mono"]{--mono:"DM Mono",ui-monospace,monospace}
-:root[data-pair="azeret"],:root[data-pair="sora-azeret"]{--mono:"Azeret Mono",ui-monospace,monospace}
-:root[data-pair="martian"],:root[data-pair="sora-martian"]{--mono:"Martian Mono",ui-monospace,monospace}
-:root[data-pair^="martian"] *,:root[data-pair="sora-martian"] *{font-stretch:87.5%}
-:root[data-pair^="sora"]{--head:"Sora",var(--sans)}
-:root[data-pair^="sora"] .hero__copy .who__name{letter-spacing:-.05em;font-weight:600}
-:root[data-pair^="sora"] .who__name,:root[data-pair^="sora"] .row__title,:root[data-pair^="sora"] .sec h2{letter-spacing:-.03em}
+.hero__copy .who__name{letter-spacing:-.05em;font-weight:600}
+.who__name,.row__title,.sec h2{letter-spacing:-.03em}
 
 /* terminal, clean: no login line, no whoami (the hero says it), no weather,
    no contact (the hero has the icons), no writing pane (the list is below),
@@ -195,6 +166,15 @@ ${faceCss}
 :root[data-term="clean"] .mon{grid-template-columns:1fr 4rem}
 :root[data-term="clean"] .mon .ptime{color:var(--t-ink)}
 @media(max-width:56rem){:root[data-term="clean"] .term__panes{grid-template-areas:"who" "ship"}}
+
+/* shipped bars: a label on every bar, one legend in the pane head, or nothing */
+.ship__legend{display:none;align-items:center;gap:.4rem}
+.ship__legend i{width:.9rem;height:.4rem;border-radius:2px;background:var(--n8)}
+.ship__legend i.hot{background:var(--t-ok);margin-left:.5rem}
+:root[data-ship="legend"] .ship__legend{display:inline-flex}
+:root:not([data-ship="labels"]) .ship__bar{grid-template-columns:1fr 5.5rem}
+:root:not([data-ship="labels"]) .ship__bar > span:first-child{display:none}
+:root:not([data-ship="labels"]) .ship__bar--after{margin-top:.2rem}
 
 /* projects: each figure joins its project */
 .pj{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
@@ -249,8 +229,8 @@ ${faceCss}
 html = html.replace('</style>', css + '</style>');
 
 // switches: only this round's choices; his earlier picks are fixed
-html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel">');
-html = html.replace(/const opts=\{[^}]*\};/, `const opts={hero:['reel','bare','panel'],face:[${faces.map((f) => "'" + f[0] + "'").join(',')}],proj:['picker','cards'],pair:['sora-dm-mono','geist','dm-mono','azeret','martian','sora-azeret','sora-martian'],term:['clean','full']};`);
+html = html.replace('<html lang="en">', '<html lang="en" data-corners="mid" data-depth="flat" data-density="airy" data-name="medium" data-list="panel" data-hero="reel" data-term="clean">');
+html = html.replace(/const opts=\{[^}]*\};/, "const opts={proj:['picker','cards'],ship:['labels','legend','none']};");
 html = html.replaceAll("'v3-'", "'v8-'");
 html = html.replace('<title>Figures · more of them</title>', '<title>One-liner right</title>');
 
