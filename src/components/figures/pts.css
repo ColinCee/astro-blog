@@ -108,7 +108,7 @@
 }
 /* The post's subject is named in the accent too, so the chart needs no colour key. */
 .prose .pts__r--hi .pts__k b {
-  font-weight: 700;
+  font-weight: 500;
   color: var(--accent-text);
 }
 /* My 2018 version, the baseline: striped, the same in every chart. */
@@ -237,5 +237,11 @@
   }
   .prose .pts__axis span {
     font-size: 0.6875rem;
+  }
+  /* The bar column is too narrow for five ticks: 75 and a right-aligned
+     100 ran together. Keep 0, 50 and 100. */
+  .prose .pts__axis span:nth-child(2),
+  .prose .pts__axis span:nth-child(4) {
+    display: none;
   }
 }

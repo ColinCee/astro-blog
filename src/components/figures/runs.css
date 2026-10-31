@@ -23,13 +23,13 @@
 .prose .runs i {
   flex: 0 1 auto;
   min-width: 1px;
-  background: var(--muted);
+  background: var(--bar);
   border-radius: 2px;
 }
 .prose .runs b {
   color: var(--ink);
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 500;
   text-align: right;
   white-space: nowrap;
 }
@@ -37,7 +37,7 @@
   background: var(--accent);
 }
 .prose .runs--hi b {
-  color: var(--accent-soft);
+  color: var(--accent-text);
 }
 .prose .runs--axis > div {
   height: auto;

@@ -21,17 +21,18 @@ const blog = defineCollection({
 // back sorted by id, so each entry carries its place on the page as `order`.
 const order = z.number().int();
 
-// Side projects, one tile each. The id is the project's name and its
-// ~/projects/ path; `repo` is where it really lives, shown on hover.
+// Side projects, one entry in the homepage's picker each. The id is the
+// project's name; `repo` is where it lives, linked under its figure.
 const projects = defineCollection({
   loader: file("src/data/projects.json"),
   schema: z.object({
     order,
     repo: z.string(),
     href: z.url(),
+    // The short line under the name in the homepage list
     desc: z.string(),
-    // Spans two columns.
-    wide: z.boolean().optional(),
+    // The caption over the project's figure
+    caption: z.string(),
   }),
 });
 
@@ -39,23 +40,6 @@ const projects = defineCollection({
 const companies = defineCollection({
   loader: file("src/data/companies.json"),
   schema: z.object({ order, name: z.string(), year: z.string() }),
-});
-
-// The terminal's shipped pane, newest first. `before` and `after` are the
-// labels; `scale` holds the two numbers the bars are drawn from (after ÷
-// before), in any one unit.
-const shipped = defineCollection({
-  loader: file("src/data/shipped.json"),
-  schema: z.object({
-    order,
-    what: z.string(),
-    where: z.string(),
-    when: z.string(),
-    href: z.string(),
-    before: z.string(),
-    after: z.string(),
-    scale: z.object({ before: z.number().positive(), after: z.number() }),
-  }),
 });
 
 // The whoami pane's `top`: each skill and the year I started using it.
@@ -74,7 +58,6 @@ export const collections = {
   blog,
   projects,
   companies,
-  shipped,
   skills,
   homelabStacks,
 };

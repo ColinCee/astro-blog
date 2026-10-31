@@ -2,7 +2,7 @@
 // Bars drawn to scale, one row each: a label, the bar and its value. Each bar
 // is its value as a fraction of the largest (or of `max`); the `after` row is
 // the result and takes the accent. A row with `from` is a step that runs from
-// `from` to `value`, drawn muted (a waterfall). `ref` draws a dashed line at
+// `from` to `value`, drawn a grey step lighter than the bars (a waterfall). `ref` draws a dashed line at
 // that value across every bar. `cols` sets the label and value column widths.
 // Styles: cmp.css.
 interface Row {
@@ -30,7 +30,7 @@ const grid = cols
 const bar = (r: Row) =>
   r.from === undefined
     ? `--w:${frac(r.value)}`
-    : `--w:${frac(Math.abs(r.value - r.from))};margin-left:${((Math.min(r.value, r.from) / max) * 100).toFixed(1)}%;background:var(--muted)`;
+    : `--w:${frac(Math.abs(r.value - r.from))};margin-left:${((Math.min(r.value, r.from) / max) * 100).toFixed(1)}%;background:var(--n8)`;
 ---
 
 {ref === undefined ? (

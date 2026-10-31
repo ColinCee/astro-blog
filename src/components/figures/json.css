@@ -15,19 +15,12 @@
   min-width: 0;
   padding-left: calc(var(--d) * 2ch);
 }
-/* Colours as the site's code blocks (Expressive Code's github-light and
-   github-dark): keys and numbers blue, strings dark or pale blue. */
+/* Colours as the site's code blocks (src/styles/code-theme.ts): keys in
+   ink, strings a step quieter, punctuation faint. */
 .prose .json {
-  --j-key: #005cc5;
-  --j-str: #032f62;
-  --j-punct: #24292e;
-}
-@media (prefers-color-scheme: dark) {
-  .prose .json {
-    --j-key: #79b8ff;
-    --j-str: #9ecbff;
-    --j-punct: #e1e4e8;
-  }
+  --j-key: var(--ink);
+  --j-str: var(--muted);
+  --j-punct: var(--faint);
 }
 /* Flex rows: the markup's line breaks between spans don't render as spaces. */
 .prose .json__l > span,

@@ -1,54 +1,71 @@
 ---
-// The terminal's writing pane: the three newest posts by title, then a link
-// to all of them. Read from the blog collection, so a new post shows here.
-// The lines print one after another as the list scrolls into view.
+// The terminal's writing pane: the five newest posts as `ls -t ~/writing`,
+// each with its date and headline result, then a link to all of them. Read
+// from the blog collection, so a new post shows here; the lines print one
+// after another as the pane scrolls into view.
 import { getCollection } from "astro:content";
 import Pane from "./Pane.astro";
 
-const latest = (await getCollection("blog"))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3);
-const posts: { title: string; date: string; href: string; all?: boolean }[] = [
-  ...latest.map((p) => ({
+const all = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+// A result that got better ("428 s → 23 s") shows the old value in grey and the
+// new one in the accent; a plain comparison or a single figure stays as it is.
+const posts = all.slice(0, 5).map((p) => {
+  const [before, after] = (p.data.stat ?? "").split("→").map((s) => s.trim());
+  return {
     title: p.data.title,
-    date: p.data.pubDate.toLocaleDateString("en-US", {
-      month: "short",
-      year: "numeric",
-    }),
     href: `/blog/${p.id}/`,
-  })),
-  { title: "All posts", date: "", href: "/blog/", all: true },
-];
+    date: p.data.pubDate.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+    }),
+    before: after ? before : undefined,
+    after: after ?? before,
+    flat: !after && (p.data.stat ?? "").includes(" vs "),
+  };
+});
 ---
 
-<Pane idx={2} name="writing" area="writing">
-  <ul class="posts" data-scroll-in>
+<Pane name="writing" area="writing">
+  <p class="wr__cmd"><span class="wr__prompt">$</span> ls -t ~/writing</p>
+  <ul class="wr" data-scroll-in>
     {posts.map((p, i) => (
       <li style={`--i: ${i}`}>
-        <a class:list={["post", { "post--all": p.all }]} href={p.href}>
-          <span class="post__title">{p.title}</span>
-          {p.date && <span class="post__date">{p.date}</span>}
-          <span class="post__go" aria-hidden="true">
-            →
-          </span>
+        <a class="wr__row" href={p.href}>
+          <span class="wr__date">{p.date}</span>
+          <span class="wr__title">{p.title}</span>
+          {p.after && (
+            <span class:list={["wr__stat", { "wr__stat--flat": p.flat }]}>
+              {p.before && <span class="wr__was">{p.before} →</span>}
+              <b>{p.after}</b>
+            </span>
+          )}
         </a>
       </li>
     ))}
   </ul>
+  <a class="wr__all" href="/blog/">all {all.length} posts →</a>
 </Pane>
 
 <style>
-  .posts {
-    display: grid;
-    gap: 0.2rem;
+  .wr__cmd {
+    margin-bottom: 0.6rem !important;
+    color: var(--ink);
   }
-  .posts li {
-    /* On a desktop, after the last shipped bar starts to grow. */
-    animation: print 0.4s var(--ease-out)
-      calc(1.15s + var(--ship-rows, 0) * 0.25s + var(--i) * 0.09s) both;
+  .wr__prompt {
+    margin-right: 0.5ch;
+    color: var(--faint);
+  }
+  .wr {
+    display: grid;
+    gap: 0.1rem;
+  }
+  .wr li {
+    animation: print 0.4s var(--ease-out) calc(0.9s + var(--i) * 0.09s) both;
   }
   @media (max-width: 900px) {
-    .posts li {
+    .wr li {
       animation-delay: calc(0.1s + var(--i) * 0.09s);
     }
   }
@@ -58,41 +75,69 @@ const posts: { title: string; date: string; href: string; all?: boolean }[] = [
       transform: translateY(5px);
     }
   }
-  .post {
+  .wr__row {
     display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 0.5rem 0.85rem;
+    grid-template-columns: 3.4rem 1fr auto;
+    gap: 1rem;
     align-items: baseline;
-    padding: 0.4rem 0.45rem;
-    margin: 0 -0.45rem;
-    border-radius: 7px;
-    color: var(--ink);
-    transition:
-      background-color var(--dur-fast) var(--ease),
-      transform var(--dur-fast) var(--ease);
-  }
-  .post:hover {
-    background: color-mix(in oklch, var(--accent) 12%, transparent);
-    transform: translateX(3px);
-  }
-  .post__title {
+    padding: 0.4rem 0;
     color: var(--ink);
   }
-  .post:hover .post__title,
-  .post--all .post__title {
-    color: var(--accent-text);
-  }
-  .post__date {
-    color: var(--muted);
-    font-size: 0.72rem;
+  .wr__date {
+    color: var(--faint);
+    font-size: 0.75rem;
     white-space: nowrap;
   }
-  .post__go {
-    color: var(--accent-text);
-    opacity: 0;
-    transition: opacity var(--dur-fast) var(--ease);
+  /* Titles read as prose, at a regular weight */
+  .wr__title {
+    font-family: var(--grotesk);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
   }
-  .post:hover .post__go {
-    opacity: 1;
+  .wr__row:hover .wr__title {
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 0.2em;
+  }
+  .wr__stat {
+    text-align: right;
+    white-space: nowrap;
+  }
+  .wr__was {
+    margin-right: 0.4rem;
+    color: var(--faint);
+  }
+  .wr__stat b {
+    font-weight: 500;
+    color: var(--accent-text);
+  }
+  .wr__stat--flat b {
+    color: var(--ink);
+  }
+  .wr__all {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--muted);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 0.2em;
+  }
+  .wr__all:hover {
+    color: var(--ink);
+  }
+  @media (max-width: 40rem) {
+    .wr__row {
+      grid-template-columns: 1fr auto;
+    }
+    .wr__date {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wr li {
+      animation: none;
+    }
   }
 </style>

@@ -4,7 +4,9 @@
 // Data: x and y axes with a max, ticks and a title; an optional band of
 // [x, low, high]; a line of [x, y]; optional dots of [x, y] (a run known only
 // at a few points, joined dashed); labels placed at data points with pixel
-// offsets; and a legend drawn in the plot's empty top-left corner.
+// offsets; and a legend drawn in the plot's empty top-left corner. The band
+// is what the chart is about and takes the accent; the line and dots it is
+// read against stay neutral.
 export type Axis = { max: number; ticks: number[]; title: string };
 export type Label = {
   x: number;
@@ -99,16 +101,16 @@ export function lineChart(d: LineData, W: number, H: number): string {
     });
   }
   el("polyline", {
-    class: "ln hi",
+    class: "ln",
     points: d.line.map(([x, v]) => `${X(x)},${Y(v)}`).join(" "),
   });
   if (d.dots) {
     el("polyline", {
-      class: "ln hi ln--dash",
+      class: "ln ln--dash",
       points: d.dots.map(([x, v]) => `${X(x)},${Y(v)}`).join(" "),
     });
     for (const [x, v] of d.dots)
-      el("circle", { class: "hi", cx: X(x), cy: Y(v), r: 4 });
+      el("circle", { class: "mk", cx: X(x), cy: Y(v), r: 4 });
   }
   (d.legend ?? []).forEach((k, i) => {
     const ky = T + 10 + i * 18,
@@ -123,14 +125,14 @@ export function lineChart(d: LineData, W: number, H: number): string {
       });
     else
       el("line", {
-        class: k.kind === "dots" ? "ln hi ln--dash" : "ln hi",
+        class: k.kind === "dots" ? "ln ln--dash" : "ln",
         x1: kx,
         x2: kx + 22,
         y1: ky,
         y2: ky,
       });
     if (k.kind === "dots")
-      el("circle", { class: "hi", cx: kx + 11, cy: ky, r: 3.5 });
+      el("circle", { class: "mk", cx: kx + 11, cy: ky, r: 3.5 });
     el("text", { x: kx + 30, y: ky + 4, class: "ink" }, k.text);
   });
   for (const l of d.labels ?? []) {

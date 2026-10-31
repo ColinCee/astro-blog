@@ -26,7 +26,7 @@
   display: block;
   height: 0.7rem;
   width: calc(var(--w) * 100%);
-  background: var(--muted);
+  background: var(--bar);
   border-radius: 1px;
   transform-origin: left;
 }
@@ -39,14 +39,14 @@
 .prose .gain--hi span,
 .prose .gain--hi em b {
   color: var(--ink);
-  font-weight: 700;
+  font-weight: 500;
 }
 .prose .gain--hi i {
   background: var(--accent);
   height: 0.9rem;
 }
 .prose .gain--hi strong {
-  color: var(--accent-soft);
+  color: var(--accent-text);
   font-size: 1.25rem;
 }
 @media (max-width: 34rem) {

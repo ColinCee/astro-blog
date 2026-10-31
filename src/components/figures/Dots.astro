@@ -1,6 +1,7 @@
 ---
 // A dot plot: one row per item, a dot at its value on one axis from 0 to
-// `max`, in titled groups. The `after` row is the result. Styles: dot.css.
+// `max`, in titled groups, with the axis's ticks (0, half, max, in `unit`)
+// under the last group. The `after` row is the result. Styles: dot.css.
 interface Row {
   label: string;
   value: number;
@@ -9,9 +10,11 @@ interface Row {
 }
 interface Props {
   max: number;
+  unit?: string;
   groups: { title?: string; rows: Row[] }[];
 }
-const { max, groups } = Astro.props;
+const { max, unit = "", groups } = Astro.props;
+const ticks = [0, max / 2, max];
 ---
 
 {groups.map((g) => (
@@ -26,3 +29,15 @@ const { max, groups } = Astro.props;
     ))}
   </Fragment>
 ))}
+<div class="dot dot--axis" aria-hidden="true">
+  <span></span>
+  <i>
+    {ticks.map((t) => (
+      <em style={`--x:${t / max}`}>
+        {t}
+        {t === max && unit ? ` ${unit}` : ""}
+      </em>
+    ))}
+  </i>
+  <b></b>
+</div>

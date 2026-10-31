@@ -47,8 +47,14 @@
 .prose .chart--fluid svg {
   min-width: 0;
 }
-.prose .chart .band--runs {
-  fill: color-mix(in oklch, var(--muted) 45%, transparent);
+/* The band is the runs the chart is about (the result), so it takes the
+   accent; the line and dots it is read against stay neutral. */
+.prose .chart .band.band--runs {
+  fill: color-mix(in oklch, var(--accent) 55%, transparent);
+}
+/* On the light page 55% thins into a pale lilac; fuller there */
+:root[data-theme="light"] .prose .chart .band.band--runs {
+  fill: color-mix(in oklch, var(--accent) 80%, transparent);
 }
 .prose .chart .band {
   fill: color-mix(in oklch, var(--bar) 45%, transparent);
@@ -78,8 +84,8 @@
   stroke: var(--accent);
 }
 .prose .chart text.hi {
-  fill: var(--accent-soft);
-  font-weight: 700;
+  fill: var(--accent-text);
+  font-weight: 500;
 }
 .prose .chart text.ink {
   fill: var(--ink);

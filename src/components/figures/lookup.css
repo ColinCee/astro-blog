@@ -16,10 +16,12 @@
   align-content: start;
   gap: 0.25rem;
 }
+/* The dictionary sits in a well, like every inset in a figure: by tone,
+   not a border. */
 .prose .lookup__dict {
   padding: 0.6rem 0.8rem;
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  background: var(--well);
+  border-radius: var(--r-chip);
 }
 .prose .lookup__row {
   display: flex;
@@ -31,7 +33,7 @@
 .prose .lookup__row span {
   min-width: 5ch;
   color: var(--ink);
-  font-weight: 600;
+  font-weight: 500;
 }
 .prose .lookup__row i {
   color: var(--faint);
@@ -44,7 +46,7 @@
   height: 1.6rem;
   border-radius: 4px;
   color: var(--ink);
-  font-weight: 600;
+  font-weight: 500;
 }
 /* One neutral style per dictionary entry, the same on both sides. */
 .prose .lookup .e0 {

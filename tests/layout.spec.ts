@@ -99,24 +99,74 @@ for (const vp of viewports) {
   });
 }
 
-// Theme follows the system setting. Guards against a page hardcoding one
-// scheme: the page background must be light in light mode and dark in dark.
-for (const scheme of ["light", "dark"] as const) {
-  test.describe(`${scheme} scheme`, () => {
-    test.use({ colorScheme: scheme });
+// Dark unless the visitor chose light (the nav button, saved as "theme"), on
+// any system setting. Guards against a page hardcoding one theme.
+for (const theme of ["dark", "light"] as const) {
+  test.describe(`${theme} theme`, () => {
+    test.use({ colorScheme: theme === "dark" ? "light" : "dark" });
 
     for (const path of ["/", "/blog", "/cv"]) {
-      test(`${path} background is ${scheme}`, async ({ page }) => {
+      test(`${path} background is ${theme}`, async ({ page }) => {
+        if (theme === "light")
+          await page.addInitScript(() =>
+            localStorage.setItem("theme", "light"),
+          );
         await page.goto(path);
-        const lightness = await page.evaluate(() => {
-          const bg = getComputedStyle(document.documentElement)
-            .getPropertyValue("--bg")
-            .trim();
-          return Number(bg.match(/oklch\(\s*([\d.]+)/)?.[1]);
+        const luminance = await page.evaluate(() => {
+          const rgb = getComputedStyle(document.querySelector(".shell")!)
+            .backgroundColor.match(/[\d.]+/g)!
+            .slice(0, 3)
+            .map(Number);
+          return (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) / 255;
         });
-        if (scheme === "light") expect(lightness).toBeGreaterThan(0.8);
-        else expect(lightness).toBeLessThan(0.3);
+        if (theme === "light") expect(luminance).toBeGreaterThan(0.6);
+        else expect(luminance).toBeLessThan(0.15);
       });
     }
   });
 }
+
+// Luminance (0 dark to 1 light) of a computed colour, the way the theme
+// tests above read the page.
+const lum = (rgb: string) => {
+  const [r, g, b] = rgb
+    .match(/[\d.]+/g)!
+    .slice(0, 3)
+    .map(Number);
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+};
+
+// The nav button switches the theme, says so to screen readers, and the
+// choice survives a reload.
+test("the theme button switches to light and it sticks", async ({ page }) => {
+  await page.goto("/blog");
+  const button = page.locator("[data-theme-toggle]");
+  await expect(button).toHaveAttribute("aria-pressed", "false");
+  await button.click();
+  await expect(button).toHaveAttribute("aria-pressed", "true");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("[data-theme-toggle]")).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+});
+
+// Printed from the dark default, code is still dark text on light paper: the
+// page switches to the light theme for the print, code blocks included.
+test("a printed post's code is dark on light", async ({ page }) => {
+  await page.goto("/blog/jest-to-vitest/");
+  await page.evaluate(() => dispatchEvent(new Event("beforeprint")));
+  await page.emulateMedia({ media: "print" });
+  const [texts, ground] = await page.evaluate(() => {
+    const code = document.querySelector(".expressive-code pre")!;
+    return [
+      [...code.querySelectorAll("span")].map((s) => getComputedStyle(s).color),
+      getComputedStyle(code).backgroundColor,
+    ] as const;
+  });
+  // the dark theme's code text is near white (0.9+); the faintest light
+  // theme grey, for punctuation, is about 0.37
+  expect(Math.max(...texts.map(lum))).toBeLessThan(0.5);
+  expect(lum(ground)).toBeGreaterThan(0.85);
+});

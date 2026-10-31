@@ -3,7 +3,8 @@
    each part's time inside it, and one key above. Parts are shares of the
    same total, so rows compare to scale; a part too thin for its time
    (--thin) has it written after the bar (.sbar__after). Estimates
-   (--est) are drawn lighter. */
+   (--est) are drawn lighter. The parts are categories, not a result, so
+   they are two greys: the first key (--a) a step lighter than --bar. */
 .prose .splits {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -27,8 +28,8 @@
   background: var(--bar);
   vertical-align: -0.05rem;
 }
-.prose .splits__key .sbar--hi::before {
-  background: var(--accent);
+.prose .splits__key .sbar--a::before {
+  background: var(--n8);
 }
 .prose .splits__k {
   font-size: 0.8rem;
@@ -61,15 +62,14 @@
   white-space: nowrap;
 }
 .prose .sbar i b {
-  font-weight: 700;
+  font-weight: 500;
 }
 .prose .sbar i em {
   margin-left: auto;
   font-style: normal;
 }
-.prose .sbar .sbar--hi {
-  background: var(--accent);
-  color: var(--bg);
+.prose .sbar .sbar--a {
+  background: var(--n8);
 }
 .prose .sbar .sbar--thin {
   min-width: 3px;
@@ -86,7 +86,6 @@
 .prose .sbar .sbar--est {
   background: color-mix(in oklch, var(--bar) 55%, transparent);
 }
-.prose .sbar .sbar--hi.sbar--est {
-  background: color-mix(in oklch, var(--accent) 45%, transparent);
-  color: var(--ink);
+.prose .sbar .sbar--a.sbar--est {
+  background: color-mix(in oklch, var(--n8) 55%, transparent);
 }

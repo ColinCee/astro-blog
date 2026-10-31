@@ -15,8 +15,7 @@
     margin: 0;
     padding: 0.9rem 1rem;
     background: var(--pane);
-    border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: 8px;
     font-family: var(--mono);
     font-size: 0.6875rem;
     line-height: 1.4;
@@ -34,8 +33,6 @@
 .recipe__k {
   margin: 0;
   color: var(--faint);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
 }
 .recipe ol {
   display: grid;
@@ -61,8 +58,8 @@
   color: var(--ink);
 }
 .recipe li.is-now {
-  color: var(--accent-soft);
+  color: var(--accent-text);
 }
 .recipe li.is-now b {
-  font-weight: 700;
+  font-weight: 500;
 }

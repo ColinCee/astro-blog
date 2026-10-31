@@ -8,6 +8,8 @@
       "**",
       "!public",
       "!.impeccable",
+      // The redesign's comps are scratch HTML and scripts, kept as a record
+      "!docs/redesign",
       "!**/*.md",
       "!**/*.mdx",
       "!pnpm-lock.yaml"

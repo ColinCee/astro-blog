@@ -20,8 +20,8 @@
   background: var(--bar);
 }
 .prose .days__k--now {
-  color: var(--accent-soft);
-  font-weight: 700;
+  color: var(--accent-text);
+  font-weight: 500;
 }
 .prose .days__k--now::before {
   background: var(--accent);

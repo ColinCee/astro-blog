@@ -6,9 +6,9 @@
   --hold: 7s;
   --move: 0.8s;
   --fr-name: var(--muted);
-  --fr-syn: color-mix(in oklch, var(--faint) 55%, transparent);
+  --fr-syn: var(--faint);
   --fr-val: var(--ink);
-  --fr-head: var(--accent-soft);
+  --fr-head: var(--ink);
   display: grid;
   gap: 1rem;
 }
@@ -53,7 +53,7 @@
   bottom: -6px;
   height: 2px;
   border-radius: 1px;
-  background: var(--accent);
+  background: var(--muted);
   transform: scaleX(0);
   transform-origin: left;
   opacity: 0.6;
@@ -100,7 +100,7 @@
     color 0.5s ease;
 }
 .prose .frames__box span.b {
-  font-weight: 600;
+  font-weight: 500;
 }
 .prose .frames[data-s="0"] {
   --h: var(--h0);

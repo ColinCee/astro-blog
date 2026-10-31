@@ -43,8 +43,7 @@ const { title, description } = Astro.props;
     font-family: var(--mono);
     font-size: 0.75rem;
     font-weight: 400;
-    letter-spacing: 0.06em;
-    color: var(--muted);
+    color: var(--faint);
   }
   .cv__sec-bar .cv__sec-head {
     margin: 0;
@@ -58,7 +57,6 @@ const { title, description } = Astro.props;
     font: inherit;
     font-family: var(--mono);
     font-size: 0.72rem;
-    letter-spacing: 0.04em;
     color: var(--muted);
     cursor: pointer;
     transition:
@@ -84,16 +82,15 @@ const { title, description } = Astro.props;
     letter-spacing: 0.01em;
     color: var(--muted);
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: var(--r-chip);
   }
 </style>
 
 <style is:global>
   /* Print: flip the terminal palette to ink-on-white, hide site chrome, and keep entries whole. */
   @media print {
-    /* :root:root outranks the dark-scheme :root block in tokens.css, which can
-       still match when printing from a dark system. */
-    :root:root {
+    /* Outranks both theme blocks in tokens.css, so the CV always prints light. */
+    :root:root:root {
       --bg: #ffffff;
       --panel: #ffffff;
       --pane: #ffffff;
@@ -101,9 +98,6 @@ const { title, description } = Astro.props;
       --ink: #111111;
       --muted: #333333;
       --faint: #5a5a5a;
-      --accent: #0e7490;
-      --accent-soft: #0e7490;
-      --accent-text: #0e7490;
       color-scheme: light;
     }
     @page {

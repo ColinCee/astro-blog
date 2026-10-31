@@ -53,7 +53,7 @@
 }
 .prose .trow--hi span b,
 .prose .trow--hi em {
-  color: var(--accent-soft);
+  color: var(--accent-text);
 }
 .prose .trow--hi i {
   background: var(--accent);

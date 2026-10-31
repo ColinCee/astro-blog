@@ -18,17 +18,18 @@
   color: var(--ink);
   background: transparent;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--r-chip);
   padding: 0.5rem 0.95rem;
   min-height: 2.75rem;
   cursor: pointer;
 }
 .prose .ctl button[aria-pressed="true"] {
   border-color: var(--accent);
-  color: var(--accent-soft);
+  color: var(--accent-text);
 }
 .prose .ctl button:hover {
-  border-color: var(--accent-line);
+  background: var(--accent-hover);
+  border-color: var(--accent-solid);
 }
 .prose .ctl button:disabled,
 .prose .ctl button:disabled:hover {

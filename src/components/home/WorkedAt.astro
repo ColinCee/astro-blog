@@ -1,6 +1,8 @@
 ---
 // "Worked at": the companies, oldest first, scrolling past on a strip that
-// can be paused. Data: src/data/companies.json.
+// can be paused: each name in thin Sora with the year it started, a purple
+// slash between. No job lengths; they read as hopping. Data:
+// src/data/companies.json.
 import { getCollection } from "astro:content";
 
 const companies = (await getCollection("companies"))
@@ -8,14 +10,19 @@ const companies = (await getCollection("companies"))
   .map((c) => c.data);
 ---
 
-<section class="strip" aria-label="Companies I have worked at">
-  <span class="strip__label">// worked at</span>
+<section class="strip" aria-label="Companies I have worked at" data-reveal>
+  <div class="strip__head">
+    <h2 class="strip__label">Worked at</h2>
+    <span class="strip__span">{companies[0]?.year} → now</span>
+  </div>
   <div class="strip__view" aria-hidden="true">
     <div class="strip__track">
-      {[...companies, ...companies, ...companies].map((c) => (
-        <span class="strip__item">
-          <b class="strip__yr">{c.year}</b>
+      {[...companies, ...companies, ...companies].map((c, n) => (
+        <span
+          class:list={["strip__item", { strip__copy: n >= companies.length }]}
+        >
           {c.name}
+          <b class="strip__yr">{c.year}</b>
           <i>/</i>
         </span>
       ))}
@@ -42,22 +49,32 @@ const companies = (await getCollection("companies"))
 <style>
   .strip {
     max-width: var(--w-poster);
-    margin: 1.6rem auto 0;
-    display: flex;
+    margin: clamp(2.5rem, 6vw, 4rem) auto 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: 1rem;
-    border-block: 1px solid var(--line);
-    padding: 0.7rem 0;
+    gap: 1rem 1.5rem;
+  }
+  .strip__head {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
   }
   .strip__label {
-    flex: none;
+    font-family: var(--head);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .strip__span {
     font-family: var(--mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.12em;
-    color: var(--muted);
+    font-size: 0.8125rem;
+    color: var(--faint);
   }
   .strip__view {
-    flex: 1;
+    min-width: 0;
     overflow: hidden;
     -webkit-mask-image: linear-gradient(
       90deg,
@@ -77,7 +94,7 @@ const companies = (await getCollection("companies"))
   .strip__track {
     display: flex;
     width: max-content;
-    animation: slide 42s linear infinite;
+    animation: slide 70s linear infinite;
   }
   .strip:hover .strip__track,
   .strip:focus-within .strip__track,
@@ -96,44 +113,46 @@ const companies = (await getCollection("companies"))
     min-height: 1.75rem;
     padding: 0 0.6rem;
     font-family: var(--mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.12em;
+    font-size: 0.75rem;
     color: var(--muted);
     background: none;
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: var(--r-ctl);
     cursor: pointer;
     transition:
       color var(--dur-fast) var(--ease),
+      background var(--dur-fast) var(--ease),
       border-color var(--dur-fast) var(--ease);
   }
   .strip__toggle:hover {
     color: var(--ink);
-    border-color: var(--accent);
+    background: var(--accent-hover);
+    border-color: var(--accent-solid);
   }
   .strip__item {
     display: inline-flex;
     align-items: baseline;
-    font-family: var(--grotesk);
-    font-weight: 700;
-    font-size: clamp(1rem, 1.5vw, 1.25rem);
-    letter-spacing: -0.01em;
+    font-family: var(--head);
+    font-weight: 200;
+    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+    letter-spacing: -0.03em;
     color: var(--ink);
     white-space: nowrap;
   }
   .strip__yr {
+    margin-left: 0.7rem;
     font-family: var(--mono);
-    font-weight: 500;
-    font-size: 0.6875rem;
-    letter-spacing: 0.02em;
-    color: var(--muted);
-    margin-right: 0.55rem;
-  }
-  .strip__item i {
-    color: color-mix(in oklch, var(--accent) 55%, transparent);
-    padding: 0 2rem;
-    font-style: normal;
     font-weight: 400;
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    color: var(--faint);
+  }
+  /* The separator keeps a hint of the accent, faded so the names lead */
+  .strip__item i {
+    padding: 0 2.25rem;
+    color: var(--accent-line);
+    font-style: normal;
+    font-weight: 200;
   }
   .sr-only {
     position: absolute;
@@ -157,6 +176,10 @@ const companies = (await getCollection("companies"))
       flex-wrap: wrap;
       width: auto;
       gap: 0.2rem 0;
+    }
+    /* Still, it is one list: the loop's two extra copies go */
+    .strip__copy {
+      display: none;
     }
   }
 </style>

@@ -40,12 +40,39 @@
   background: var(--accent);
 }
 .prose .dot--after b {
-  color: var(--accent-soft);
-  font-weight: 700;
+  color: var(--accent-text);
+  font-weight: 500;
+}
+/* The axis under the rows: its ticks, no dot or line */
+.prose .dot--axis i {
+  height: 1rem;
+}
+.prose .dot--axis i::before,
+.prose .dot--axis i::after {
+  content: none;
+}
+.prose .dot--axis em {
+  position: absolute;
+  left: calc(var(--x) * 100%);
+  transform: translateX(-50%);
+  font-style: normal;
+  font-size: 0.6875rem;
+  color: var(--faint);
+  white-space: nowrap;
+}
+.prose .dot--axis em:first-child {
+  transform: none;
+}
+.prose .dot--axis em:last-child {
+  transform: translateX(-100%);
 }
 @media (max-width: 34rem) {
+  .prose .dot--axis span {
+    display: none;
+  }
+  /* the same value column on every row, so the axis ticks line up with the dots */
   .prose .dot {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) 4.2rem;
   }
   .prose .dot span {
     grid-column: 1 / -1;

@@ -24,8 +24,8 @@
   background: var(--accent);
 }
 .prose .cmp--after b {
-  color: var(--accent-soft);
-  font-weight: 700;
+  color: var(--accent-text);
+  font-weight: 500;
 }
 /* A reference line across .cmp bars: wrap the rows in <div class="cmp-ref"> with
    --ref (the reference value as a fraction of the largest). On wide screens it is one

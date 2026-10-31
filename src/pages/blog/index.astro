@@ -18,6 +18,11 @@ const entries = posts.map((post) => {
     mon: post.data.pubDate.toLocaleDateString("en-US", { month: "short" }),
     read: readMinutes(post.body),
     metric: post.data.stat ?? null,
+    // "428 s → 23 s" splits so the old value can go grey; "82% vs 80%" stays ink
+    parts: post.data.stat?.includes("→")
+      ? post.data.stat.split("→").map((x) => x.trim())
+      : null,
+    flat: post.data.stat?.includes(" vs ") ?? false,
     label: post.data.statLabel ?? null,
   };
 });
@@ -49,8 +54,18 @@ const entries = posts.map((post) => {
             <div class="log__body">
               <h2 class="log__title">{e.title}</h2>
               {e.metric && (
-                <p class="log__sig" aria-hidden="true">
-                  {e.metric}
+                <p
+                  class:list={["log__sig", { "log__sig--flat": e.flat }]}
+                  aria-hidden="true"
+                >
+                  {e.parts ? (
+                    <Fragment>
+                      <span class="log__was">{e.parts[0]}</span> →{" "}
+                      <b>{e.parts[1]}</b>
+                    </Fragment>
+                  ) : (
+                    <b>{e.metric}</b>
+                  )}
                   {e.label && <span class="log__label">{e.label}</span>}
                 </p>
               )}
@@ -90,17 +105,16 @@ const entries = posts.map((post) => {
     margin: 0 0 1rem;
     font-family: var(--mono);
     font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    color: var(--accent-soft);
+    color: var(--faint);
   }
   .log__lede {
     margin: 0;
     max-width: 40ch;
-    font-family: var(--grotesk);
-    font-weight: 500;
+    font-family: var(--head);
+    font-weight: 600;
+    letter-spacing: -0.03em;
     font-size: clamp(1.15rem, 1.8vw, 1.4rem);
     line-height: 1.4;
-    letter-spacing: -0.01em;
     color: var(--ink);
     text-wrap: balance;
   }
@@ -168,52 +182,60 @@ const entries = posts.map((post) => {
   }
   .log__mon {
     font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
     color: var(--faint);
   }
   .log__read {
     margin-top: 0.35rem;
     font-size: 0.6875rem;
-    letter-spacing: 0.04em;
     color: var(--faint);
   }
 
   .log__body {
     min-width: 0;
   }
-  /* muted title — the metric is the accent, not this */
+  /* A list title reads as prose: Geist at a regular weight, a step under ink;
+     the result is the accent, not this. */
   .log__title {
     margin: 0;
     font-family: var(--grotesk);
-    font-weight: 600;
+    font-weight: 400;
     font-size: clamp(1.2rem, 2vw, 1.5rem);
     line-height: 1.2;
     letter-spacing: -0.01em;
-    color: var(--muted);
+    color: var(--ink);
     text-wrap: balance;
     transition: color var(--dur-fast) var(--ease);
   }
   .log__link:hover .log__title,
   .log__link:focus-visible .log__title {
-    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
   }
   .log__sig {
     margin: 0.5rem 0 0;
-    font-family: var(--grotesk);
-    font-weight: 600;
-    font-size: clamp(1.05rem, 1.7vw, 1.2rem);
-    letter-spacing: -0.01em;
-    color: var(--accent-soft);
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 0.9375rem;
+    color: var(--faint);
     font-variant-numeric: tabular-nums;
+  }
+  .log__was {
+    color: var(--faint);
+  }
+  .log__sig b {
+    font-weight: 500;
+    color: var(--accent-text);
+  }
+  .log__sig--flat b {
+    color: var(--ink);
   }
   .log__label {
     margin-left: 0.5rem;
     font-family: var(--mono);
     font-size: 0.6875rem;
     font-weight: 400;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
     color: var(--faint);
   }
 
@@ -228,7 +250,6 @@ const entries = posts.map((post) => {
     border-top: 1px solid var(--line);
     font-family: var(--mono);
     font-size: 0.76rem;
-    letter-spacing: 0.02em;
     color: var(--faint);
   }
 

@@ -1,60 +1,69 @@
+@import "./scales.css";
+
 /*
-  Terminal design system — the single source of truth for colincheung.dev.
+  The design system's roles for colincheung.dev. The colours themselves are
+  scales.css, generated from docs/redesign/comps/tokens.mts: a 12-step cool grey
+  (n1-n12), a six-step purple accent spectrum (v1-v6) and the status colours (ok, warn, danger
+  at steps 3, 9, 11). The rules for using them, with samples, are in
+  src/pages/design.astro (/design/ on the dev server).
 
-  Two themes from one token set: "Stone" (warm grey, light) by default and a
-  warm near-black for visitors whose system is in dark mode. One accent hue (tomato) on a warm
-  neutral ramp. Import this file globally or per page
-  and build UI with the var(--token) values below. That is the whole system:
-  colour, type, and a couple of global niceties. Nothing here is page-specific.
+  Dark is the default. Light is a toggle (data-theme="light" on <html>, set by
+  the nav button and by an inline script in Head.astro before anything paints),
+  and soft: a mid-grey page and off-white panels, no pure white.
 
-  Fonts: Bricolage Grotesque (display/sans) + JetBrains Mono (mono), loaded
-  from Google Fonts by components/site/Head.astro.
+  Fonts: Sora (names, headings, the one-liners), Geist (reading), DM Mono
+  (data), loaded from Google Fonts by components/site/Head.astro.
 */
 
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
 
-  /* ---- Neutrals: page, two raised surfaces, one hairline ----
-     Light ("Stone"): a warm grey page around 90% lightness so large areas do
-     not glare; raised surfaces step one notch lighter. */
-  --bg: oklch(0.905 0.008 85);
-  --panel: oklch(0.92 0.008 85);
-  --pane: oklch(0.935 0.008 85);
-  --line: oklch(0.82 0.011 85);
+  /* ---- Surfaces: page, two raised surfaces, a well inside them ---- */
+  --bg: var(--n1);
+  --panel: var(--n3);
+  --pane: var(--n3);
+  --well: var(--n4);
+  /* Edges are cut from the ink, so every border shares its tint. */
+  --line: color-mix(in oklab, var(--n12) 10%, transparent);
+  --line-strong: color-mix(in oklab, var(--n12) 16%, transparent);
 
   /* Text */
-  --ink: oklch(0.22 0.012 85);
-  --muted: oklch(0.42 0.013 85);
-  --faint: oklch(0.49 0.013 85);
-  --prose-ink: oklch(0.27 0.012 85);
+  --ink: var(--n12);
+  --muted: var(--n11);
+  --faint: var(--n10);
+  --prose-ink: color-mix(in oklab, var(--n12) 82%, var(--n11));
 
-  /* ---- Accent: one hue (tomato) ----
-     It marks results, links, and active or hover states; everything else is
-     the neutral ramp above, except --gain and --loss for chart changes. */
-  --accent: oklch(0.55 0.19 32);
-  --accent-ink: oklch(0.98 0.01 60);
-  --accent-soft: oklch(0.49 0.17 32);
-  --loss: oklch(
-    0.5 0.2 15
-  ); /* a drop in a chart: crimson, kept apart from the tomato accent */
-  --gain: oklch(0.5 0.13 150); /* a real gain in a chart: green */
-  /* Small accent text (labels, values): on the light surfaces --accent itself
-     is under the 4.5:1 contrast text needs, so it takes the softer tone. */
-  --accent-text: var(--accent-soft);
+  /* ---- Accent: three jobs, each a step of the purple spectrum (v1-v6,
+     dark purple up to the accent) ----
+     --accent: bars, lines and a post's big result. --accent-text: links and
+     small results. --accent-solid: filled marks (the one-liner drawings).
+     Where each may go is DESIGN.md's Accent Points Rule. */
+  --accent-solid: var(--v4);
+  --accent: var(--v6);
+  --accent-text: var(--v6);
+  --accent-ink: #fff;
+  /* A chart's real gain and real drop: the status green and red. */
+  --gain: var(--ok11);
+  --loss: var(--danger11);
 
-  /* Track colour for the "before" bar in before/after comparisons */
-  --bar: oklch(0.78 0.011 85);
+  /* The "before" bar in before/after comparisons */
+  --bar: var(--n7);
 
-  /* The terminal window's ambient lift */
-  --lift:
-    0 1px 2px rgba(40, 30, 20, 0.05), 0 30px 60px -36px rgba(40, 30, 20, 0.3);
+  /* Flat: no shadows, no glow behind the page */
+  --wash: none;
 
   /* Type */
-  --grotesk: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --grotesk: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --head: "Sora", var(--grotesk);
+  --mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --cjk:
     "PingFang TC", "Hiragino Sans", "Noto Sans TC", "Noto Sans SC",
     "Microsoft JhengHei", var(--grotesk);
+
+  /* Corners: 8px panels, 6px controls, 4px chips; only dots are round */
+  --r: 8px;
+  --r-ctl: 6px;
+  --r-chip: 4px;
 
   /* Layout — the shared content frame (see DESIGN.md). Nav, footer, the CV and
      the blog index all center on --w-page so their edges line up; long-form
@@ -71,37 +80,31 @@
 
   /* Accent states — derived from --accent, reused across components */
   --accent-line: color-mix(in oklch, var(--accent) 40%, transparent);
+  /* A hovered button: a purple fill dark enough that its label stays bright,
+     with the chroma to read purple, not grey-mauve (about Radix dark step 4) */
+  --accent-hover: color-mix(in oklch, var(--v3) 50%, var(--panel));
   --ring: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
-  --wash: radial-gradient(
-    48rem 36rem at 88% -8%,
-    color-mix(in oklch, var(--accent) 8%, transparent),
-    transparent 60%
-  );
 }
 
-/* Dark: the original warm near-black, served to visitors whose system is in
-   dark mode. Same roles; the accent is lighter and slightly less saturated. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: oklch(0.165 0.012 80);
-    --panel: oklch(0.205 0.014 80);
-    --pane: oklch(0.185 0.013 80);
-    --line: oklch(0.31 0.018 80);
+/* Light, the toggle: soft, so a long read doesn't glare. */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: var(--n5);
+  --panel: var(--n3);
+  --pane: var(--n2);
+  --well: var(--n4);
+  --prose-ink: var(--n12);
+  --accent: var(--v5);
+  --accent-text: var(--v4);
+  --accent-hover: color-mix(in oklch, var(--v5) 16%, var(--panel));
+}
 
-    --ink: oklch(0.95 0.01 95);
-    --muted: oklch(0.72 0.02 95);
-    --faint: oklch(0.63 0.02 95);
-    --prose-ink: oklch(0.87 0.012 95);
-
-    --accent: oklch(0.75 0.17 38);
-    --accent-ink: oklch(0.2 0.04 40);
-    --accent-soft: oklch(0.79 0.11 38);
-    --loss: oklch(0.68 0.19 12);
-    --gain: oklch(0.76 0.15 150);
-    --accent-text: var(--accent);
-
-    --bar: oklch(0.38 0.018 80);
-    --lift: 0 40px 80px -40px rgba(0, 0, 0, 0.7);
+/* Paper is light in any theme (scales.css flips the greys), so the accent
+   takes the light theme's steps too. */
+@media print {
+  :root:root {
+    --accent: var(--v5);
+    --accent-text: var(--v4);
   }
 }
 

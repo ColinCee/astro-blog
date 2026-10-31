@@ -139,6 +139,11 @@ const span =
     : 0;
 const first = entries[0];
 const last = entries[entries.length - 1];
+// A stat like "428 s → 23 s" is a result that got better: split it so the
+// old value can go grey and the new one take the accent.
+const statParts = stat?.includes("→")
+  ? (stat.split("→").map((x) => x.trim()) as [string, string])
+  : undefined;
 ---
 
 <Base
@@ -159,7 +164,15 @@ const last = entries[entries.length - 1];
         <dl class="figs">
           <div class="figs__item">
             {statLabel && <dt>{statLabel}</dt>}
-            <dd>{stat}</dd>
+            {statParts ? (
+              <dd>
+                <span class="figs__was">{statParts[0]}</span>
+                <span class="figs__to">→</span>
+                <b>{statParts[1]}</b>
+              </dd>
+            ) : (
+              <dd class:list={{ figs__flat: stat.includes(" vs ") }}>{stat}</dd>
+            )}
           </div>
         </dl>
       )}
@@ -296,20 +309,19 @@ const last = entries[entries.length - 1];
     margin-bottom: 1.4rem;
     font-family: var(--mono);
     font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    color: var(--accent-soft);
+    color: var(--faint);
     transition: color var(--dur-fast) var(--ease);
   }
   .post__back:hover {
-    color: var(--accent);
+    color: var(--accent-text);
   }
   .post__title {
     margin: 0;
-    font-family: var(--grotesk);
-    font-weight: 800;
+    font-family: var(--head);
+    font-weight: 600;
     font-size: clamp(1.9rem, 5vw, 2.7rem);
-    line-height: 1.04;
-    letter-spacing: -0.02em;
+    line-height: 1.05;
+    letter-spacing: -0.045em;
     color: var(--ink);
     text-wrap: pretty;
   }
@@ -333,21 +345,34 @@ const last = entries[entries.length - 1];
   .figs dt {
     font-family: var(--mono);
     font-size: 0.6875rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--faint);
   }
   .figs dd {
     margin: 0;
-    font-weight: 700;
+    font-family: var(--head);
+    font-weight: 600;
     font-size: clamp(1.5rem, 3.4vw, 2.1rem);
     line-height: 1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.04em;
     font-variant-numeric: tabular-nums;
-    color: var(--ink);
-  }
-  .figs__item:last-child dd {
     color: var(--accent);
+  }
+  /* A result that got better: the old value in grey, the new one in the
+     accent. A plain comparison ("82% vs 80%") stays ink. */
+  .figs__was {
+    color: var(--faint);
+    font-weight: 400;
+  }
+  .figs__to {
+    margin: 0 0.3em;
+    color: var(--faint);
+    font-weight: 300;
+  }
+  .figs dd b {
+    font-weight: 600;
+  }
+  .figs dd.figs__flat {
+    color: var(--ink);
   }
   @media (max-width: 30rem) {
     .figs {
@@ -374,7 +399,6 @@ const last = entries[entries.length - 1];
     gap: 0.4rem 0.7rem;
     font-family: var(--mono);
     font-size: 0.76rem;
-    letter-spacing: 0.02em;
     color: var(--faint);
   }
   .post__dot {
@@ -400,17 +424,16 @@ const last = entries[entries.length - 1];
   .tl__span > * {
     font-family: var(--mono);
     font-size: 0.75rem;
-    letter-spacing: 0.06em;
   }
   .tl__k {
-    color: var(--accent-soft);
+    color: var(--faint);
   }
   .tl__range {
     color: var(--faint);
   }
   .tl__span b {
     margin-left: auto;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--ink);
     font-variant-numeric: tabular-nums;
   }
@@ -466,8 +489,6 @@ const last = entries[entries.length - 1];
     margin-bottom: 0.5rem;
     font-family: var(--mono);
     font-size: 0.76rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--faint);
   }
   .tl__when time {
@@ -478,11 +499,10 @@ const last = entries[entries.length - 1];
   .tl__day,
   .tl__mon {
     color: var(--ink);
-    font-weight: 700;
+    font-weight: 500;
   }
   .tl__since {
     text-transform: none;
-    letter-spacing: 0.02em;
   }
   .tl__body :global(h2) {
     margin: 0 0 0.85rem;
@@ -529,8 +549,8 @@ const last = entries[entries.length - 1];
       column-gap: 0.4rem;
     }
     .tl__day {
-      font-family: var(--grotesk);
-      font-weight: 800;
+      font-family: var(--head);
+      font-weight: 600;
       font-size: 1.7rem;
       line-height: 1;
       letter-spacing: -0.04em;
@@ -565,12 +585,10 @@ const last = entries[entries.length - 1];
   .post__adj-k {
     font-family: var(--mono);
     font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--faint);
   }
   .post__adj-t {
-    font-weight: 600;
+    font-weight: 400;
     font-size: 1.1rem;
     line-height: 1.25;
     letter-spacing: -0.01em;
@@ -578,18 +596,17 @@ const last = entries[entries.length - 1];
     transition: color var(--dur-fast) var(--ease);
   }
   .post__adj:hover .post__adj-t {
-    color: var(--accent-soft);
+    color: var(--accent-text);
   }
   .post__more {
     position: relative;
     font-family: var(--mono);
     font-size: 0.78rem;
-    letter-spacing: 0.02em;
-    color: var(--accent-soft);
+    color: var(--accent-text);
     transition: color var(--dur-fast) var(--ease);
   }
   .post__more:hover {
-    color: var(--accent);
+    color: var(--accent-text);
   }
   /* Small mono links get a tap area of at least 32px without moving anything. */
   .post__back::before,
