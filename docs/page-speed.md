@@ -19,8 +19,8 @@ blog index, a post (jest-to-vitest) and CV. For each page:
 - **Requests:** how many.
 - **LCP** (largest contentful paint: when the biggest thing on the first
   screen has painted), the median of the three loads.
-- **Layout shift** (CLS: how far things on screen jump while the page loads;
-  under 0.1 counts as good), from the first load.
+- **Layout shift** (CLS: how far things on screen jump while the page loads,
+  in its worst burst; under 0.1 counts as good), from the first load.
 
 The homepage's weather call gets a fixed answer, so every run loads the same
 page. A request that fails or answers with an error fails the test, since it

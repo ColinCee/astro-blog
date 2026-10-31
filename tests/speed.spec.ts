@@ -135,16 +135,30 @@ async function load(page: Page, path: string) {
       }),
     ),
   );
-  // Layout shift: how far things on screen move while the page loads.
+  // Layout shift (CLS): the worst burst of shifts, a burst being shifts under
+  // 1 s apart within 5 s, as Chrome scores it.
   await page.addInitScript(() => {
     const w = window as unknown as { cls: number };
     w.cls = 0;
+    let sum = 0;
+    let first = 0;
+    let last = 0;
     new PerformanceObserver((list) => {
       for (const e of list.getEntries() as unknown as {
         value: number;
         hadRecentInput: boolean;
-      }[])
-        if (!e.hadRecentInput) w.cls += e.value;
+        startTime: number;
+      }[]) {
+        if (e.hadRecentInput) continue;
+        if (sum && e.startTime - last < 1000 && e.startTime - first < 5000)
+          sum += e.value;
+        else {
+          sum = e.value;
+          first = e.startTime;
+        }
+        last = e.startTime;
+        w.cls = Math.max(w.cls, sum);
+      }
     }).observe({ type: "layout-shift", buffered: true });
   });
   await page.goto(path, { waitUntil: "networkidle" });

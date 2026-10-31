@@ -53,9 +53,9 @@
   --wash: none;
 
   /* Type */
-  --grotesk: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --grotesk: var(--font-geist);
   --head: var(--font-sora), var(--grotesk);
-  --mono: var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --mono: var(--font-dm-mono);
   --cjk:
     "PingFang TC", "Hiragino Sans", "Noto Sans TC", "Noto Sans SC",
     "Microsoft JhengHei", var(--grotesk);
