@@ -96,12 +96,15 @@ async function load(page: Page, path: string) {
     lcp: 0,
   };
   const sized: Promise<void>[] = [];
-  // A file that fails to load would make the page look lighter, so it fails the test.
+  // A file that fails to load, or answers with an error, would make the page
+  // look lighter, so it fails the test.
   const failed: string[] = [];
   page.on("requestfailed", (req) => failed.push(req.url()));
   page.on("requestfinished", (req) =>
     sized.push(
-      req.sizes().then((s) => {
+      req.sizes().then(async (s) => {
+        if (((await req.response())?.status() ?? 0) >= 400)
+          failed.push(req.url());
         const kb = (s.responseHeadersSize + s.responseBodySize) / 1024;
         const kind = kinds[req.resourceType()];
         if (kind) got[kind] += kb;
@@ -111,8 +114,19 @@ async function load(page: Page, path: string) {
     ),
   );
   await page.goto(path, { waitUntil: "networkidle" });
-  // Past the first screen's entrances, so LCP has its last candidate.
-  await page.waitForTimeout(1000);
+  // Past the first screen's entrances, so LCP has its last candidate: every
+  // animation that ends, up to 3 s, since the home reel's timer bar runs 5 s.
+  await page.evaluate(() =>
+    Promise.race([
+      Promise.all(
+        document
+          .getAnimations()
+          .filter((a) => a.effect?.getComputedTiming().endTime !== Infinity)
+          .map((a) => a.finished.catch(() => {})),
+      ),
+      new Promise((done) => setTimeout(done, 3000)),
+    ]),
+  );
   got.lcp = await page.evaluate(
     () =>
       new Promise<number>((done) =>

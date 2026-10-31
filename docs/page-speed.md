@@ -21,8 +21,9 @@ blog index, a post (jest-to-vitest) and CV. For each page:
   screen has painted), the median of the three loads.
 
 The homepage's weather call gets a fixed answer, so every run loads the same
-page. A request that fails fails the test, since it would make the page look
-lighter. Google Fonts is fetched for real, since that is what a visitor
+page. A request that fails or answers with an error fails the test, since it
+would make the page look lighter. LCP is read once the first screen's
+animations have finished (at most 3 s), so a long entrance still counts. Google Fonts is fetched for real, since that is what a visitor
 downloads; it is most of every page's bytes, so a fonts-only overshoot with no
 font change in the PR means Google changed its files.
 
