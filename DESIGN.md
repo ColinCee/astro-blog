@@ -231,7 +231,8 @@ failure (a homelab service down); a result that got worse stays ink. In charts,
 
 All three are served from the site itself by Astro's font API (`fonts` in
 `astro.config.ts`, linked in `components/site/Head.astro`), with fallbacks
-sized to match so nothing moves when they arrive; Sora is preloaded. Geist Mono was tried and clashed with Sora.
+sized to match the visitor's system font so nothing moves when they arrive;
+Sora and DM Mono 400 are preloaded. Geist Mono was tried and clashed with Sora.
 
 ### Hierarchy
 - **Display** (Sora 600, `clamp(2.6rem, 5.5vw, 4.25rem)`, −0.05em): the hero

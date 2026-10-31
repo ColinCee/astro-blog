@@ -78,10 +78,14 @@ a design call, so the budgets hold today's numbers with the fades in.
 
 Fonts were most of every page and came from Google, over a second
 connection. Moving them onto the site (Astro's font API) cut them from 101
-to 86 KB on home, gave each a fallback sized to match so text doesn't rewrap
-when it lands (the CV jumped 0.19), and let Sora, the font of every title,
-be preloaded. LCP dropped about 250-350 ms on home and posts; the CV's rose
-about 130 ms, since the preload shares its slow connection.
+to 80 KB, gave each a fallback sized to match the visitor's system font
+(Segoe UI, Apple's, Roboto on Android, else Arial) so text doesn't rewrap when
+it lands (the CV jumped 0.19), and let the fonts that would still move things
+be preloaded: Sora, every title's font, and DM Mono 400, whose fallback can
+only be sized to Courier New, which Android lacks. LCP dropped about
+250-350 ms on home and posts; the CV's rose about 100 ms, since the preloads
+share its slow connection. CI installs Roboto, so the test sees the fallback an
+Android phone would.
 
 Links also fetch their page when the pointer rests on them or they get
 focus (Astro's prefetch), so a click opens a page that is already here.
