@@ -31,8 +31,9 @@ Static, fast, and every post leads with the number it's about.
 
 ```sh
 pnpm install
-pnpm dev        # http://localhost:4321
-pnpm check      # everything CI runs
+pnpm exec playwright install chromium   # once, for the tests
+pnpm dev                                # http://localhost:4321
+pnpm check                              # everything CI runs
 ```
 
 Node and pnpm versions are pinned in `package.json`.
