@@ -11,6 +11,9 @@
   "kv_namespaces": [
     { "binding": "STATS", "id": "45016c99a0de472cb42332c3632f4044" }
   ],
+  "vars": {
+    "HOMELAB_PUBLIC_KEY": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
   "workers_dev": false,
   "preview_urls": false,
   "routes": [

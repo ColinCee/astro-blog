@@ -1,15 +1,21 @@
 // The site is static assets; this script answers one path, /homelab.json
 // (wrangler.json's run_worker_first), so nothing else ever runs it. The home
 // server PUTs a few numbers there every five minutes and the home page's
-// home-lab and flight-tracker figures GET them. The shape is fixed here, so a
-// leaked token can only change these numbers, never put text on the page.
+// home-lab and flight-tracker figures GET them.
+//
+// The server signs each body with its private key (a homelab GitHub secret,
+// the only copy); this checks it with the public half, in wrangler.json, so
+// nothing here is secret. The shape is fixed, so even a stolen key could only
+// change these numbers, never put text on the page, and only newer numbers
+// are taken, so an old signed body can't be sent again.
 
-interface Env {
+export interface Env {
   STATS: {
-    get(key: string, options: { cacheTtl: number }): Promise<string | null>;
+    get(key: string, options?: { cacheTtl: number }): Promise<string | null>;
     put(key: string, value: string): Promise<void>;
   };
-  HOMELAB_TOKEN: string;
+  // Ed25519, 32 bytes as hex
+  HOMELAB_PUBLIC_KEY: string;
 }
 
 type HomelabStats = {
@@ -54,14 +60,24 @@ export const parse = (text: string, now: number): HomelabStats | null => {
   return body as HomelabStats;
 };
 
-// Constant time, so the token cannot be guessed a byte at a time.
-const same = async (a: string, b: string) => {
-  const hash = async (s: string) =>
-    new Uint8Array(
-      await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)),
-    );
-  const [x, y] = await Promise.all([hash(a), hash(b)]);
-  return x.reduce((d, v, i) => d | (v ^ y[i]), 0) === 0;
+const hex = (s: string) =>
+  /^([0-9a-f]{2})+$/i.test(s)
+    ? Uint8Array.from(s.match(/../g)!, (b) => Number.parseInt(b, 16))
+    : null;
+
+// The body was signed by the server's private key.
+const signed = async (body: ArrayBuffer, signature: string, key: string) => {
+  const sig = hex(signature);
+  const pub = hex(key);
+  if (sig?.length !== 64 || pub?.length !== 32) return false;
+  try {
+    const k = await crypto.subtle.importKey("raw", pub, "Ed25519", false, [
+      "verify",
+    ]);
+    return await crypto.subtle.verify("Ed25519", k, sig, body);
+  } catch {
+    return false;
+  }
 };
 
 const KEY = "latest";
@@ -83,16 +99,19 @@ export default {
         status: 405,
         headers: { Allow: "GET, PUT" },
       });
-    const auth = request.headers.get("Authorization") ?? "";
-    if (
-      !env.HOMELAB_TOKEN ||
-      !(await same(auth, `Bearer ${env.HOMELAB_TOKEN}`))
-    )
-      return new Response("unauthorised", { status: 401 });
-    const text = await request.text();
-    if (text.length > 1024) return new Response("too big", { status: 413 });
-    const stats = parse(text, Math.floor(Date.now() / 1000));
+    const body = await request.arrayBuffer();
+    if (body.byteLength > 1024) return new Response("too big", { status: 413 });
+    const signature = request.headers.get("Signature") ?? "";
+    if (!(await signed(body, signature, env.HOMELAB_PUBLIC_KEY)))
+      return new Response("bad signature", { status: 401 });
+    const stats = parse(
+      new TextDecoder().decode(body),
+      Math.floor(Date.now() / 1000),
+    );
     if (!stats) return new Response("bad body", { status: 400 });
+    const last = await env.STATS.get(KEY);
+    if (last && JSON.parse(last).at >= stats.at)
+      return new Response("not newer", { status: 409 });
     await env.STATS.put(KEY, JSON.stringify(stats));
     return new Response(null, { status: 204 });
   },

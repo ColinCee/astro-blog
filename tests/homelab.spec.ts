@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { parse } from "../worker/index.ts";
+import worker, { type Env, parse } from "../worker/index.ts";
 
 // The home server's numbers (worker/index.ts) in the home-lab and
 // flight-tracker figures. The dev server has no Worker, so each test answers
@@ -75,4 +75,66 @@ test("the Worker accepts only the known numbers, freshly gathered", () => {
   expect(parse(body({ at: now + 61 }), now)).toBeNull();
   expect(parse("[]", now)).toBeNull();
   expect(parse("nope", now)).toBeNull();
+});
+
+test("the Worker takes a body only when the server's key signed it", async () => {
+  const toHex = (b: ArrayBuffer) => Buffer.from(b).toString("hex");
+  const keys = (await crypto.subtle.generateKey("Ed25519", true, [
+    "sign",
+    "verify",
+  ])) as CryptoKeyPair;
+  const other = (await crypto.subtle.generateKey("Ed25519", true, [
+    "sign",
+    "verify",
+  ])) as CryptoKeyPair;
+  const kv = new Map<string, string>();
+  const env: Env = {
+    STATS: {
+      get: async (k) => kv.get(k) ?? null,
+      put: async (k, v) => void kv.set(k, v),
+    },
+    HOMELAB_PUBLIC_KEY: toHex(
+      await crypto.subtle.exportKey("raw", keys.publicKey),
+    ),
+  };
+  const put = async (body: string, key = keys.privateKey) =>
+    (
+      await worker.fetch(
+        new Request("https://x/homelab.json", {
+          method: "PUT",
+          body,
+          headers: {
+            Signature: toHex(
+              await crypto.subtle.sign(
+                "Ed25519",
+                key,
+                new TextEncoder().encode(body),
+              ),
+            ),
+          },
+        }),
+        env,
+      )
+    ).status;
+  const body = JSON.stringify({ ...stats, at: now });
+  expect(await put(body, other.privateKey)).toBe(401);
+  expect(await put(body)).toBe(204);
+  expect(JSON.parse(kv.get("latest")!).blocked).toBe(1212);
+  // the same signed body again, or an older one, is refused
+  expect(await put(body)).toBe(409);
+  expect(
+    (
+      await worker.fetch(
+        new Request("https://x/homelab.json", {
+          method: "PUT",
+          body: body.replace("1212", "9999"),
+          headers: { Signature: "00".repeat(64) },
+        }),
+        env,
+      )
+    ).status,
+  ).toBe(401);
+  expect(
+    (await worker.fetch(new Request("https://x/homelab.json"), env)).status,
+  ).toBe(200);
 });
