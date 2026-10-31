@@ -55,4 +55,4 @@ ${block(out.light).replace(/^/gm,'  ')}
 }
 `;
 // the comps keep their frozen scales.css and scales.json from before the accent became four shades
-import('node:fs').then(fs=>{fs.writeFileSync('../../../src/styles/scales.css',site);console.log('written');});
+import('node:fs').then(fs=>{fs.writeFileSync(new URL('../../../src/styles/scales.css',import.meta.url),site);console.log('written');});
