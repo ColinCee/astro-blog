@@ -347,9 +347,9 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 ### Hero (homepage)
 - `components/home/Hero.astro`. Left: the name (Display), "Senior Software
   Engineer" in `--muted`, and GitHub / LinkedIn icon controls. No slogan.
-- Right: the one-liners as a **reel**: a `today's one-liner` mono caption with a
-  `01 / 18` count, the current line at full strength and the next one faint
-  under it (no previous line), and a thin bar for the time left. One every 5 s;
+- Right: the one-liners as a **reel**: only the current line shows (no caption,
+  no faint next line: both distracted from it); over it a thin bar for the time
+  left and a mono `01 / 18` count say another is coming. One every 5 s;
   hover pauses, a click skips. Lines are Voice type in ink; some carry a small
   inline drawing with neutral marks (n5–n8) and the punchline mark in
   `--accent-solid`, a deeper purple than the text accent so the marks read rich,

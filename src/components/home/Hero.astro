@@ -47,12 +47,13 @@ const quips = [
     </div>
   </div>
 
-  <!-- The one-liners as a reel: the current one, the next one faint under it.
-       One every 5 s; hover or focus pauses, a click, Enter or Space skips, the
-       bar shows the time left. Under reduced motion it waits for a click. -->
+  <!-- The one-liners as a reel: only the current one shows; the bar over it
+       (the time left) and the count say another is coming. One every 5 s;
+       hover or focus pauses, a click, Enter or Space skips. Under reduced
+       motion it waits for a click. -->
   <div class="reel" data-reel data-quips={JSON.stringify(quips)}>
-    <p class="reel__cap">
-      <span>today's one-liner</span>
+    <p class="reel__head" aria-hidden="true">
+      <span class="reel__bar"><i data-reel-bar></i></span>
       <span data-reel-n>01 / {String(quips.length).padStart(2, "0")}</span>
     </p>
     <div class="reel__list">
@@ -69,7 +70,6 @@ const quips = [
         <li class="reel__item" aria-hidden="true" set:html={quips[1]} />
       </ul>
     </div>
-    <div class="reel__bar" aria-hidden="true"><i data-reel-bar></i></div>
   </div>
 </section>
 
@@ -137,22 +137,24 @@ const quips = [
     cursor: pointer;
     min-width: 0;
   }
-  .reel__cap {
+  .reel__head {
     display: flex;
-    justify-content: space-between;
-    gap: 1rem;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 0;
     font-family: var(--mono);
     font-size: 0.75rem;
     color: var(--faint);
   }
+  /* Tall enough for the longest line (two rows at 1.8rem, measured), so
+     nothing below moves when the line changes */
   .reel__list {
     position: relative;
-    height: 9rem;
+    height: 6rem;
     margin: 0;
     padding: 0;
     list-style: none;
     overflow: hidden;
-    mask-image: linear-gradient(#000 60%, transparent);
   }
   .reel__track {
     position: absolute;
@@ -165,7 +167,7 @@ const quips = [
     transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.2, 1);
   }
   .reel__bar {
-    max-width: 12rem;
+    width: 12rem;
     height: 2px;
     border-radius: 2px;
     background: var(--well);
@@ -208,7 +210,7 @@ const quips = [
       min-height: 0;
     }
     .reel__list {
-      height: 9.5rem;
+      height: 4.75rem;
     }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -221,8 +223,8 @@ const quips = [
 <!-- Global: the one-liners arrive as HTML (set:html, then innerHTML), which
      scoped styles do not reach. -->
 <style is:global>
-  /* The one-liners: Sora at 200 in ink. The current
-     one is full strength, the next one faint; the old one fades as it rises. */
+  /* The one-liners: Sora at 200 in ink. Only the current one shows: the next
+     fades in as it rises into place and the old one fades as it leaves. */
   .reel__item {
     max-width: 28ch;
     padding: 0 0 1.1rem;
@@ -233,7 +235,7 @@ const quips = [
     letter-spacing: -0.03em;
     color: var(--ink);
     text-wrap: balance;
-    opacity: 0.18;
+    opacity: 0;
     transition: opacity 0.7s;
   }
   .reel__item.is-cur {
