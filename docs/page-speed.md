@@ -97,6 +97,8 @@ Android phone would.
 
 A click opens the next page at once in Chrome and Edge: speculation rules in
 `Head.astro` prerender a page while the pointer rests on its link, so on a
-slow phone the blog index shows about 170 ms after the click, not 370. A plain prefetch (Astro's) saved nothing: the HTML is sent
+slow phone the blog index shows about 170 ms after the click, not 370. That
+is measured in automated Chrome, which won't prerender and reuses the fetched
+page instead; a visitor's Chrome prerenders the whole page, so it is sooner. A plain prefetch (Astro's) saved nothing: the HTML is sent
 "check again before use", so the click downloaded it a second time. The last
 test in `tests/speed.spec.ts` holds the click under 250 ms.

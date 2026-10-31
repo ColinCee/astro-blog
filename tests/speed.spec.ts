@@ -111,9 +111,6 @@ async function fixLiveCalls(page: Page) {
   );
 }
 
-// What each failure names, from the last load.
-const why: Partial<Record<keyof Budget, string>> = {};
-
 // One load in a fresh context (a cold cache).
 async function load(page: Page, path: string) {
   await slow(page);
@@ -171,7 +168,8 @@ async function load(page: Page, path: string) {
           w.moved = e.sources
             .map(
               (x) =>
-                (x.node as Element | undefined)?.className || x.node?.nodeName,
+                (x.node as Element | undefined)?.getAttribute?.("class") ||
+                x.node?.nodeName,
             )
             .join(", ");
         }
@@ -207,7 +205,7 @@ async function load(page: Page, path: string) {
           const e = list.getEntries().at(-1) as unknown as
             | { startTime: number; element: Element | null }
             | undefined;
-          done([e?.startTime ?? 0, e?.element?.className ?? ""]);
+          done([e?.startTime ?? 0, e?.element?.getAttribute("class") ?? ""]);
         }).observe({ type: "largest-contentful-paint", buffered: true }),
       ),
   );
@@ -218,16 +216,15 @@ async function load(page: Page, path: string) {
   });
   got.cls = shift.cls;
   // Named in a failure message: what LCP waited for and what moved most.
-  why.lcp = lcp[1];
-  why.cls = shift.moved;
+  const why = { lcp: lcp[1], cls: shift.moved };
   await Promise.all(sized);
   expect(failed, `${path}: requests that failed`).toEqual([]);
-  return got;
+  return { got, why };
 }
 
 for (const [path, budget] of Object.entries(budgets)) {
   test(`${path} keeps to its speed budget`, async ({ browser }) => {
-    const runs: Budget[] = [];
+    const runs: Awaited<ReturnType<typeof load>>[] = [];
     for (let i = 0; i < 3; i++) {
       const context = await browser.newContext({
         viewport: { width: 390, height: 844 },
@@ -236,10 +233,12 @@ for (const [path, budget] of Object.entries(budgets)) {
       runs.push(await load(await context.newPage(), path));
       await context.close();
     }
-    // Bytes from the first load; LCP the median of the three.
-    const got = {
-      ...runs[0],
-      lcp: runs.map((r) => r.lcp).sort((a, b) => a - b)[1],
+    // Bytes and layout shift from the first load; LCP the median of the three.
+    const median = [...runs].sort((a, b) => a.got.lcp - b.got.lcp)[1];
+    const got = { ...runs[0].got, lcp: median.got.lcp };
+    const why: Partial<Record<keyof Budget, string>> = {
+      cls: runs[0].why.cls,
+      lcp: median.why.lcp,
     };
     const shown = Object.fromEntries(
       Object.entries(got).map(([k, v]) => {
@@ -258,9 +257,10 @@ for (const [path, budget] of Object.entries(budgets)) {
   });
 }
 
-// A reader's click: the pointer rests on a link, then clicks it. The page is
-// prerendered while it rests (the speculation rules in Head.astro), so the time
-// from click to the next page's main content is its entrance, not the network.
+// A reader's click: the pointer rests on a link, then clicks it. The speculation
+// rules in Head.astro prerender the page while it rests. Chrome under automation
+// won't prerender (PrerenderingDisabledByDevTools), so this measures what it
+// does instead, reuse the page it fetched; a visitor's Chrome shows it sooner.
 // Measured by the clock: navigation timing hides the throttle's delay.
 test("a hovered link opens its page at once", async ({ browser }) => {
   const runs: number[] = [];

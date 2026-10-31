@@ -151,7 +151,7 @@ html {
   font-family: "DM Mono fallback";
   src:
     local("Courier New"), local("Liberation Mono"), local("DejaVu Sans Mono"),
-    local("Droid Sans Mono"), local("Menlo"), local("Courier");
+    local("Droid Sans Mono"), local("Menlo Regular"), local("Courier");
   font-weight: 100 900;
   ascent-override: 99.2161%;
   descent-override: 31.005%;

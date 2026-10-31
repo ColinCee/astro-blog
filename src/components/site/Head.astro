@@ -60,10 +60,18 @@ const schema = article
 <!-- The theme: dark unless the visitor chose light (the nav button). Set here,
      before any stylesheet, so a light page never flashes dark or the reverse. -->
 <script is:inline>
-  try {
-    if (localStorage.getItem("theme") === "light")
-      document.documentElement.dataset.theme = "light";
-  } catch {}
+  const theme = () => {
+    try {
+      if (localStorage.getItem("theme") === "light")
+        document.documentElement.dataset.theme = "light";
+      else delete document.documentElement.dataset.theme;
+    } catch {}
+  };
+  theme();
+  // A prerendered page (see the speculation rules below) read the theme when
+  // it was made; read it again as it is shown, in case it changed since.
+  if (document.prerendering)
+    document.addEventListener("prerenderingchange", theme, { once: true });
   // Paper is light: print in the light theme (code blocks switch with
   // data-theme, not the print media query), then put the reader's back.
   addEventListener("beforeprint", () => {
@@ -84,8 +92,8 @@ const schema = article
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
 <!-- Fonts, self-hosted (astro.config.ts). Sora (titles) and DM Mono 400
      (meta lines) are preloaded: text that rewraps when its font lands moves
-     the page under it, and DM Mono's fallback is sized to Courier New, which
-     Android lacks. -->
+     the page under it, and DM Mono's stand-in ("DM Mono fallback" in
+     tokens.css) matches its height but not its width. -->
 <Font cssVariable="--font-geist" />
 <Font cssVariable="--font-sora" preload={[{ subset: "latin" }]} />
 <Font
