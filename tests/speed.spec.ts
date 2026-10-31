@@ -111,6 +111,9 @@ async function fixLiveCalls(page: Page) {
   );
 }
 
+// What each failure names, from the last load.
+const why: Partial<Record<keyof Budget, string>> = {};
+
 // One load in a fresh context (a cold cache).
 async function load(page: Page, path: string) {
   await slow(page);
@@ -147,8 +150,10 @@ async function load(page: Page, path: string) {
   // Layout shift (CLS): the worst burst of shifts, a burst being shifts under
   // 1 s apart within 5 s, as Chrome scores it.
   await page.addInitScript(() => {
-    const w = window as unknown as { cls: number };
+    const w = window as unknown as { cls: number; moved: string };
     w.cls = 0;
+    w.moved = "";
+    let biggest = 0;
     let sum = 0;
     let first = 0;
     let last = 0;
@@ -157,8 +162,19 @@ async function load(page: Page, path: string) {
         value: number;
         hadRecentInput: boolean;
         startTime: number;
+        sources: { node?: Node }[];
       }[]) {
         if (e.hadRecentInput) continue;
+        // What moved in the biggest shift, for the failure message.
+        if (e.value > biggest) {
+          biggest = e.value;
+          w.moved = e.sources
+            .map(
+              (x) =>
+                (x.node as Element | undefined)?.className || x.node?.nodeName,
+            )
+            .join(", ");
+        }
         if (sum && e.startTime - last < 1000 && e.startTime - first < 5000)
           sum += e.value;
         else {
@@ -184,17 +200,25 @@ async function load(page: Page, path: string) {
       new Promise((done) => setTimeout(done, 3000)),
     ]),
   );
-  got.lcp = await page.evaluate(
+  const lcp = await page.evaluate(
     () =>
-      new Promise<number>((done) =>
-        new PerformanceObserver((list) =>
-          done(list.getEntries().at(-1)?.startTime ?? 0),
-        ).observe({ type: "largest-contentful-paint", buffered: true }),
+      new Promise<[number, string]>((done) =>
+        new PerformanceObserver((list) => {
+          const e = list.getEntries().at(-1) as unknown as
+            | { startTime: number; element: Element | null }
+            | undefined;
+          done([e?.startTime ?? 0, e?.element?.className ?? ""]);
+        }).observe({ type: "largest-contentful-paint", buffered: true }),
       ),
   );
-  got.cls = await page.evaluate(
-    () => (window as unknown as { cls: number }).cls,
+  got.lcp = lcp[0];
+  const shift = await page.evaluate(
+    () => window as unknown as { cls: number; moved: string },
   );
+  got.cls = shift.cls;
+  // Named in a failure message: what LCP waited for and what moved most.
+  why.lcp = lcp[1];
+  why.cls = shift.moved;
   await Promise.all(sized);
   expect(failed, `${path}: requests that failed`).toEqual([]);
   return got;
@@ -225,7 +249,10 @@ for (const [path, budget] of Object.entries(budgets)) {
     console.log(path, JSON.stringify(shown));
     for (const key of Object.keys(budget) as (keyof Budget)[])
       expect
-        .soft(got[key], `${path} ${key} (budget in tests/speed.spec.ts)`)
+        .soft(
+          got[key],
+          `${path} ${key}${why[key] ? ` (${why[key]})` : ""} (budget in tests/speed.spec.ts)`,
+        )
         .toBeLessThanOrEqual(budget[key]);
   });
 }
