@@ -51,6 +51,8 @@ const style = (c: Cell) =>
 </div>
 
 <script>
+  import { still } from "../../scripts/in-view";
+
   // Each stage holds for --hold (frames.css; the timer bar fills over it),
   // then moves on. Hovering or focusing it pauses it; a tab stops it.
   for (const fig of document.querySelectorAll<HTMLElement>(".frames")) {
@@ -101,7 +103,7 @@ const style = (c: Cell) =>
         focus = on;
         loop();
       });
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) continue;
+    if (still) continue;
     new IntersectionObserver(
       ([e]) => {
         seen = e.isIntersecting;

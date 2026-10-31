@@ -397,6 +397,28 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   Headline line "Best way to reach me is LinkedIn ↗" (the link in `--accent-text`)
   and a mono line linking GitHub.
 
+### Motion
+One scale for everything the interface does (`tokens.css`); a raw duration or
+curve in a component is a bug unless it is a content timing.
+- **Speeds:** `--dur-fast` 0.16s for hover and colour, `--dur-base` 0.3s for a
+  small state change (a chevron, a flip, a layer fading), `--dur-slow` 0.5s for
+  anything arriving, `--dur-draw` 0.9s for a figure's bars growing, `--dur-line`
+  1.4s for a chart line drawing.
+- **Curves:** `--ease` for colour, `--ease-out` (fast start, long settle) for
+  anything moving into place, `--ease-in-out` for something that turns over or
+  swaps in place.
+- **Order:** rows follow one another by `--stagger` (70ms); a dense figure (many
+  runs in a row, a grid of frames) may go faster and says so where it does.
+- **Entrances** are one move: fade and rise 12px (`rise`, or the same as a
+  transition), `--dur-slow` `--ease-out`, armed by JS so without it everything
+  is simply there.
+- **Content timings** (the reel's 5 s, a loop's period, the marquee) are not
+  interface motion and stay written where they are.
+- **Reduced motion:** `Base.astro` zeroes every animation and transition; a
+  component adds its own rule only where the resting state differs (bars at
+  full length, the marquee's copies hidden). Anything that moves on its own
+  stops under hover or focus.
+
 ### Homepage motion
 - The name and the terminal rise in on load (the shared `rise` keyframe).
 - One thing moves on the first screen: the reel. The terminal types its commands,

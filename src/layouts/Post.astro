@@ -779,6 +779,8 @@ const statParts = stat?.includes("→")
 </style>
 
 <script>
+  import { onceSeen, still } from "../scripts/in-view";
+
   // A link to a collapsed <details> (#internals) opens it before jumping.
   const openTarget = () => {
     const el = location.hash && document.getElementById(location.hash.slice(1));
@@ -827,44 +829,39 @@ const statParts = stat?.includes("→")
   // Figures: recordings play only while on screen (and never on their own
   // under reduced motion); every figure draws itself in once when seen
   // (draw.css), so it is marked [data-grow] here, never in the markup.
-  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const seen = new IntersectionObserver(
+  const playing = new IntersectionObserver(
     (items) => {
       for (const it of items) {
-        const el = it.target as HTMLElement;
-        if (el instanceof HTMLVideoElement) {
-          el.playbackRate = Number(el.dataset.rate ?? 1);
-          // A video inside a qview waits for its data (data-ready) so the
-          // scores under it start with it; the widget starts it then.
-          const waits =
-            el.closest("[data-widget='qview']") && !el.dataset.ready;
-          if (it.isIntersecting && !still && !el.dataset.hold && !waits)
-            el.play().catch(() => {});
-          else el.pause();
-        } else if (it.isIntersecting) {
-          el.classList.add("is-in");
-          seen.unobserve(el);
-        }
+        const el = it.target as HTMLVideoElement;
+        el.playbackRate = Number(el.dataset.rate ?? 1);
+        // A video inside a qview waits for its data (data-ready) so the
+        // scores under it start with it; the widget starts it then.
+        const waits = el.closest("[data-widget='qview']") && !el.dataset.ready;
+        if (it.isIntersecting && !still && !el.dataset.hold && !waits)
+          el.play().catch(() => {});
+        else el.pause();
       }
     },
     { threshold: 0.35 },
   );
   document.querySelectorAll<HTMLVideoElement>(".prose video").forEach((v) => {
     if (still) v.controls = true;
-    seen.observe(v);
+    playing.observe(v);
   });
   const bars =
     ".cmp i, .gain i, .trow i, .qmini i, .decide__pass > i, .pts__t i, .sbar i, .stack span, .dot i";
-  if (!still)
-    for (const f of document.querySelectorAll<HTMLElement>(".prose .fig")) {
+  if (!still) {
+    const figs = document.querySelectorAll<HTMLElement>(".prose .fig");
+    for (const f of figs) {
       f.querySelectorAll(bars).forEach((b, i) =>
         (b as HTMLElement).style.setProperty("--row", String(Math.min(i, 8))),
       );
       for (const l of f.querySelectorAll(".chart .ln:not(.ln--dash)"))
         l.setAttribute("pathLength", "1");
       f.dataset.grow = "";
-      seen.observe(f);
     }
+    onceSeen(figs, (f) => f.classList.add("is-in"), { threshold: 0.35 });
+  }
 
   // Interactive figures load their code only on posts that use them.
   if (document.querySelector("[data-widget]")) import("../scripts/widgets");
