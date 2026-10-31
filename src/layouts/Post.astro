@@ -214,89 +214,91 @@ const statParts = stat?.includes("→")
       </p>
     </header>
 
-    {sections.length >= 3 && (
-      <nav
-        class="toc"
-        aria-label="Sections"
-        data-toc-nav
-        data-mins={minutesRead}
-      >
-        <div class="toc__in">
-          <p class="toc__k">{"// sections"}</p>
-          <ol class="toc__list" data-toc-list>
-            {sections.map((h, i) => (
-              <li>
-                <a href={`#${h.slug}`} data-toc={h.slug}>
-                  <span class="toc__n">{String(i + 1).padStart(2, "0")}</span>
-                  <span class="toc__t">{h.text}</span>
-                </a>
+    <div class="post__body">
+      {sections.length >= 3 && (
+        <nav
+          class="toc"
+          aria-label="Sections"
+          data-toc-nav
+          data-mins={minutesRead}
+        >
+          <div class="toc__in">
+            <p class="toc__k">{"// sections"}</p>
+            <ol class="toc__list" data-toc-list>
+              {sections.map((h, i) => (
+                <li>
+                  <a href={`#${h.slug}`} data-toc={h.slug}>
+                    <span class="toc__n">{String(i + 1).padStart(2, "0")}</span>
+                    <span class="toc__t">{h.text}</span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+            <p class="toc__left" data-toc-left hidden></p>
+          </div>
+        </nav>
+      )}
+
+      <div class="prose" set:html={intro} />
+
+      {isTimeline && (
+        <section class="tl" aria-label="Timeline">
+          <p class="tl__span">
+            <span class="tl__k">{"// timeline"}</span>
+            <span class="tl__range">
+              {first.day} {first.mon} {first.year} → {last.day} {last.mon}{" "}
+              {last.year}
+            </span>
+            <b>{span} days</b>
+          </p>
+          <ol class="tl__list">
+            {entries.map((e) => (
+              <li class="tl__item" data-entry>
+                <div class="tl__when">
+                  <time datetime={e.iso}>
+                    <span class="tl__day">{e.day}</span>
+                    <span class="tl__mon">{e.mon}</span>
+                    <span class="tl__yr">{e.year}</span>
+                  </time>
+                  {e.since && <span class="tl__since">{e.since}</span>}
+                </div>
+                <span class="tl__node" aria-hidden="true" />
+                <div class="tl__body prose">
+                  <h2 id={e.slug}>{e.what}</h2>
+                  <Fragment set:html={e.body} />
+                </div>
               </li>
             ))}
           </ol>
-          <p class="toc__left" data-toc-left hidden></p>
-        </div>
-      </nav>
-    )}
-
-    <div class="prose" set:html={intro} />
-
-    {isTimeline && (
-      <section class="tl" aria-label="Timeline">
-        <p class="tl__span">
-          <span class="tl__k">{"// timeline"}</span>
-          <span class="tl__range">
-            {first.day} {first.mon} {first.year} → {last.day} {last.mon}{" "}
-            {last.year}
-          </span>
-          <b>{span} days</b>
-        </p>
-        <ol class="tl__list">
-          {entries.map((e) => (
-            <li class="tl__item" data-entry>
-              <div class="tl__when">
-                <time datetime={e.iso}>
-                  <span class="tl__day">{e.day}</span>
-                  <span class="tl__mon">{e.mon}</span>
-                  <span class="tl__yr">{e.year}</span>
-                </time>
-                {e.since && <span class="tl__since">{e.since}</span>}
-              </div>
-              <span class="tl__node" aria-hidden="true" />
-              <div class="tl__body prose">
-                <h2 id={e.slug}>{e.what}</h2>
-                <Fragment set:html={e.body} />
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-    )}
-
-    {after && <div class="prose prose--after" set:html={after} />}
-
-    <footer class="post__foot">
-      {(older || newer) && (
-        <nav class="post__nav" aria-label="More posts">
-          {older && (
-            <a class="post__adj" href={older.href}>
-              <span class="post__adj-k">
-                <span aria-hidden="true">←</span> older
-              </span>
-              <span class="post__adj-t">{older.title}</span>
-            </a>
-          )}
-          {newer && (
-            <a class="post__adj post__adj--newer" href={newer.href}>
-              <span class="post__adj-k">
-                newer <span aria-hidden="true">→</span>
-              </span>
-              <span class="post__adj-t">{newer.title}</span>
-            </a>
-          )}
-        </nav>
+        </section>
       )}
-      <a class="post__more" href="/blog/"> all writing </a>
-    </footer>
+
+      {after && <div class="prose prose--after" set:html={after} />}
+
+      <footer class="post__foot">
+        {(older || newer) && (
+          <nav class="post__nav" aria-label="More posts">
+            {older && (
+              <a class="post__adj" href={older.href}>
+                <span class="post__adj-k">
+                  <span aria-hidden="true">←</span> older
+                </span>
+                <span class="post__adj-t">{older.title}</span>
+              </a>
+            )}
+            {newer && (
+              <a class="post__adj post__adj--newer" href={newer.href}>
+                <span class="post__adj-k">
+                  newer <span aria-hidden="true">→</span>
+                </span>
+                <span class="post__adj-t">{newer.title}</span>
+              </a>
+            )}
+          </nav>
+        )}
+        <a class="post__more" href="/blog/"> all writing </a>
+      </footer>
+    </div>
   </article>
 </Base>
 
@@ -317,7 +319,6 @@ const statParts = stat?.includes("→")
   }
   @media (min-width: 64rem) {
     .post {
-      position: relative;
       max-width: var(--w-page);
       padding-left: calc(var(--rail) + var(--rail-gap));
     }
@@ -327,7 +328,8 @@ const statParts = stat?.includes("→")
      section, numbered, the line filling as you read (the timeline's
      vocabulary, in grey: chrome takes no accent). Read sections are muted, the
      one being read is ink with a ringed dot, the rest faint; under them, the
-     minutes left. The script starts it level with the body (--toc-top). */
+     minutes left. It spans the body, so it starts level with the text with
+     no script moving it after load: 1.5rem up into the header's 3rem gap. */
   .toc {
     display: none;
   }
@@ -335,9 +337,8 @@ const statParts = stat?.includes("→")
     .toc {
       display: block;
       position: absolute;
-      inset: 0 auto 0 0;
+      inset: -1.5rem auto 0 calc(-1 * (var(--rail) + var(--rail-gap)));
       width: var(--rail);
-      padding-top: var(--toc-top, 13rem);
     }
     .toc__in {
       position: sticky;
@@ -457,6 +458,9 @@ const statParts = stat?.includes("→")
 
   /* Header and footer share the prose measure, so their hairlines end where
      the text does. */
+  .post__body {
+    position: relative;
+  }
   .post__head,
   .post__foot {
     max-width: var(--measure, 44rem);
@@ -780,11 +784,11 @@ const statParts = stat?.includes("→")
 
   @media (prefers-reduced-motion: no-preference) {
     .post__head,
-    .post > .prose,
+    .post__body > .prose,
     .tl {
       animation: rise var(--dur-slow) var(--ease-out) both;
     }
-    .post > .prose {
+    .post__body > .prose {
       animation-delay: var(--stagger);
     }
     .tl {
@@ -901,7 +905,6 @@ const statParts = stat?.includes("→")
     const left = tocNav.querySelector<HTMLElement>("[data-toc-left]")!;
     const heads = links.map((a) => document.getElementById(a.dataset.toc!)!);
     const post = tocNav.closest<HTMLElement>(".post")!;
-    const head = post.querySelector<HTMLElement>(".post__head")!;
     const prose = Array.from(post.querySelectorAll<HTMLElement>(".prose"));
     // words before each heading, and in all, from the text in document order
     const words = (t: string) => t.split(/\s+/).filter(Boolean).length;
@@ -912,12 +915,6 @@ const statParts = stat?.includes("→")
       r.setEndBefore(h);
       return words(r.toString());
     });
-    // level with the body: the header's foot, in the article's frame
-    const place = () =>
-      tocNav.style.setProperty(
-        "--toc-top",
-        `${head.offsetTop + head.offsetHeight + 24}px`,
-      );
     let ticking = false;
     const spy = () => {
       ticking = false;
@@ -959,13 +956,9 @@ const statParts = stat?.includes("→")
       left.hidden = false;
       left.textContent = mins > 0 ? `${mins} min left` : "done";
     };
-    place();
     spy();
     // the article's size moves the headings; the window's height moves the line
-    new ResizeObserver(() => {
-      place();
-      spy();
-    }).observe(post);
+    new ResizeObserver(spy).observe(post);
     window.addEventListener("resize", spy);
     window.addEventListener(
       "scroll",
