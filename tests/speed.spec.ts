@@ -212,9 +212,10 @@ async function load(page: Page, path: string) {
       ),
   );
   got.lcp = lcp[0];
-  const shift = await page.evaluate(
-    () => window as unknown as { cls: number; moved: string },
-  );
+  const shift = await page.evaluate(() => {
+    const w = window as unknown as { cls: number; moved: string };
+    return { cls: w.cls, moved: w.moved };
+  });
   got.cls = shift.cls;
   // Named in a failure message: what LCP waited for and what moved most.
   why.lcp = lcp[1];

@@ -280,12 +280,13 @@ const entries = posts.map((post) => {
     .log__head {
       animation: lift var(--dur-slow) var(--ease-out) both;
     }
+    /* The rows are the page's main content too: they rise without the fade. */
     .log__item {
-      animation: rise var(--dur-slow) var(--ease-out) both;
+      animation: lift var(--dur-slow) var(--ease-out) both;
       animation-delay: calc((var(--i, 0) + 1) * var(--stagger));
     }
     .log__end {
-      animation: rise var(--dur-slow) var(--ease-out) both;
+      animation: lift var(--dur-slow) var(--ease-out) both;
       animation-delay: calc((var(--i, 0) + 1) * var(--stagger));
     }
   }
