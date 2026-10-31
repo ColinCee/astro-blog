@@ -19,48 +19,48 @@ type Budget = {
 
 const budgets: Record<string, Budget> = {
   "/": {
-    html: 13,
-    css: 11,
+    html: 20,
+    css: 3,
     js: 12,
     font: 95,
     image: 3,
-    total: 124,
-    requests: 18,
-    lcp: 850,
+    total: 123,
+    requests: 17,
+    lcp: 550,
     cls: 0.1,
   },
   "/blog/": {
-    html: 8,
-    css: 6,
+    html: 11,
+    css: 3,
     js: 3,
     font: 88,
     image: 3,
     total: 96,
-    requests: 8,
-    lcp: 950,
+    requests: 7,
+    lcp: 450,
     cls: 0.1,
   },
   // A post with a code block, a figure and a script; its content is settled.
   "/blog/jest-to-vitest/": {
-    html: 12,
-    css: 20,
+    html: 24,
+    css: 8,
     js: 8,
     font: 88,
     image: 3,
     total: 121,
-    requests: 13,
-    lcp: 1250,
+    requests: 11,
+    lcp: 500,
     cls: 0.1,
   },
   "/cv/": {
-    html: 10,
-    css: 8,
+    html: 15,
+    css: 3,
     js: 3,
     font: 88,
     image: 3,
     total: 101,
-    requests: 9,
-    lcp: 750,
+    requests: 7,
+    lcp: 500,
     cls: 0.1,
   },
 };
@@ -267,9 +267,9 @@ test("a hovered link opens its page at once", async ({ browser }) => {
   }
   const median = runs.sort((a, b) => a - b)[1];
   console.log("click to blog index painted", Math.round(median), "ms");
-  // About 230 ms today, against about 370 without the prerender.
+  // About 170 ms today, against about 370 without the prerender.
   expect(
     median,
     "click to painted, ms (tests/speed.spec.ts)",
-  ).toBeLessThanOrEqual(300);
+  ).toBeLessThanOrEqual(250);
 });

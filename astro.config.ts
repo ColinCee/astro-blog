@@ -59,6 +59,9 @@ const lastmod = Object.fromEntries(
 export default defineConfig({
   site: "https://colincheung.dev",
   compressHTML: true,
+  // CSS in the page itself: a separate file is one more round trip before
+  // anything paints (200-300 ms on a slow phone), for a few KB a page.
+  build: { inlineStylesheets: "always" },
   // Fonts served from the site itself, not Google: no second connection, and
   // fallbacks sized to match, so nothing moves when the font arrives.
   fonts: [

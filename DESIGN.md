@@ -427,7 +427,9 @@ curve in a component is a bug unless it is a content timing.
   runs in a row, a grid of frames) may go faster and says so where it does.
 - **Entrances** are one move: fade and rise 12px (`rise`, or the same as a
   transition), `--dur-slow` `--ease-out`, armed by JS so without it everything
-  is simply there.
+  is simply there. The first screen's headline (the name, a page's title) only
+  rises (`lift`), without the fade: it is the page's main content, and a fade
+  keeps it from counting as painted until the fade ends (LCP).
 - **Content timings** (the reel's 5 s, a loop's period, the marquee) are not
   interface motion and stay written where they are.
 - **Reduced motion:** `Base.astro` zeroes every animation and transition; a
@@ -436,7 +438,7 @@ curve in a component is a bug unless it is a content timing.
   stops under hover or focus.
 
 ### Homepage motion
-- The name and the terminal rise in on load (the shared `rise` keyframe).
+- The name lifts in on load (`lift`), the terminal rises (`rise`).
 - One thing moves on the first screen: the reel. The terminal types its commands,
   then the writing lines print one after another.
 - Worked at, Projects and Reach carry `data-reveal` and rise in on scroll (armed

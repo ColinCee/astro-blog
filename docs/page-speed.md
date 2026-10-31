@@ -46,13 +46,21 @@ headroom:
 
 | Page | Total | Fonts | LCP |
 |---|---|---|---|
-| Home | 107 → 124 KB | 80 → 95 KB | 644 → 850 ms |
-| Blog index | 88 → 96 KB | 80 → 88 KB | 628 → 950 ms |
-| Post | 110 → 121 KB | 80 → 88 KB | 956 → 1250 ms (CI's worst run) |
-| CV | 92 → 101 KB | 80 → 88 KB | 548 → 750 ms |
+| Home | 112 → 123 KB | 86 → 95 KB | 412 → 550 ms |
+| Blog index | 87 → 96 KB | 80 → 88 KB | 344 → 450 ms |
+| Post | 109 → 121 KB | 80 → 88 KB | 384 → 500 ms |
+| CV | 91 → 101 KB | 80 → 88 KB | 356 → 500 ms |
 
 Fonts are most of every page. Raise a budget only with the reason in the PR
 that raises it.
+
+Two more changes put each page's main content on screen with its first
+paint. The CSS is in the page itself (`inlineStylesheets` in
+`astro.config.ts`): a separate file was one more round trip before anything
+painted, 200-300 ms on a slow phone, for a few KB a page. And the headline
+(the name, a page's title) only rises in, without the fade (`lift` in
+`tokens.css`): a fading element doesn't count as painted until the fade ends.
+On a slow phone LCP went from 620-760 ms to 340-410 ms.
 
 ## Why Playwright
 
@@ -89,7 +97,6 @@ Android phone would.
 
 A click opens the next page at once in Chrome and Edge: speculation rules in
 `Head.astro` prerender a page while the pointer rests on its link, so on a
-slow phone the blog index shows 230 ms after the click, not 370; what is left
-is its entrance. A plain prefetch (Astro's) saved nothing: the HTML is sent
+slow phone the blog index shows about 170 ms after the click, not 370. A plain prefetch (Astro's) saved nothing: the HTML is sent
 "check again before use", so the click downloaded it a second time. The last
-test in `tests/speed.spec.ts` holds the click under 300 ms.
+test in `tests/speed.spec.ts` holds the click under 250 ms.

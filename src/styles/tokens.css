@@ -143,6 +143,18 @@ html {
   }
 }
 
+/* The first screen's headline (the name, a page's title) only rises: it is
+   the page's main content, and one hidden by a fade isn't painted until the
+   fade ends (LCP waits for it). */
+@keyframes lift {
+  from {
+    transform: translateY(12px);
+  }
+  to {
+    transform: none;
+  }
+}
+
 /* Smooth in-page scrolling (anchors), unless the user prefers less motion */
 @media (prefers-reduced-motion: no-preference) {
   html {
