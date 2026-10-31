@@ -81,6 +81,8 @@
 
   /* Accent states — derived from --accent, reused across components */
   --accent-line: color-mix(in oklch, var(--accent) 40%, transparent);
+  /* A hovered button: a violet tint, so its label stays bright */
+  --accent-hover: color-mix(in oklch, var(--accent) 22%, var(--panel));
   --ring: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
 }
 

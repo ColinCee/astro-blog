@@ -119,10 +119,12 @@ const companies = (await getCollection("companies"))
     cursor: pointer;
     transition:
       color var(--dur-fast) var(--ease),
+      background var(--dur-fast) var(--ease),
       border-color var(--dur-fast) var(--ease);
   }
   .strip__toggle:hover {
-    color: var(--accent-text);
+    color: var(--ink);
+    background: var(--accent-hover);
     border-color: var(--accent);
   }
   .strip__item {
