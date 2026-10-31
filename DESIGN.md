@@ -12,9 +12,9 @@ colors:
   ink: "#e8eff9"
   muted: "#b2b8bf"
   faint: "#a0a5ac"
-  accent: "#8b5ae4"
-  accent-solid: "#6e38b8"
-  accent-text: "#a388f8"
+  accent: "#9a71f5"
+  accent-solid: "#6f3cbc"
+  accent-text: "#9a71f5"
   accent-ink: "#fff"
   gain: "#7cd591"
   loss: "#fda19a"
@@ -153,11 +153,12 @@ lightness. Swatches are on the design page.
 
 ### Scales
 - **Neutral** (`--n1`…`--n12`): hue 255, barely tinted cool, 12 steps.
-- **Accent** (`--v1`…`--v7`): one violet spectrum, 7 even lightness steps, the
-  same in both themes; hue eases from 298 to 290 as it lightens so the pale end
-  stays violet, not pink. Each theme picks its four jobs from it (Roles below).
-  12 steps had 8 never used; four loose shades sat too close together. A
-  four-hue palette (teal, ochre, indigo alongside the accent) read as busy.
+- **Accent** (`--v1`…`--v6`): one violet spectrum, 6 even steps from a dark
+  violet up to the accent itself, the same in both themes; hue eases from 298 to
+  295 as it lightens so it stays violet. It stops at the accent: the greys need
+  a white end, the accent never does (pale tints read pink or white). Each theme
+  picks its jobs from it (Roles below). A four-hue palette (teal, ochre, indigo
+  alongside the accent) read as busy.
 - **Status** (`--ok`, `--warn`, `--danger`): green, amber, red, at steps 3 (wash),
   9 (dot) and 11 (text) only. There is no blue status colour; the accent stands
   for "info".
@@ -170,11 +171,11 @@ lightness. Swatches are on the design page.
   `--prose-ink` post body, a notch softer than ink in dark, ink in light.
 - **Edges:** `--line` and `--line-strong`, cut from the ink at 10% and 16%, so
   every border shares its tint.
-- **Accent:** each job is one spectrum step. `--accent` (v4) bars, lines and a
-  post's big result; `--accent-solid` (v3) filled marks; `--accent-text` links
-  and small results, 4.5:1 (v5 dark, v3 light and print); `--accent-wash` a
-  tinted background (v1 dark, v7 light); `--accent-ink` (white) for text on a
-  filled accent.
+- **Accent:** each job is one spectrum step. Dark: `--accent` and
+  `--accent-text` are v6, the accent itself (bars, lines, results, links);
+  `--accent-solid` v4 for filled marks. Light and print step down one so they
+  hold contrast on a light page: `--accent` v5, `--accent-text` v4 (4.5:1).
+  `--accent-ink` (white) for text on a filled accent.
   Derived: `--accent-line` (40%, inline link borders) and `--ring` (20%, the state
   glow).
 - **Charts:** `--bar` (n7) the "before" bar; `--gain` (ok11) and `--loss`

@@ -81,10 +81,10 @@ if (import.meta.env.PROD) return Astro.redirect("/");
     </div>
     <div class="scale">
       <h3>
-        accent · violet spectrum, 7 even steps, the same in both themes · each
-        job is one step
+        accent · violet spectrum, 6 even steps from dark up to the accent, the
+        same in both themes · each job is one step
       </h3>
-      <div class="sw seven" data-sw="a"></div>
+      <div class="sw six" data-sw="a"></div>
     </div>
     <div class="scale">
       <h3>
@@ -788,16 +788,12 @@ if (import.meta.env.PROD) return Astro.redirect("/");
     color: var(--faint);
     box-shadow: inset 0 0 0 1px var(--line-2);
   }
-  .ds .sw.seven {
-    grid-template-columns: repeat(7, 1fr);
+  .ds .sw.six {
+    grid-template-columns: repeat(6, 1fr);
   }
-  .ds .sw.seven div {
+  .ds .sw.six div {
     height: 3.6rem;
     color: #fff;
-  }
-  /* The spectrum is the same in both themes, so its labels are fixed too */
-  .ds .sw.seven div:nth-child(n + 5) {
-    color: #1a1033;
   }
   .ds .sw.three {
     grid-template-columns: repeat(9, minmax(0, 5.5rem));
@@ -987,13 +983,12 @@ if (import.meta.env.PROD) return Astro.redirect("/");
   // Swatches drawn from the tokens, so this page can never disagree with them.
   // Which job each step does, dark / light
   const labels: Record<string, string> = {
-    v1: "1 · wash (dark)",
+    v1: "1",
     v2: "2",
-    v3: "3 · solid · text (light)",
-    v4: "4 · accent: bars, big results",
-    v5: "5 · text (dark)",
-    v6: "6",
-    v7: "7 · wash (light)",
+    v3: "3",
+    v4: "4 · filled marks · light: text",
+    v5: "5 · light: bars, big results",
+    v6: "6 · the accent: bars, results, text",
   };
   const fill = (k: string, keys: string[]) => {
     const el = document.querySelector<HTMLElement>(`[data-sw="${k}"]`);
@@ -1010,7 +1005,7 @@ if (import.meta.env.PROD) return Astro.redirect("/");
   fill("n", steps("n"));
   fill(
     "a",
-    Array.from({ length: 7 }, (_, i) => `v${i + 1}`),
+    Array.from({ length: 6 }, (_, i) => `v${i + 1}`),
   );
   fill(
     "s",

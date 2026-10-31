@@ -33,15 +33,14 @@
   --faint: var(--n10);
   --prose-ink: color-mix(in oklab, var(--n12) 82%, var(--n11));
 
-  /* ---- Accent: four jobs, each a step of the violet spectrum (v1-v7) ----
+  /* ---- Accent: three jobs, each a step of the violet spectrum (v1-v6,
+     dark violet up to the accent) ----
      --accent: bars, lines and a post's big result. --accent-text: links and
      small results. --accent-solid: filled marks (the one-liner drawings).
-     --accent-wash: a tinted background. Where each may go is DESIGN.md's
-     Accent Points Rule. */
-  --accent-wash: var(--v1);
-  --accent-solid: var(--v3);
-  --accent: var(--v4);
-  --accent-text: var(--v5);
+     Where each may go is DESIGN.md's Accent Points Rule. */
+  --accent-solid: var(--v4);
+  --accent: var(--v6);
+  --accent-text: var(--v6);
   --accent-ink: #fff;
   /* A chart's real gain and real drop: the status green and red. */
   --gain: var(--ok11);
@@ -93,16 +92,16 @@
   --pane: var(--n2);
   --well: var(--n4);
   --prose-ink: var(--n12);
-  --accent-wash: var(--v7);
-  --accent-text: var(--v3);
+  --accent: var(--v5);
+  --accent-text: var(--v4);
 }
 
 /* Paper is light in any theme (scales.css flips the greys), so the accent
    takes the light theme's steps too. */
 @media print {
   :root:root {
-    --accent-wash: var(--v7);
-    --accent-text: var(--v3);
+    --accent: var(--v5);
+    --accent-text: var(--v4);
   }
 }
 
