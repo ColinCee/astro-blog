@@ -9,6 +9,8 @@ Colin wants to see a visual change from the PR itself, before he merges, without
 
 ## Decide what to show
 
+Show only what a reader would see change. When the pages look the same (a speed, refactor or test change), say so in one line and add no images: identical before and after pictures tell Colin nothing.
+
 That part is yours, per PR: which page and path, which interaction, and which views changed (phone, desktop, or both).
 
 - **A still change** (layout, colour, copy): screenshots, before and after.
