@@ -69,6 +69,9 @@ export default defineConfig({
       provider: fontProviders.google(),
       name: "Geist",
       cssVariable: "--font-geist",
+      // Sized to match whichever system font a visitor has: Segoe UI,
+      // the Apple system font, Roboto on Android, else Arial.
+      fallbacks: ["system-ui"],
       weights: [400, 500, 600],
       styles: ["normal"],
       subsets: ["latin", "latin-ext"],
@@ -77,6 +80,7 @@ export default defineConfig({
       provider: fontProviders.google(),
       name: "Sora",
       cssVariable: "--font-sora",
+      fallbacks: ["system-ui"],
       weights: ["200 600"],
       styles: ["normal"],
       subsets: ["latin", "latin-ext"],

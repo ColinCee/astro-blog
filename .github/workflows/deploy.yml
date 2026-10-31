@@ -56,6 +56,11 @@ jobs:
       - name: Install Playwright browser
         run: pnpm playwright install --with-deps chromium
 
+      # Roboto, Android's system font: the fonts' size-matched fallbacks
+      # need one a visitor would have, and the runner has none.
+      - name: Install Roboto
+        run: sudo apt-get install -y --no-install-recommends fonts-roboto
+
       - name: Layout and typography tests
         run: pnpm test
 
