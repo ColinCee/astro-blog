@@ -231,7 +231,8 @@ failure (a homelab service down); a result that got worse stays ink. In charts,
 
 All three are served from the site itself by Astro's font API (`fonts` in
 `astro.config.ts`, linked in `components/site/Head.astro`), with fallbacks
-sized to match the visitor's system font so nothing moves when they arrive;
+sized to match the visitor's system font so nothing moves when they arrive
+(DM Mono's is its own, "DM Mono fallback" in `tokens.css`);
 Sora and DM Mono 400 are preloaded. Geist Mono was tried and clashed with Sora.
 
 ### Hierarchy

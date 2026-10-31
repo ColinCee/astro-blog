@@ -55,7 +55,7 @@
   /* Type */
   --grotesk: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --head: var(--font-sora), var(--grotesk);
-  --mono: var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --mono: var(--font-dm-mono), "DM Mono fallback", monospace;
   --cjk:
     "PingFang TC", "Hiragino Sans", "Noto Sans TC", "Noto Sans SC",
     "Microsoft JhengHei", var(--grotesk);
@@ -141,6 +141,21 @@ html {
     opacity: 1;
     transform: none;
   }
+}
+
+/* DM Mono's stand-in while it loads: whichever monospace font the device has,
+   at DM Mono's height (its ascent and descent), so a line of mono text is the
+   same height in either font and nothing below it jumps when DM Mono lands.
+   All of these are about 0.6em wide, as DM Mono is. */
+@font-face {
+  font-family: "DM Mono fallback";
+  src:
+    local("Courier New"), local("Liberation Mono"), local("DejaVu Sans Mono"),
+    local("Droid Sans Mono"), local("Menlo"), local("Courier");
+  font-weight: 100 900;
+  ascent-override: 99.2161%;
+  descent-override: 31.005%;
+  line-gap-override: 0%;
 }
 
 /* The first screen's headline (the name, a page's title) only rises: it is

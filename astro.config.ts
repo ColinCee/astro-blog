@@ -92,7 +92,9 @@ export default defineConfig({
       weights: [300, 400, 500],
       styles: ["normal"],
       subsets: ["latin", "latin-ext"],
-      fallbacks: ["monospace"],
+      // Its fallback is "DM Mono fallback" in tokens.css: Astro sizes one only
+      // to Courier New, which Android and Linux lack.
+      fallbacks: [],
     },
   ],
   vite: {
