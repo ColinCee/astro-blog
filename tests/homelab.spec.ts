@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { parse } from "../worker/index.ts";
+import worker, { type Env, parse } from "../worker/index.ts";
 
 // The home server's numbers (worker/index.ts) in the home-lab and
 // flight-tracker figures. The dev server has no Worker, so each test answers
@@ -12,8 +12,6 @@ const stats = {
   blocked: 1212,
   tracking: 237,
   londonHour: 107,
-  haDays: 1,
-  backupOk: true,
 };
 
 const open = async (page: Page, name: string) => {
@@ -32,8 +30,6 @@ test("the figures show the server's numbers, and the dots go green", async ({
   await expect(lab.locator(".pj__cap")).toContainText("live, 2 min ago");
   await expect(lab.locator(".dg--lab")).toHaveAttribute("data-up", "");
   await expect(lab.locator(".lab")).toContainText("blocking 1,212 ips");
-  await expect(lab.locator(".lab")).toContainText("up 1 day");
-  await expect(lab.locator(".lab")).toContainText("restic, nightly · last ok");
   const radar = await open(page, "flight-tracker");
   await expect(radar.locator(".pj__cap")).toContainText("live, 2 min ago");
   await expect(radar.locator(".rd__nodes")).toContainText("237");
@@ -50,7 +46,6 @@ test("old numbers say when they were seen and leave the dots grey", async ({
   const lab = await open(page, "home-lab");
   await expect(lab.locator(".pj__cap")).toContainText("last seen 3 h ago");
   await expect(lab.locator(".dg--lab")).not.toHaveAttribute("data-up");
-  await expect(lab.locator(".lab")).not.toContainText("last ok");
 });
 
 test("without the server, the dashes stay and the caption says offline", async ({
@@ -75,4 +70,90 @@ test("the Worker accepts only the known numbers, freshly gathered", () => {
   expect(parse(body({ at: now + 61 }), now)).toBeNull();
   expect(parse("[]", now)).toBeNull();
   expect(parse("nope", now)).toBeNull();
+});
+
+test("the Worker takes a body only when the server's key signed it", async () => {
+  const toHex = (b: ArrayBuffer) => Buffer.from(b).toString("hex");
+  const keys = (await crypto.subtle.generateKey("Ed25519", true, [
+    "sign",
+    "verify",
+  ])) as CryptoKeyPair;
+  const other = (await crypto.subtle.generateKey("Ed25519", true, [
+    "sign",
+    "verify",
+  ])) as CryptoKeyPair;
+  const kv = new Map<string, string>();
+  const env: Env = {
+    STATS: {
+      get: async (k) => kv.get(k) ?? null,
+      put: async (k, v) => void kv.set(k, v),
+    },
+    HOMELAB_PUBLIC_KEY: toHex(
+      await crypto.subtle.exportKey("raw", keys.publicKey),
+    ),
+  };
+  const put = async (body: string, key = keys.privateKey) =>
+    (
+      await worker.fetch(
+        new Request("https://x/homelab.json", {
+          method: "PUT",
+          body,
+          headers: {
+            // Set by the server's HTTP client; Node's Request leaves it out.
+            "Content-Length": String(body.length),
+            Signature: toHex(
+              await crypto.subtle.sign(
+                "Ed25519",
+                key,
+                new TextEncoder().encode(body),
+              ),
+            ),
+          },
+        }),
+        env,
+      )
+    ).status;
+  const body = JSON.stringify({ ...stats, at: now });
+  expect(await put(body, other.privateKey)).toBe(401);
+  // no key configured yet (wrangler.json ships it empty): nothing is taken
+  const key = env.HOMELAB_PUBLIC_KEY;
+  env.HOMELAB_PUBLIC_KEY = "";
+  expect(await put(body)).toBe(401);
+  env.HOMELAB_PUBLIC_KEY = key;
+  expect(await put(body)).toBe(204);
+  expect(JSON.parse(kv.get("latest")!).blocked).toBe(1212);
+  // the same signed body again, or an older one, is refused
+  expect(await put(body)).toBe(409);
+  expect(
+    (
+      await worker.fetch(
+        new Request("https://x/homelab.json", {
+          method: "PUT",
+          body: body.replace("1212", "9999"),
+          headers: {
+            "Content-Length": String(body.length),
+            Signature: "00".repeat(64),
+          },
+        }),
+        env,
+      )
+    ).status,
+  ).toBe(401);
+  expect(
+    (await worker.fetch(new Request("https://x/homelab.json"), env)).status,
+  ).toBe(200);
+  // no length, or a malformed one, is refused before the body is read
+  for (const length of [undefined, "abc"])
+    expect(
+      (
+        await worker.fetch(
+          new Request("https://x/homelab.json", {
+            method: "PUT",
+            body,
+            headers: length ? { "Content-Length": length } : {},
+          }),
+          env,
+        )
+      ).status,
+    ).toBe(413);
 });
