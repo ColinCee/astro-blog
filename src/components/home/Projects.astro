@@ -10,6 +10,10 @@ import { getCollection } from "astro:content";
 import ankiCards from "../../data/anki-cards.json";
 import Cloud from "./projects/Cloud.astro";
 
+// The delivery figure's numbers are real: the commit this page was built
+// from, the post count, and (in the browser) this visit's time to first byte.
+const build = __BUILD__;
+const postCount = (await getCollection("blog")).length;
 const projects = (await getCollection("projects"))
   .sort((a, b) => a.data.order - b.data.order)
   .map(({ id, data }) => ({ id, ...data }));
@@ -231,13 +235,13 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
                 </svg>
                 <span class="node" data-node="repo">
                   <span class="node__k">git push</span>
-                  <span class="node__v">main</span>
+                  <span class="node__v">{build.hash || "main"}</span>
                   <span class="node__s">github</span>
                 </span>
                 <span class="node" data-node="build">
                   <span class="node__k">astro build</span>
                   <span class="node__v">
-                    <b data-n="14">14</b> s
+                    <b data-n={postCount}>{postCount}</b> posts
                   </span>
                   <span class="node__s">cloudflare workers</span>
                 </span>
@@ -252,9 +256,12 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
                 <span class="node" data-node="you">
                   <span class="node__k">you</span>
                   <span class="node__v hot">
-                    <b data-n="24">24</b> ms
+                    <b data-n="0" data-ttfb>
+                      –
+                    </b>{" "}
+                    ms
                   </span>
-                  <span class="node__s">first byte</span>
+                  <span class="node__s">your first byte</span>
                 </span>
               </div>
             )}
@@ -775,6 +782,18 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
       el.dataset.live ? live.get(el.dataset.live)! : Number(el.dataset.n);
     for (const el of pj.querySelectorAll<HTMLElement>("[data-live]"))
       live.set(el.dataset.live!, Number(el.dataset.n));
+    // This visit's own time to first byte, from the browser's timing of the
+    // page request; without it the dash stays.
+    const nav = performance.getEntriesByType("navigation")[0] as
+      | PerformanceNavigationTiming
+      | undefined;
+    const ttfb = pj.querySelector<HTMLElement>("[data-ttfb]");
+    if (ttfb && nav && nav.responseStart > 0) {
+      ttfb.dataset.n = String(
+        Math.max(1, Math.round(nav.responseStart - nav.startTime)),
+      );
+      ttfb.textContent = ttfb.dataset.n;
+    } else ttfb?.removeAttribute("data-n");
     const countUp = (el: HTMLElement) => {
       counted.add(el);
       if (reduce) return;
@@ -873,9 +892,14 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
       else runScope();
     };
     for (const it of items) {
-      const b = it.querySelector("[data-pj-pick]")!;
-      for (const ev of ["click", "focus", "pointerenter"])
+      const b = it.querySelector<HTMLElement>("[data-pj-pick]")!;
+      for (const ev of ["click", "focus"])
         b.addEventListener(ev, () => pick(it));
+      // A moving mouse, not pointerenter: a still pointer that the page
+      // scrolls under would otherwise switch the figure mid-scroll.
+      b.addEventListener("pointermove", (e) => {
+        if (e.pointerType === "mouse") pick(it);
+      });
     }
 
     new IntersectionObserver(

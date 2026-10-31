@@ -4,7 +4,7 @@
 .prose details.more {
   margin: 2rem 0;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--panel);
 }
 .prose details.more > summary {
