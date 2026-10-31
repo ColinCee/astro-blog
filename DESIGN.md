@@ -314,10 +314,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   lede, then one row per post from its frontmatter: year, month and read time in
   the rail; the title in Geist 400, ink, an `--accent` underline on hover; under it the stat in
   mono (old value `--faint`, new one `--accent-text`, a `vs` comparison in
-  ink) and its `statLabel` in `--faint`. Under it the stat's two sides to scale
-  (`scripts/stat-scale.ts` reads s/min/h, KB/MB/GB, % and £): two 4px bars, the
-  old `--bar`, the new `--accent`, growing in with the row; a stat it can't read,
-  or a `vs` comparison, gets none.
+  ink) and its `statLabel` in `--faint`.
 - **CV ledger (`pages/cv.astro`):** one `<details>` row per role, so the whole
   career fits one laptop screen closed. Closed, a row is the evidence: node, mono
   dates (`now` in `--accent-text` for the current role), company in Sora 600,
