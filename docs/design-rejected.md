@@ -74,3 +74,5 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | Pill-shaped buttons and 16–20px corners | "Overly rounded"; 8px chosen. |
 | Four-hue palette, stronger spacing scale, wider breakout figures | See DESIGN.md, where each is noted at the rule it informed. |
 | Striking through the old value of a stat ("~~428 s~~ → 23 s") | The arrow already says it changed; the strike read as an error. Old value grey instead. |
+| Bold punchlines in the one-liners (Sora 400 in a 200 line) | Heavier Sora reads thick next to the thin voice; the punchline is violet at 300 instead, one violet thing per line. |
+| Button hover that turns only the icon violet | The violet icon read dimmer than the white one at rest ("washed out"); a violet-tinted fill with a bright icon instead. |

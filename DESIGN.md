@@ -348,7 +348,10 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   inline drawing with neutral marks (n5–n8) and the punchline mark in
   `--accent-solid`, a deeper violet than the text accent so the marks read rich,
   not electric; the counter is a solid `--accent-solid` chip with `--accent-ink`
-  (white). Below 56rem the reel stacks under the name.
+  (white). Each line has exactly one violet thing: the drawing or counter if it
+  has one, else its punchline word (`<b>`) in `--accent-text` at weight 300.
+  Never bold: heavier Sora reads thick next to the 200 voice. Below 56rem the
+  reel stacks under the name.
 
 ### Terminal Session (homepage only)
 - `components/home/Terminal.astro`: a `--panel` window titled `~/ColinOS` with

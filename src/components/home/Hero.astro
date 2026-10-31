@@ -198,7 +198,7 @@ const quips = [
 <!-- Global: the one-liners arrive as HTML (set:html, then innerHTML), which
      scoped styles do not reach. -->
 <style is:global>
-  /* The one-liners: Sora at 200, the punchline at 400, in ink. The current
+  /* The one-liners: Sora at 200 in ink. The current
      one is full strength, the next one faint; the old one fades as it rises. */
   .reel__item {
     max-width: 28ch;
@@ -220,8 +220,16 @@ const quips = [
     opacity: 0;
     transition-duration: 0.35s;
   }
+  /* One violet thing per line: the punchline word, unless a drawing or the
+     counter already is. Colour, not bold: a heavy Sora reads thick next to
+     the 200 voice; 300 only keeps the thin violet strokes as solid as ink. */
   .reel__item b {
-    font-weight: 400;
+    font-weight: 300;
+    color: var(--accent-text);
+  }
+  .reel__item:has(.q-svg, .q-meter, .q-dots, .q-split, .q-ctr) b {
+    font-weight: inherit;
+    color: inherit;
   }
   /* Inline drawings: neutral marks, the punchline in the accent, one line tall. */
   .q-svg {
