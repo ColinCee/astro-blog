@@ -26,7 +26,6 @@ const stacks = (await getCollection("homelabStacks"))
 // in [data-stat]. Until it arrives, or without it, the number is a dash.
 const stackNow: Record<string, [string, string, string]> = {
   "flight-tracker": ["tracking", "tracking", "now"],
-  "home-assistant": ["up", "haDays", "days"],
   crowdsec: ["blocking", "blocked", "ips"],
 };
 
@@ -187,11 +186,6 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
                                 {`${now[0]} `}
                                 <b data-stat={now[1]}>–</b>{" "}
                                 <span>{now[2]}</span>
-                              </Fragment>
-                            ) : s.id === "backup" ? (
-                              <Fragment>
-                                restic, nightly
-                                <span data-stat-backup></span>
                               </Fragment>
                             ) : (
                               s.services
@@ -830,7 +824,6 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     // seen; unreachable, the dashes stay.
     const ages = pj.querySelectorAll<HTMLElement>("[data-stats-age]");
     const lab = pj.querySelector<HTMLElement>(".dg--lab");
-    const backup = pj.querySelector("[data-stat-backup]");
     let stats: Record<string, number | boolean | null> | undefined;
     const say = () => {
       if (!stats) return;
@@ -851,13 +844,6 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
       lab?.toggleAttribute("data-up", up);
       for (const d of lab?.querySelectorAll(".dot") ?? [])
         d.setAttribute("aria-label", up ? "up" : "not reported");
-      // Old news about a backup is no news.
-      if (backup)
-        backup.textContent = !fresh
-          ? ""
-          : stats.backupOk
-            ? " · last ok"
-            : " · overdue";
     };
     const load = () =>
       fetch("/homelab.json")
@@ -873,8 +859,6 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
               el.textContent = "–";
               continue;
             }
-            if (el.dataset.stat === "haDays")
-              el.nextElementSibling!.textContent = v === 1 ? "day" : "days";
             el.dataset.n = String(v);
             el.textContent = fmt(v);
             // On screen for the first time: count up now; otherwise when it

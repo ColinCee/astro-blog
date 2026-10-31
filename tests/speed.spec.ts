@@ -95,8 +95,6 @@ async function load(page: Page, path: string) {
         blocked: 1212,
         tracking: 237,
         londonHour: 107,
-        haDays: 3,
-        backupOk: true,
       },
     }),
   );

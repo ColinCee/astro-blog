@@ -24,12 +24,10 @@ type HomelabStats = {
   blocked: number | null;
   tracking: number | null;
   londonHour: number | null;
-  haDays: number | null;
-  backupOk: boolean;
 };
 
-const counts = ["blocked", "tracking", "londonHour", "haDays"] as const;
-const flags = ["allUp", "backupOk"] as const;
+const counts = ["blocked", "tracking", "londonHour"] as const;
+const flags = ["allUp"] as const;
 const keys = ["at", ...counts, ...flags].sort().join();
 
 const count = (v: unknown) =>
@@ -100,7 +98,8 @@ export default {
         headers: { Allow: "GET, PUT" },
       });
     // Refused before reading, so a big upload costs nothing.
-    if (Number(request.headers.get("Content-Length") ?? Infinity) > 1024)
+    // A missing or malformed length is NaN, which fails this too.
+    if (!(Number(request.headers.get("Content-Length") ?? Number.NaN) <= 1024))
       return new Response("too big", { status: 413 });
     const body = await request.arrayBuffer();
     if (body.byteLength > 1024) return new Response("too big", { status: 413 });

@@ -12,8 +12,6 @@ const stats = {
   blocked: 1212,
   tracking: 237,
   londonHour: 107,
-  haDays: 1,
-  backupOk: true,
 };
 
 const open = async (page: Page, name: string) => {
@@ -32,8 +30,6 @@ test("the figures show the server's numbers, and the dots go green", async ({
   await expect(lab.locator(".pj__cap")).toContainText("live, 2 min ago");
   await expect(lab.locator(".dg--lab")).toHaveAttribute("data-up", "");
   await expect(lab.locator(".lab")).toContainText("blocking 1,212 ips");
-  await expect(lab.locator(".lab")).toContainText("up 1 day");
-  await expect(lab.locator(".lab")).toContainText("restic, nightly · last ok");
   const radar = await open(page, "flight-tracker");
   await expect(radar.locator(".pj__cap")).toContainText("live, 2 min ago");
   await expect(radar.locator(".rd__nodes")).toContainText("237");
@@ -50,7 +46,6 @@ test("old numbers say when they were seen and leave the dots grey", async ({
   const lab = await open(page, "home-lab");
   await expect(lab.locator(".pj__cap")).toContainText("last seen 3 h ago");
   await expect(lab.locator(".dg--lab")).not.toHaveAttribute("data-up");
-  await expect(lab.locator(".lab")).not.toContainText("last ok");
 });
 
 test("without the server, the dashes stay and the caption says offline", async ({
@@ -147,4 +142,18 @@ test("the Worker takes a body only when the server's key signed it", async () =>
   expect(
     (await worker.fetch(new Request("https://x/homelab.json"), env)).status,
   ).toBe(200);
+  // no length, or a malformed one, is refused before the body is read
+  for (const length of [undefined, "abc"])
+    expect(
+      (
+        await worker.fetch(
+          new Request("https://x/homelab.json", {
+            method: "PUT",
+            body,
+            headers: length ? { "Content-Length": length } : {},
+          }),
+          env,
+        )
+      ).status,
+    ).toBe(413);
 });
