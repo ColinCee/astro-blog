@@ -21,7 +21,10 @@ blog index, a post (jest-to-vitest) and CV. For each page:
   screen has painted), the median of the three loads.
 
 The homepage's weather call gets a fixed answer, so every run loads the same
-page. Google Fonts is fetched for real, since that is what a visitor downloads.
+page. A request that fails fails the test, since it would make the page look
+lighter. Google Fonts is fetched for real, since that is what a visitor
+downloads; it is most of every page's bytes, so a fonts-only overshoot with no
+font change in the PR means Google changed its files.
 
 The local preview speaks HTTP/1.1 and the throttle adds its delay per request,
 so an extra file costs more here than on Cloudflare: the numbers are a
@@ -35,8 +38,8 @@ Set from the numbers when they were added (Oct 2026), with headroom:
 - **Bytes:** 10% or 3 KB over today, whichever is more, rounded up to a KB, so
   a small file can take a small edit and a big one can't grow by much.
 - **Requests:** two more than today.
-- **LCP:** 30% over today, rounded up to 50 ms; the test retries once, since
-  timing on a shared CI machine can spike where bytes never do.
+- **LCP:** 30% over today, rounded up to 50 ms. A failing test runs once more
+  before it counts, since timing on a shared CI machine can spike.
 
 | Page | Total | Fonts | LCP |
 |---|---|---|---|

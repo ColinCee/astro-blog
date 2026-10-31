@@ -96,6 +96,9 @@ async function load(page: Page, path: string) {
     lcp: 0,
   };
   const sized: Promise<void>[] = [];
+  // A file that fails to load would make the page look lighter, so it fails the test.
+  const failed: string[] = [];
+  page.on("requestfailed", (req) => failed.push(req.url()));
   page.on("requestfinished", (req) =>
     sized.push(
       req.sizes().then((s) => {
@@ -119,6 +122,7 @@ async function load(page: Page, path: string) {
       ),
   );
   await Promise.all(sized);
+  expect(failed, `${path}: requests that failed`).toEqual([]);
   return got;
 }
 
