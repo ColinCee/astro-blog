@@ -81,8 +81,9 @@
 
   /* Accent states — derived from --accent, reused across components */
   --accent-line: color-mix(in oklch, var(--accent) 40%, transparent);
-  /* A hovered button: a violet tint, so its label stays bright */
-  --accent-hover: color-mix(in oklch, var(--accent) 22%, var(--panel));
+  /* A hovered button: a violet fill dark enough that its label stays bright,
+     with the chroma to read violet, not grey-mauve (about Radix dark step 4) */
+  --accent-hover: color-mix(in oklch, var(--v3) 50%, var(--panel));
   --ring: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
 }
 
@@ -96,6 +97,7 @@
   --prose-ink: var(--n12);
   --accent: var(--v5);
   --accent-text: var(--v4);
+  --accent-hover: color-mix(in oklch, var(--v5) 16%, var(--panel));
 }
 
 /* Paper is light in any theme (scales.css flips the greys), so the accent

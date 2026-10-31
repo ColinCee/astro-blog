@@ -197,9 +197,9 @@ two themes.
    `--faint` before an arrow; a plain comparison like "82% vs 80%" stays ink.
 2. **Links**, in `--accent-text` (`--accent-text` in prose).
 3. **The one highlight in a hero drawing or one-liner.**
-4. **A hovered control:** a button fills with `--accent-hover` (the accent at
-   22% over the panel) and its border goes `--accent`, while its label or icon
-   stays bright ink (a violet icon read dimmer than the white one at rest); a
+4. **A hovered control:** a button fills with `--accent-hover` (dark: v3 half
+   over the panel; light: v5 at 16%) and its border goes `--accent-solid`, while
+   its label or icon stays bright ink (a violet icon read dimmer than the white one at rest); a
    link's underline goes `--accent`. One at a time, so it
    never crowds a glance.
 Chrome never takes it: prompts, carets, window dots, the nav, separators (the
