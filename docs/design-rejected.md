@@ -76,3 +76,5 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | Striking through the old value of a stat ("~~428 s~~ → 23 s") | The arrow already says it changed; the strike read as an error. Old value grey instead. |
 | Bold punchlines in the one-liners (Sora 400 in a 200 line) | Heavier Sora reads thick next to the thin voice; the punchline is violet at 300 instead, one violet thing per line. |
 | Button hover that turns only the icon violet | The violet icon read dimmer than the white one at rest ("washed out"); a violet-tinted fill with a bright icon instead. |
+| Violet (hue 296) as the accent | Lightened enough to read in dark, it turned into a muted lavender ("washed out"); at full strength it was "too vivid". Purple 308 keeps its colour in both themes (31 Oct 2026). |
+| A 12-step accent ramp, then four loose accent shades | 8 of 12 steps unused; the four shades sat too close and the pale ones read pink or white. One 6-step spectrum from dark up to the accent (31 Oct 2026). |
