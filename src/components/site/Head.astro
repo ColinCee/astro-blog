@@ -3,6 +3,7 @@
 // description, canonical URL, the social card, and structured data for
 // search engines: a BlogPosting on posts (`article`), the person on the
 // homepage (`person`).
+import { Font } from "astro:assets";
 import links from "../../data/links.json";
 
 interface Props {
@@ -81,14 +82,11 @@ const schema = article
 <link rel="icon" href="/favicon.ico?v=2" sizes="32x32">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
-<!-- Fonts: linked here, not imported from a stylesheet, so the browser asks
-     for them as soon as it reads the head. -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Sora:wght@200..600&amp;family=DM+Mono:wght@300;400;500&amp;display=swap"
->
+<!-- Fonts, self-hosted (astro.config.ts). Sora, the titles, is preloaded:
+     a big title that rewraps when its font lands moves the page under it. -->
+<Font cssVariable="--font-geist" />
+<Font cssVariable="--font-sora" preload={[{ subset: "latin" }]} />
+<Font cssVariable="--font-dm-mono" />
 <meta name="generator" content={Astro.generator}>
 
 <title>{title}</title>

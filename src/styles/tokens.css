@@ -12,7 +12,7 @@
   and soft: a mid-grey page and off-white panels, no pure white.
 
   Fonts: Sora (names, headings, the one-liners), Geist (reading), DM Mono
-  (data), loaded from Google Fonts by components/site/Head.astro.
+  (data), self-hosted by Astro's font API (astro.config.ts), linked in components/site/Head.astro.
 */
 
 :root {
@@ -53,9 +53,9 @@
   --wash: none;
 
   /* Type */
-  --grotesk: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --head: "Sora", var(--grotesk);
-  --mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --grotesk: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --head: var(--font-sora), var(--grotesk);
+  --mono: var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
   --cjk:
     "PingFang TC", "Hiragino Sans", "Noto Sans TC", "Noto Sans SC",
     "Microsoft JhengHei", var(--grotesk);

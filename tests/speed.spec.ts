@@ -1,7 +1,7 @@
 import { expect, type Page, test } from "@playwright/test";
 
-// Page speed budgets: each page type's bytes by type (KB), request count and
-// LCP (ms) on a slow phone connection, against the built site (run by
+// Page speed budgets: each page type's bytes by type (KB), request count, LCP
+// (ms) and layout shift (CLS) on a slow phone connection, against the built site (run by
 // playwright.speed.config.ts, `pnpm speed`). How they are measured and why
 // these numbers: docs/page-speed.md. Raise one only with the reason in the PR.
 
@@ -14,49 +14,54 @@ type Budget = {
   total: number;
   requests: number;
   lcp: number;
+  cls: number;
 };
 
 const budgets: Record<string, Budget> = {
   "/": {
-    html: 12,
-    css: 12,
+    html: 13,
+    css: 11,
     js: 12,
-    font: 112,
+    font: 95,
     image: 3,
-    total: 141,
-    requests: 19,
-    lcp: 1300,
+    total: 124,
+    requests: 20,
+    lcp: 850,
+    cls: 0.1,
   },
   "/blog/": {
-    html: 7,
-    css: 7,
-    js: 3,
-    font: 101,
+    html: 8,
+    css: 6,
+    js: 5,
+    font: 88,
     image: 3,
-    total: 110,
+    total: 96,
     requests: 9,
-    lcp: 1250,
+    lcp: 950,
+    cls: 0.1,
   },
   // A post with a code block, a figure and a script; its content is settled.
   "/blog/jest-to-vitest/": {
-    html: 11,
-    css: 21,
+    html: 12,
+    css: 20,
     js: 8,
-    font: 101,
+    font: 88,
     image: 3,
-    total: 134,
+    total: 121,
     requests: 14,
-    lcp: 1400,
+    lcp: 950,
+    cls: 0.1,
   },
   "/cv/": {
-    html: 9,
-    css: 10,
-    js: 3,
-    font: 101,
+    html: 10,
+    css: 8,
+    js: 5,
+    font: 88,
     image: 3,
-    total: 114,
+    total: 101,
     requests: 10,
-    lcp: 600,
+    lcp: 750,
+    cls: 0.1,
   },
 };
 
@@ -110,6 +115,7 @@ async function load(page: Page, path: string) {
     total: 0,
     requests: 0,
     lcp: 0,
+    cls: 0,
   };
   const sized: Promise<void>[] = [];
   // A file that fails to load, or answers with an error, would make the page
@@ -129,6 +135,18 @@ async function load(page: Page, path: string) {
       }),
     ),
   );
+  // Layout shift: how far things on screen move while the page loads.
+  await page.addInitScript(() => {
+    const w = window as unknown as { cls: number };
+    w.cls = 0;
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries() as unknown as {
+        value: number;
+        hadRecentInput: boolean;
+      }[])
+        if (!e.hadRecentInput) w.cls += e.value;
+    }).observe({ type: "layout-shift", buffered: true });
+  });
   await page.goto(path, { waitUntil: "networkidle" });
   // Past the first screen's entrances, so LCP has its last candidate: every
   // animation that ends, up to 3 s, since the home reel's timer bar runs 5 s.
@@ -150,6 +168,9 @@ async function load(page: Page, path: string) {
           done(list.getEntries().at(-1)?.startTime ?? 0),
         ).observe({ type: "largest-contentful-paint", buffered: true }),
       ),
+  );
+  got.cls = await page.evaluate(
+    () => (window as unknown as { cls: number }).cls,
   );
   await Promise.all(sized);
   expect(failed, `${path}: requests that failed`).toEqual([]);
@@ -173,7 +194,10 @@ for (const [path, budget] of Object.entries(budgets)) {
       lcp: runs.map((r) => r.lcp).sort((a, b) => a - b)[1],
     };
     const shown = Object.fromEntries(
-      Object.entries(got).map(([k, v]) => [k, Math.round(v * 10) / 10]),
+      Object.entries(got).map(([k, v]) => {
+        const at = k === "cls" ? 1000 : 10;
+        return [k, Math.round(v * at) / at];
+      }),
     );
     console.log(path, JSON.stringify(shown));
     for (const key of Object.keys(budget) as (keyof Budget)[])

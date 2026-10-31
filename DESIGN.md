@@ -229,8 +229,9 @@ failure (a homelab service down); a result that got worse stays ink. In charts,
 **Data:** DM Mono (`--mono`), 300–500.
 **CJK:** `--cjk` stack (PingFang TC / Noto Sans TC/SC) for names like 張志權.
 
-All three come from Google Fonts by a `<link>` in `components/site/Head.astro`,
-with preconnects. Geist Mono was tried and clashed with Sora.
+All three are served from the site itself by Astro's font API (`fonts` in
+`astro.config.ts`, linked in `components/site/Head.astro`), with fallbacks
+sized to match so nothing moves when they arrive; Sora is preloaded. Geist Mono was tried and clashed with Sora.
 
 ### Hierarchy
 - **Display** (Sora 600, `clamp(2.6rem, 5.5vw, 4.25rem)`, −0.05em): the hero

@@ -2,7 +2,7 @@ import { execSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 import expressiveCode from "astro-expressive-code";
 import { codeThemes } from "./src/styles/code-theme";
 
@@ -59,6 +59,38 @@ const lastmod = Object.fromEntries(
 export default defineConfig({
   site: "https://colincheung.dev",
   compressHTML: true,
+  // Every internal link fetches its page when the pointer rests on it or it
+  // gets focus, so the click opens a page that is already here.
+  prefetch: { prefetchAll: true, defaultStrategy: "hover" },
+  // Fonts served from the site itself, not Google: no second connection, and
+  // fallbacks sized to match, so nothing moves when the font arrives.
+  fonts: [
+    {
+      provider: fontProviders.google(),
+      name: "Geist",
+      cssVariable: "--font-geist",
+      weights: [400, 500, 600],
+      styles: ["normal"],
+      subsets: ["latin", "latin-ext"],
+    },
+    {
+      provider: fontProviders.google(),
+      name: "Sora",
+      cssVariable: "--font-sora",
+      weights: ["200 600"],
+      styles: ["normal"],
+      subsets: ["latin", "latin-ext"],
+    },
+    {
+      provider: fontProviders.google(),
+      name: "DM Mono",
+      cssVariable: "--font-dm-mono",
+      weights: [300, 400, 500],
+      styles: ["normal"],
+      subsets: ["latin", "latin-ext"],
+      fallbacks: ["monospace"],
+    },
+  ],
   vite: {
     define: { __BUILD__: JSON.stringify(buildInfo()) },
   },
