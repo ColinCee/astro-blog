@@ -65,7 +65,7 @@ for (const vp of viewports) {
             // Below 64rem the timeline body is inset for its spine, by design.
             vp.width >= 1024
               ? ".post__head, .prose > *, .tl__span, .post__foot"
-              : ".post__head, .post > .prose > *, .tl__span, .post__foot",
+              : ".post__head, .post__body > .prose > *, .tl__span, .post__foot",
           )
           .evaluateAll((els) =>
             els
@@ -77,6 +77,8 @@ for (const vp of viewports) {
                 right: Math.round(r.right),
               })),
           );
+        // header and footer alone would pass, so the body must be in it too
+        expect(boxes.length, `${href} body blocks found`).toBeGreaterThan(2);
         const right = Math.max(...boxes.map((b) => b.right));
         for (const box of boxes) {
           expect(
