@@ -200,6 +200,7 @@ two themes.
    `--faint` before an arrow; a plain comparison like "82% vs 80%" stays ink.
    One purple per figure: where a figure has two candidates (a curve and a bar,
    a count and the planes it counts), the result keeps it and the other goes ink.
+   A result bar and its own value are one result, so both stay purple.
    A list of results where something else on the page is already purple (the home
    terminal) stays ink.
 2. **Links**, in `--accent-text` (`--accent-text` in prose).
