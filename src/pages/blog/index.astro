@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import { readMinutes } from "../../scripts/read-minutes";
+import { statScale } from "../../scripts/stat-scale";
 
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -11,6 +12,9 @@ const posts = (await getCollection("blog")).sort(
 // an optional `statLabel`. Every post gets the same row; nothing is listed here.
 
 const entries = posts.map((post) => {
+  const parts = post.data.stat?.includes("→")
+    ? post.data.stat.split("→").map((x) => x.trim())
+    : null;
   return {
     href: `/blog/${post.id}/`,
     title: post.data.title,
@@ -19,9 +23,9 @@ const entries = posts.map((post) => {
     read: readMinutes(post.body),
     metric: post.data.stat ?? null,
     // "428 s → 23 s" splits so the old value can go grey; "82% vs 80%" stays ink
-    parts: post.data.stat?.includes("→")
-      ? post.data.stat.split("→").map((x) => x.trim())
-      : null,
+    parts,
+    // the two sides drawn to scale under the stat, when they can be read
+    scale: parts ? statScale(parts[0], parts[1]) : null,
     flat: post.data.stat?.includes(" vs ") ?? false,
     label: post.data.statLabel ?? null,
   };
@@ -68,6 +72,12 @@ const entries = posts.map((post) => {
                   )}
                   {e.label && <span class="log__label">{e.label}</span>}
                 </p>
+              )}
+              {e.scale && (
+                <span class="log__bars" aria-hidden="true">
+                  <i style={`--w:${e.scale.was.toFixed(3)}`} />
+                  <i class="log__now" style={`--w:${e.scale.now.toFixed(3)}`} />
+                </span>
               )}
             </div>
           </a>
@@ -212,6 +222,38 @@ const entries = posts.map((post) => {
     text-decoration-color: var(--accent);
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
+  }
+  /* The stat's two sides to scale, as the posts' before/after bars draw
+     them: the old grey above, the new in the accent, each a fraction of the
+     larger. They grow in with the row. */
+  .log__bars {
+    display: grid;
+    gap: 3px;
+    width: min(14rem, 100%);
+    margin-top: 0.6rem;
+  }
+  .log__bars i {
+    display: block;
+    height: 4px;
+    min-width: 2px;
+    width: calc(var(--w) * 100%);
+    border-radius: 1px;
+    background: var(--bar);
+  }
+  .log__bars .log__now {
+    background: var(--accent);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .log__bars i {
+      transform-origin: left;
+      animation: log-grow 0.9s var(--ease-out) calc(0.3s + var(--i, 0) * 0.08s)
+        both;
+    }
+  }
+  @keyframes log-grow {
+    from {
+      transform: scaleX(0);
+    }
   }
   .log__sig {
     margin: 0.5rem 0 0;

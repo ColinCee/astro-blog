@@ -15,7 +15,7 @@ for (const path of paths)
     p.on('pageerror', (e) => errors.push(e.message));
     p.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
     if (theme === 'light') await p.addInitScript(() => localStorage.setItem('theme', 'light'));
-    await p.goto('http://localhost:4331' + path, { waitUntil: 'networkidle' });
+    await p.goto('http://localhost:' + (process.env.PORT ?? '4331') + path, { waitUntil: 'networkidle' });
     await p.evaluate(() => document.fonts.ready);
     // scroll through once so anything that waits to be seen has played
     await p.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 500) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 120)); } scrollTo(0, 0); });
