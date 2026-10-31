@@ -3,8 +3,8 @@
 /*
   The design system's roles for colincheung.dev. The colours themselves are
   scales.css, generated from docs/redesign/comps/tokens.mts: a 12-step cool grey
-  (n1-n12), a 12-step violet accent (a1-a12) and the status colours (ok, warn,
-  danger at steps 3, 9, 11). The rules for using them, with samples, are in
+  (n1-n12), four violet accent shades and the status colours (ok, warn, danger
+  at steps 3, 9, 11). The rules for using them, with samples, are in
   src/pages/design.astro (/design/ on the dev server).
 
   Dark is the default. Light is a toggle (data-theme="light" on <html>, set by
@@ -33,16 +33,12 @@
   --faint: var(--n10);
   --prose-ink: color-mix(in oklab, var(--n12) 82%, var(--n11));
 
-  /* ---- Accent: violet, three jobs ----
-     The value that got better, links, and small marks at the one thing (the
-     slashes, the open project, a chart's result). Never a surface or a button.
-     --accent is for marks and bars; --accent-soft and --accent-text for text. */
-  --accent: var(--a10);
-  --accent-solid: var(--a9);
-  --accent-soft: var(--a11);
-  --accent-text: var(--a11);
+  /* ---- Accent: violet, four shades from scales.css, each with one job ----
+     --accent: bars, lines and a post's big result. --accent-text: links and
+     small results. --accent-solid: filled marks (the one-liner drawings).
+     --accent-wash: a tinted background. Where each may go is DESIGN.md's
+     Accent Points Rule. */
   --accent-ink: #fff;
-  --accent-wash: var(--a3);
   /* A chart's real gain and real drop: the status green and red. */
   --gain: var(--ok11);
   --loss: var(--danger11);
@@ -93,7 +89,6 @@
   --pane: var(--n2);
   --well: var(--n4);
   --prose-ink: var(--n12);
-  --accent: var(--a9);
 }
 
 /* Large monitors: nudge the whole rem-based system up a little, so a wide

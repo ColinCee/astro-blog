@@ -45,7 +45,7 @@
   font-weight: 500;
 }
 .prose .ladder [data-out] strong {
-  color: var(--accent-soft);
+  color: var(--accent-text);
 }
 .prose .ladder [data-out] small {
   color: var(--faint);

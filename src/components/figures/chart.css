@@ -78,7 +78,7 @@
   stroke: var(--accent);
 }
 .prose .chart text.hi {
-  fill: var(--accent-soft);
+  fill: var(--accent-text);
   font-weight: 500;
 }
 .prose .chart text.ink {

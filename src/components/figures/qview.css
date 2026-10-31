@@ -105,7 +105,7 @@
   margin: 0;
 }
 .prose .peek .fig__k b {
-  color: var(--accent-soft);
+  color: var(--accent-text);
   font-weight: 500;
 }
 .prose .peek__seen {

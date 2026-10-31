@@ -37,7 +37,7 @@
   background: var(--accent);
 }
 .prose .runs--hi b {
-  color: var(--accent-soft);
+  color: var(--accent-text);
 }
 .prose .runs--axis > div {
   height: auto;

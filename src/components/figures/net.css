@@ -81,6 +81,6 @@
   padding: 0.5rem 0.7rem;
   border: 1px solid var(--accent);
   border-radius: 6px;
-  color: var(--accent-soft);
+  color: var(--accent-text);
   white-space: nowrap;
 }

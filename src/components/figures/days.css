@@ -20,7 +20,7 @@
   background: var(--bar);
 }
 .prose .days__k--now {
-  color: var(--accent-soft);
+  color: var(--accent-text);
   font-weight: 500;
 }
 .prose .days__k--now::before {

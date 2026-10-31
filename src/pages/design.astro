@@ -70,18 +70,18 @@ if (import.meta.env.PROD) return Astro.redirect("/");
 
     <h2>Colour</h2>
     <p>
-      Three kinds of colour and nothing else: one grey scale, one accent scale,
-      three status colours. Each step is one OKLCH value; only lightness changes
-      between light and dark, so dark mode is the same palette, not a second
-      one.
+      Three kinds of colour and nothing else: one grey scale, four accent
+      shades, three status colours. Each is one OKLCH value; only lightness
+      changes between light and dark, so dark mode is the same palette, not a
+      second one.
     </p>
     <div class="scale">
       <h3>neutral · hue 255, barely tinted cool · 12 steps</h3>
       <div class="sw" data-sw="n"></div>
     </div>
     <div class="scale">
-      <h3>accent · violet, hue 298 · 12 steps</h3>
-      <div class="sw" data-sw="a"></div>
+      <h3>accent · violet, hue 298 · four shades, one job each</h3>
+      <div class="sw four" data-sw="a"></div>
     </div>
     <div class="scale">
       <h3>
@@ -640,7 +640,7 @@ if (import.meta.env.PROD) return Astro.redirect("/");
   /* The page's own names for the site's roles */
   .ds {
     --sans: var(--grotesk);
-    --accent: var(--accent-soft);
+    --accent: var(--accent-text);
     --line-2: color-mix(in oklab, var(--n12) 5%, transparent);
     max-width: var(--w-page);
     margin: 0 auto;
@@ -784,6 +784,15 @@ if (import.meta.env.PROD) return Astro.redirect("/");
     font-size: 0.68rem;
     color: var(--faint);
     box-shadow: inset 0 0 0 1px var(--line-2);
+  }
+  .ds .sw.four {
+    grid-template-columns: repeat(4, minmax(0, 11rem));
+  }
+  .ds .sw.four span {
+    color: #fff;
+  }
+  .ds .sw.four div:first-child span {
+    color: var(--accent-text);
   }
   .ds .sw.three {
     grid-template-columns: repeat(9, minmax(0, 5.5rem));
@@ -971,20 +980,26 @@ if (import.meta.env.PROD) return Astro.redirect("/");
         `<i style="aspect-ratio:1;border-radius:1px;background:var(${i < 9 ? "--accent-solid" : "--n6"})"></i>`,
     ).join("");
   // Swatches drawn from the tokens, so this page can never disagree with them.
+  const labels: Record<string, string> = {
+    "accent-wash": "wash · tint",
+    "accent-solid": "solid · filled marks",
+    accent: "accent · bars, big results",
+    "accent-text": "text · links, small results",
+  };
   const fill = (k: string, keys: string[]) => {
     const el = document.querySelector<HTMLElement>(`[data-sw="${k}"]`);
     if (el)
       el.innerHTML = keys
         .map(
           (n) =>
-            `<div style="background:var(--${n})"><span>${n.replace(/^[na](\d)/, "$1")}</span></div>`,
+            `<div style="background:var(--${n})"><span>${labels[n] ?? n.replace(/^n(\d)/, "$1")}</span></div>`,
         )
         .join("");
   };
   const steps = (p: string) =>
     Array.from({ length: 12 }, (_, i) => p + (i + 1));
   fill("n", steps("n"));
-  fill("a", steps("a"));
+  fill("a", ["accent-wash", "accent-solid", "accent", "accent-text"]);
   fill(
     "s",
     ["ok", "warn", "danger"].flatMap((h) => [h + 3, h + 9, h + 11]),

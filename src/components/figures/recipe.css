@@ -59,7 +59,7 @@
   color: var(--ink);
 }
 .recipe li.is-now {
-  color: var(--accent-soft);
+  color: var(--accent-text);
 }
 .recipe li.is-now b {
   font-weight: 500;

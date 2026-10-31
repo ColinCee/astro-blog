@@ -46,7 +46,7 @@
   height: 0.9rem;
 }
 .prose .gain--hi strong {
-  color: var(--accent-soft);
+  color: var(--accent-text);
   font-size: 1.25rem;
 }
 @media (max-width: 34rem) {

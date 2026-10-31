@@ -17,7 +17,7 @@
   transform: none;
 }
 .prose .slab.is-on figcaption {
-  color: var(--accent-soft);
+  color: var(--accent-text);
 }
 .prose .slab--out.is-on span {
   background: color-mix(in oklch, var(--accent) 14%, transparent);

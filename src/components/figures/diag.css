@@ -28,7 +28,7 @@
   fill: var(--faint);
 }
 .prose .diag text.hi {
-  fill: var(--accent-soft);
+  fill: var(--accent-text);
 }
 .prose .diag .arr {
   fill: none;

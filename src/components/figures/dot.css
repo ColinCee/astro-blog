@@ -40,7 +40,7 @@
   background: var(--accent);
 }
 .prose .dot--after b {
-  color: var(--accent-soft);
+  color: var(--accent-text);
   font-weight: 500;
 }
 @media (max-width: 34rem) {

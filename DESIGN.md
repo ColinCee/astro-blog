@@ -12,9 +12,9 @@ colors:
   ink: "#e8eff9"
   muted: "#b2b8bf"
   faint: "#a0a5ac"
-  accent: "#9951fc"
-  accent-solid: "#782dd1"
-  accent-soft: "#a977ff"
+  accent: "#9757f5"
+  accent-solid: "#7242ba"
+  accent-text: "#b490fb"
   accent-ink: "#fff"
   gain: "#7cd591"
   loss: "#fda19a"
@@ -72,7 +72,7 @@ components:
     textColor: "{colors.muted}"
     typography: "{typography.body}"
   kicker:
-    textColor: "{colors.accent-soft}"
+    textColor: "{colors.accent-text}"
     typography: "{typography.label}"
   tag:
     textColor: "{colors.muted}"
@@ -84,7 +84,7 @@ components:
     backgroundColor: "{colors.panel}"
     rounded: "{rounded.control}"
   metric:
-    textColor: "{colors.accent-soft}"
+    textColor: "{colors.accent-text}"
 ---
 
 # Design System: colincheung.dev
@@ -133,7 +133,7 @@ big.
 
 **Key Characteristics:**
 
-- Three kinds of colour and nothing else: one cool grey scale, one violet accent scale, three status colours.
+- Three kinds of colour and nothing else: one cool grey scale, four violet accent shades (one per job), three status colours.
 - Dark and light are the same OKLCH scales at other lightnesses, not a second palette. No pure white or black surfaces.
 - Sora for names and the voice, Geist for reading, DM Mono for data.
 - Flat: surfaces separate by tone, never by a shadow or a border.
@@ -148,13 +148,15 @@ big.
 
 ## 2. Colours
 
-Each step is one OKLCH value from `tokens.mts`; light and dark change only
+Each colour is one OKLCH value from `tokens.mts`; light and dark change only
 lightness. Swatches are on the design page.
 
 ### Scales
 - **Neutral** (`--n1`…`--n12`): hue 255, barely tinted cool, 12 steps.
-- **Accent** (`--a1`…`--a12`): violet, hue 298, 12 steps. A four-hue palette
-  (teal, ochre, indigo alongside the accent) was tried and read as busy.
+- **Accent:** violet, hue 298, four shades named for their job, not a ramp: an
+  accent marks a few things, so it needs a shade per job, not 12 steps (8 of
+  the old 12 were never used). A four-hue palette (teal, ochre, indigo alongside
+  the accent) was tried and read as busy.
 - **Status** (`--ok`, `--warn`, `--danger`): green, amber, red, at steps 3 (wash),
   9 (dot) and 11 (text) only. There is no blue status colour; the accent stands
   for "info".
@@ -167,9 +169,11 @@ lightness. Swatches are on the design page.
   `--prose-ink` post body, a notch softer than ink in dark, ink in light.
 - **Edges:** `--line` and `--line-strong`, cut from the ink at 10% and 16%, so
   every border shares its tint.
-- **Accent:** `--accent` (a10 dark, a9 light) for marks and bars; `--accent-solid`
-  (a9) for filled marks; `--accent-soft` and `--accent-text` (a11) for accented
-  text; `--accent-wash` (a3); `--accent-ink` for text on a filled accent.
+- **Accent:** `--accent` bars, lines and a post's big result; `--accent-text`
+  links and small results (4.5:1); `--accent-solid` filled marks, a little deeper
+  so they read rich, not electric; `--accent-wash` a tinted background;
+  `--accent-ink` (white) for text on a filled accent. In light, `--accent` and
+  `--accent-solid` are the same shade.
   Derived: `--accent-line` (40%, inline link borders) and `--ring` (20%, the state
   glow).
 - **Charts:** `--bar` (n7) the "before" bar; `--gain` (ok11) and `--loss`
@@ -189,7 +193,7 @@ two themes.
    headline value and a chart's result bar or line in full `--accent`; a result
    in small text (a terminal row, a table) in `--accent-text`. The old value is
    `--faint` before an arrow; a plain comparison like "82% vs 80%" stays ink.
-2. **Links**, in `--accent-text` (`--accent-soft` in prose).
+2. **Links**, in `--accent-text` (`--accent-text` in prose).
 3. **The one highlight in a hero drawing or one-liner.**
 4. **A hovered control:** a button's border goes `--accent` and its label or
    icon `--accent-text`; a link's underline goes `--accent`. One at a time, so it
@@ -232,7 +236,7 @@ with preconnects. Geist Mono was tried and clashed with Sora.
 
 ### Named Rules
 **The `//` Kicker System.** Sections are marked with a lowercase mono comment —
-`// writing`, `// experience`, `// reach out` — in `--accent-soft` (the blog index
+`// writing`, `// experience`, `// reach out` — in `--accent-text` (the blog index
 and a post's back-link), `--muted` (the CV) or `--faint` (reach out). Keep it
 lowercase, mono and comment-prefixed: never an all-caps tracked eyebrow, never
 `01 / 02` numbered markers.
@@ -285,7 +289,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   pause button. Never the accent, never a pill.
 
 ### Links (inline)
-- `--accent-soft` text with a `1px` **`--accent-line`** `border-bottom` that goes
+- `--accent-text` text with a `1px` **`--accent-line`** `border-bottom` that goes
   solid `--accent` on hover. Never underlined by default; the border is the
   affordance.
 
@@ -299,7 +303,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 - **Blog index (`pages/blog/index.astro`):** a `// writing` kicker and a Sora
   lede, then one row per post from its frontmatter: year, month and read time in
   the rail; the title in Geist 400, `--muted`, ink on hover; under it the stat in
-  mono (old value `--faint`, new one `--accent-soft`, a `vs` comparison in
+  mono (old value `--faint`, new one `--accent-text`, a `vs` comparison in
   ink) and its `statLabel` in `--faint`.
 - **CV ledger (`pages/cv.astro`):** one `<details>` row per role, so the whole
   career fits one laptop screen closed. Closed, a row is the evidence: node, mono
@@ -377,7 +381,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 
 ### Reach out (homepage)
 - `components/home/Reach.astro`: a `// reach out` kicker in `--faint`, then the
-  Headline line "Best way to reach me is LinkedIn ↗" (the link in `--accent-soft`)
+  Headline line "Best way to reach me is LinkedIn ↗" (the link in `--accent-text`)
   and a mono line linking GitHub.
 
 ### Homepage motion
@@ -391,7 +395,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   every animation and transition).
 
 ### Metric Highlight
-- `.hl` — inline `<b>` in `--accent-soft`, weight 600, `tabular-nums`, in post
+- `.hl` — inline `<b>` in `--accent-text`, weight 600, `tabular-nums`, in post
   prose. Wraps the one number in a paragraph that is the point; any other number
   stays bold ink.
 
@@ -407,7 +411,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   `--accent`; a `vs` comparison stays ink.
 - **Quotes** are excerpts on the raised surface (`--pane`, 8px, no border or rule),
   so quoted documents read differently from narration. **Ordered lists** are
-  numbered takeaways: hairline-separated rows with mono `--accent-soft` numerals.
+  numbered takeaways: hairline-separated rows with mono `--accent-text` numerals.
 - **Body size:** `--prose-size`, 16-17px (`clamp(1rem, 0.96rem + 0.18vw, 1.0625rem)`),
   line-height 1.65. Larger sizes read as heavy; do not raise it.
 - **Figures** are components in `src/components/figures/`, used by name in a
@@ -475,8 +479,8 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 - **Sections:** each `##` (Sora 600) gets a hairline above it so long posts scan as sections.
 - **`.prose`** styles the slotted Markdown: `--prose-ink`, `--prose-size`, line-height
   `1.65`, measure `--measure` (`44rem`). Headings are Sora 600 `--ink`; links are
-  `--accent-soft` with an `--accent-line` bottom border; list markers are
-  `--accent-soft`; bold is ink 600.
+  `--accent-text` with an `--accent-line` bottom border; list markers are
+  `--accent-text`; bold is ink 600.
 - **A wide screen grows the type, never the measure.** The measure is in rem, so it
   grows only with the root size on large monitors (see "Large screens"); the answer
   to a cramped big monitor is a filled margin, not a longer line.

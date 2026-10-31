@@ -28,8 +28,8 @@
   flex: none;
   width: 0.55rem;
   height: 0.55rem;
-  border-right: 2px solid var(--accent-soft);
-  border-bottom: 2px solid var(--accent-soft);
+  border-right: 2px solid var(--accent-text);
+  border-bottom: 2px solid var(--accent-text);
   transform: translateY(-25%) rotate(45deg);
   transition: transform 0.2s;
 }
@@ -38,7 +38,7 @@
 }
 .prose details.more > summary:hover,
 .prose details.more > summary:focus-visible {
-  color: var(--accent-soft);
+  color: var(--accent-text);
   outline: none;
 }
 .prose details.more[open] > summary {

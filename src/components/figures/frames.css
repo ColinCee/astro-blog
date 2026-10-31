@@ -8,7 +8,7 @@
   --fr-name: var(--muted);
   --fr-syn: color-mix(in oklch, var(--faint) 55%, transparent);
   --fr-val: var(--ink);
-  --fr-head: var(--accent-soft);
+  --fr-head: var(--accent-text);
   display: grid;
   gap: 1rem;
 }

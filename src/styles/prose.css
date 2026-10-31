@@ -35,7 +35,7 @@
   color: var(--ink);
 }
 .prose a {
-  color: var(--accent-soft);
+  color: var(--accent-text);
   border-bottom: 1px solid var(--accent-line);
   transition:
     color var(--dur-fast) var(--ease),
@@ -61,7 +61,7 @@
   margin: 0.45rem 0;
 }
 .prose li::marker {
-  color: var(--accent-soft);
+  color: var(--accent-text);
 }
 /* Quoted documents (emails, rulings): set apart as an excerpt on the raised
    surface, so evidence reads differently from narration. */
@@ -101,7 +101,7 @@
   font-family: var(--mono);
   font-size: 0.8em;
   font-weight: 500;
-  color: var(--accent-soft);
+  color: var(--accent-text);
 }
 /* Footnotes (Markdown [^1]): a quiet source list, not numbered takeaways. */
 .prose .footnotes {
@@ -133,7 +133,7 @@
 /* Inline metric highlight — the site's "the metric is the accent" rule,
    carried into long-form. Use it on the one number that is the point. */
 .prose .hl {
-  color: var(--accent-soft);
+  color: var(--accent-text);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }

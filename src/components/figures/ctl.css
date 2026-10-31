@@ -25,7 +25,7 @@
 }
 .prose .ctl button[aria-pressed="true"] {
   border-color: var(--accent);
-  color: var(--accent-soft);
+  color: var(--accent-text);
 }
 .prose .ctl button:hover {
   border-color: var(--accent);
