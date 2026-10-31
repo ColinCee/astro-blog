@@ -417,8 +417,13 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   single `--w-prose` column. At `64rem` and up the post sits on `--w-page`, inset by
   `--rail` (`9rem`) plus `--rail-gap` (`3.5rem`), so timeline dates sit in the left
   margin and plain and timeline posts share one left edge. A plain post with three
-  or more sections lists them in that margin (`.toc`): mono 11px `--faint`, sticky,
-  the section being read in ink, no accent (it is chrome). Content carries a `// writing` back-kicker, a Sora 600 title
+  or more sections lists them in that margin (`.toc`), sticky, level with the body:
+  a `// sections` kicker, then a rail with a numbered dot per section (the
+  timeline's vocabulary in grey: no accent, it is chrome). The rail fills
+  `--muted` as you read, through each section, not jumping between them; read
+  sections are `--muted` with a filled dot, the one being read ink with a ringed
+  dot, the rest `--faint` and hollow; under them the minutes left (200 words a
+  minute, as the read time). Content carries a `// writing` back-kicker, a Sora 600 title
   (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em), and a mono meta line (date · N min read).
 - **Headline stat:** the post's `stat` renders under the title between hairlines,
   its `statLabel` above it in 11px mono `--faint`, the value in Sora 600. A result
