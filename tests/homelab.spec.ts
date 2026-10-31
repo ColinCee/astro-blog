@@ -35,6 +35,7 @@ test("the figures show the server's numbers, and the dots go green", async ({
   await expect(lab.locator(".lab")).toContainText("up 1 day");
   await expect(lab.locator(".lab")).toContainText("restic, nightly · last ok");
   const radar = await open(page, "flight-tracker");
+  await expect(radar.locator(".pj__cap")).toContainText("live, 2 min ago");
   await expect(radar.locator(".rd__nodes")).toContainText("237");
   await expect(radar.locator(".rd__nodes")).toContainText("107");
 });
@@ -49,6 +50,7 @@ test("old numbers say when they were seen and leave the dots grey", async ({
   const lab = await open(page, "home-lab");
   await expect(lab.locator(".pj__cap")).toContainText("last seen 3 h ago");
   await expect(lab.locator(".dg--lab")).not.toHaveAttribute("data-up");
+  await expect(lab.locator(".lab")).not.toContainText("last ok");
 });
 
 test("without the server, the dashes stay and the caption says offline", async ({
@@ -69,7 +71,8 @@ test("the Worker accepts only the known numbers, freshly gathered", () => {
   expect(parse(body({ blocked: -1 }), now)).toBeNull();
   expect(parse(body({ allUp: 1 }), now)).toBeNull();
   expect(parse(body({ at: now - 601 }), now)).toBeNull();
-  expect(parse(body({ at: now + 1 }), now)).toBeNull();
+  expect(parse(body({ at: now + 30 }), now)).not.toBeNull();
+  expect(parse(body({ at: now + 61 }), now)).toBeNull();
   expect(parse("[]", now)).toBeNull();
   expect(parse("nope", now)).toBeNull();
 });

@@ -52,7 +52,9 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
         <figure class="pj__fig" id={`pj-${i}`}>
           <figcaption class="pj__cap">
             {p.caption}
-            {p.id === "home-lab" && <span data-stats-age></span>}
+            {["home-lab", "flight-tracker"].includes(p.id) && (
+              <span data-stats-age></span>
+            )}
           </figcaption>
           <div class="pj__body">
             {p.id === "dissertation" && (
@@ -764,7 +766,7 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     .p {
       display: none;
     }
-    .dot {
+    [data-up] .dot {
       animation: none;
     }
   }
@@ -822,48 +824,69 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     };
 
     // The home server's numbers (worker/index.ts), gathered every five
-    // minutes. Older than 20 minutes, the dots go grey and the caption says
-    // when they were last seen; unreachable, the dashes stay.
-    const age = pj.querySelector<HTMLElement>("[data-stats-age]");
-    fetch("/homelab.json")
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((s: Record<string, number | boolean | null>) => {
-        const mins = Math.max(
-          0,
-          Math.round((Date.now() / 1000 - Number(s.at)) / 60),
-        );
-        const fresh = mins <= 20;
-        const ago =
-          mins < 2
-            ? "just now"
-            : mins < 120
-              ? `${mins} min ago`
-              : `${Math.round(mins / 60)} h ago`;
-        if (age)
-          age.textContent = fresh ? ` · live, ${ago}` : ` · last seen ${ago}`;
-        const lab = pj.querySelector<HTMLElement>(".dg--lab");
-        if (lab && fresh && s.allUp) {
-          lab.dataset.up = "";
-          for (const d of lab.querySelectorAll(".dot"))
-            d.setAttribute("aria-label", "up");
-        }
-        const backup = pj.querySelector("[data-stat-backup]");
-        if (backup)
-          backup.textContent = s.backupOk ? " · last ok" : " · overdue";
-        for (const el of pj.querySelectorAll<HTMLElement>("[data-stat]")) {
-          const v = s[el.dataset.stat!];
-          if (typeof v !== "number") continue;
-          if (el.dataset.stat === "haDays" && v === 1)
-            el.nextElementSibling!.textContent = "day";
-          el.dataset.n = String(v);
-          el.textContent = fmt(v);
-          // Already on screen: count up now; otherwise when it is shown.
-          if (el.closest(".is-drawn")) countUp(el);
-        }
-      })
-      .catch(() => {
-        if (age) age.textContent = " · offline";
-      });
+    // minutes, fetched again as often while the tab is open. Older than 20
+    // minutes, the dots go grey and the captions say when they were last
+    // seen; unreachable, the dashes stay.
+    const ages = pj.querySelectorAll<HTMLElement>("[data-stats-age]");
+    const lab = pj.querySelector<HTMLElement>(".dg--lab");
+    const backup = pj.querySelector("[data-stat-backup]");
+    let stats: Record<string, number | boolean | null> | undefined;
+    const say = () => {
+      if (!stats) return;
+      const mins = Math.max(
+        0,
+        Math.round((Date.now() / 1000 - Number(stats.at)) / 60),
+      );
+      const fresh = mins <= 20;
+      const ago =
+        mins < 2
+          ? "just now"
+          : mins < 120
+            ? `${mins} min ago`
+            : `${Math.round(mins / 60)} h ago`;
+      for (const a of ages)
+        a.textContent = fresh ? ` · live, ${ago}` : ` · last seen ${ago}`;
+      const up = fresh && !!stats.allUp;
+      lab?.toggleAttribute("data-up", up);
+      for (const d of lab?.querySelectorAll(".dot") ?? [])
+        d.setAttribute("aria-label", up ? "up" : "not reported");
+      // Old news about a backup is no news.
+      if (backup)
+        backup.textContent = !fresh
+          ? ""
+          : stats.backupOk
+            ? " · last ok"
+            : " · overdue";
+    };
+    const load = () =>
+      fetch("/homelab.json")
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((s: Record<string, number | boolean | null>) => {
+          stats = s;
+          say();
+          for (const el of pj.querySelectorAll<HTMLElement>("[data-stat]")) {
+            const v = s[el.dataset.stat!];
+            if (typeof v !== "number") continue;
+            if (el.dataset.stat === "haDays")
+              el.nextElementSibling!.textContent = v === 1 ? "day" : "days";
+            el.dataset.n = String(v);
+            el.textContent = fmt(v);
+            // On screen for the first time: count up now; otherwise when it
+            // is shown. A later fetch just puts the new number in.
+            if (!counted.has(el) && el.closest(".is-drawn")) countUp(el);
+          }
+        })
+        .catch(() => {
+          if (stats) say();
+          else for (const a of ages) a.textContent = " · offline";
+        });
+    load();
+    setInterval(() => {
+      if (!document.hidden) load();
+    }, 300_000);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) say();
+    });
 
     // Edges from box to box: side to side when the next node is to the right,
     // top to bottom when the diagram is stacked.

@@ -42,10 +42,10 @@ export const parse = (text: string, now: number): HomelabStats | null => {
     return null;
   if (Object.keys(body).sort().join() !== keys) return null;
   const at = body.at;
-  // Gathered in the last ten minutes, and not in the future.
+  // Gathered in the last ten minutes; a minute ahead allows for clock skew.
   if (
     !Number.isInteger(at) ||
-    (at as number) > now ||
+    (at as number) > now + 60 ||
     (at as number) < now - 600
   )
     return null;
