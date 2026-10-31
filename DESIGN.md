@@ -309,14 +309,14 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   right.
 - **Blog index (`pages/blog/index.astro`):** a `// writing` kicker and a Sora
   lede, then one row per post from its frontmatter: year, month and read time in
-  the rail; the title in Geist 400, `--muted`, ink on hover; under it the stat in
+  the rail; the title in Geist 400, ink, an `--accent` underline on hover; under it the stat in
   mono (old value `--faint`, new one `--accent-text`, a `vs` comparison in
   ink) and its `statLabel` in `--faint`.
 - **CV ledger (`pages/cv.astro`):** one `<details>` row per role, so the whole
   career fits one laptop screen closed. Closed, a row is the evidence: node, mono
   dates (`now` in `--accent-text` for the current role), company in Sora 600,
   title in mono with a `contract` chip (ink on `--well`, 4px) where it applies,
-  and the headline result right-aligned in `--accent-text`. Open, it unfolds in
+  and the headline result right-aligned in ink (six in a column would sprinkle the accent). Open, it unfolds in
   place (`::details-content` height and opacity, the page's one authored motion)
   into the context line, bullets and stack tags, indented to the company column.
   An `open all` / `close all` mono control sits on the section line, and every

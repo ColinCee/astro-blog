@@ -202,13 +202,16 @@ const entries = posts.map((post) => {
     font-size: clamp(1.2rem, 2vw, 1.5rem);
     line-height: 1.2;
     letter-spacing: -0.01em;
-    color: var(--muted);
+    color: var(--ink);
     text-wrap: balance;
     transition: color var(--dur-fast) var(--ease);
   }
   .log__link:hover .log__title,
   .log__link:focus-visible .log__title {
-    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
   }
   .log__sig {
     margin: 0.5rem 0 0;

@@ -198,7 +198,7 @@ const { experience } = Astro.props;
     white-space: nowrap;
   }
   .row__now {
-    font-weight: 600;
+    font-weight: 500;
     color: var(--accent-text);
   }
   .row__who {
@@ -229,12 +229,14 @@ const { experience } = Astro.props;
     border-radius: var(--r-chip);
     align-self: center;
   }
+  /* Each role's highlight in ink: six in one column would sprinkle the
+     accent, which is spent on the current role's node and "now". */
   .row__result {
     font-family: var(--grotesk);
-    font-weight: 500;
+    font-weight: 400;
     font-size: 0.95rem;
     letter-spacing: -0.005em;
-    color: var(--accent-text);
+    color: var(--ink);
     text-align: right;
     white-space: nowrap;
   }
