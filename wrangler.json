@@ -12,7 +12,7 @@
     { "binding": "STATS", "id": "45016c99a0de472cb42332c3632f4044" }
   ],
   "vars": {
-    "HOMELAB_PUBLIC_KEY": ""
+    "HOMELAB_PUBLIC_KEY": "94a4099a4b128d887d8fc5e3b4fd22c099f6d7822e947fda7b22e5a85a3175a5"
   },
   "workers_dev": false,
   "preview_urls": false,
