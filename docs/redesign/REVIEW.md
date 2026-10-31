@@ -9,7 +9,7 @@ Two local branches, nothing pushed:
 
 - Migration: start `blog-dev` (or `pnpm dev`), then http://localhost:4331/, `/blog/`, each post, `/cv/`, and `/design/` (the design system, dev only).
 - New ideas: in the cook checkout run `pnpm dev --port 4332`, then http://localhost:4332/blog/ and any long post on a wide screen.
-- One-page summary: `docs/redesign/shots/morning.png`. Each figure in dark, light and 375px: `node docs/redesign/comps/shoot-figs.mts <slug>` (sheets in `docs/redesign/shots/figs/`).
+- One-page summary: `docs/redesign/shots/morning.png`. Each figure in dark, light and 375px: with `blog-dev` running, `cd docs/redesign/comps && node shoot-figs.mts <slug>` (sheets in `docs/redesign/shots/figs/`).
 
 ## What changed overnight on `redesign-figures`
 
