@@ -582,8 +582,9 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     stroke-width: 1.5;
     stroke-dasharray: 3 4;
   }
+  /* The 2026 curve in ink: the bar beside it is this figure's one purple */
   .new {
-    stroke: var(--accent);
+    stroke: var(--ink);
     stroke-width: 2;
   }
   /* The 2026 curve draws itself, left to right, each time it is shown. */
@@ -649,7 +650,7 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     text-align: right;
     color: var(--muted);
   }
-  /* The curve and the bar carry the accent; their labels stay ink */
+  /* The 2026 bar carries the accent; its label stays ink */
   .bars em.hot {
     font-weight: 500;
     color: var(--ink);

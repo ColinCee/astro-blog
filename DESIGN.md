@@ -196,8 +196,12 @@ two themes.
 **The Accent Points Rule.** The accent marks results and links, nothing else:
 1. **The result**, the number or mark a page or figure exists to show: a post's
    headline value and a chart's result bar or line in full `--accent`; a result
-   in small text (a terminal row, a table) in `--accent-text`. The old value is
+   in small text (a table, the blog index) in `--accent-text`. The old value is
    `--faint` before an arrow; a plain comparison like "82% vs 80%" stays ink.
+   One purple per figure: where a figure has two candidates (a curve and a bar,
+   a count and the planes it counts), the result keeps it and the other goes ink.
+   A list of results where something else on the page is already purple (the home
+   terminal) stays ink.
 2. **Links**, in `--accent-text` (`--accent-text` in prose).
 3. **The one highlight in a hero drawing or one-liner.**
 4. **A hovered control:** a button fills with `--accent-hover` (dark: v3 half
@@ -378,7 +382,9 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   scrolls in); without JS or with reduced motion the finished session shows.
 - **Right, `WritingPane`:** `ls -t ~/writing`, the newest five posts from the blog
   collection (date, title in Geist 400, stat with the old value in grey and the
-  new one in `--accent-text`, a `vs` comparison in ink), then `all N posts →`.
+  new one in ink, not purple: the home page already has its purple, and a purple
+  number on every row made the terminal the loudest thing on it), then
+  `all N posts →`.
   Publishing a post updates it on its own; never hard-code the list.
 
 ### Worked at (homepage)
@@ -453,7 +459,9 @@ curve in a component is a bug unless it is a content timing.
   sections are `--muted` with a filled dot, the one being read ink with a ringed
   dot, the rest `--faint` and hollow; under them the minutes left (the header's
   read time, scaled by the words still to read). It follows the title in the
-  page, so keyboards and screen readers reach the title first. Content carries a `// writing` back-kicker, a Sora 600 title
+  page, so keyboards and screen readers reach the title first. Where it shows,
+  its rail is the reading progress, so the purple bar along the top of the
+  window is hidden; below 64rem (and on posts without the list) the bar stays. Content carries a `// writing` back-kicker, a Sora 600 title
   (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em), and a mono meta line (date · N min read).
 - **Headline stat:** the post's `stat` renders under the title between hairlines,
   its `statLabel` above it in 11px mono `--faint`, the value in Sora 600. A result

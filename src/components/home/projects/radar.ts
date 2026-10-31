@@ -155,7 +155,8 @@ export function radar(canvas: HTMLCanvasElement, reduce: boolean) {
       faint: v("--n9"),
       plane: v("--n10"),
       label: v("--n11"),
-      hot: v("--accent"),
+      // the planes with callsigns in ink; the figure's purple is its count
+      hot: v("--n12"),
       mono: v("--mono"),
     };
   };

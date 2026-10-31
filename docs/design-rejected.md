@@ -82,3 +82,4 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | A caption over the one-liner ("today's one-liner") and the next line faint under it | Both distracting; the time-left bar and the count say another is coming (31 Oct 2026). |
 | Scale bars under each stat on the blog index | Too noisy beside the stats; the numbers say it on their own (31 Oct 2026). |
 | The prompt mark (`>_`) as the favicon; a cc monogram, 張, a caret or c/ instead | The prompt read as code, not as the site, and its thin strokes blurred at 16px. Before → after won: the site's stat as a mark (31 Oct 2026; sheet in comps/logo-ideas.html). |
+| A purple result on every row of the home terminal; two purple things in one project figure | The terminal outshouted the page; one purple per figure (the result keeps it) (31 Oct 2026). |

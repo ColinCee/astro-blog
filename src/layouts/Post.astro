@@ -447,6 +447,13 @@ const statParts = stat?.includes("→")
     transform: scaleX(var(--read, 0));
     transform-origin: left;
   }
+  /* Where the section list shows, its rail is the progress; the bar is for
+     phones and narrow windows */
+  @media (min-width: 64rem) {
+    .post:has(.toc) .read-bar {
+      display: none;
+    }
+  }
 
   /* Header and footer share the prose measure, so their hairlines end where
      the text does. */

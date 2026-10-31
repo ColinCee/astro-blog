@@ -10,7 +10,8 @@ const all = (await getCollection("blog")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 // A result that got better ("428 s → 23 s") shows the old value in grey and the
-// new one in the accent; a plain comparison or a single figure stays as it is.
+// new one in ink: a purple number on every row would make the terminal the
+// loudest thing on the page.
 const posts = all.slice(0, 5).map((p) => {
   const [before, after] = (p.data.stat ?? "").split("→").map((s) => s.trim());
   return {
@@ -22,7 +23,6 @@ const posts = all.slice(0, 5).map((p) => {
     }),
     before: after ? before : undefined,
     after: after ?? before,
-    flat: !after && (p.data.stat ?? "").includes(" vs "),
   };
 });
 ---
@@ -36,7 +36,7 @@ const posts = all.slice(0, 5).map((p) => {
           <span class="wr__date">{p.date}</span>
           <span class="wr__title">{p.title}</span>
           {p.after && (
-            <span class:list={["wr__stat", { "wr__stat--flat": p.flat }]}>
+            <span class="wr__stat">
               {p.before && <span class="wr__was">{p.before} →</span>}
               <b>{p.after}</b>
             </span>
@@ -112,9 +112,6 @@ const posts = all.slice(0, 5).map((p) => {
   }
   .wr__stat b {
     font-weight: 500;
-    color: var(--accent-text);
-  }
-  .wr__stat--flat b {
     color: var(--ink);
   }
   .wr__all {
