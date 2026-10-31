@@ -50,8 +50,20 @@ for (const vp of viewports) {
     test("post body text is a comfortable size and line length", async ({
       page,
     }) => {
-      page.on("response", async (r) => { if (r.url().includes("font")) console.log("DIAG", r.status(), r.url(), r.status() >= 400 ? (await r.text().catch(() => "")).slice(0, 300) : ""); });
-      page.on("requestfailed", (r) => console.log("DIAG failed", r.url(), r.failure()?.errorText));
+      page.on("response", async (r) => {
+        if (r.url().includes("font"))
+          console.log(
+            "DIAG",
+            r.status(),
+            r.url(),
+            r.status() >= 400
+              ? (await r.text().catch(() => "")).slice(0, 300)
+              : "",
+          );
+      });
+      page.on("requestfailed", (r) =>
+        console.log("DIAG failed", r.url(), r.failure()?.errorText),
+      );
       await page.goto(post);
       const m = await page
         .locator(".prose p")
