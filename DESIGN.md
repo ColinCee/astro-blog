@@ -282,6 +282,13 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   the links with its right edge (and with the footer). On the homepage it spans
   `--w-poster`; its links show at every width.
 
+### Favicon
+- **Before → after** (`public/favicon.svg`): every post's headline result as a
+  mark, a long `n8` bar over a short accent one on the page colour, dark unless
+  the browser chrome is light. Solid shapes so it holds at 16px. `pnpm og`
+  renders `favicon.ico` and `apple-touch-icon.png` from it; bump the `?v=` on
+  the links in `Head.astro` when it changes.
+
 ### Footer
 - One `components/site/Footer.astro`: `Colin Cheung` (mono, `--muted`) and
   `© {year} · built in Glasgow` (`--faint`), centered on `--w-page`, `1px` top
