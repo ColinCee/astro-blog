@@ -78,3 +78,4 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | Button hover that turns only the icon violet | The violet icon read dimmer than the white one at rest ("washed out"); a violet-tinted fill with a bright icon instead. |
 | Violet (hue 296) as the accent | Lightened enough to read in dark, it turned into a muted lavender ("washed out"); at full strength it was "too vivid". Purple 308 keeps its colour in both themes (31 Oct 2026). |
 | A 12-step accent ramp, then four loose accent shades | 8 of 12 steps unused; the four shades sat too close and the pale ones read pink or white. One 6-step spectrum from dark up to the accent (31 Oct 2026). |
+| An all-grey code theme (keywords and types a step quieter, no hues) | Read as missing its colour scheme; five syntax hues at one lightness instead (31 Oct 2026). |

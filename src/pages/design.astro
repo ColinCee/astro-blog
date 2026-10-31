@@ -586,12 +586,19 @@ if (import.meta.env.PROD) return Astro.redirect("/");
         <h3>code</h3>
         <pre
           style="margin:0;padding:.8rem 1rem;border-radius:var(--r);background:var(--n2);font-family:var(--mono);font-size:.8rem;line-height:1.6;color:var(--ink);overflow:auto"
-        ><span style="color:var(--accent)">export default</span> defineConfig({"{"}
-  test: {"{"} isolate: <span style="color:var(--accent)">false</span> {"}"},
-{"}"});</pre>
+        ><span style="color:var(--syn-kw)">export default</span> <span style="color:var(--syn-fn)">defineConfig</span><span style="color:var(--faint)">({"{"}</span>
+  <span style="color:var(--faint)">// one engine per worker</span>
+  test: <span style="color:var(--faint)">{"{"}</span> isolate: <span style="color:var(--syn-num)">false</span>, pool: <span style="color:var(--syn-str)">"threads"</span> <span style="color:var(--faint)">{"}"}</span>,
+<span style="color:var(--faint)">{"}"});</span></pre>
         <p class="f" style="margin-top:.6rem">
-          wrapped, never scrolling sideways; its highlighting theme set in the
-          build
+          wrapped, never scrolling sideways. Five syntax hues at one lightness:
+          <span style="color:var(--syn-kw)">keyword</span>
+          (the accent's hue),
+          <span style="color:var(--syn-fn)">function</span>,
+          <span style="color:var(--syn-str)">string</span>,
+          <span style="color:var(--syn-num)">number</span>,
+          <span style="color:var(--syn-type)">type</span>; names in ink,
+          comments faint
         </p>
       </div>
       <div class="card">

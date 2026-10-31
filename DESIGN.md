@@ -504,9 +504,11 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   A bold last row is a total, ruled off in ink.
   Below `40rem` the table scrolls horizontally in its own overflow container.
 - **Code:** fenced blocks are rendered by Expressive Code with the site's own
-  theme (`src/styles/code-theme.ts`, read from `scales.css`): names and strings in
-  ink, keywords and types `--muted`, comments and punctuation `--faint`, no accent
-  (it marks results and links). Switched by the site's `data-theme`, not the system
+  theme (`src/styles/code-theme.ts`, read from `scales.css`): five syntax hues at
+  one lightness per theme (`--syn-kw` in the accent's hue, `--syn-fn` blue,
+  `--syn-str` green, `--syn-num` amber, `--syn-type` teal, each 5:1 or more on the
+  pane), names in ink, comments and punctuation `--faint`. Code is the one place
+  colour is allowed beyond the accent: it reads as code, not as a result. Switched by the site's `data-theme`, not the system
   setting; DM Mono, 8px corners, `--pane` with `--line` borders, no shadow and no
   coloured tab marker (set in `astro.config`); inline code
   is a mono chip on a faint `--ink` 10% wash, 4px corners. Never hand-restyle

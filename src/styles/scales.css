@@ -18,6 +18,11 @@
   --v4: #7d39ac;
   --v5: #9b45d6;
   --v6: #b55df5;
+  --syn-kw: #d19dff;
+  --syn-fn: #80bdfb;
+  --syn-str: #7ccd8e;
+  --syn-num: #efa464;
+  --syn-type: #5ecbcb;
   --ok3: #082310;
   --ok9: #03a14a;
   --ok11: #7cd591;
@@ -47,6 +52,11 @@
   --v4: #7d39ac;
   --v5: #9b45d6;
   --v6: #b55df5;
+  --syn-kw: #8236b6;
+  --syn-fn: #1b66a8;
+  --syn-str: #007835;
+  --syn-num: #91510c;
+  --syn-type: #047272;
   --ok3: #d9fadf;
   --ok9: #03a14a;
   --ok11: #006e30;
@@ -77,6 +87,11 @@
     --v4: #7d39ac;
     --v5: #9b45d6;
     --v6: #b55df5;
+    --syn-kw: #8236b6;
+    --syn-fn: #1b66a8;
+    --syn-str: #007835;
+    --syn-num: #91510c;
+    --syn-type: #047272;
     --ok3: #d9fadf;
     --ok9: #03a14a;
     --ok11: #006e30;
