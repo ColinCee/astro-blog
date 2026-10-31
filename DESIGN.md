@@ -532,7 +532,8 @@ curve in a component is a bug unless it is a content timing.
   and read time (prose words only, at 200 a minute; figures do not count). Header, prose, timeline and footer all share one measure, `--measure` (44rem),
   so every block on a post (text, figures, code, tables) has the same left and
   right edge. Wider "breakout" figures and code were tried and rejected (Oct 2026).
-- **Reading progress:** a 2px accent bar fixed to the top of the viewport.
+- **Reading progress:** a 2px accent bar fixed to the top of the viewport, hidden
+  from 64rem on posts with the section list, whose rail shows the progress there.
 - **Post footer:** `older` / `newer` links by publish date, then `all writing`.
 - **Sections:** each `##` (Sora 600) gets a hairline above it so long posts scan as sections.
 - **`.prose`** styles the slotted Markdown: `--prose-ink`, `--prose-size`, line-height
