@@ -28,7 +28,8 @@
     "og": "node scripts/og/render.ts",
     "record": "node scripts/capture.ts",
     "compare": "node scripts/compare.ts",
-    "screenshot": "node scripts/capture.ts --still"
+    "screenshot": "node scripts/capture.ts --still",
+    "chart": "node scripts/chart.ts"
   },
   "type": "module",
   "volta": {

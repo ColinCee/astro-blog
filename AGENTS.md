@@ -8,4 +8,4 @@
 - **Cloudflare's bot detection stays on.** Its injected script costs the Lighthouse best-practices score about 20 points; that score doesn't matter, so don't chase it.
 - **During the redesign, `src/pages/design.astro` (`/design/` on the dev server, not built) is the design system** (colours from `docs/redesign/comps/tokens.mts`, which writes `src/styles/scales.css`). Colin wants it kept current: change it in the same commit as any design decision, and read it before proposing one.
 - **Writing or reviewing a post:** follow `.claude/skills/writing-posts/SKILL.md` (story, his voice, numbers, figures, shipping). Figure components and tokens are in `DESIGN.md`.
-- **A PR that changes how a page looks or moves shows it**, so Colin can see it before merging: follow `.claude/skills/pr-visuals/SKILL.md`.
+- **A PR shows what it changes**, so Colin can scan it before merging: screenshots or a video when a page looks or moves differently, a chart when only numbers change (speed, size), nothing when neither does. Follow `.claude/skills/pr-visuals/SKILL.md`.
