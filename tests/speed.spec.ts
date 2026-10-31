@@ -111,6 +111,22 @@ async function fixLiveCalls(page: Page) {
   );
 }
 
+// Past the first screen's entrances, so LCP has its last candidate: every
+// animation that ends, up to 3 s, since the home reel's timer bar runs 5 s.
+async function settle(page: Page) {
+  await page.evaluate(() =>
+    Promise.race([
+      Promise.all(
+        document
+          .getAnimations()
+          .filter((a) => a.effect?.getComputedTiming().endTime !== Infinity)
+          .map((a) => a.finished.catch(() => {})),
+      ),
+      new Promise((done) => setTimeout(done, 3000)),
+    ]),
+  );
+}
+
 // One load in a fresh context (a cold cache).
 async function load(page: Page, path: string) {
   await slow(page);
@@ -185,19 +201,7 @@ async function load(page: Page, path: string) {
     }).observe({ type: "layout-shift", buffered: true });
   });
   await page.goto(path, { waitUntil: "networkidle" });
-  // Past the first screen's entrances, so LCP has its last candidate: every
-  // animation that ends, up to 3 s, since the home reel's timer bar runs 5 s.
-  await page.evaluate(() =>
-    Promise.race([
-      Promise.all(
-        document
-          .getAnimations()
-          .filter((a) => a.effect?.getComputedTiming().endTime !== Infinity)
-          .map((a) => a.finished.catch(() => {})),
-      ),
-      new Promise((done) => setTimeout(done, 3000)),
-    ]),
-  );
+  await settle(page);
   const lcp = await page.evaluate(
     () =>
       new Promise<[number, string]>((done) =>
@@ -269,8 +273,7 @@ test("a hovered link opens its page at once", async ({ browser }) => {
       viewport: { width: 390, height: 844 },
     });
     const page = await context.newPage();
-    // Throttled only: intercepting requests (fixLiveCalls) turns prerendering
-    // off, and the page needn't be idle, just loaded.
+    // Throttled only: the page needn't be idle, just loaded.
     await slow(page);
     await page.goto("/");
     const link = page.locator('a[href="/blog/"]').first();
@@ -279,6 +282,7 @@ test("a hovered link opens its page at once", async ({ browser }) => {
     const clicked = Date.now();
     await link.click();
     await page.waitForURL("**/blog/");
+    await settle(page);
     const painted = await page.evaluate(
       () =>
         new Promise<number>((done) =>

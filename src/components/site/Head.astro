@@ -70,8 +70,21 @@ const schema = article
   theme();
   // A prerendered page (see the speculation rules below) read the theme when
   // it was made; read it again as it is shown, in case it changed since.
+  // The toggle's state and the canvases follow (as the toggle does, Nav.astro).
   if (document.prerendering)
-    document.addEventListener("prerenderingchange", theme, { once: true });
+    document.addEventListener(
+      "prerenderingchange",
+      () => {
+        theme();
+        const light = String(
+          document.documentElement.dataset.theme === "light",
+        );
+        for (const b of document.querySelectorAll("[data-theme-toggle]"))
+          b.setAttribute("aria-pressed", light);
+        dispatchEvent(new Event("themechange"));
+      },
+      { once: true },
+    );
   // Paper is light: print in the light theme (code blocks switch with
   // data-theme, not the print media query), then put the reader's back.
   addEventListener("beforeprint", () => {
