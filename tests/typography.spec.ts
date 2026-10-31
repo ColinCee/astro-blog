@@ -51,16 +51,17 @@ for (const vp of viewports) {
       page,
     }) => {
       await page.goto(post);
-      // Measure the real font, not its fallback while it loads.
-      await page.evaluate(() => document.fonts.ready);
       const m = await page
         .locator(".prose p")
         .first()
-        .evaluate((p) => {
+        .evaluate(async (p) => {
           const cs = getComputedStyle(p);
           const size = parseFloat(cs.fontSize);
           const ctx = document.createElement("canvas").getContext("2d")!;
           ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+          // Measure the real font, not its fallback: load it first (fonts.ready
+          // can resolve before the browser has started fetching it).
+          await document.fonts.load(ctx.font, p.textContent ?? "");
           const text = p.textContent ?? "";
           const charWidth = ctx.measureText(text).width / text.length;
           return {
