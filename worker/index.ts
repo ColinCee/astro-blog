@@ -99,6 +99,9 @@ export default {
         status: 405,
         headers: { Allow: "GET, PUT" },
       });
+    // Refused before reading, so a big upload costs nothing.
+    if (Number(request.headers.get("Content-Length") ?? Infinity) > 1024)
+      return new Response("too big", { status: 413 });
     const body = await request.arrayBuffer();
     if (body.byteLength > 1024) return new Response("too big", { status: 413 });
     const signature = request.headers.get("Signature") ?? "";

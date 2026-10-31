@@ -104,6 +104,8 @@ test("the Worker takes a body only when the server's key signed it", async () =>
           method: "PUT",
           body,
           headers: {
+            // Set by the server's HTTP client; Node's Request leaves it out.
+            "Content-Length": String(body.length),
             Signature: toHex(
               await crypto.subtle.sign(
                 "Ed25519",
@@ -118,6 +120,11 @@ test("the Worker takes a body only when the server's key signed it", async () =>
     ).status;
   const body = JSON.stringify({ ...stats, at: now });
   expect(await put(body, other.privateKey)).toBe(401);
+  // no key configured yet (wrangler.json ships it empty): nothing is taken
+  const key = env.HOMELAB_PUBLIC_KEY;
+  env.HOMELAB_PUBLIC_KEY = "";
+  expect(await put(body)).toBe(401);
+  env.HOMELAB_PUBLIC_KEY = key;
   expect(await put(body)).toBe(204);
   expect(JSON.parse(kv.get("latest")!).blocked).toBe(1212);
   // the same signed body again, or an older one, is refused
@@ -128,7 +135,10 @@ test("the Worker takes a body only when the server's key signed it", async () =>
         new Request("https://x/homelab.json", {
           method: "PUT",
           body: body.replace("1212", "9999"),
-          headers: { Signature: "00".repeat(64) },
+          headers: {
+            "Content-Length": String(body.length),
+            Signature: "00".repeat(64),
+          },
         }),
         env,
       )
