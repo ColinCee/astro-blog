@@ -67,11 +67,12 @@
   .prose .fig[data-grow] .runs i {
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.25s var(--ease-out);
+    /* dense: a row holds many runs, so they follow faster than --stagger */
+    transition: transform var(--dur-base) var(--ease-out);
     transition-delay: calc(var(--n, 0) * 20ms);
   }
   .prose .fig[data-grow] .runs:not(.runs--hi) i {
-    transition-duration: 1.6s;
+    transition-duration: var(--dur-line);
   }
   .prose .fig[data-grow].is-in .runs i {
     transform: none;

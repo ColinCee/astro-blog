@@ -282,11 +282,11 @@ const entries = posts.map((post) => {
     }
     .log__item {
       animation: rise var(--dur-slow) var(--ease-out) both;
-      animation-delay: calc(0.08s + var(--i, 0) * 0.07s);
+      animation-delay: calc(0.08s + var(--i, 0) * var(--stagger));
     }
     .log__end {
       animation: rise var(--dur-slow) var(--ease-out) both;
-      animation-delay: calc(0.08s + var(--i, 0) * 0.07s);
+      animation-delay: calc(0.08s + var(--i, 0) * var(--stagger));
     }
   }
 </style>

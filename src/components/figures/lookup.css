@@ -28,7 +28,7 @@
   align-items: center;
   gap: 0.6rem;
   border-radius: 4px;
-  transition: background var(--dur-fast, 0.2s) ease;
+  transition: background var(--dur-fast) var(--ease);
 }
 .prose .lookup__row span {
   min-width: 5ch;

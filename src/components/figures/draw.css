@@ -9,7 +9,8 @@
     .fig[data-grow]
     :is(.trow i, .qmini i, .decide__pass > i, .pts__t i, .sbar i, .stack span) {
     transform-origin: left;
-    transition: transform 0.9s var(--ease-out) calc(var(--row, 0) * 70ms);
+    transition: transform var(--dur-draw) var(--ease-out)
+      calc(var(--row, 0) * var(--stagger));
   }
   .prose
     .fig[data-grow]:not(.is-in)
@@ -17,7 +18,8 @@
     transform: scaleX(0);
   }
   .prose .fig[data-grow] .dot i::after {
-    transition: transform 0.5s var(--ease-out) calc(var(--row, 0) * 70ms);
+    transition: transform var(--dur-slow) var(--ease-out)
+      calc(var(--row, 0) * var(--stagger));
   }
   .prose .fig[data-grow]:not(.is-in) .dot i::after {
     transform: translate(-50%, -50%) scale(0);
@@ -25,7 +27,7 @@
   /* pathLength="1" (set by the same script) makes one dash the whole line */
   .prose .fig[data-grow] .chart .ln[pathLength]:not(.ln--dash) {
     stroke-dasharray: 1;
-    transition: stroke-dashoffset 1.4s var(--ease-out);
+    transition: stroke-dashoffset var(--dur-line) var(--ease-out);
   }
   .prose .fig[data-grow]:not(.is-in) .chart .ln[pathLength]:not(.ln--dash) {
     stroke-dashoffset: 1;

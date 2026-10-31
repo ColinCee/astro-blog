@@ -242,7 +242,7 @@ const { experience } = Astro.props;
   }
   .row__chev {
     color: var(--faint);
-    transition: rotate 0.3s var(--ease-out);
+    transition: rotate var(--dur-base) var(--ease-out);
   }
   .row[open] .row__chev {
     rotate: 180deg;
@@ -255,9 +255,9 @@ const { experience } = Astro.props;
     overflow: hidden;
     opacity: 0;
     transition:
-      block-size 0.4s var(--ease-out),
-      opacity 0.3s var(--ease-out),
-      content-visibility 0.4s allow-discrete;
+      block-size var(--dur-slow) var(--ease-out),
+      opacity var(--dur-base) var(--ease-out),
+      content-visibility var(--dur-slow) allow-discrete;
   }
   .row[open]::details-content {
     block-size: auto;

@@ -60,7 +60,7 @@
 @media (prefers-reduced-motion: no-preference) {
   .prose .fig[data-grow] .gain i {
     transform: scaleX(0);
-    transition: transform 0.9s var(--ease-out);
+    transition: transform var(--dur-draw) var(--ease-out);
   }
   .prose .fig[data-grow].is-in .gain i {
     transform: none;

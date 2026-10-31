@@ -72,11 +72,21 @@
   --w-prose: 46rem;
   --w-poster: 90rem;
 
-  /* Motion */
+  /* Motion: four speeds and three curves for everything the interface does
+     (DESIGN.md, Motion). Fast for hover and colour, base for a small state
+     change (a chevron, a flip, a layer fading), slow for anything arriving,
+     draw for a figure's bars growing, line for a chart line drawing; rows
+     follow one another by --stagger. Content timings (the reel's 5 s, a loop's
+     period) are not interface motion and stay where they are written. */
   --dur-fast: 0.16s;
+  --dur-base: 0.3s;
   --dur-slow: 0.5s;
+  --dur-draw: 0.9s;
+  --dur-line: 1.4s;
+  --stagger: 70ms;
   --ease: ease;
-  --ease-out: ease-out;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
   /* Accent states — derived from --accent, reused across components */
   --accent-line: color-mix(in oklch, var(--accent) 40%, transparent);
