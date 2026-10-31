@@ -1,0 +1,84 @@
+<!doctype html>
+<!-- Favicon / logo ideas (31 Oct 2026), each at 96px on both themes and at true
+     tab size (16 and 32px). Shot by shoot-logos.mts. Colours from
+     src/styles/scales.css: n1/n3 tiles, v6 dark accent, v4 light accent. -->
+<html>
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Sora:wght@300;600&family=DM+Mono:wght@400;500&family=Noto+Sans+TC:wght@500;700&display=block" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 32px; background: #141516; color: #e8eff9; font-family: Geist, sans-serif; }
+  h1 { font: 600 22px Sora; margin: 0 0 4px; letter-spacing: -.02em; }
+  .sub { color: #a0a5ac; font: 13px "DM Mono"; margin: 0 0 24px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .c { background: #1c1d1f; border-radius: 8px; padding: 18px; display: grid; gap: 14px; }
+  .c h2 { margin: 0; font: 500 15px Geist; }
+  .c p { margin: 0; color: #a0a5ac; font-size: 12.5px; line-height: 1.45; }
+  .big { display: flex; gap: 12px; }
+  .tabs { display: grid; gap: 6px; }
+  .tab { display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 10px; border-radius: 6px; font: 12px Geist; width: max-content; }
+  .tab.d { background: #292b2e; color: #e8eff9; }
+  .tab.l { background: #e9ebee; color: #161b22; }
+  .tab svg { flex: none; }
+  .k { font: 11px "DM Mono"; color: #81878d; }
+  /* the marks */
+  .tile-d { fill: #0c0d0f; } .tile-l { fill: #f1f3f5; }
+  .a-d { fill: #b55df5; stroke: #b55df5; } .a-l { fill: #7d39ac; stroke: #7d39ac; }
+  .i-d { fill: #e8eff9; } .i-l { fill: #161b22; }
+  .g-d { fill: #575b60; } .g-l { fill: #adb1b7; }
+  text { font-family: Sora; }
+</style>
+</head>
+<body>
+<h1>Logo ideas</h1>
+<p class="sub">96px on dark and light, then at true size in a browser tab (16px) and a bookmark (32px)</p>
+<div class="grid" id="grid"></div>
+<template id="marks"><svg>
+  <!-- A: today's prompt -->
+  <g data-k="A" data-name="Prompt (today)" data-why="The terminal on the home page; reads as code, not as you. Thin strokes go soft at 16px.">
+    <path class="a" d="M34 40 L56 64 L34 88" fill="none" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" style="fill:none"/>
+    <rect class="a" x="62" y="79" width="30" height="11" rx="5.5" style="stroke:none"/>
+  </g>
+  <!-- B: the before/after bars every post leads with -->
+  <g data-k="B" data-name="Before → after" data-why="Every post's stat as a mark: a long grey bar, a short purple one (428 s → 23 s). Says what the site is about; solid shapes hold at 16px.">
+    <rect class="g" x="26" y="40" width="76" height="18" rx="5"/>
+    <rect class="a" x="26" y="70" width="30" height="18" rx="5" style="stroke:none"/>
+  </g>
+  <!-- C: 張, the family name -->
+  <g data-k="C" data-name="張 (Cheung)" data-why="Your family name, from the whoami line. Personal and unlike any other dev blog; dense, so it needs the heavier weight at 16px.">
+    <text class="a" x="64" y="90" font-size="72" text-anchor="middle" style="font-family:'Noto Sans TC';font-weight:700;stroke:none">張</text>
+  </g>
+  <!-- D: cc monogram -->
+  <g data-k="D" data-name="cc monogram" data-why="Your initials in the title face (Sora 600). Familiar and clean; the least distinctive of the six.">
+    <text class="a" x="64" y="84" font-size="60" text-anchor="middle" letter-spacing="-4" style="font-weight:600;stroke:none">cc</text>
+  </g>
+  <!-- E: the caret alone -->
+  <g data-k="E" data-name="Caret" data-why="Just the terminal's cursor: one purple block. The boldest at 16px, and it could blink in the nav; says little on its own.">
+    <rect class="a" x="44" y="34" width="40" height="60" rx="7" style="stroke:none"/>
+  </g>
+  <!-- F: c/ with the worked-at slash -->
+  <g data-k="F" data-name="c/" data-why="Your initial and the slash from the worked-at strip, the site's one recurring mark. Ink letter, purple slash: one accent.">
+    <text class="i" x="46" y="86" font-size="66" text-anchor="middle" style="font-weight:600">c</text>
+    <path class="a" d="M92 28 L70 100" stroke-width="11" stroke-linecap="round" style="fill:none"/>
+  </g>
+</svg></template>
+<script>
+  const marks = [...document.getElementById("marks").content.querySelectorAll("svg > g")];
+  const svg = (g, theme, px) => {
+    const inner = g.innerHTML.replace(/class="(a|i|g)"/g, (_, c) => `class="${c}-${theme}"`);
+    return `<svg width="${px}" height="${px}" viewBox="0 0 128 128"><rect class="tile-${theme}" width="128" height="128" rx="24"/>${inner}</svg>`;
+  };
+  document.getElementById("grid").innerHTML = marks.map((g) => `
+    <div class="c">
+      <h2><span class="k">${g.dataset.k}</span> ${g.dataset.name}</h2>
+      <div class="big">${svg(g, "d", 96)}${svg(g, "l", 96)}</div>
+      <div class="tabs">
+        <div class="tab d">${svg(g, "d", 16)} Colin Cheung</div>
+        <div class="tab l">${svg(g, "l", 16)} Colin Cheung</div>
+        <div class="big">${svg(g, "d", 32)}${svg(g, "l", 32)}</div>
+      </div>
+      <p>${g.dataset.why}</p>
+    </div>`).join("");
+</script>
+</body>
+</html>
