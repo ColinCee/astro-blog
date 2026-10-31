@@ -2,86 +2,67 @@
 
 # colincheung.dev
 
-**A terminal-native personal site and engineering blog.**
+A terminal-flavoured personal site and engineering blog.<br>
+Static, fast, and every post leads with the number it's about.
 
-**▶ Live: [colincheung.dev](https://colincheung.dev)** · [Blog](https://colincheung.dev/blog) · [CV](https://colincheung.dev/cv)
+[**Site**](https://colincheung.dev) · [**Writing**](https://colincheung.dev/blog) · [**CV**](https://colincheung.dev/cv)
 
 [![Deploy](https://github.com/ColinCee/astro-blog/actions/workflows/deploy.yml/badge.svg?branch=main&event=push)](https://github.com/ColinCee/astro-blog/actions/workflows/deploy.yml?query=branch%3Amain)
-[![Live](https://img.shields.io/website?url=https%3A%2F%2Fcolincheung.dev&label=live&up_message=online&down_message=offline)](https://colincheung.dev)
+![Astro](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
 
-![Screenshot](docs/screenshot.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme-dark.png">
+  <img alt="The homepage: the name, a rotating one-liner, and a terminal with the latest posts" src="docs/readme-light.png" width="860">
+</picture>
 
 </div>
 
-## What it does
+## Inside
 
-- Terminal-inspired homepage built around a tmux-style window with live project tiles
-- Technical blog written in MDX, with figure components and Expressive Code blocks
-- Printable CV page that prints clean to ink-on-white
-- Light and dark themes that follow the system setting
-- Built for search: a sitemap with each post's last change, robots.txt, schema.org data (BlogPosting on posts, Person on the homepage) and a real 404 page
+- **Homepage:** a terminal that types `whoami`, lists the latest posts with their results, and shows live figures from the home lab.
+- **Writing:** MDX posts with figures that draw themselves in, and code blocks themed to match.
+- **CV:** one page that prints clean on white.
+- **Dark first**, with a light theme a click away.
+- **Held to a speed budget:** every pull request fails if a page gets heavier or slower ([how](docs/page-speed.md)).
 
-## Stack
-
-| Area | Tooling |
-| --- | --- |
-| Framework | Astro 7 (static), TypeScript 6 |
-| Content | MDX content collections; figures as Astro components |
-| Code blocks | Astro Expressive Code |
-| Styling | Custom CSS tokens in `src/styles/tokens.css`; scoped styles beside each component |
-| Hosting | Cloudflare Workers |
-| Deploys | GitHub Actions + Wrangler |
-| Tooling | Node 24 LTS (pinned with Volta), pnpm, Biome (lint and format), Playwright |
-
-## Run locally
+## Run it
 
 ```sh
 pnpm install
-pnpm dev
+pnpm exec playwright install chromium   # once, for the tests
+pnpm dev                                # http://localhost:4321
+pnpm check                              # everything CI runs
 ```
 
-Node and pnpm versions are pinned in `package.json` (`volta`, `packageManager`).
+Node and pnpm versions are pinned in `package.json`.
 
-## How it works
+<details>
+<summary><b>All commands</b></summary>
 
-Astro builds the pages in `src/pages/` and the posts in `src/content/blog/`, styled with a small custom design system, into a fully static site. Wrangler uploads `dist/` to Cloudflare as a Worker (`wrangler.json`) that serves those files. Its only code, `worker/index.ts`, answers one path, `/homelab.json`: the home server's signed numbers for the homepage's home-lab and flight-tracker figures (how the server sends them: ColinCee/homelab's `docs/public-stats.md`). [DESIGN.md](DESIGN.md) owns the visual system and [PRODUCT.md](PRODUCT.md) the audience and purpose.
-
-## Project structure
-
-```text
-src/pages/             Routes: index.astro composes the homepage; blog/, cv.astro, cortex/
-src/layouts/           Base (the shell: head, nav, footer) and Post (a post, inside Base)
-src/components/site/   Head, Nav, Footer: the parts every page shares
-src/components/home/   The homepage's sections: Hero, Terminal and its panes, WorkedAt, Projects, Writing, Reach
-src/components/figures/ The posts' figures (Fig, Cmp, Dots, LineChart, Ladder, QView, …), each with its CSS beside it
-src/content/blog/      The posts, one MDX file each
-src/data/              The homepage's data as JSON: projects, companies, shipped, skills, homelab stacks
-src/content.config.ts  The collections and their schemas: blog, plus one per data file
-src/styles/            tokens.css (colours, type, widths) and prose.css (post text)
-src/scripts/           Browser scripts shared between components, and the post figures' widgets
-public/                Static files copied into the build as they are
-worker/index.ts        The Worker's one route, /homelab.json: checks and stores the home server's numbers
-```
-
-## Commands
-
-| Command | Action |
+| Command | Does |
 | --- | --- |
-| `pnpm install` | Install dependencies |
-| `pnpm dev` | Start the local dev server |
-| `pnpm build` | Build the production site |
-| `pnpm check` | Type-check (`astro check`), lint and format check (Biome), build, Wrangler dry run, then the tests |
-| `pnpm format` | Lint-fix and format with Biome (posts and docs are left alone) |
-| `pnpm run deploy` | Build and deploy to Cloudflare Workers (`pnpm deploy` is a pnpm command of its own) |
-| `pnpm test` | Run the Playwright layout and typography tests; they start their own dev server on `PORT` (default 4380) |
+| `pnpm build` | Build the static site into `dist/` |
+| `pnpm test` | The Playwright tests (layout, type, motion, home lab) on a dev server |
+| `pnpm speed` | Build, then the per-page speed budgets |
+| `pnpm preview` | Build, then serve it through the Worker locally |
+| `pnpm format` | Lint-fix and format with Biome |
+| `pnpm og` | Render each post's social card |
+| `pnpm run deploy` | Build and deploy to Cloudflare |
 
-## Deployment
+</details>
 
-Pushes to `main` run `.github/workflows/deploy.yml`, which installs dependencies, type-checks, lints and checks formatting, builds the site, validates the Wrangler config, runs the tests, and deploys with Cloudflare secrets. Pull requests run the same steps without the deploy.
-
-Required repository secrets:
+## How it fits together
 
 ```text
-CLOUDFLARE_ACCOUNT_ID
-CLOUDFLARE_API_TOKEN
+src/pages/        routes: home, blog/, cv
+src/content/blog/ the posts, one MDX file each
+src/components/   site/ (head, nav, footer) · home/ · figures/ · cv/
+src/styles/       tokens.css, the design system's colours, type and motion
+worker/index.ts   one route, /homelab.json, for the home lab's live numbers
 ```
+
+Astro builds everything to static files; a Cloudflare Worker serves them. Pushes to `main` deploy through GitHub Actions after the same checks pull requests run, with the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets.
+
+[DESIGN.md](DESIGN.md) holds the visual system and [PRODUCT.md](PRODUCT.md) who it's for.
