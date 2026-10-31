@@ -17,6 +17,8 @@ type Plane = {
   v: number;
   wps: Pt[];
   i: number;
+  // steps since the last waypoint
+  s: number;
   t: number;
   trail: Pt[];
   cs: string;
@@ -100,6 +102,7 @@ const spawn = (hot: boolean): Plane => {
     y: p[1],
     h: h ?? Math.atan2(w[1] - p[1], w[0] - p[0]),
     i: 0,
+    s: 0,
     t: 0,
     trail: [],
     cs: pick(airlines) + Math.floor(rnd(10, 990)),
@@ -107,23 +110,29 @@ const spawn = (hot: boolean): Plane => {
   };
 };
 
+// A plane is done once past its last waypoint (or off the scope); a
+// waypoint it can't turn tightly enough to reach (a stack's lap corners) is
+// given up after 300 steps rather than circled for ever.
 const step = (p: Plane) => {
   const w = p.wps[p.i];
-  if (!w) return;
-  let d = Math.atan2(w[1] - p.y, w[0] - p.x) - p.h;
-  d = Math.atan2(Math.sin(d), Math.cos(d));
-  p.h += Math.max(-0.03, Math.min(0.03, d));
+  if (w) {
+    let d = Math.atan2(w[1] - p.y, w[0] - p.x) - p.h;
+    d = Math.atan2(Math.sin(d), Math.cos(d));
+    p.h += Math.max(-0.03, Math.min(0.03, d));
+  }
   if (p.kind === "dep") p.v = Math.min(0.0034, p.v * 1.004);
   p.x += Math.cos(p.h) * p.v;
   p.y += Math.sin(p.h) * p.v;
-  if (Math.hypot(w[0] - p.x, w[1] - p.y) < 0.05) p.i++;
+  if (w && (Math.hypot(w[0] - p.x, w[1] - p.y) < 0.05 || ++p.s > 300)) {
+    p.i++;
+    p.s = 0;
+  }
   if (++p.t % 4 === 0) p.trail.push([p.x, p.y]);
   if (p.trail.length > 45) p.trail.shift();
 };
 
 const done = (p: Plane) =>
-  (p.kind === "arr" && p.i >= p.wps.length) ||
-  (Math.hypot(p.x, p.y) > 1.2 && p.i > 0);
+  p.i >= p.wps.length || (Math.hypot(p.x, p.y) > 1.2 && p.i > 0);
 
 export function radar(canvas: HTMLCanvasElement, reduce: boolean) {
   const ctx = canvas.getContext("2d")!;

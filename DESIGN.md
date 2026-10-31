@@ -256,8 +256,8 @@ none on mono. Letters never touch.
 ## 4. Elevation
 
 Flat. Depth comes from tone, not shadows or borders: page (`--bg`), a raised
-panel (`--panel` / `--pane`), a darker well inside it (`--well`). `--lift` and
-`--wash` are `none`: no drop shadows, no glow behind the page, no gradients.
+panel (`--panel` / `--pane`), a darker well inside it (`--well`): no drop
+shadows, no glow behind the page, no gradients.
 
 ### Named Rules
 **The Flat-By-Tone Rule.** No shadows on cards, panels, inputs or figures, and no
@@ -280,7 +280,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   is on.
 - Centered on `--w-page`, so the mark lines up with the content's left edge and
   the links with its right edge (and with the footer). On the homepage it spans
-  `--w-poster` and hides its links below 560px.
+  `--w-poster`; its links show at every width.
 
 ### Footer
 - One `components/site/Footer.astro`: `Colin Cheung` (mono, `--muted`) and

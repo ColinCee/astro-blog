@@ -3,7 +3,6 @@
    can open rather than a button. */
 .prose details.more {
   margin: 2rem 0;
-  border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
 }

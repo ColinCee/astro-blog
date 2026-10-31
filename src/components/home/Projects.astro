@@ -434,6 +434,10 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     stroke-linecap: round;
     animation: flow 7s linear infinite;
   }
+  /* Anything moving on its own stops while the pointer or focus is on it */
+  .pj__fig:is(:hover, :focus-within) :is(.p, .dot) {
+    animation-play-state: paused;
+  }
   @keyframes flow {
     to {
       stroke-dashoffset: -72;
@@ -780,6 +784,7 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     const canvas = pj.querySelector<HTMLCanvasElement>("[data-radar]");
     const scope = canvas ? radar(canvas, reduce) : null;
     const isOpen = (it: HTMLElement) => it.classList.contains("is-on");
+    const sideBySide = matchMedia("(min-width: 56.01rem)");
     let inView = false;
 
     // Numbers count up from zero the first time they are shown. The live ones
@@ -872,10 +877,26 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
         for (const dg of it.querySelectorAll<HTMLElement>(".dg")) draw(dg);
     };
 
-    // The radar runs only while it is open, on screen and the tab is visible.
+    // The radar runs only while it is open, on screen, not held by the
+    // pointer or focus, and the tab is visible.
+    let held = false;
+    const scopeFig = canvas?.closest<HTMLElement>(".pj__fig");
+    for (const [ev, on] of [
+      ["pointerenter", true],
+      ["pointerleave", false],
+      ["focusin", true],
+      ["focusout", false],
+    ] as const)
+      scopeFig?.addEventListener(ev, () => {
+        held = on;
+        runScope();
+      });
     const runScope = () =>
       scope?.run(
-        inView && !document.hidden && !!items.find(isOpen)?.contains(canvas),
+        inView &&
+          !held &&
+          !document.hidden &&
+          !!items.find(isOpen)?.contains(canvas),
       );
 
     const show = (it: HTMLElement, replay: boolean) => {
@@ -908,9 +929,10 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
       for (const ev of ["click", "focus"])
         b.addEventListener(ev, () => pick(it));
       // A moving mouse, not pointerenter: a still pointer that the page
-      // scrolls under would otherwise switch the figure mid-scroll.
+      // scrolls under would otherwise switch the figure mid-scroll. Only side
+      // by side: stacked, opening one moves the list under the pointer.
       b.addEventListener("pointermove", (e) => {
-        if (e.pointerType === "mouse") pick(it);
+        if (e.pointerType === "mouse" && sideBySide.matches) pick(it);
       });
     }
 

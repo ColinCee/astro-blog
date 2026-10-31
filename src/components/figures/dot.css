@@ -70,8 +70,9 @@
   .prose .dot--axis span {
     display: none;
   }
+  /* the same value column on every row, so the axis ticks line up with the dots */
   .prose .dot {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) 4.2rem;
   }
   .prose .dot span {
     grid-column: 1 / -1;

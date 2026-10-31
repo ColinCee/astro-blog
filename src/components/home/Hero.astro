@@ -196,8 +196,10 @@ const quips = [
     cursor: pointer;
     outline: none;
   }
+  /* inset: the list clips anything drawn outside the button */
   .reel__next:focus-visible {
-    box-shadow: var(--ring);
+    outline: 2px solid var(--ink);
+    outline-offset: -2px;
   }
   @keyframes reel-run {
     to {
