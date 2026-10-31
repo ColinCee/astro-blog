@@ -77,7 +77,10 @@ const schema = article
     delete r.dataset.screenTheme;
   });
 </script>
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<!-- ?v= changes with the icon, so browsers drop the one they cached -->
+<link rel="icon" href="/favicon.ico?v=2" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
 <!-- Fonts: linked here, not imported from a stylesheet, so the browser asks
      for them as soon as it reads the head. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
