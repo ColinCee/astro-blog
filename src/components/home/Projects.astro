@@ -698,10 +698,13 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     border: 1px solid var(--line-strong);
     border-radius: var(--r-ctl);
     cursor: pointer;
-    transition: border-color var(--dur-fast) var(--ease);
+    transition:
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
   }
   .ak__next:hover {
-    border-color: var(--ink);
+    border-color: var(--accent);
+    color: var(--accent-text);
   }
 
   /* A figure narrower than its diagram stacks it; the edges then run top

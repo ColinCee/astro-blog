@@ -191,6 +191,9 @@ two themes.
    `--faint` before an arrow; a plain comparison like "82% vs 80%" stays ink.
 2. **Links**, in `--accent-text` (`--accent-soft` in prose).
 3. **The one highlight in a hero drawing or one-liner.**
+4. **A hovered control:** a button's border goes `--accent` and its label or
+   icon `--accent-text`; a link's underline goes `--accent`. One at a time, so it
+   never crowds a glance.
 Chrome never takes it: prompts, carets, window dots, the nav, separators (the
 worked-at slashes keep a 40% hint, `--accent-line`). Never a surface, a large
 area, a heading or a button. If two things are violet in one glance, one is

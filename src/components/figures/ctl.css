@@ -28,7 +28,8 @@
   color: var(--accent-soft);
 }
 .prose .ctl button:hover {
-  border-color: var(--accent-line);
+  border-color: var(--accent);
+  color: var(--accent-text);
 }
 .prose .ctl button:disabled,
 .prose .ctl button:disabled:hover {

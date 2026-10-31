@@ -36,7 +36,7 @@
   border-left: 1px solid var(--line);
 }
 .prose .player button:hover {
-  color: var(--ink);
+  color: var(--accent-text);
   background: var(--pane);
 }
 .prose .player button:focus-visible,

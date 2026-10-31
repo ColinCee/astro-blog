@@ -123,7 +123,8 @@ if (import.meta.env.PROD) return Astro.redirect("/");
           <span class="f">where it goes</span>
         </p>
         <p class="f">
-          plus the one highlight in a hero drawing. Never chrome (prompts,
+          plus the one highlight in a hero drawing, and a control under the
+          pointer. Never chrome (prompts,
           carets, window dots, the nav, separators), a surface, a heading or a
           button. It also stands for "info": there is no separate blue status
           colour.
@@ -668,7 +669,8 @@ if (import.meta.env.PROD) return Astro.redirect("/");
     cursor: pointer;
   }
   .ds .ctl:hover {
-    border-color: var(--ink);
+    border-color: var(--accent);
+    color: var(--accent-text);
   }
   .ds .acc {
     display: flex;

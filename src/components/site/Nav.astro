@@ -113,10 +113,13 @@ const active = (href: string) => {
     background: var(--panel);
     color: var(--ink);
     cursor: pointer;
-    transition: border-color var(--dur-fast) var(--ease);
+    transition:
+      color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
   }
   .nav__theme:hover {
-    border-color: var(--ink);
+    border-color: var(--accent);
+    color: var(--accent-text);
   }
   .nav__theme svg {
     width: 1rem;
