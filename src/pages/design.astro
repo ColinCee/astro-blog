@@ -70,8 +70,8 @@ if (import.meta.env.PROD) return Astro.redirect("/");
 
     <h2>Colour</h2>
     <p>
-      Three kinds of colour and nothing else: one grey scale, four accent
-      shades, three status colours. Each is one OKLCH value; only lightness
+      Three kinds of colour and nothing else: one grey scale, one violet
+      spectrum, three status colours. Each is one OKLCH value; only lightness
       changes between light and dark, so dark mode is the same palette, not a
       second one.
     </p>
@@ -80,8 +80,11 @@ if (import.meta.env.PROD) return Astro.redirect("/");
       <div class="sw" data-sw="n"></div>
     </div>
     <div class="scale">
-      <h3>accent · violet, hue 298 · four shades, one job each</h3>
-      <div class="sw four" data-sw="a"></div>
+      <h3>
+        accent · violet spectrum, 7 even steps, the same in both themes · each
+        job is one step
+      </h3>
+      <div class="sw seven" data-sw="a"></div>
     </div>
     <div class="scale">
       <h3>
@@ -785,14 +788,16 @@ if (import.meta.env.PROD) return Astro.redirect("/");
     color: var(--faint);
     box-shadow: inset 0 0 0 1px var(--line-2);
   }
-  .ds .sw.four {
-    grid-template-columns: repeat(4, minmax(0, 11rem));
+  .ds .sw.seven {
+    grid-template-columns: repeat(7, 1fr);
   }
-  .ds .sw.four span {
+  .ds .sw.seven div {
+    height: 3.6rem;
     color: #fff;
   }
-  .ds .sw.four div:first-child span {
-    color: var(--accent-text);
+  /* The spectrum is the same in both themes, so its labels are fixed too */
+  .ds .sw.seven div:nth-child(n + 5) {
+    color: #1a1033;
   }
   .ds .sw.three {
     grid-template-columns: repeat(9, minmax(0, 5.5rem));
@@ -980,11 +985,15 @@ if (import.meta.env.PROD) return Astro.redirect("/");
         `<i style="aspect-ratio:1;border-radius:1px;background:var(${i < 9 ? "--accent-solid" : "--n6"})"></i>`,
     ).join("");
   // Swatches drawn from the tokens, so this page can never disagree with them.
+  // Which job each step does, dark / light
   const labels: Record<string, string> = {
-    "accent-wash": "wash · tint",
-    "accent-solid": "solid · filled marks",
-    accent: "accent · bars, big results",
-    "accent-text": "text · links, small results",
+    v1: "1 · wash (dark)",
+    v2: "2",
+    v3: "3 · solid · text (light)",
+    v4: "4 · accent: bars, big results",
+    v5: "5 · text (dark)",
+    v6: "6",
+    v7: "7 · wash (light)",
   };
   const fill = (k: string, keys: string[]) => {
     const el = document.querySelector<HTMLElement>(`[data-sw="${k}"]`);
@@ -999,7 +1008,10 @@ if (import.meta.env.PROD) return Astro.redirect("/");
   const steps = (p: string) =>
     Array.from({ length: 12 }, (_, i) => p + (i + 1));
   fill("n", steps("n"));
-  fill("a", ["accent-wash", "accent-solid", "accent", "accent-text"]);
+  fill(
+    "a",
+    Array.from({ length: 7 }, (_, i) => `v${i + 1}`),
+  );
   fill(
     "s",
     ["ok", "warn", "danger"].flatMap((h) => [h + 3, h + 9, h + 11]),

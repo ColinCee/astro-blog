@@ -12,20 +12,22 @@ const cr=(a,b)=>{const [x,y]=[lum(a),lum(b)].sort((p,q)=>q-p);return (x+.05)/(y+
 const NH=255, AH=298, OKH=150, WH=70, DH=25;
 // neutral: [L light, L dark, chroma]
 const N=[[.993,.16,.003],[.982,.195,.003],[.962,.23,.004],[.94,.26,.005],[.915,.29,.006],[.885,.325,.007],[.84,.385,.008],[.76,.47,.010],[.62,.62,.012],[.52,.72,.012],[.45,.78,.012],[.22,.95,.015]];
-// accent: four shades named for their job, not a 12-step ramp (31 Oct 2026: 8 steps were
-// never used). [L light, L dark, chroma light, chroma dark]; light marks and bars use its solid.
-// Any other hue must stay outside h20-180, clear of the status hues (research/status-accent-research.md).
-const ACC={'accent-wash':[.945,.25,.05,.05],'accent-solid':[.55,.50,.21,.18],accent:[.55,.61,.21,.225],'accent-text':[.47,.73,.17,.18]};
+// accent: one violet spectrum, 7 even lightness steps shared by both themes; each theme picks
+// its four jobs from it in tokens.css (31 Oct 2026: a 12-step ramp had 8 unused steps, then four
+// loose shades sat too close and the light ones read pink). Hue eases bluer as it lightens, so the
+// pale end stays violet. Any other hue must stay outside h20-180, clear of the status hues
+// (research/status-accent-research.md). [L, C, H]
+const V=[[.25,.07,298],[.37,.15,298],[.48,.19,298],[.59,.20,296],[.70,.16,293],[.82,.10,290],[.95,.035,290]];
 // status: green ok, amber warn, red danger (round 29), each at steps 3 (wash) / 9 (dot) / 11 (text)
 const S={ok:[OKH,[[.955,.23,.05],[.62,.62,.17],[.47,.80,.13]]],warn:[WH,[[.96,.25,.06],[.64,.76,.16],[.50,.86,.13]]],danger:[DH,[[.955,.24,.04],[.60,.62,.20],[.50,.80,.15]]]};
 const out={light:{},dark:{}};
 N.forEach(([l,d,c],i)=>{out.light['n'+(i+1)]=hex(l,c,NH);out.dark['n'+(i+1)]=hex(d,c,NH)});
-for(const [k,[l,d,c,cd]] of Object.entries(ACC)){out.light[k]=hex(l,c,AH);out.dark[k]=hex(d,cd,AH)}
+V.forEach(([l,c,h],i)=>{out.light['v'+(i+1)]=out.dark['v'+(i+1)]=hex(l,c,h)});
 for(const [k,[h,steps]] of Object.entries(S)){[3,9,11].forEach((s,i)=>{const [l,d,c]=steps[i];out.light[k+s]=hex(l,c,h);out.dark[k+s]=hex(d,c,h)})}
 // checks: text at 4.5:1; bars and marks only need 3:1, so they are not listed
 const chk=[];
 for(const m of ['light','dark']){const t=out[m];
- chk.push([m,'n12 on n1',cr(t.n12,t.n1)],[m,'n11 on n2',cr(t.n11,t.n2)],[m,'n11 on n3',cr(t.n11,t.n3)],[m,'n10 on n1',cr(t.n10,t.n1)],[m,'n10 on n3',cr(t.n10,t.n3)],[m,'text on n1',cr(t['accent-text'],t.n1)],[m,'text on n3',cr(t['accent-text'],t.n3)],[m,'text on wash',cr(t['accent-text'],t['accent-wash'])],[m,'ok11 on ok3',cr(t.ok11,t.ok3)],[m,'ok11 on n1',cr(t.ok11,t.n1)],[m,'warn11 on warn3',cr(t.warn11,t.warn3)],[m,'warn11 on n1',cr(t.warn11,t.n1)],[m,'danger11 on danger3',cr(t.danger11,t.danger3)],[m,'danger11 on n1',cr(t.danger11,t.n1)],[m,'white on solid',cr('#ffffff',t['accent-solid'])]);}
+ chk.push([m,'n12 on n1',cr(t.n12,t.n1)],[m,'n11 on n2',cr(t.n11,t.n2)],[m,'n11 on n3',cr(t.n11,t.n3)],[m,'n10 on n1',cr(t.n10,t.n1)],[m,'n10 on n3',cr(t.n10,t.n3)],...(m==='dark'?[[m,'v5 text on n1',cr(t.v5,t.n1)],[m,'v5 text on n3',cr(t.v5,t.n3)],[m,'v5 on v1 wash',cr(t.v5,t.v1)]]:[[m,'v3 text on n3',cr(t.v3,t.n3)],[m,'v3 text on n5',cr(t.v3,t.n5)],[m,'v3 on v7 wash',cr(t.v3,t.v7)]]),[m,'ok11 on ok3',cr(t.ok11,t.ok3)],[m,'ok11 on n1',cr(t.ok11,t.n1)],[m,'warn11 on warn3',cr(t.warn11,t.warn3)],[m,'warn11 on n1',cr(t.warn11,t.n1)],[m,'danger11 on danger3',cr(t.danger11,t.danger3)],[m,'danger11 on n1',cr(t.danger11,t.n1)],[m,'white on v3',cr('#ffffff',t.v3)]);}
 chk.forEach(([m,n,v])=>console.log((v>=4.5?'ok  ':'FAIL')+' '+m.padEnd(5)+n.padEnd(16)+v.toFixed(2)));
 // the site's copy: dark is the default, light is the toggle (src/styles/tokens.css names the roles)
 const block=(t)=>Object.entries(t).map(([k,v])=>`  --${k}: ${v};`).join('\n');

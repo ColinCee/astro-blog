@@ -12,9 +12,9 @@ colors:
   ink: "#e8eff9"
   muted: "#b2b8bf"
   faint: "#a0a5ac"
-  accent: "#9757f5"
-  accent-solid: "#7242ba"
-  accent-text: "#b490fb"
+  accent: "#8b5ae4"
+  accent-solid: "#6e38b8"
+  accent-text: "#a388f8"
   accent-ink: "#fff"
   gain: "#7cd591"
   loss: "#fda19a"
@@ -133,7 +133,7 @@ big.
 
 **Key Characteristics:**
 
-- Three kinds of colour and nothing else: one cool grey scale, four violet accent shades (one per job), three status colours.
+- Three kinds of colour and nothing else: one cool grey scale, one violet spectrum, three status colours.
 - Dark and light are the same OKLCH scales at other lightnesses, not a second palette. No pure white or black surfaces.
 - Sora for names and the voice, Geist for reading, DM Mono for data.
 - Flat: surfaces separate by tone, never by a shadow or a border.
@@ -153,10 +153,11 @@ lightness. Swatches are on the design page.
 
 ### Scales
 - **Neutral** (`--n1`…`--n12`): hue 255, barely tinted cool, 12 steps.
-- **Accent:** violet, hue 298, four shades named for their job, not a ramp: an
-  accent marks a few things, so it needs a shade per job, not 12 steps (8 of
-  the old 12 were never used). A four-hue palette (teal, ochre, indigo alongside
-  the accent) was tried and read as busy.
+- **Accent** (`--v1`…`--v7`): one violet spectrum, 7 even lightness steps, the
+  same in both themes; hue eases from 298 to 290 as it lightens so the pale end
+  stays violet, not pink. Each theme picks its four jobs from it (Roles below).
+  12 steps had 8 never used; four loose shades sat too close together. A
+  four-hue palette (teal, ochre, indigo alongside the accent) read as busy.
 - **Status** (`--ok`, `--warn`, `--danger`): green, amber, red, at steps 3 (wash),
   9 (dot) and 11 (text) only. There is no blue status colour; the accent stands
   for "info".
@@ -169,11 +170,11 @@ lightness. Swatches are on the design page.
   `--prose-ink` post body, a notch softer than ink in dark, ink in light.
 - **Edges:** `--line` and `--line-strong`, cut from the ink at 10% and 16%, so
   every border shares its tint.
-- **Accent:** `--accent` bars, lines and a post's big result; `--accent-text`
-  links and small results (4.5:1); `--accent-solid` filled marks, a little deeper
-  so they read rich, not electric; `--accent-wash` a tinted background;
-  `--accent-ink` (white) for text on a filled accent. In light, `--accent` and
-  `--accent-solid` are the same shade.
+- **Accent:** each job is one spectrum step. `--accent` (v4) bars, lines and a
+  post's big result; `--accent-solid` (v3) filled marks; `--accent-text` links
+  and small results, 4.5:1 (v5 dark, v3 light and print); `--accent-wash` a
+  tinted background (v1 dark, v7 light); `--accent-ink` (white) for text on a
+  filled accent.
   Derived: `--accent-line` (40%, inline link borders) and `--ring` (20%, the state
   glow).
 - **Charts:** `--bar` (n7) the "before" bar; `--gain` (ok11) and `--loss`
