@@ -51,6 +51,8 @@ for (const vp of viewports) {
       page,
     }) => {
       await page.goto(post);
+      // Measure the real font, not its fallback while it loads.
+      await page.evaluate(() => document.fonts.ready);
       const m = await page
         .locator(".prose p")
         .first()
