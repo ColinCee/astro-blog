@@ -6,7 +6,9 @@
 // Posts whose H2s are dated ("16 December: they move the flight") render as a
 // timeline: each dated section becomes an entry with its date set in a left
 // column beside a spine. Everything else renders as plain prose.
+
 import type { CollectionEntry } from "astro:content";
+import { existsSync } from "node:fs";
 import type { MarkdownHeading } from "astro";
 import FormattedDate from "../components/site/FormattedDate.astro";
 import Base from "./Base.astro";
@@ -141,6 +143,12 @@ const first = entries[0];
 const last = entries[entries.length - 1];
 // A stat like "428 s → 23 s" is a result that got better: split it so the
 // old value can go grey and the new one take the accent.
+// The post's own share card (title and result), rendered by `pnpm og` into
+// public/og/<slug>.png; a post without one yet shares the site's card.
+const slug = Astro.url.pathname.split("/").filter(Boolean).pop();
+const card = existsSync(`public/og/${slug}.png`)
+  ? `/og/${slug}.png`
+  : undefined;
 const statParts = stat?.includes("→")
   ? (stat.split("→").map((x) => x.trim()) as [string, string])
   : undefined;
@@ -152,6 +160,7 @@ const statParts = stat?.includes("→")
     ? `${title}: ${stat}${statLabel ? `, ${statLabel}` : ""}`
     : title}
   ogType="article"
+  image={card}
   article={{ headline: title, published: pubDate, modified: updatedDate }}
 >
   <article class="post">

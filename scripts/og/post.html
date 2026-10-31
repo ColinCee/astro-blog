@@ -1,0 +1,120 @@
+<!doctype html>
+<!-- A post's link-preview image (public/og/<slug>.png): its title and headline result,
+     as the post's own header shows them, in the dark theme. scripts/og/render.ts fills
+     the [data-*] slots from each post's frontmatter. Colours are the dark values in
+     src/styles/scales.css; fonts as the site. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600&family=DM+Mono:wght@400&display=block"
+    >
+    <style>
+      :root {
+        --bg: #0c0d0f;
+        --ink: #e8eff9;
+        --faint: #a0a5ac;
+        --accent: #b55df5;
+        --line: color-mix(in oklab, var(--ink) 10%, transparent);
+        --head: "Sora", sans-serif;
+        --mono: "DM Mono", monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+      .card {
+        width: 1200px;
+        height: 630px;
+        padding: 60px 80px 56px;
+        display: flex;
+        flex-direction: column;
+        color: var(--ink);
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--mono);
+        font-size: 24px;
+        color: var(--faint);
+      }
+      .top span {
+        color: var(--ink);
+      }
+      .title {
+        margin: 52px 0 0;
+        font-family: var(--head);
+        font-weight: 600;
+        font-size: 62px;
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+        text-wrap: balance;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .stat {
+        margin-top: auto;
+        padding-top: 28px;
+        border-top: 1px solid var(--line);
+      }
+      .label {
+        font-family: var(--mono);
+        font-size: 24px;
+        color: var(--faint);
+      }
+      .value {
+        margin-top: 10px;
+        font-family: var(--head);
+        font-weight: 600;
+        font-size: 104px;
+        line-height: 1;
+        letter-spacing: -0.04em;
+        font-variant-numeric: tabular-nums;
+      }
+      /* The old value grey, the new one the one thing in the accent */
+      .value .was {
+        color: var(--faint);
+        font-weight: 400;
+      }
+      .value .to {
+        margin: 0 0.25em;
+        color: var(--faint);
+        font-weight: 400;
+      }
+      .value .now {
+        color: var(--accent);
+      }
+      .value.flat .now {
+        color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="top">
+        <span
+          >colin@glasgow<b style="color:var(--faint);font-weight:400"
+            >:~$</b
+          ></span
+        >colincheung.dev
+      </div>
+      <h1 class="title" data-title></h1>
+      <div class="stat">
+        <div class="label" data-label></div>
+        <div class="value" data-value></div>
+      </div>
+    </div>
+  </body>
+</html>

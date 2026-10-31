@@ -80,6 +80,7 @@ Show, don't ask: build the change or two or three distinct variations, put them 
    - Series posts link to each other.
    - Work posts name nothing private.
    - The linked repos are pushed, so links show the current page.
+   - `pnpm og` has rendered the post's link-preview card (`public/og/<slug>.png`: title and headline result from the frontmatter); without it the post shares the site's card.
    - `pnpm check` passes.
    - An independent review is done.
 3. Merge, watch the deploy, then load the live page.
