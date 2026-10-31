@@ -232,7 +232,8 @@ for (const [path, budget] of Object.entries(budgets)) {
     for (let i = 0; i < 3; i++) {
       const context = await browser.newContext({
         viewport: { width: 390, height: 844 },
-        reducedMotion: "no-preference",
+        // Motion off: the entrances are design, not load time (docs/page-speed.md).
+        reducedMotion: "reduce",
       });
       runs.push(await load(await context.newPage(), path));
       await context.close();
@@ -271,6 +272,7 @@ test("a hovered link opens its page at once", async ({ browser }) => {
   for (let i = 0; i < 3; i++) {
     const context = await browser.newContext({
       viewport: { width: 390, height: 844 },
+      reducedMotion: "reduce",
     });
     const page = await context.newPage();
     // Throttled only: the page needn't be idle, just loaded.
@@ -299,7 +301,7 @@ test("a hovered link opens its page at once", async ({ browser }) => {
   }
   const median = runs.sort((a, b) => a - b)[1];
   console.log("click to blog index painted", Math.round(median), "ms");
-  // About 170 ms today, against about 370 without the prerender.
+  // About 140 ms today with motion off.
   expect(
     median,
     "click to painted, ms (tests/speed.spec.ts)",

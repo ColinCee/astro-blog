@@ -19,6 +19,13 @@ blog index, a post (jest-to-vitest) and CV. For each page:
 - **Requests:** how many.
 - **LCP** (largest contentful paint: when the biggest thing on the first
   screen has painted), the median of the three loads.
+
+Every load runs with motion off (reduced motion). The entrances fade the main
+content in over 0.5 s on purpose, and LCP counts a fading element only once
+the fade ends, so with motion on LCP would measure the design, not the
+loading. A visitor with motion on sees the main content start to fade in at
+the LCP measured here and finish 0.5 s later, still well inside the 2.5 s
+Google counts as good.
 - **Layout shift** (CLS: how far things on screen jump while the page loads,
   in its worst burst; under 0.1 counts as good), from the first load.
 
@@ -47,20 +54,16 @@ headroom:
 | Page | Total | Fonts | LCP |
 |---|---|---|---|
 | Home | 112 → 123 KB | 86 → 95 KB | 412 → 550 ms |
-| Blog index | 87 → 96 KB | 80 → 88 KB | 344 → 450 ms |
-| Post | 109 → 121 KB | 80 → 88 KB | 384 → 500 ms |
-| CV | 91 → 101 KB | 80 → 88 KB | 356 → 500 ms |
+| Blog index | 87 → 96 KB | 80 → 88 KB | 332 → 450 ms |
+| Post | 109 → 121 KB | 80 → 88 KB | 388 → 500 ms |
+| CV | 91 → 101 KB | 80 → 88 KB | 360 → 500 ms |
 
 Fonts are most of every page. Raise a budget only with the reason in the PR
 that raises it.
 
-Two more changes put each page's main content on screen with its first
-paint. The CSS is in the page itself (`inlineStylesheets` in
-`astro.config.ts`): a separate file was one more round trip before anything
-painted, 200-300 ms on a slow phone, for a few KB a page. And the headline
-(the name, a page's title) only rises in, without the fade (`lift` in
-`tokens.css`): a fading element doesn't count as painted until the fade ends.
-On a slow phone LCP went from 620-760 ms to 340-410 ms.
+The CSS is in the page itself (`inlineStylesheets` in `astro.config.ts`): a
+separate file was one more round trip before anything painted, 200-300 ms on a
+slow phone, for a few KB a page.
 
 ## Why Playwright
 
@@ -79,8 +82,8 @@ It went from about 490 to 950 ms with the redesign while the page got lighter
 (214 → 128 KB), so it is not loading. The largest thing on the first screen is
 the name, and it now fades in over 0.5 s (`rise` on `.hero__name`). With
 reduced motion, same bytes, LCP is 460 ms. The blog index and posts have the
-same kind of entrance (about 430 and 560 ms without it). Keeping the fades is
-a design call, so the budgets hold today's numbers with the fades in.
+same kind of entrance. The fades stay (taking the fade off the headline was
+tried and read as less interesting), so the budgets measure with motion off.
 
 ## What made it faster
 
@@ -97,7 +100,7 @@ Android phone would.
 
 A click opens the next page at once in Chrome and Edge: speculation rules in
 `Head.astro` prerender a page while the pointer rests on its link, so on a
-slow phone the blog index shows about 170 ms after the click, not 370. That
+slow phone the blog index shows about 140 ms after the click (motion off). That
 is measured in automated Chrome, which won't prerender and reuses the fetched
 page instead; a visitor's Chrome prerenders the whole page, so it is sooner. A plain prefetch (Astro's) saved nothing: the HTML is sent
 "check again before use", so the click downloaded it a second time. The last

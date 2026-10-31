@@ -779,12 +779,10 @@ const statParts = stat?.includes("→")
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .post__head,
     .post > .prose,
     .tl {
       animation: rise var(--dur-slow) var(--ease-out) both;
-    }
-    .post__head {
-      animation: lift var(--dur-slow) var(--ease-out) both;
     }
     .post > .prose {
       animation-delay: var(--stagger);
