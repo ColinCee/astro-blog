@@ -85,6 +85,22 @@ async function load(page: Page, path: string) {
     }),
   );
 
+  // The home server's numbers come from the Worker (worker/index.ts), which
+  // the preview server doesn't run: a production-sized answer instead.
+  await page.route("**/homelab.json", (route) =>
+    route.fulfill({
+      json: {
+        at: Math.floor(Date.now() / 1000),
+        allUp: true,
+        blocked: 1212,
+        tracking: 237,
+        londonHour: 107,
+        haDays: 3,
+        backupOk: true,
+      },
+    }),
+  );
+
   const got: Budget = {
     html: 0,
     css: 0,

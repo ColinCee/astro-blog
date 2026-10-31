@@ -816,6 +816,7 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
       if (reduce) return;
       const t0 = performance.now();
       const frame = (t: number) => {
+        if (el.dataset.n === undefined) return;
         const e = 1 - (1 - Math.min(1, (t - t0) / 1400)) ** 3;
         el.textContent = fmt(Number(el.dataset.n) * e);
         if (e < 1) requestAnimationFrame(frame);
@@ -866,7 +867,12 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
           say();
           for (const el of pj.querySelectorAll<HTMLElement>("[data-stat]")) {
             const v = s[el.dataset.stat!];
-            if (typeof v !== "number") continue;
+            if (typeof v !== "number") {
+              // Not reported this time: back to a dash, not the old number.
+              delete el.dataset.n;
+              el.textContent = "–";
+              continue;
+            }
             if (el.dataset.stat === "haDays")
               el.nextElementSibling!.textContent = v === 1 ? "day" : "days";
             el.dataset.n = String(v);
