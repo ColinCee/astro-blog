@@ -12,9 +12,9 @@ colors:
   ink: "#e8eff9"
   muted: "#b2b8bf"
   faint: "#a0a5ac"
-  accent: "#9a71f5"
-  accent-solid: "#6f3cbc"
-  accent-text: "#9a71f5"
+  accent: "#b55df5"
+  accent-solid: "#7d39ac"
+  accent-text: "#b55df5"
   accent-ink: "#fff"
   gain: "#7cd591"
   loss: "#fda19a"
@@ -133,7 +133,7 @@ big.
 
 **Key Characteristics:**
 
-- Three kinds of colour and nothing else: one cool grey scale, one violet spectrum, three status colours.
+- Three kinds of colour and nothing else: one cool grey scale, one purple accent spectrum, three status colours.
 - Dark and light are the same OKLCH scales at other lightnesses, not a second palette. No pure white or black surfaces.
 - Sora for names and the voice, Geist for reading, DM Mono for data.
 - Flat: surfaces separate by tone, never by a shadow or a border.
@@ -153,9 +153,11 @@ lightness. Swatches are on the design page.
 
 ### Scales
 - **Neutral** (`--n1`…`--n12`): hue 255, barely tinted cool, 12 steps.
-- **Accent** (`--v1`…`--v6`): one violet spectrum, 6 even steps from a dark
-  violet up to the accent itself, the same in both themes; hue eases from 298 to
-  295 as it lightens so it stays violet. It stops at the accent: the greys need
+- **Accent** (`--v1`…`--v6`): one purple spectrum at hue 308, 6 even steps from
+  a dark purple up to the accent itself, the same in both themes. 308, not violet
+  296 or blue 262: a hue loses colour as it lightens, and of the hues clear of the
+  status colours, 308 keeps the most in both themes; violet read muted lavender
+  in dark, and blue keeps less still and reads as a default link. It stops at the accent: the greys need
   a white end, the accent never does (pale tints read pink or white). Each theme
   picks its jobs from it (Roles below); why, against Radix, Tailwind, Material
   and others, is `docs/redesign/research/accent-ramp-research.md`. A four-hue

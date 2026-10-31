@@ -11,3 +11,4 @@ Is a 6-step violet ramp from dark up to the accent, shared by both themes, a sou
 - **Not taken up:**
   - **Brighter one-liner marks:** the research suggested moving them from v4 to v5. v4 is 2.45:1 on the panel, under WCAG's 3:1 for graphics, but the marks are decorative (`aria-hidden`), and Colin asked for this deeper violet.
   - **A pale dark-mode text step** (L .78 C .12): it is the lavender Colin rejected as washed out.
+- **Hue, later the same day:** the accent moved from violet 296 to purple 308. At the lightness the accent needs in dark, violet can carry less colour than purple, so it read muted lavender. Blue can carry even less, and reads as a default link colour.

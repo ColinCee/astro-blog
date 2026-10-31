@@ -8,17 +8,19 @@ function hex(L,C,h){let c=C;for(let i=0;i<60;i++){const rgb=oklch2rgb(L,c,h);if(
 const lum=h=>{const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:((v+.055)/1.055)**2.4);return .2126*c[0]+.7152*c[1]+.0722*c[2]};
 const cr=(a,b)=>{const [x,y]=[lum(a),lum(b)].sort((p,q)=>q-p);return (x+.05)/(y+.05)};
 
-// accent: violet, hue 298, chosen 30 Oct 2026 over blue 262, indigo 278, sky 235, tomato 35 and orange 55
+// accent: violet chosen 30 Oct 2026 over blue 262, indigo 278, sky 235, tomato 35 and orange 55; purple 308 since 31 Oct
 const NH=255, AH=298, OKH=150, WH=70, DH=25;
 // neutral: [L light, L dark, chroma]
 const N=[[.993,.16,.003],[.982,.195,.003],[.962,.23,.004],[.94,.26,.005],[.915,.29,.006],[.885,.325,.007],[.84,.385,.008],[.76,.47,.010],[.62,.62,.012],[.52,.72,.012],[.45,.78,.012],[.22,.95,.015]];
-// accent: one violet spectrum, 6 even steps from a dark violet up to the accent itself, shared
+// accent: one purple spectrum, 6 even steps from a dark purple up to the accent itself, shared
 // by both themes; each theme picks its jobs from it in tokens.css. It stops at the accent: the
 // greys need a white end, the accent never does (31 Oct 2026: 12 steps had 8 unused; pale tints
-// read pink or white). Hue eases from 298 to 295 as it lightens so it stays violet. Any other
-// hue must stay outside h20-180, clear of the status hues (research/status-accent-research.md).
-// [L, C, H]
-const V=[[.25,.07,298],[.33,.12,298],[.41,.16,298],[.49,.19,297],[.57,.20,296],[.65,.19,295]];
+// read pink or white). Hue 308, moved from violet 296 the same day: violet loses its colour as it
+// lightens and read muted lavender in dark; 308 keeps the most colour in both themes of the hues
+// clear of the status colours (blue keeps less, and reads as a default link). Each step takes the
+// same share of 308's possible chroma that the violet steps took of violet's. Any other hue must
+// stay outside h20-180 (research/status-accent-research.md). [L, C, H]
+const V=[[.25,.066,308],[.33,.114,308],[.41,.151,308],[.49,.179,308],[.57,.216,308],[.65,.223,308]];
 // status: green ok, amber warn, red danger (round 29), each at steps 3 (wash) / 9 (dot) / 11 (text)
 const S={ok:[OKH,[[.955,.23,.05],[.62,.62,.17],[.47,.80,.13]]],warn:[WH,[[.96,.25,.06],[.64,.76,.16],[.50,.86,.13]]],danger:[DH,[[.955,.24,.04],[.60,.62,.20],[.50,.80,.15]]]};
 const out={light:{},dark:{}};
