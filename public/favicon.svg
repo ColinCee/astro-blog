@@ -1,11 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
-    <!-- Stone and tomato, or the dark theme's colours when the system is dark (src/styles/tokens.css). -->
+    <!-- The prompt mark in the accent on the page colour: dark (the site's default) unless
+         the browser chrome is light. Values from src/styles/scales.css: n1 and v6 dark,
+         n3 and v4 light. -->
     <style>
-        .tile { fill: #e2dfda; }
-        .mark { fill: #c8331a; stroke: #c8331a; }
+        .tile { fill: #f1f3f5; }
+        .mark { fill: #7d39ac; stroke: #7d39ac; }
         @media (prefers-color-scheme: dark) {
-            .tile { fill: #110e09; }
-            .mark { fill: #ff8259; stroke: #ff8259; }
+            .tile { fill: #0c0d0f; }
+            .mark { fill: #b55df5; stroke: #b55df5; }
         }
     </style>
     <rect class="tile" width="128" height="128" rx="24" />
