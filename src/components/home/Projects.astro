@@ -21,16 +21,13 @@ const stacks = (await getCollection("homelabStacks"))
   .sort((a, b) => a.data.order - b.data.order)
   .map(({ id, data }) => ({ id, ...data }));
 
-// What each stack's node says instead of its service list. The two counts
-// tick up while the page is open; [data-live] keeps every copy of one in step.
-const stackNow: Record<
-  string,
-  { label: string; n: number; live: string; every: number } | string
-> = {
-  crowdsec: { label: "blocked", n: 1284, live: "blocked", every: 4000 },
-  "flight-tracker": { label: "seen today", n: 212, live: "seen", every: 7000 },
-  "home-assistant": "19.5°C inside",
-  backup: "restic, nightly at 03:00",
+// What each stack's node says instead of its service list: a real number from
+// the home server, read in the browser from /homelab.json (worker/index.ts),
+// in [data-stat]. Until it arrives, or without it, the number is a dash.
+const stackNow: Record<string, [string, string, string]> = {
+  "flight-tracker": ["tracking", "tracking", "now"],
+  "home-assistant": ["up", "haDays", "days"],
+  crowdsec: ["blocking", "blocked", "ips"],
 };
 
 // One training run: 12 hours in 2018, 11 minutes in 2026.
@@ -53,7 +50,10 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
           <span class="pj__sub">{p.desc}</span>
         </button>
         <figure class="pj__fig" id={`pj-${i}`}>
-          <figcaption class="pj__cap">{p.caption}</figcaption>
+          <figcaption class="pj__cap">
+            {p.caption}
+            {p.id === "home-lab" && <span data-stats-age></span>}
+          </figcaption>
           <div class="pj__body">
             {p.id === "dissertation" && (
               <div class="tr">
@@ -135,20 +135,18 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
                 ></canvas>
                 <div class="rd__nodes">
                   <span class="node">
-                    <span class="node__k">seen today</span>
-                    <span class="node__v">
-                      <b data-n="212" data-live="seen">
-                        212
-                      </b>
-                    </span>
-                    <span class="node__s">ads-b, one antenna</span>
-                  </span>
-                  <span class="node">
                     <span class="node__k">tracking now</span>
                     <span class="node__v hot">
-                      <b data-n="7">7</b>
+                      <b data-stat="tracking">–</b>
                     </span>
-                    <span class="node__s">two with callsigns</span>
+                    <span class="node__s">within 30 nm of heathrow</span>
+                  </span>
+                  <span class="node">
+                    <span class="node__k">bound for london</span>
+                    <span class="node__v">
+                      <b data-stat="londonHour">–</b>
+                    </span>
+                    <span class="node__s">seen in the past hour</span>
                   </span>
                 </div>
               </div>
@@ -174,23 +172,27 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
                       return (
                         <li class="node">
                           <span class="node__k">
-                            <i class="dot" role="img" aria-label="up"></i>
+                            <i
+                              class="dot"
+                              role="img"
+                              aria-label="not reported"
+                            ></i>
                             {s.id}
                           </span>
                           <span class="node__s">
-                            {typeof now === "object" ? (
+                            {now ? (
                               <Fragment>
-                                {now.label}{" "}
-                                <b
-                                  data-n={now.n}
-                                  data-live={now.live}
-                                  data-every={now.every}
-                                >
-                                  {now.n.toLocaleString("en-GB")}
-                                </b>
+                                {`${now[0]} `}
+                                <b data-stat={now[1]}>–</b>{" "}
+                                <span>{now[2]}</span>
+                              </Fragment>
+                            ) : s.id === "backup" ? (
+                              <Fragment>
+                                restic, nightly
+                                <span data-stat-backup></span>
                               </Fragment>
                             ) : (
-                              (now ?? s.services)
+                              s.services
                             )}
                           </span>
                         </li>
@@ -499,12 +501,16 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
   .node--host > .node__k {
     margin-bottom: 0.6rem;
   }
+  /* Grey until the home server reports every stack up in the last 20 min */
   .dot {
     display: inline-block;
     width: 0.45rem;
     height: 0.45rem;
     margin-right: 0.4rem;
     border-radius: 50%;
+    background: var(--faint);
+  }
+  [data-up] .dot {
     background: var(--ok9);
     animation: pulse 3s var(--ease-in-out) infinite;
   }
@@ -788,16 +794,9 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     const sideBySide = matchMedia("(min-width: 56.01rem)");
     let inView = false;
 
-    // Numbers count up from zero the first time they are shown. The live ones
-    // keep one value per name, so the radar and the home-lab agree.
+    // Numbers count up from zero the first time they are shown.
     const fmt = (v: number) => Math.round(v).toLocaleString("en-GB");
-    const live = new Map<string, number>();
     const counted = new WeakSet<HTMLElement>();
-    const counting = new WeakSet<HTMLElement>();
-    const target = (el: HTMLElement) =>
-      el.dataset.live ? live.get(el.dataset.live)! : Number(el.dataset.n);
-    for (const el of pj.querySelectorAll<HTMLElement>("[data-live]"))
-      live.set(el.dataset.live!, Number(el.dataset.n));
     // This visit's own time to first byte, from the browser's timing of the
     // page request; without it the dash stays.
     const nav = performance.getEntriesByType("navigation")[0] as
@@ -813,34 +812,58 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     const countUp = (el: HTMLElement) => {
       counted.add(el);
       if (reduce) return;
-      counting.add(el);
       const t0 = performance.now();
       const frame = (t: number) => {
         const e = 1 - (1 - Math.min(1, (t - t0) / 1400)) ** 3;
-        el.textContent = fmt(target(el) * e);
+        el.textContent = fmt(Number(el.dataset.n) * e);
         if (e < 1) requestAnimationFrame(frame);
-        else counting.delete(el);
       };
       requestAnimationFrame(frame);
     };
-    let ticking = false;
-    const tick = () => {
-      if (ticking || reduce) return;
-      ticking = true;
-      for (const el of pj.querySelectorAll<HTMLElement>("[data-every]")) {
-        const key = el.dataset.live!;
-        setInterval(() => {
-          // nothing to see off-screen or in a hidden tab
-          if (!inView || document.hidden) return;
-          const v = live.get(key)! + 0.6 + Math.random() * 0.8;
-          live.set(key, v);
-          for (const o of pj.querySelectorAll<HTMLElement>(
-            `[data-live="${key}"]`,
-          ))
-            if (!counting.has(o)) o.textContent = fmt(v);
-        }, Number(el.dataset.every));
-      }
-    };
+
+    // The home server's numbers (worker/index.ts), gathered every five
+    // minutes. Older than 20 minutes, the dots go grey and the caption says
+    // when they were last seen; unreachable, the dashes stay.
+    const age = pj.querySelector<HTMLElement>("[data-stats-age]");
+    fetch("/homelab.json")
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((s: Record<string, number | boolean | null>) => {
+        const mins = Math.max(
+          0,
+          Math.round((Date.now() / 1000 - Number(s.at)) / 60),
+        );
+        const fresh = mins <= 20;
+        const ago =
+          mins < 2
+            ? "just now"
+            : mins < 120
+              ? `${mins} min ago`
+              : `${Math.round(mins / 60)} h ago`;
+        if (age)
+          age.textContent = fresh ? ` · live, ${ago}` : ` · last seen ${ago}`;
+        const lab = pj.querySelector<HTMLElement>(".dg--lab");
+        if (lab && fresh && s.allUp) {
+          lab.dataset.up = "";
+          for (const d of lab.querySelectorAll(".dot"))
+            d.setAttribute("aria-label", "up");
+        }
+        const backup = pj.querySelector("[data-stat-backup]");
+        if (backup)
+          backup.textContent = s.backupOk ? " · last ok" : " · overdue";
+        for (const el of pj.querySelectorAll<HTMLElement>("[data-stat]")) {
+          const v = s[el.dataset.stat!];
+          if (typeof v !== "number") continue;
+          if (el.dataset.stat === "haDays" && v === 1)
+            el.nextElementSibling!.textContent = "day";
+          el.dataset.n = String(v);
+          el.textContent = fmt(v);
+          // Already on screen: count up now; otherwise when it is shown.
+          if (el.closest(".is-drawn")) countUp(el);
+        }
+      })
+      .catch(() => {
+        if (age) age.textContent = " · offline";
+      });
 
     // Edges from box to box: side to side when the next node is to the right,
     // top to bottom when the diagram is stacked.
@@ -911,7 +934,6 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
         if (!counted.has(el)) countUp(el);
       drawOpen();
       runScope();
-      tick();
     };
     const pick = (it: HTMLElement) => {
       if (isOpen(it)) return;
