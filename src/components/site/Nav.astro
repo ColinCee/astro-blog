@@ -1,7 +1,6 @@
 ---
 // Site navigation — the terminal shell's top bar, on every page. On the
-// homepage (`home`) it spans the wider poster frame and hides its links on
-// phones; the page itself links to the blog and the CV.
+// homepage (`home`) it spans the wider poster frame.
 interface Props {
   home?: boolean;
 }
@@ -36,7 +35,7 @@ const active = (href: string) => {
     class="nav__theme"
     type="button"
     data-theme-toggle
-    aria-label="Switch between dark and light"
+    aria-label="Light theme"
   >
     <svg class="nav__moon" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
@@ -53,12 +52,15 @@ const active = (href: string) => {
 <script>
   // Dark is the default; the choice of light is remembered. Head.astro applies
   // it before paint; pieces that draw in a canvas listen for "themechange".
+  // aria-pressed says whether light is on.
+  const r = document.documentElement;
   for (const b of document.querySelectorAll("[data-theme-toggle]")) {
+    b.setAttribute("aria-pressed", String(r.dataset.theme === "light"));
     b.addEventListener("click", () => {
-      const r = document.documentElement;
       const light = r.dataset.theme !== "light";
       if (light) r.dataset.theme = "light";
       else delete r.dataset.theme;
+      b.setAttribute("aria-pressed", String(light));
       try {
         if (light) localStorage.setItem("theme", "light");
         else localStorage.removeItem("theme");
@@ -166,10 +168,5 @@ const active = (href: string) => {
   }
   .nav--home {
     max-width: var(--w-poster);
-  }
-  @media (max-width: 560px) {
-    .nav--home .nav__links {
-      display: none;
-    }
   }
 </style>

@@ -48,13 +48,22 @@ const quips = [
   </div>
 
   <!-- The one-liners as a reel: the current one, the next one faint under it.
-       One every 5 s; hover pauses, a click skips, the bar shows the time left. -->
+       One every 5 s; hover or focus pauses, a click, Enter or Space skips, the
+       bar shows the time left. Under reduced motion it waits for a click. -->
   <div class="reel" data-reel data-quips={JSON.stringify(quips)}>
     <p class="reel__cap">
       <span>today's one-liner</span>
       <span data-reel-n>01 / {String(quips.length).padStart(2, "0")}</span>
     </p>
     <div class="reel__list">
+      <!-- The whole reel is the skip button: a real button laid over it -->
+      <button
+        class="reel__next"
+        type="button"
+        aria-label="Next one-liner"
+        data-reel-next
+        hidden
+      ></button>
       <ul class="reel__track" data-reel-track>
         <li class="reel__item is-cur" set:html={quips[0]} />
         <li class="reel__item" aria-hidden="true" set:html={quips[1]} />
@@ -171,8 +180,22 @@ const quips = [
   .reel__bar i.is-running {
     animation: reel-run 5s linear forwards;
   }
-  .reel:hover .reel__bar i.is-running {
+  .reel.is-held .reel__bar i.is-running {
     animation-play-state: paused;
+  }
+  .reel__next {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-ctl);
+    background: none;
+    cursor: pointer;
+    outline: none;
+  }
+  .reel__next:focus-visible {
+    box-shadow: var(--ring);
   }
   @keyframes reel-run {
     to {
@@ -296,7 +319,7 @@ const quips = [
     border-radius: 3px;
     background: var(--accent-solid);
     color: var(--accent-ink);
-    font-weight: 500;
+    font-weight: 300;
     line-height: 1.3;
     text-align: center;
     font-variant-numeric: tabular-nums;
@@ -435,7 +458,7 @@ const quips = [
         track.querySelector<HTMLElement>(`[data-d="${d}"]`)!;
       track.style.transform = `translateY(${-row(-1).offsetTop}px)`;
       void track.offsetWidth;
-      track.classList.add("is-moving");
+      if (!reduce) track.classList.add("is-moving");
       row(-1).classList.replace("is-cur", "is-gone");
       row(0).classList.add("is-cur");
       track.style.transform = `translateY(${-row(0).offsetTop}px)`;
@@ -445,31 +468,62 @@ const quips = [
       bar.classList.add("is-running");
     };
 
+    // The timer runs only while nothing holds it: a pointer over the reel,
+    // focus on it, the reel off-screen or the tab hidden. The bar pauses with it.
     let timer = 0;
     let left = EVERY;
     let t0 = 0;
+    const holds = new Set<string>();
+    const schedule = (ms: number) => {
+      window.clearTimeout(timer);
+      left = ms;
+      t0 = performance.now();
+      if (!reduce && !holds.size) timer = window.setTimeout(next, ms);
+    };
     const next = () => {
       i = (i + 1) % N;
       paint();
       schedule(EVERY);
     };
-    const schedule = (ms: number) => {
-      window.clearTimeout(timer);
-      left = ms;
-      t0 = performance.now();
-      timer = window.setTimeout(next, ms);
+    const hold = (why: string, on: boolean) => {
+      if (reduce || on === holds.has(why)) return;
+      if (on) {
+        if (!holds.size) {
+          window.clearTimeout(timer);
+          left -= performance.now() - t0;
+        }
+        holds.add(why);
+      } else {
+        holds.delete(why);
+        if (!holds.size) schedule(Math.max(600, left));
+      }
+      reel.classList.toggle("is-held", holds.size > 0);
+      // Off-screen or hidden, the line's own drawing (the odometer) stops too
+      if (why === "away" || why === "hidden") {
+        if (on) for (const t of timers) window.clearTimeout(t);
+        else animate(track.querySelector<HTMLElement>(".is-cur")!);
+      }
     };
 
     animate(track.querySelector<HTMLElement>(".is-cur")!);
-    if (!reduce && N > 1) {
-      bar.classList.add("is-running");
-      schedule(EVERY);
-      reel.addEventListener("mouseenter", () => {
-        window.clearTimeout(timer);
-        left -= performance.now() - t0;
-      });
-      reel.addEventListener("mouseleave", () => schedule(Math.max(600, left)));
-      reel.addEventListener("click", next);
+    if (N > 1) {
+      const skip = reel.querySelector<HTMLElement>("[data-reel-next]")!;
+      skip.hidden = false;
+      skip.addEventListener("click", next);
+      if (!reduce) {
+        bar.classList.add("is-running");
+        schedule(EVERY);
+        reel.addEventListener("mouseenter", () => hold("hover", true));
+        reel.addEventListener("mouseleave", () => hold("hover", false));
+        skip.addEventListener("focus", () => hold("focus", true));
+        skip.addEventListener("blur", () => hold("focus", false));
+        new IntersectionObserver(([e]) =>
+          hold("away", !e.isIntersecting),
+        ).observe(reel);
+        document.addEventListener("visibilitychange", () =>
+          hold("hidden", document.hidden),
+        );
+      }
     }
   }
 </script>

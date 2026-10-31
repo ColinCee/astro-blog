@@ -97,8 +97,8 @@ export default defineConfig({
     // After Expressive Code, so code blocks in MDX posts get it too.
     mdx(),
     sitemap({
-      // The 404 page is not a page to index.
-      filter: (page) => !page.endsWith("/404/"),
+      // The 404 page and the dev-only design page are not pages to index.
+      filter: (page) => !page.endsWith("/404/") && !page.endsWith("/design/"),
       serialize: (item) => {
         const when = lastmod[item.url];
         return when ? { ...item, lastmod: when.toISOString() } : item;

@@ -291,12 +291,18 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
 
   /* ---- The picker: the list in column one; the open item's figure spans
      every row of column two. The list keeps its own spacing and the
-     figure's extra height goes to a last, empty row. ---- */
+     figure's extra height goes to a last, empty row. The script arms it
+     ([data-picker]); without JS every figure shows under its name. ---- */
   .pj {
     display: grid;
-    grid-template-columns: minmax(15rem, 0.8fr) minmax(0, 2fr);
-    grid-template-rows: repeat(var(--n), min-content) 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.1rem 2.5rem;
+  }
+  @media (min-width: 56.01rem) {
+    .pj[data-picker] {
+      grid-template-columns: minmax(15rem, 0.8fr) minmax(0, 2fr);
+      grid-template-rows: repeat(var(--n), min-content) 1fr;
+    }
   }
   .pj__item {
     display: contents;
@@ -333,20 +339,18 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
   .is-on .pj__sub {
     color: var(--muted);
   }
-  /* The open project: a purple slash hanging in the margin, like the
-     slashes between the companies, so the names stay flush with the
+  /* The open project: a slash hanging in the margin, the same faint purple
+     as the slashes between the companies, so the names stay flush with the
      heading. */
-  .is-on .pj__name::before {
+  [data-picker] .is-on .pj__name::before {
     content: "/";
     position: absolute;
     right: calc(100% + 0.45rem);
     font-weight: 300;
-    color: var(--accent);
+    color: var(--accent-line);
   }
   .pj__fig {
-    grid-column: 2;
-    grid-row: 1 / -1;
-    display: none;
+    display: grid;
     grid-template-rows: auto 1fr auto;
     gap: 1rem;
     min-width: 0;
@@ -357,8 +361,17 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     border-radius: var(--r);
     container-type: inline-size;
   }
-  .is-on .pj__fig {
+  [data-picker] .pj__fig {
+    display: none;
+  }
+  [data-picker] .is-on .pj__fig {
     display: grid;
+  }
+  @media (min-width: 56.01rem) {
+    [data-picker] .pj__fig {
+      grid-column: 2;
+      grid-row: 1 / -1;
+    }
   }
   .pj__cap,
   .pj__link {
@@ -384,13 +397,7 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
   }
   /* Narrow: an accordion, each figure right under its name. */
   @media (max-width: 56rem) {
-    .pj {
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: none;
-    }
     .pj__fig {
-      grid-column: 1;
-      grid-row: auto;
       min-height: 0;
       margin: 0.3rem 0 0.7rem;
       padding: 1rem 1rem 1.1rem;
@@ -418,9 +425,10 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     stroke: var(--n7);
     stroke-width: 1.5;
   }
+  /* The traffic on the edges is decoration, so neutral */
   .p {
     fill: none;
-    stroke: var(--accent);
+    stroke: var(--muted);
     stroke-width: 2;
     stroke-dasharray: 3 15;
     stroke-linecap: round;
@@ -596,7 +604,7 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
   .tr__lab--new {
     left: 55%;
     top: 9%;
-    color: var(--accent-text);
+    color: var(--ink);
   }
   .tr__lab--old {
     left: 60%;
@@ -637,9 +645,10 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
     text-align: right;
     color: var(--muted);
   }
+  /* The curve and the bar carry the accent; their labels stay ink */
   .bars em.hot {
     font-weight: 500;
-    color: var(--accent-text);
+    color: var(--ink);
   }
 
   /* flight-tracker: the scope, and two counts beside it */
@@ -766,6 +775,7 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
   if (pj) {
     // Without this the curve is simply drawn (no JS, or reduced motion).
     if (!reduce) pj.dataset.motion = "";
+    pj.dataset.picker = "";
     const items = [...pj.querySelectorAll<HTMLElement>("[data-pj-item]")];
     const canvas = pj.querySelector<HTMLCanvasElement>("[data-radar]");
     const scope = canvas ? radar(canvas, reduce) : null;
@@ -814,6 +824,8 @@ const runNow = `${((11 / (12 * 60)) * 100).toFixed(2)}%`;
       for (const el of pj.querySelectorAll<HTMLElement>("[data-every]")) {
         const key = el.dataset.live!;
         setInterval(() => {
+          // nothing to see off-screen or in a hidden tab
+          if (!inView || document.hidden) return;
           const v = live.get(key)! + 0.6 + Math.random() * 0.8;
           live.set(key, v);
           for (const o of pj.querySelectorAll<HTMLElement>(

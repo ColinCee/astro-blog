@@ -187,8 +187,8 @@ lightness. Swatches are on the design page.
 ### Print
 The CV re-declares the tokens inside `@media print` to flip to ink-on-white for a
 clean PDF: `--bg`/`--panel`/`--pane` become `#ffffff`, `--ink` `#111111`,
-`--muted` `#333333`, `--faint` `#5a5a5a`, `--line` `#d5d5d5`, and the accents
-become `#0e7490` (a print-safe teal). Site chrome (nav and footer) is hidden and
+`--muted` `#333333`, `--faint` `#5a5a5a`, `--line` `#d5d5d5`; the accent takes the
+light theme's steps, as every printed page does. Site chrome (nav and footer) is hidden and
 entries use `break-inside: avoid`. This is the only place the palette leaves the
 two themes.
 
@@ -232,7 +232,7 @@ with preconnects. Geist Mono was tried and clashed with Sora.
   name. One per view, sentence case.
 - **Headline** (Sora 600): post titles (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em),
   the reach-out line, section headings (`1–1.35rem`, −0.02 to −0.03em).
-- **Voice** (Sora 200, punchline 400, −0.03em): the one-liners and the worked-at
+- **Voice** (Sora 200, the punchline 300 in the accent, −0.03em): the one-liners and the worked-at
   names. Heavier weights read as thick.
 - **Title** (Geist 400, −0.01em): post and list titles. Never 500 or heavier in
   lists.
@@ -269,13 +269,15 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 
 ### Navigation
 - One `components/site/Nav.astro` on every page. A mono mark
-  `colin@glasgow:~$` (ink, the `@` in the accent, `:~$` faint) on the left; links
+  `colin@glasgow:~$` (ink, the `@` `--muted`, `:~$` faint) on the left; links
   **Writing** and **CV** (Geist, `0.9375rem`, `--muted`) and the theme button on
   the right. (No About; contact lives on the homepage.)
 - **Hover:** `--ink` with an accent `border-bottom`. **Active:** `--ink` with a
   `--line` border.
 - **Theme button:** a control — ink icon (moon / sun), `--panel` fill, `--line`
-  border, 6px corners; the border goes ink on hover.
+  border, 6px corners; hovered, it fills `--accent-hover` with an
+  `--accent-solid` border, the icon staying ink. `aria-pressed` says whether light
+  is on.
 - Centered on `--w-page`, so the mark lines up with the content's left edge and
   the links with its right edge (and with the footer). On the homepage it spans
   `--w-poster` and hides its links below 560px.

@@ -59,6 +59,19 @@ const schema = article
     if (localStorage.getItem("theme") === "light")
       document.documentElement.dataset.theme = "light";
   } catch {}
+  // Paper is light: print in the light theme (code blocks switch with
+  // data-theme, not the print media query), then put the reader's back.
+  addEventListener("beforeprint", () => {
+    const r = document.documentElement;
+    r.dataset.screenTheme = r.dataset.theme || "dark";
+    r.dataset.theme = "light";
+  });
+  addEventListener("afterprint", () => {
+    const r = document.documentElement;
+    if (r.dataset.screenTheme === "light") r.dataset.theme = "light";
+    else delete r.dataset.theme;
+    delete r.dataset.screenTheme;
+  });
 </script>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <!-- Fonts: linked here, not imported from a stylesheet, so the browser asks

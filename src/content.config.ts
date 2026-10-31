@@ -21,8 +21,8 @@ const blog = defineCollection({
 // back sorted by id, so each entry carries its place on the page as `order`.
 const order = z.number().int();
 
-// Side projects, one tile each. The id is the project's name and its
-// ~/projects/ path; `repo` is where it really lives, shown on hover.
+// Side projects, one entry in the homepage's picker each. The id is the
+// project's name; `repo` is where it lives, linked under its figure.
 const projects = defineCollection({
   loader: file("src/data/projects.json"),
   schema: z.object({

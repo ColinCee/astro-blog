@@ -17,8 +17,10 @@ const companies = (await getCollection("companies"))
   </div>
   <div class="strip__view" aria-hidden="true">
     <div class="strip__track">
-      {[...companies, ...companies, ...companies].map((c) => (
-        <span class="strip__item">
+      {[...companies, ...companies, ...companies].map((c, n) => (
+        <span
+          class:list={["strip__item", { strip__copy: n >= companies.length }]}
+        >
           {c.name}
           <b class="strip__yr">{c.year}</b>
           <i>/</i>
@@ -174,6 +176,10 @@ const companies = (await getCollection("companies"))
       flex-wrap: wrap;
       width: auto;
       gap: 0.2rem 0;
+    }
+    /* Still, it is one list: the loop's two extra copies go */
+    .strip__copy {
+      display: none;
     }
   }
 </style>

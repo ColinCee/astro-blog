@@ -50,7 +50,6 @@
   --bar: var(--n7);
 
   /* Flat: no shadows, no glow behind the page */
-  --lift: none;
   --wash: none;
 
   /* Type */
