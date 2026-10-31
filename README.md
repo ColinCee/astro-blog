@@ -44,7 +44,7 @@ Node and pnpm versions are pinned in `package.json` (`volta`, `packageManager`).
 
 ## How it works
 
-Astro builds the pages in `src/pages/` and the posts in `src/content/blog/`, styled with a small custom design system, into a fully static site. Wrangler uploads `dist/` to Cloudflare as an assets-only Worker (`wrangler.json`); there is no server code. [DESIGN.md](DESIGN.md) owns the visual system and [PRODUCT.md](PRODUCT.md) the audience and purpose.
+Astro builds the pages in `src/pages/` and the posts in `src/content/blog/`, styled with a small custom design system, into a fully static site. Wrangler uploads `dist/` to Cloudflare as a Worker (`wrangler.json`) that serves those files. Its only code, `worker/index.ts`, answers one path, `/homelab.json`: the home server's signed numbers for the homepage's home-lab and flight-tracker figures (how the server sends them: ColinCee/homelab's `docs/public-stats.md`). [DESIGN.md](DESIGN.md) owns the visual system and [PRODUCT.md](PRODUCT.md) the audience and purpose.
 
 ## Project structure
 
@@ -60,6 +60,7 @@ src/content.config.ts  The collections and their schemas: blog, plus one per dat
 src/styles/            tokens.css (colours, type, widths) and prose.css (post text)
 src/scripts/           Browser scripts shared between components, and the post figures' widgets
 public/                Static files copied into the build as they are
+worker/index.ts        The Worker's one route, /homelab.json: checks and stores the home server's numbers
 ```
 
 ## Commands
