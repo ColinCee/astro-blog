@@ -80,10 +80,9 @@
 @media (prefers-reduced-motion: no-preference) {
   .prose .fig[data-grow] .cmp i {
     transform-origin: left;
-    transform: scaleX(0);
-    transition: transform 0.9s var(--ease-out);
+    transition: transform 0.9s var(--ease-out) calc(var(--row, 0) * 70ms);
   }
-  .prose .fig[data-grow].is-in .cmp i {
-    transform: none;
+  .prose .fig[data-grow]:not(.is-in) .cmp i {
+    transform: scaleX(0);
   }
 }

@@ -1,22 +1,17 @@
 ---
 // A figure: one raised panel with an optional title above and caption below.
-// `grow` animates its bars in once it scrolls into view. Any other attribute
-// (data-widget and its data) goes on the <figure>. Styles: fig.css.
+// Any other attribute (data-widget and its data) goes on the <figure>. Every
+// figure draws itself in once it is seen (draw.css). Styles: fig.css.
 import type { HTMLAttributes } from "astro/types";
 
 interface Props extends HTMLAttributes<"figure"> {
   title?: string;
   caption?: string;
-  grow?: boolean;
 }
-const { title, caption, grow, class: className, ...rest } = Astro.props;
+const { title, caption, class: className, ...rest } = Astro.props;
 ---
 
-<figure
-  class:list={["fig", className]}
-  data-grow={grow ? "" : undefined}
-  {...rest}
->
+<figure class:list={["fig", className]} {...rest}>
   {title && <p class="fig__k">{title}</p>}
   <slot />
   {caption && <figcaption>{caption}</figcaption>}

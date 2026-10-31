@@ -1,0 +1,33 @@
+/* Every figure draws itself once, the first time it scrolls into view: bars
+   grow from their left end, row after row (--row, capped), dots pop onto
+   their axis, and solid chart lines draw along their length. Post.astro marks
+   each figure [data-grow] after load and adds .is-in when it is seen, so
+   without JS, or under reduced motion, every figure is simply there. The
+   bars of Cmp, Gains and Runs have their own rules in their files. */
+@media (prefers-reduced-motion: no-preference) {
+  .prose
+    .fig[data-grow]
+    :is(.trow i, .qmini i, .decide__pass > i, .pts__t i, .sbar i, .stack span) {
+    transform-origin: left;
+    transition: transform 0.9s var(--ease-out) calc(var(--row, 0) * 70ms);
+  }
+  .prose
+    .fig[data-grow]:not(.is-in)
+    :is(.trow i, .qmini i, .decide__pass > i, .pts__t i, .sbar i, .stack span) {
+    transform: scaleX(0);
+  }
+  .prose .fig[data-grow] .dot i::after {
+    transition: transform 0.5s var(--ease-out) calc(var(--row, 0) * 70ms);
+  }
+  .prose .fig[data-grow]:not(.is-in) .dot i::after {
+    transform: translate(-50%, -50%) scale(0);
+  }
+  /* pathLength="1" (set by the same script) makes one dash the whole line */
+  .prose .fig[data-grow] .chart .ln[pathLength]:not(.ln--dash) {
+    stroke-dasharray: 1;
+    transition: stroke-dashoffset 1.4s var(--ease-out);
+  }
+  .prose .fig[data-grow]:not(.is-in) .chart .ln[pathLength]:not(.ln--dash) {
+    stroke-dashoffset: 1;
+  }
+}

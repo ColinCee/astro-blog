@@ -687,7 +687,8 @@ const statParts = stat?.includes("→")
   }
 
   // Figures: recordings play only while on screen (and never on their own
-  // under reduced motion); [data-grow] figures animate once when seen.
+  // under reduced motion); every figure draws itself in once when seen
+  // (draw.css), so it is marked [data-grow] here, never in the markup.
   const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const seen = new IntersectionObserver(
     (items) => {
@@ -714,9 +715,18 @@ const statParts = stat?.includes("→")
     if (still) v.controls = true;
     seen.observe(v);
   });
-  document
-    .querySelectorAll<HTMLElement>(".prose [data-grow]")
-    .forEach((f) => seen.observe(f));
+  const bars =
+    ".cmp i, .gain i, .trow i, .qmini i, .decide__pass > i, .pts__t i, .sbar i, .stack span, .dot i";
+  if (!still)
+    for (const f of document.querySelectorAll<HTMLElement>(".prose .fig")) {
+      f.querySelectorAll(bars).forEach((b, i) =>
+        (b as HTMLElement).style.setProperty("--row", String(Math.min(i, 8))),
+      );
+      for (const l of f.querySelectorAll(".chart .ln:not(.ln--dash)"))
+        l.setAttribute("pathLength", "1");
+      f.dataset.grow = "";
+      seen.observe(f);
+    }
 
   // Interactive figures load their code only on posts that use them.
   if (document.querySelector("[data-widget]")) import("../scripts/widgets");
