@@ -50,20 +50,6 @@ for (const vp of viewports) {
     test("post body text is a comfortable size and line length", async ({
       page,
     }) => {
-      page.on("response", async (r) => {
-        if (r.url().includes("font"))
-          console.log(
-            "DIAG",
-            r.status(),
-            r.url(),
-            r.status() >= 400
-              ? (await r.text().catch(() => "")).slice(0, 300)
-              : "",
-          );
-      });
-      page.on("requestfailed", (r) =>
-        console.log("DIAG failed", r.url(), r.failure()?.errorText),
-      );
       await page.goto(post);
       const m = await page
         .locator(".prose p")
@@ -74,8 +60,12 @@ for (const vp of viewports) {
           const ctx = document.createElement("canvas").getContext("2d")!;
           ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
           // Measure the real font, not its fallback: load it first (fonts.ready
-          // can resolve before the browser has started fetching it).
-          await document.fonts.load(ctx.font, p.textContent ?? "");
+          // can resolve before the fetch starts). Only the first family: the
+          // sized fallback is local Arial, which Linux lacks, and fails the load.
+          const family = cs.fontFamily.split(",")[0];
+          await document.fonts.load(
+            `${cs.fontWeight} ${cs.fontSize} ${family}`,
+          );
           const text = p.textContent ?? "";
           const charWidth = ctx.measureText(text).width / text.length;
           return {
