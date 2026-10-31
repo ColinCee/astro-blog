@@ -416,7 +416,9 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 - Posts render on the shared `Base` shell via `layouts/Post.astro`; the prose styles are `styles/prose.css`. Below `64rem` it is a
   single `--w-prose` column. At `64rem` and up the post sits on `--w-page`, inset by
   `--rail` (`9rem`) plus `--rail-gap` (`3.5rem`), so timeline dates sit in the left
-  margin and plain and timeline posts share one left edge. Content carries a `// writing` back-kicker, a Sora 600 title
+  margin and plain and timeline posts share one left edge. A plain post with three
+  or more sections lists them in that margin (`.toc`): mono 11px `--faint`, sticky,
+  the section being read in ink, no accent (it is chrome). Content carries a `// writing` back-kicker, a Sora 600 title
   (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em), and a mono meta line (date · N min read).
 - **Headline stat:** the post's `stat` renders under the title between hairlines,
   its `statLabel` above it in 11px mono `--faint`, the value in Sora 600. A result

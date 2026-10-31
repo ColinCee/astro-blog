@@ -101,6 +101,10 @@ const chunks = marks.map((mk, i) => ({
 const firstUndated = chunks.findIndex((c) => !c.meta?.month);
 const run = firstUndated === -1 ? chunks.length : firstUndated;
 const isTimeline = run >= 3;
+// A plain post with three or more sections lists them in its left margin on
+// wide screens (the timeline's date column, empty otherwise), the one being
+// read in ink.
+const sections = isTimeline ? [] : headings.filter((h) => h.depth === 2);
 const intro = isTimeline ? html.slice(0, marks[0].start) : html;
 const dated = isTimeline ? chunks.slice(0, run) : [];
 const after = isTimeline ? html.slice(chunks[run]?.start ?? html.length) : "";
@@ -165,6 +169,19 @@ const statParts = stat?.includes("→")
 >
   <article class="post">
     <div class="read-bar" aria-hidden="true" data-readbar></div>
+    {sections.length >= 3 && (
+      <nav class="toc" aria-label="Sections">
+        <ol>
+          {sections.map((h) => (
+            <li>
+              <a href={`#${h.slug}`} data-toc={h.slug}>
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
 
     <header class="post__head">
       <a class="post__back" href="/blog/">{"// writing"}</a>
@@ -287,8 +304,47 @@ const statParts = stat?.includes("→")
   }
   @media (min-width: 64rem) {
     .post {
+      position: relative;
       max-width: var(--w-page);
       padding-left: calc(var(--rail) + var(--rail-gap));
+    }
+  }
+
+  /* The sections, in the left margin from 64rem: mono, faint, the one being
+     read in ink. Chrome, so no accent. Sticky inside the article's height. */
+  .toc {
+    display: none;
+  }
+  @media (min-width: 64rem) {
+    .toc {
+      display: block;
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: var(--rail);
+      /* start level with the body, below the title and stat */
+      padding-top: 13rem;
+    }
+    .toc ol {
+      position: sticky;
+      top: 5.5rem;
+      display: grid;
+      gap: 0.55rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .toc a {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.6875rem;
+      line-height: 1.4;
+      color: var(--faint);
+      text-decoration: none;
+      transition: color var(--dur-fast) var(--ease);
+    }
+    .toc a:hover,
+    .toc a[aria-current="true"] {
+      color: var(--ink);
     }
   }
 
@@ -730,6 +786,38 @@ const statParts = stat?.includes("→")
 
   // Interactive figures load their code only on posts that use them.
   if (document.querySelector("[data-widget]")) import("../scripts/widgets");
+
+  // Sections scroll-spy: the section whose heading last crossed a line 40%
+  // down the viewport is the one being read.
+  const tocLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>("[data-toc]"),
+  );
+  if (tocLinks.length) {
+    const heads = tocLinks.map((a) => document.getElementById(a.dataset.toc!));
+    let ticking = false;
+    const spy = () => {
+      ticking = false;
+      const line = window.innerHeight * 0.4;
+      let current = -1;
+      heads.forEach((h, i) => {
+        if (h && h.getBoundingClientRect().top <= line) current = i;
+      });
+      tocLinks.forEach((a, i) => {
+        a.setAttribute("aria-current", String(i === current));
+      });
+    };
+    spy();
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(spy);
+        }
+      },
+      { passive: true },
+    );
+  }
 
   // Timeline scroll-spy: the entry crossing a line 40% down the viewport is
   // current; entries above it are past. Their nodes fill in as you read.
