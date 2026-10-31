@@ -54,13 +54,23 @@ for (const vp of viewports) {
       const m = await page
         .locator(".prose p")
         .first()
-        .evaluate((p) => {
+        .evaluate(async (p) => {
           const cs = getComputedStyle(p);
           const size = parseFloat(cs.fontSize);
           const ctx = document.createElement("canvas").getContext("2d")!;
-          ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+          // At 100px and scaled down: at a whole-pixel body size, Linux hints
+          // glyph widths, so the same page measured about 1% wider there.
+          ctx.font = `${cs.fontWeight} 100px ${cs.fontFamily}`;
+          // Measure the real font, not its fallback: load it first (fonts.ready
+          // can resolve before the fetch starts). Only the first family: the
+          // sized fallback is local Arial, which Linux lacks, and fails the load.
+          const family = cs.fontFamily.split(",")[0];
+          await document.fonts.load(
+            `${cs.fontWeight} ${cs.fontSize} ${family}`,
+          );
           const text = p.textContent ?? "";
-          const charWidth = ctx.measureText(text).width / text.length;
+          const charWidth =
+            ((ctx.measureText(text).width / text.length) * size) / 100;
           return {
             size,
             lineHeight: parseFloat(cs.lineHeight) / size,

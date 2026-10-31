@@ -2,7 +2,7 @@ import { execSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 import expressiveCode from "astro-expressive-code";
 import { codeThemes } from "./src/styles/code-theme";
 
@@ -59,6 +59,44 @@ const lastmod = Object.fromEntries(
 export default defineConfig({
   site: "https://colincheung.dev",
   compressHTML: true,
+  // CSS in the page itself: a separate file is one more round trip before
+  // anything paints (200-300 ms on a slow phone), for a few KB a page.
+  build: { inlineStylesheets: "always" },
+  // Fonts served from the site itself, not Google: no second connection, and
+  // fallbacks sized to match, so nothing moves when the font arrives.
+  fonts: [
+    {
+      provider: fontProviders.google(),
+      name: "Geist",
+      cssVariable: "--font-geist",
+      // Sized to match whichever system font a visitor has: Segoe UI,
+      // the Apple system font, Roboto on Android, else Arial.
+      fallbacks: ["system-ui"],
+      weights: [400, 500, 600],
+      styles: ["normal"],
+      subsets: ["latin", "latin-ext"],
+    },
+    {
+      provider: fontProviders.google(),
+      name: "Sora",
+      cssVariable: "--font-sora",
+      fallbacks: ["system-ui"],
+      weights: ["200 600"],
+      styles: ["normal"],
+      subsets: ["latin", "latin-ext"],
+    },
+    {
+      provider: fontProviders.google(),
+      name: "DM Mono",
+      cssVariable: "--font-dm-mono",
+      weights: [300, 400, 500],
+      styles: ["normal"],
+      subsets: ["latin", "latin-ext"],
+      // Its fallback is "DM Mono fallback" in tokens.css: Astro sizes one only
+      // to Courier New, which Android and Linux lack.
+      fallbacks: [],
+    },
+  ],
   vite: {
     define: { __BUILD__: JSON.stringify(buildInfo()) },
   },

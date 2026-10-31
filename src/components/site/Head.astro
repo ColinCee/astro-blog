@@ -3,6 +3,7 @@
 // description, canonical URL, the social card, and structured data for
 // search engines: a BlogPosting on posts (`article`), the person on the
 // homepage (`person`).
+import { Font } from "astro:assets";
 import links from "../../data/links.json";
 
 interface Props {
@@ -59,10 +60,31 @@ const schema = article
 <!-- The theme: dark unless the visitor chose light (the nav button). Set here,
      before any stylesheet, so a light page never flashes dark or the reverse. -->
 <script is:inline>
-  try {
-    if (localStorage.getItem("theme") === "light")
-      document.documentElement.dataset.theme = "light";
-  } catch {}
+  const theme = () => {
+    try {
+      if (localStorage.getItem("theme") === "light")
+        document.documentElement.dataset.theme = "light";
+      else delete document.documentElement.dataset.theme;
+    } catch {}
+  };
+  theme();
+  // A prerendered page (see the speculation rules below) read the theme when
+  // it was made; read it again as it is shown, in case it changed since.
+  // The toggle's state and the canvases follow (as the toggle does, Nav.astro).
+  if (document.prerendering)
+    document.addEventListener(
+      "prerenderingchange",
+      () => {
+        theme();
+        const light = String(
+          document.documentElement.dataset.theme === "light",
+        );
+        for (const b of document.querySelectorAll("[data-theme-toggle]"))
+          b.setAttribute("aria-pressed", light);
+        dispatchEvent(new Event("themechange"));
+      },
+      { once: true },
+    );
   // Paper is light: print in the light theme (code blocks switch with
   // data-theme, not the print media query), then put the reader's back.
   addEventListener("beforeprint", () => {
@@ -81,14 +103,36 @@ const schema = article
 <link rel="icon" href="/favicon.ico?v=2" sizes="32x32">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
-<!-- Fonts: linked here, not imported from a stylesheet, so the browser asks
-     for them as soon as it reads the head. -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Sora:wght@200..600&amp;family=DM+Mono:wght@300;400;500&amp;display=swap"
->
+<!-- Fonts, self-hosted (astro.config.ts). Sora (titles) and DM Mono 400
+     (meta lines) are preloaded: text that rewraps when its font lands moves
+     the page under it, and DM Mono's stand-in ("DM Mono fallback" in
+     tokens.css) matches its height but not its width. -->
+<Font cssVariable="--font-geist" />
+<Font cssVariable="--font-sora" preload={[{ subset: "latin" }]} />
+<Font
+  cssVariable="--font-dm-mono"
+  preload={[{ weight: 400, subset: "latin" }]}
+/>
+<!-- Chrome and Edge prerender a page of the site when the pointer rests on
+     its link (or as a tap starts), so the click shows it at once. Files (a
+     path with a dot, like a post's sample data) are left alone. A prefetch
+     would not do: the HTML is sent "check again before use", so it was
+     downloaded twice. -->
+<script type="speculationrules" is:inline>
+  {
+    "prerender": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": "/*.*" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+</script>
 <meta name="generator" content={Astro.generator}>
 
 <title>{title}</title>

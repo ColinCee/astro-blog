@@ -333,7 +333,7 @@ if (import.meta.env.PROD) return Astro.redirect("/");
             font-size="6"
             text-anchor="middle"
             fill="var(--faint)"
-            font-family="DM Mono"
+            style="font-family: var(--mono)"
           >
             44rem, one edge
           </text>
@@ -494,7 +494,7 @@ if (import.meta.env.PROD) return Astro.redirect("/");
       <div class="card">
         <h3>A vs B · bars to scale</h3>
         <svg aria-hidden="true" viewBox="0 0 200 54" style="width:100%">
-          <g font-family="DM Mono" font-size="8" fill="var(--muted)">
+          <g style="font-family: var(--mono)" font-size="8" fill="var(--muted)">
             <text x="0" y="13">Jest</text>
             <text x="0" y="33">Vitest</text>
             <text x="198" y="13" text-anchor="end">428 s</text>
@@ -510,7 +510,7 @@ if (import.meta.env.PROD) return Astro.redirect("/");
         <h3>options · dot plot on one axis</h3>
         <svg aria-hidden="true" viewBox="0 0 200 54" style="width:100%">
           <path d="M50 50H190" stroke="var(--line-strong)" />
-          <g font-family="DM Mono" font-size="8" fill="var(--muted)">
+          <g style="font-family: var(--mono)" font-size="8" fill="var(--muted)">
             <text x="0" y="12">QEMU</text>
             <text x="0" y="26">Firecracker</text>
             <text x="0" y="40">Docker</text>
@@ -531,7 +531,7 @@ if (import.meta.env.PROD) return Astro.redirect("/");
             height="12"
             fill="var(--accent-solid)"
           />
-          <g font-family="DM Mono" font-size="8" fill="var(--muted)">
+          <g style="font-family: var(--mono)" font-size="8" fill="var(--muted)">
             <text x="0" y="40">80% loading the engine</text>
             <text x="200" y="40" text-anchor="end" fill="var(--accent)">
               20% running
@@ -556,7 +556,7 @@ if (import.meta.env.PROD) return Astro.redirect("/");
             stroke-width="2"
           />
           <path d="M20 30H196" stroke="var(--muted)" stroke-dasharray="3 3" />
-          <g font-family="DM Mono" font-size="7" fill="var(--faint)">
+          <g style="font-family: var(--mono)" font-size="7" fill="var(--faint)">
             <text x="196" y="68" text-anchor="end">test files →</text>
             <text x="2" y="10">min</text>
           </g>
@@ -577,7 +577,11 @@ if (import.meta.env.PROD) return Astro.redirect("/");
             height="8"
             fill="var(--accent-solid)"
           />
-          <g font-family="DM Mono" font-size="7.5" fill="var(--muted)">
+          <g
+            style="font-family: var(--mono)"
+            font-size="7.5"
+            fill="var(--muted)"
+          >
             <text x="0" y="9">GitHub</text>
             <text x="0" y="21">pickup</text>
             <text x="0" y="33">installs</text>
