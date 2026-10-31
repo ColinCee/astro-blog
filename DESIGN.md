@@ -184,12 +184,19 @@ entries use `break-inside: avoid`. This is the only place the palette leaves the
 two themes.
 
 ### Named Rules
-**The Accent Points Rule.** The accent has three jobs and no others: the new value
-of a result that got better (the old value in `--faint` before an arrow, a plain
-comparison like "82% vs 80%" stays ink), links, and small marks at the one thing
-(the slashes, the prompt, the open project, a chart's result, the current node).
-Never a surface, a large area, a heading or a button. If two things are violet in
-one glance, one is wrong. A metric inside a sentence or a bullet is bold `--ink`.
+**The Accent Points Rule.** The accent marks results and links, nothing else:
+1. **The result**, the number or mark a page or figure exists to show: a post's
+   headline value and a chart's result bar or line in full `--accent`; a result
+   in small text (a terminal row, a table) in `--accent-text`. The old value is
+   `--faint` before an arrow; a plain comparison like "82% vs 80%" stays ink.
+2. **Links**, in `--accent-text` (`--accent-soft` in prose).
+3. **The one highlight in a hero drawing or one-liner.**
+Chrome never takes it: prompts, carets, window dots, the nav, separators (the
+worked-at slashes keep a 40% hint, `--accent-line`). Never a surface, a large
+area, a heading or a button. If two things are violet in one glance, one is
+wrong. A metric inside a sentence or a bullet is bold `--ink`. (Set 31 Oct 2026:
+violet on every prompt and slash made the homepage loud while the post results
+read pale.)
 
 **The Status Is Small Rule.** Green, amber and red appear only as dots and small
 badges, always with a word, never colour alone. Red in the chrome means a real
@@ -332,13 +339,13 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 
 ### Terminal Session (homepage only)
 - `components/home/Terminal.astro`: a `--panel` window titled `~/ColinOS` with
-  three dots (the first in the accent) and no status bar. Two panes on `--pane`,
+  three grey dots and no status bar. Two panes on `--pane`,
   split by a 1px `--line` gap, stacked below 900px. This is the scarce set-piece
   — do not reproduce it on other pages.
 - **Left, `WhoamiPane`:** `whoami` (Colin Cheung 張志權), `top -u colin` (skills
   from the `skills` collection with years of experience, one time column in ink),
   `weather` (Glasgow, live from open-meteo) and a waiting prompt. The prompt `$`
-  and the caret are the accent. It types itself out on load (on phones, when it
+  is `--faint` and the caret `--muted`. It types itself out on load (on phones, when it
   scrolls in); without JS or with reduced motion the finished session shows.
 - **Right, `WritingPane`:** `ls -t ~/writing`, the newest five posts from the blog
   collection (date, title in Geist 400, stat with the old value in grey and the
@@ -348,7 +355,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 ### Worked at (homepage)
 - `components/home/WorkedAt.astro`: a "Worked at" heading with `<first year> →
   now`, then a thin marquee of the companies, oldest first: each name in Sora 200
-  with the year it started beside it in DM Mono `--faint`, a thin `--accent-solid`
+  with the year it started beside it in DM Mono `--faint`, a thin `--accent-line`
   slash between names. No icons, logos or job lengths. 70 s loop, paused on hover
   or focus, with a `pause` / `play` control; under reduced motion it stands still
   and wraps. Data: `src/data/companies.json`.
@@ -392,7 +399,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 - **Headline stat:** the post's `stat` renders under the title between hairlines,
   its `statLabel` above it in 11px mono `--faint`, the value in Sora 600. A result
   that got better shows the old value in `--faint`, an arrow, and the new one in
-  `--accent-soft`; a `vs` comparison stays ink.
+  `--accent`; a `vs` comparison stays ink.
 - **Quotes** are excerpts on the raised surface (`--pane`, 8px, no border or rule),
   so quoted documents read differently from narration. **Ordered lists** are
   numbered takeaways: hairline-separated rows with mono `--accent-soft` numerals.
