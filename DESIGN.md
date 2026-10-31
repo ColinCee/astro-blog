@@ -157,8 +157,9 @@ lightness. Swatches are on the design page.
   violet up to the accent itself, the same in both themes; hue eases from 298 to
   295 as it lightens so it stays violet. It stops at the accent: the greys need
   a white end, the accent never does (pale tints read pink or white). Each theme
-  picks its jobs from it (Roles below). A four-hue palette (teal, ochre, indigo
-  alongside the accent) read as busy.
+  picks its jobs from it (Roles below); why, against Radix, Tailwind, Material
+  and others, is `docs/redesign/research/accent-ramp-research.md`. A four-hue
+  palette (teal, ochre, indigo alongside the accent) read as busy.
 - **Status** (`--ok`, `--warn`, `--danger`): green, amber, red, at steps 3 (wash),
   9 (dot) and 11 (text) only. There is no blue status colour; the accent stands
   for "info".
