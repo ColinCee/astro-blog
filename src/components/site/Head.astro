@@ -92,6 +92,26 @@ const schema = article
   cssVariable="--font-dm-mono"
   preload={[{ weight: 400, subset: "latin" }]}
 />
+<!-- Chrome and Edge prerender a page of the site when the pointer rests on
+     its link (or as a tap starts), so the click shows it at once. Files (a
+     path with a dot, like a post's sample data) are left alone. A prefetch
+     would not do: the HTML is sent "check again before use", so it was
+     downloaded twice. -->
+<script type="speculationrules" is:inline>
+  {
+    "prerender": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": "/*.*" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+</script>
 <meta name="generator" content={Astro.generator}>
 
 <title>{title}</title>

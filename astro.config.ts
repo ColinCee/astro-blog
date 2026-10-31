@@ -59,9 +59,6 @@ const lastmod = Object.fromEntries(
 export default defineConfig({
   site: "https://colincheung.dev",
   compressHTML: true,
-  // Every internal link fetches its page when the pointer rests on it or it
-  // gets focus, so the click opens a page that is already here.
-  prefetch: { prefetchAll: true, defaultStrategy: "hover" },
   // Fonts served from the site itself, not Google: no second connection, and
   // fallbacks sized to match, so nothing moves when the font arrives.
   fonts: [

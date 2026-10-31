@@ -25,18 +25,18 @@ const budgets: Record<string, Budget> = {
     font: 95,
     image: 3,
     total: 124,
-    requests: 20,
+    requests: 18,
     lcp: 850,
     cls: 0.1,
   },
   "/blog/": {
     html: 8,
     css: 6,
-    js: 5,
+    js: 3,
     font: 88,
     image: 3,
     total: 96,
-    requests: 9,
+    requests: 8,
     lcp: 950,
     cls: 0.1,
   },
@@ -48,18 +48,18 @@ const budgets: Record<string, Budget> = {
     font: 88,
     image: 3,
     total: 121,
-    requests: 14,
+    requests: 13,
     lcp: 950,
     cls: 0.1,
   },
   "/cv/": {
     html: 10,
     css: 8,
-    js: 5,
+    js: 3,
     font: 88,
     image: 3,
     total: 101,
-    requests: 10,
+    requests: 9,
     lcp: 750,
     cls: 0.1,
   },
@@ -73,8 +73,8 @@ const kinds: Record<string, keyof Budget> = {
   image: "image",
 };
 
-// One load in a fresh context (a cold cache), at 1.6 Mbps and 150 ms a request.
-async function load(page: Page, path: string) {
+// A slow phone connection: 1.6 Mbps and 150 ms a request.
+async function slow(page: Page) {
   const cdp = await page.context().newCDPSession(page);
   await cdp.send("Network.enable");
   await cdp.send("Network.emulateNetworkConditions", {
@@ -83,6 +83,11 @@ async function load(page: Page, path: string) {
     downloadThroughput: 1.6e6 / 8,
     uploadThroughput: 0.75e6 / 8,
   });
+}
+
+// One load in a fresh context (a cold cache).
+async function load(page: Page, path: string) {
+  await slow(page);
   // The homepage's live weather: a fixed answer, so the page is the same each run.
   await page.route("https://api.open-meteo.com/**", (route) =>
     route.fulfill({
@@ -220,3 +225,45 @@ for (const [path, budget] of Object.entries(budgets)) {
         .toBeLessThanOrEqual(budget[key]);
   });
 }
+
+// A reader's click: the pointer rests on a link, then clicks it. The page is
+// prerendered while it rests (the speculation rules in Head.astro), so the time
+// from click to the next page's main content is its entrance, not the network.
+// Measured by the clock: navigation timing hides the throttle's delay.
+test("a hovered link opens its page at once", async ({ browser }) => {
+  const runs: number[] = [];
+  for (let i = 0; i < 3; i++) {
+    const context = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+    });
+    const page = await context.newPage();
+    await slow(page);
+    await page.goto("/", { waitUntil: "networkidle" });
+    const link = page.locator('a[href="/blog/"]').first();
+    await link.hover();
+    await page.waitForTimeout(600);
+    const clicked = Date.now();
+    await link.click();
+    await page.waitForURL("**/blog/");
+    const painted = await page.evaluate(
+      () =>
+        new Promise<number>((done) =>
+          new PerformanceObserver((list) =>
+            done(
+              performance.timeOrigin +
+                (list.getEntries().at(-1)?.startTime ?? 0),
+            ),
+          ).observe({ type: "largest-contentful-paint", buffered: true }),
+        ),
+    );
+    runs.push(painted - clicked);
+    await context.close();
+  }
+  const median = runs.sort((a, b) => a - b)[1];
+  console.log("click to blog index painted", Math.round(median), "ms");
+  // About 230 ms today, against about 370 without the prerender.
+  expect(
+    median,
+    "click to painted, ms (tests/speed.spec.ts)",
+  ).toBeLessThanOrEqual(300);
+});

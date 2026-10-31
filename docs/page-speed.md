@@ -46,10 +46,10 @@ headroom:
 
 | Page | Total | Fonts | LCP |
 |---|---|---|---|
-| Home | 113 → 124 KB | 86 → 95 KB | 628 → 850 ms |
-| Blog index | 88 → 96 KB | 80 → 88 KB | 712 → 950 ms |
-| Post | 111 → 121 KB | 80 → 88 KB | 692 → 950 ms |
-| CV | 93 → 101 KB | 80 → 88 KB | 544 → 750 ms |
+| Home | 107 → 124 KB | 80 → 95 KB | 644 → 850 ms |
+| Blog index | 88 → 96 KB | 80 → 88 KB | 628 → 950 ms |
+| Post | 110 → 121 KB | 80 → 88 KB | 760 → 950 ms |
+| CV | 92 → 101 KB | 80 → 88 KB | 548 → 750 ms |
 
 Fonts are most of every page. Raise a budget only with the reason in the PR
 that raises it.
@@ -87,5 +87,9 @@ only be sized to Courier New, which Android lacks. LCP dropped about
 share its slow connection. CI installs Roboto, so the test sees the fallback an
 Android phone would.
 
-Links also fetch their page when the pointer rests on them or they get
-focus (Astro's prefetch), so a click opens a page that is already here.
+A click opens the next page at once in Chrome and Edge: speculation rules in
+`Head.astro` prerender a page while the pointer rests on its link, so on a
+slow phone the blog index shows 230 ms after the click, not 370; what is left
+is its entrance. A plain prefetch (Astro's) saved nothing: the HTML is sent
+"check again before use", so the click downloaded it a second time. The last
+test in `tests/speed.spec.ts` holds the click under 300 ms.
