@@ -249,11 +249,25 @@ if (import.meta.env.PROD) return Astro.redirect("/");
         </p>
         <p class="f">with its word, never alone</p>
       </div>
-      <div class="card">
-        <h3>motion</h3>
-        <p>
-          one moving thing on the first screen (the one-liner, 5 s); figures
-          move slowly; hover pauses; reduced motion stills everything
+      <div class="card mo">
+        <h3>motion · hover to play</h3>
+        {[
+          ["fast", "hover, colour"],
+          ["base", "a state change"],
+          ["slow", "anything arriving"],
+          ["draw", "bars growing"],
+          ["line", "a line drawing"],
+        ].map(([k, job]) => (
+          <p class="mo__row">
+            <span class="t-mono">{k}</span>
+            <i style={`--d: var(--dur-${k})`}></i>
+            <span class="f">{job}</span>
+          </p>
+        ))}
+        <p class="f">
+          curves: --ease for colour, --ease-out into place, --ease-in-out for a
+          swap; rows follow by --stagger (70ms). One moving thing on the first
+          screen; hover pauses; reduced motion stills everything
         </p>
       </div>
     </div>
@@ -968,6 +982,24 @@ if (import.meta.env.PROD) return Astro.redirect("/");
     font-size: 0.75rem;
     color: var(--faint);
     text-align: center;
+  }
+  .mo__row {
+    display: grid;
+    grid-template-columns: 3rem 1fr 7.5rem;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.3rem 0;
+  }
+  .mo__row i {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--bar);
+    transform: scaleX(0.04);
+    transform-origin: left;
+    transition: transform var(--d) var(--ease-out);
+  }
+  .mo:hover .mo__row i {
+    transform: none;
   }
   .ds code {
     font-family: var(--mono);

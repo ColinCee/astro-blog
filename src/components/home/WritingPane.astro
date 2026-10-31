@@ -62,11 +62,12 @@ const posts = all.slice(0, 5).map((p) => {
     gap: 0.1rem;
   }
   .wr li {
-    animation: print 0.4s var(--ease-out) calc(0.9s + var(--i) * 0.09s) both;
+    animation: print var(--dur-slow) var(--ease-out)
+      calc(0.9s + var(--i) * var(--stagger)) both;
   }
   @media (max-width: 900px) {
     .wr li {
-      animation-delay: calc(0.1s + var(--i) * 0.09s);
+      animation-delay: calc(0.1s + var(--i) * var(--stagger));
     }
   }
   @keyframes print {

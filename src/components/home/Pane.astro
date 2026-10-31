@@ -37,11 +37,11 @@ const { name, area } = Astro.props;
   }
   .pane--who {
     grid-area: who;
-    animation-delay: 0.12s;
+    animation-delay: calc(2 * var(--stagger));
   }
   .pane--writing {
     grid-area: writing;
-    animation-delay: 0.28s;
+    animation-delay: calc(4 * var(--stagger));
   }
   /* On a phone the panes stack, so each waits for its turn on screen. */
   @media (max-width: 900px) {
@@ -69,6 +69,8 @@ const { name, area } = Astro.props;
 </style>
 
 <script>
+  import { onceSeen, still } from "../../scripts/in-view";
+
   // On a phone, where the panes stack, anything marked data-scroll-in holds
   // its entrance (and its children's) until it scrolls into view. Desktop
   // plays its sequence on load: a held element's delay only counts down once
@@ -78,29 +80,19 @@ const { name, area } = Astro.props;
   if (
     items.length &&
     matchMedia("(max-width: 900px)").matches &&
-    !matchMedia("(prefers-reduced-motion: reduce)").matches &&
+    !still &&
     "IntersectionObserver" in window
   ) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (!e.isIntersecting) return;
-          e.target.classList.remove("is-held");
-          io.unobserve(e.target);
-        });
-      },
-      { rootMargin: "0px 0px -12% 0px" },
-    );
-    items.forEach((el) => {
-      el.classList.add("is-held");
-      io.observe(el);
+    for (const el of items) el.classList.add("is-held");
+    onceSeen(items, (el) => el.classList.remove("is-held"), {
+      rootMargin: "0px 0px -12% 0px",
     });
-    // Tabbing into something held (at opacity 0) shows it straight away.
+    // Tabbing into something held (at opacity 0) shows it straight away (when
+    // it is later seen, removing the class again does nothing).
     document.addEventListener("focusin", (e) => {
       let held = (e.target as Element).closest?.(".is-held");
       while (held) {
         held.classList.remove("is-held");
-        io.unobserve(held);
         held = held.closest(".is-held");
       }
     });
