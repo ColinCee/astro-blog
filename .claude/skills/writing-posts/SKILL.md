@@ -58,7 +58,7 @@ Show, don't ask: build the change or two or three distinct variations, put them 
   - A short title above.
   - Axis titles with units, e.g. "win rate (%)".
   - The baseline first and striped.
-  - One accent (`--accent`, violet) for the result or the option kept.
+  - One accent (`--accent`, purple) for the result or the option kept.
   - Changes in green (`--gain`, real gain), red (`--loss`, real drop) or grey (could be luck), with a key on the chart.
   - Numbers aligned in their own columns, and even row spacing.
   - Text sizes as in `DESIGN.md`, nothing under 11px.

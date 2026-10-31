@@ -1,6 +1,6 @@
 ---
 name: colincheung.dev
-description: Terminal-native personal site — cool grey, dark by default with a soft light toggle, one violet accent, Sora + Geist + DM Mono.
+description: Terminal-native personal site — cool grey, dark by default with a soft light toggle, one purple accent, Sora + Geist + DM Mono.
 # Dark values (the default). Light swaps the scales in scales.css; roles in tokens.css.
 colors:
   bg: "#0c0d0f"
@@ -202,14 +202,14 @@ two themes.
 3. **The one highlight in a hero drawing or one-liner.**
 4. **A hovered control:** a button fills with `--accent-hover` (dark: v3 half
    over the panel; light: v5 at 16%) and its border goes `--accent-solid`, while
-   its label or icon stays bright ink (a violet icon read dimmer than the white one at rest); a
+   its label or icon stays bright ink (a purple icon read dimmer than the white one at rest); a
    link's underline goes `--accent`. One at a time, so it
    never crowds a glance.
 Chrome never takes it: prompts, carets, window dots, the nav, separators (the
 worked-at slashes keep a 40% hint, `--accent-line`). Never a surface, a large
-area, a heading or a button. If two things are violet in one glance, one is
+area, a heading or a button. If two things are purple in one glance, one is
 wrong. A metric inside a sentence or a bullet is bold `--ink`. (Set 31 Oct 2026:
-violet on every prompt and slash made the homepage loud while the post results
+the accent on every prompt and slash made the homepage loud while the post results
 read pale.)
 
 **The Status Is Small Rule.** Green, amber and red appear only as dots and small
@@ -349,9 +349,9 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   under it (no previous line), and a thin bar for the time left. One every 5 s;
   hover pauses, a click skips. Lines are Voice type in ink; some carry a small
   inline drawing with neutral marks (n5–n8) and the punchline mark in
-  `--accent-solid`, a deeper violet than the text accent so the marks read rich,
+  `--accent-solid`, a deeper purple than the text accent so the marks read rich,
   not electric; the counter is a solid `--accent-solid` chip with `--accent-ink`
-  (white). Each line has exactly one violet thing: the drawing or counter if it
+  (white). Each line has exactly one purple thing: the drawing or counter if it
   has one, else its punchline word (`<b>`) in `--accent-text` at weight 300.
   Never bold: heavier Sora reads thick next to the 200 voice. Below 56rem the
   reel stacks under the name.
@@ -509,7 +509,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 ## 6. Do's and Don'ts
 
 ### Do:
-- **Do** keep to the grey scale, the violet accent and the three status colours.
+- **Do** keep to the grey scale, the purple accent and the three status colours.
   Body text ≥ 4.5:1, large/bold ≥ 3:1 (`tokens.mts` checks the scales).
 - **Do** give the accent only its three jobs: the improved value, links, small
   marks at the one thing. Leave the sentence around a number `--muted` or ink.

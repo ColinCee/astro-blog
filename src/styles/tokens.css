@@ -3,7 +3,7 @@
 /*
   The design system's roles for colincheung.dev. The colours themselves are
   scales.css, generated from docs/redesign/comps/tokens.mts: a 12-step cool grey
-  (n1-n12), four violet accent shades and the status colours (ok, warn, danger
+  (n1-n12), a six-step purple accent spectrum (v1-v6) and the status colours (ok, warn, danger
   at steps 3, 9, 11). The rules for using them, with samples, are in
   src/pages/design.astro (/design/ on the dev server).
 
@@ -33,8 +33,8 @@
   --faint: var(--n10);
   --prose-ink: color-mix(in oklab, var(--n12) 82%, var(--n11));
 
-  /* ---- Accent: three jobs, each a step of the violet spectrum (v1-v6,
-     dark violet up to the accent) ----
+  /* ---- Accent: three jobs, each a step of the purple spectrum (v1-v6,
+     dark purple up to the accent) ----
      --accent: bars, lines and a post's big result. --accent-text: links and
      small results. --accent-solid: filled marks (the one-liner drawings).
      Where each may go is DESIGN.md's Accent Points Rule. */
@@ -81,8 +81,8 @@
 
   /* Accent states — derived from --accent, reused across components */
   --accent-line: color-mix(in oklch, var(--accent) 40%, transparent);
-  /* A hovered button: a violet fill dark enough that its label stays bright,
-     with the chroma to read violet, not grey-mauve (about Radix dark step 4) */
+  /* A hovered button: a purple fill dark enough that its label stays bright,
+     with the chroma to read purple, not grey-mauve (about Radix dark step 4) */
   --accent-hover: color-mix(in oklch, var(--v3) 50%, var(--panel));
   --ring: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
 }
