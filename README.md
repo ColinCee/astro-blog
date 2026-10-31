@@ -8,8 +8,8 @@ Static, fast, and every post leads with the number it's about.
 [**Site**](https://colincheung.dev) · [**Writing**](https://colincheung.dev/blog) · [**CV**](https://colincheung.dev/cv)
 
 [![Deploy](https://github.com/ColinCee/astro-blog/actions/workflows/deploy.yml/badge.svg?branch=main&event=push)](https://github.com/ColinCee/astro-blog/actions/workflows/deploy.yml?query=branch%3Amain)
-![Astro](https://img.shields.io/badge/Astro-7-BC52EE?logo=astro&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
+![Astro](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
 ![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
 
 <picture>
@@ -32,7 +32,7 @@ Static, fast, and every post leads with the number it's about.
 ```sh
 pnpm install
 pnpm dev        # http://localhost:4321
-pnpm check      # types, lint, build, layout and speed tests
+pnpm check      # everything CI runs
 ```
 
 Node and pnpm versions are pinned in `package.json`.
@@ -43,8 +43,9 @@ Node and pnpm versions are pinned in `package.json`.
 | Command | Does |
 | --- | --- |
 | `pnpm build` | Build the static site into `dist/` |
-| `pnpm test` | Layout, typography and motion tests on a dev server |
+| `pnpm test` | The Playwright tests (layout, type, motion, home lab) on a dev server |
 | `pnpm speed` | Build, then the per-page speed budgets |
+| `pnpm preview` | Build, then serve it through the Worker locally |
 | `pnpm format` | Lint-fix and format with Biome |
 | `pnpm og` | Render each post's social card |
 | `pnpm run deploy` | Build and deploy to Cloudflare |
