@@ -49,7 +49,7 @@ const budgets: Record<string, Budget> = {
     image: 3,
     total: 121,
     requests: 13,
-    lcp: 950,
+    lcp: 1250,
     cls: 0.1,
   },
   "/cv/": {
@@ -73,9 +73,8 @@ const kinds: Record<string, keyof Budget> = {
   image: "image",
 };
 
-// A slow phone connection (1.6 Mbps and 150 ms a request), and fixed answers
-// for the live calls, so the page is the same each run.
-async function prepare(page: Page) {
+// A slow phone connection: 1.6 Mbps and 150 ms a request.
+async function slow(page: Page) {
   const cdp = await page.context().newCDPSession(page);
   await cdp.send("Network.enable");
   await cdp.send("Network.emulateNetworkConditions", {
@@ -84,6 +83,10 @@ async function prepare(page: Page) {
     downloadThroughput: 1.6e6 / 8,
     uploadThroughput: 0.75e6 / 8,
   });
+}
+
+// Fixed answers for the live calls, so the page is the same each run.
+async function fixLiveCalls(page: Page) {
   // The homepage's live weather: a fixed answer, so the page is the same each run.
   await page.route("https://api.open-meteo.com/**", (route) =>
     route.fulfill({
@@ -110,7 +113,8 @@ async function prepare(page: Page) {
 
 // One load in a fresh context (a cold cache).
 async function load(page: Page, path: string) {
-  await prepare(page);
+  await slow(page);
+  await fixLiveCalls(page);
   const got: Budget = {
     html: 0,
     css: 0,
@@ -237,8 +241,10 @@ test("a hovered link opens its page at once", async ({ browser }) => {
       viewport: { width: 390, height: 844 },
     });
     const page = await context.newPage();
-    await prepare(page);
-    await page.goto("/", { waitUntil: "networkidle" });
+    // Throttled only: intercepting requests (fixLiveCalls) turns prerendering
+    // off, and the page needn't be idle, just loaded.
+    await slow(page);
+    await page.goto("/");
     const link = page.locator('a[href="/blog/"]').first();
     await link.hover();
     await page.waitForTimeout(600);

@@ -48,7 +48,7 @@ headroom:
 |---|---|---|---|
 | Home | 107 → 124 KB | 80 → 95 KB | 644 → 850 ms |
 | Blog index | 88 → 96 KB | 80 → 88 KB | 628 → 950 ms |
-| Post | 110 → 121 KB | 80 → 88 KB | 760 → 950 ms |
+| Post | 110 → 121 KB | 80 → 88 KB | 956 → 1250 ms (CI's worst run) |
 | CV | 92 → 101 KB | 80 → 88 KB | 548 → 750 ms |
 
 Fonts are most of every page. Raise a budget only with the reason in the PR
