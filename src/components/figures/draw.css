@@ -1,35 +1,64 @@
 /* Every figure draws itself once, the first time it scrolls into view: bars
    grow from their left end, row after row (--row, capped), dots pop onto
-   their axis, and solid chart lines draw along their length. Post.astro marks
+   their axis, solid chart lines draw along their length, and a diagram builds
+   in reading order: each box rises in, then the arrow out of it draws. Post.astro marks
    each figure [data-grow] after load and adds .is-in when it is seen, so
-   without JS, or under reduced motion, every figure is simply there. The
-   bars of Cmp, Gains and Runs have their own rules in their files. */
-@media (prefers-reduced-motion: no-preference) {
+   without JS, under reduced motion or on paper, every figure is simply there.
+   Only the way in is animated: arming a figure hides it at once, so nothing
+   lingers and fades out on load. The bars of Cmp, Gains and Runs have their
+   own rules in their files. */
+@media screen and (prefers-reduced-motion: no-preference) {
   .prose
     .fig[data-grow]
     :is(.trow i, .qmini i, .decide__pass > i, .pts__t i, .sbar i, .stack span) {
     transform-origin: left;
-    transition: transform var(--dur-draw) var(--ease-out)
+  }
+  .prose
+    .fig[data-grow].is-in
+    :is(.trow i, .qmini i, .decide__pass > i, .pts__t i, .sbar i, .stack span) {
+    transition: scale var(--dur-draw) var(--ease-out)
       calc(var(--row, 0) * var(--stagger));
   }
   .prose
     .fig[data-grow]:not(.is-in)
     :is(.trow i, .qmini i, .decide__pass > i, .pts__t i, .sbar i, .stack span) {
-    transform: scaleX(0);
+    scale: 0 1;
   }
-  .prose .fig[data-grow] .dot i::after {
+  .prose .fig[data-grow].is-in .dot i::after {
     transition: transform var(--dur-slow) var(--ease-out)
       calc(var(--row, 0) * var(--stagger));
   }
   .prose .fig[data-grow]:not(.is-in) .dot i::after {
     transform: translate(-50%, -50%) scale(0);
   }
-  /* pathLength="1" (set by the same script) makes one dash the whole line */
+  /* pathLength="1" (set by line-chart.ts) makes one dash the whole line */
   .prose .fig[data-grow] .chart .ln[pathLength]:not(.ln--dash) {
     stroke-dasharray: 1;
+  }
+  .prose .fig[data-grow].is-in .chart .ln[pathLength]:not(.ln--dash) {
     transition: stroke-dashoffset var(--dur-line) var(--ease-out);
   }
   .prose .fig[data-grow]:not(.is-in) .chart .ln[pathLength]:not(.ln--dash) {
     stroke-dashoffset: 1;
+  }
+  /* Diagrams: --row is each part's place in reading order, two staggers apart
+     so a box has landed before the arrow out of it starts. */
+  .prose .fig[data-grow].diag.is-in svg > :is(g, text, .arr) {
+    transition:
+      opacity var(--dur-slow) var(--ease-out),
+      transform var(--dur-slow) var(--ease-out),
+      stroke-dashoffset var(--dur-slow) var(--ease-out);
+    transition-delay: calc(var(--row, 0) * 2 * var(--stagger));
+  }
+  .prose .fig[data-grow].diag:not(.is-in) svg > :is(g, text) {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  .prose .fig[data-grow].diag .arr[pathLength] {
+    stroke-dasharray: 1;
+  }
+  .prose .fig[data-grow].diag:not(.is-in) .arr[pathLength] {
+    stroke-dashoffset: 1;
+    opacity: 0;
   }
 }

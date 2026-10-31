@@ -451,8 +451,9 @@ curve in a component is a bug unless it is a content timing.
   timeline's vocabulary in grey: no accent, it is chrome). The rail fills
   `--muted` as you read, through each section, not jumping between them; read
   sections are `--muted` with a filled dot, the one being read ink with a ringed
-  dot, the rest `--faint` and hollow; under them the minutes left (200 words a
-  minute, as the read time). Content carries a `// writing` back-kicker, a Sora 600 title
+  dot, the rest `--faint` and hollow; under them the minutes left (the header's
+  read time, scaled by the words still to read). It follows the title in the
+  page, so keyboards and screen readers reach the title first. Content carries a `// writing` back-kicker, a Sora 600 title
   (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em), and a mono meta line (date · N min read).
 - **Headline stat:** the post's `stat` renders under the title between hairlines,
   its `statLabel` above it in 11px mono `--faint`, the value in Sora 600. A result
@@ -467,9 +468,9 @@ curve in a component is a bug unless it is a content timing.
   post's MDX (no import needed): give them the raw numbers and they compute the
   bars, positions and shares. Each one's styles sit beside it as a `.css` file,
   global and under `.prose`, all loaded for every post through `figures.css` in
-  the order they apply. `<Fig title caption grow>` is the frame: one panel on
-  `--pane`, 8px, no border, a short title above, a caption below; `grow` animates
-  its bars in once when seen.
+  the order they apply. `<Fig title caption>` is the frame: one panel on
+  `--pane`, 8px, no border, a short title above, a caption below. Every figure
+  draws itself in once when seen (`draw.css`), so there is no prop for it.
   Inside it: `<Cmp>` (before/after bars to scale; `from` makes a step of a
   waterfall, `ref` a dashed reference line, `cols` the column widths), `<Dots>` (a
   dot plot on one axis, in titled groups), `<Stack>` (one bar split into shares,

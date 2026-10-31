@@ -103,8 +103,10 @@ const run = firstUndated === -1 ? chunks.length : firstUndated;
 const isTimeline = run >= 3;
 // A plain post with three or more sections lists them in its left margin on
 // wide screens (the timeline's date column, empty otherwise), the one being
-// read in ink.
-const sections = isTimeline ? [] : headings.filter((h) => h.depth === 2);
+// read in ink. The footnotes' hidden heading is not a section.
+const sections = isTimeline
+  ? []
+  : headings.filter((h) => h.depth === 2 && h.slug !== "footnote-label");
 const intro = isTimeline ? html.slice(0, marks[0].start) : html;
 const dated = isTimeline ? chunks.slice(0, run) : [];
 const after = isTimeline ? html.slice(chunks[run]?.start ?? html.length) : "";
@@ -169,24 +171,6 @@ const statParts = stat?.includes("→")
 >
   <article class="post">
     <div class="read-bar" aria-hidden="true" data-readbar></div>
-    {sections.length >= 3 && (
-      <nav class="toc" aria-label="Sections" data-toc-nav>
-        <div class="toc__in">
-          <p class="toc__k">{"// sections"}</p>
-          <ol class="toc__list" data-toc-list>
-            {sections.map((h, i) => (
-              <li>
-                <a href={`#${h.slug}`} data-toc={h.slug}>
-                  <span class="toc__n">{String(i + 1).padStart(2, "0")}</span>
-                  <span class="toc__t">{h.text}</span>
-                </a>
-              </li>
-            ))}
-          </ol>
-          <p class="toc__left" data-toc-left hidden></p>
-        </div>
-      </nav>
-    )}
 
     <header class="post__head">
       <a class="post__back" href="/blog/">{"// writing"}</a>
@@ -229,6 +213,30 @@ const statParts = stat?.includes("→")
         )}
       </p>
     </header>
+
+    {sections.length >= 3 && (
+      <nav
+        class="toc"
+        aria-label="Sections"
+        data-toc-nav
+        data-mins={minutesRead}
+      >
+        <div class="toc__in">
+          <p class="toc__k">{"// sections"}</p>
+          <ol class="toc__list" data-toc-list>
+            {sections.map((h, i) => (
+              <li>
+                <a href={`#${h.slug}`} data-toc={h.slug}>
+                  <span class="toc__n">{String(i + 1).padStart(2, "0")}</span>
+                  <span class="toc__t">{h.text}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+          <p class="toc__left" data-toc-left hidden></p>
+        </div>
+      </nav>
+    )}
 
     <div class="prose" set:html={intro} />
 
@@ -856,8 +864,11 @@ const statParts = stat?.includes("→")
       f.querySelectorAll(bars).forEach((b, i) =>
         (b as HTMLElement).style.setProperty("--row", String(Math.min(i, 8))),
       );
-      for (const l of f.querySelectorAll(".chart .ln:not(.ln--dash)"))
-        l.setAttribute("pathLength", "1");
+      // a diagram's boxes, labels and arrows, in reading order
+      f.querySelectorAll(".diag svg > :is(g, text, .arr)").forEach((el, i) => {
+        (el as SVGElement).style.setProperty("--row", String(Math.min(i, 12)));
+        if (el.classList.contains("arr")) el.setAttribute("pathLength", "1");
+      });
       f.dataset.grow = "";
     }
     onceSeen(figs, (f) => f.classList.add("is-in"), { threshold: 0.35 });
@@ -868,8 +879,9 @@ const statParts = stat?.includes("→")
 
   // Sections: the one whose heading last crossed a line 40% down the
   // viewport is being read; the rail fills to that heading's dot plus how far
-  // through the section you are, and the minutes left count the words still
-  // below the line (200 a minute, as read-minutes.ts).
+  // through the section you are. The minutes left are the header's read time
+  // times the share of words still below the line, so the two agree at the
+  // top; at the foot of the page it is done, however short the last section.
   const tocNav = document.querySelector<HTMLElement>("[data-toc-nav]");
   if (tocNav) {
     const links = Array.from(
@@ -902,15 +914,22 @@ const statParts = stat?.includes("→")
       const line = window.innerHeight * 0.4;
       const tops = heads.map((h) => h.getBoundingClientRect().top);
       const end = post.getBoundingClientRect().bottom - window.innerHeight;
+      const atEnd =
+        window.scrollY >=
+        document.documentElement.scrollHeight - window.innerHeight - 1;
       let cur = -1;
       tops.forEach((t, i) => {
         if (t <= line) cur = i;
       });
+      if (atEnd) cur = tops.length - 1;
       // how far through the current section, 0 to 1
       const from = tops[cur] ?? 0;
       const to = cur + 1 < tops.length ? tops[cur + 1] : end + line;
-      const p =
-        cur < 0 ? 0 : Math.min(1, Math.max(0, (line - from) / (to - from)));
+      const p = atEnd
+        ? 1
+        : cur < 0
+          ? 0
+          : Math.min(1, Math.max(0, (line - from) / (to - from || 1)));
       links.forEach((a, i) => {
         a.setAttribute("aria-current", String(i === cur));
         a.classList.toggle("is-past", i < cur);
@@ -924,7 +943,9 @@ const statParts = stat?.includes("→")
         cur < 0
           ? 0
           : before[cur] + p * ((before[cur + 1] ?? total) - before[cur]);
-      const mins = Math.ceil((total - read) / 200);
+      const mins = Math.ceil(
+        Number(tocNav.dataset.mins ?? 0) * (1 - read / total),
+      );
       left.hidden = false;
       left.textContent = mins > 0 ? `${mins} min left` : "done";
     };
