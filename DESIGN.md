@@ -72,7 +72,7 @@ components:
     textColor: "{colors.muted}"
     typography: "{typography.body}"
   kicker:
-    textColor: "{colors.accent-text}"
+    textColor: "{colors.faint}"
     typography: "{typography.label}"
   tag:
     textColor: "{colors.muted}"
@@ -243,8 +243,9 @@ with preconnects. Geist Mono was tried and clashed with Sora.
 
 ### Named Rules
 **The `//` Kicker System.** Sections are marked with a lowercase mono comment —
-`// writing`, `// experience`, `// reach out` — in `--accent-text` (the blog index
-and a post's back-link), `--muted` (the CV) or `--faint` (reach out). Keep it
+`// writing`, `// experience`, `// reach out` — always in `--faint`: a label
+is chrome, so it never takes the accent (a post's `// writing` back-link turns
+`--accent-text` on hover). Keep it
 lowercase, mono and comment-prefixed: never an all-caps tracked eyebrow, never
 `01 / 02` numbered markers.
 
@@ -322,7 +323,7 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   An `open all` / `close all` mono control sits on the section line, and every
   row opens for print. Hover tint is `--panel`, pointer devices only. Below 720px
   the row stacks dates, company, title and result with the chevron at the right.
-  The `//` kickers and section heads on the CV are `--muted`; a metric inside a
+  The `//` kickers on the CV are `--faint`, like every kicker; a metric inside a
   bullet is bold ink. Content is `data/cv.ts`; the pieces are `components/cv/`.
 - **Article timeline (`layouts/Post.astro`):** the third use of the spine, and it is
   in the flow of the article, not a sidebar. When a post opens with three or more
@@ -500,9 +501,12 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   column renders mono, `tabular-nums` and `nowrap` so figures align on the decimal.
   A bold last row is a total, ruled off in ink.
   Below `40rem` the table scrolls horizontally in its own overflow container.
-- **Code:** fenced blocks are rendered by Expressive Code (`github-dark` /
-  `github-light`, switched by the site's `data-theme`, not the system setting) on
-  `--pane` with `--line` borders and no shadow (set in `astro.config`); inline code
+- **Code:** fenced blocks are rendered by Expressive Code with the site's own
+  theme (`src/styles/code-theme.ts`, read from `scales.css`): names and strings in
+  ink, keywords and types `--muted`, comments and punctuation `--faint`, no accent
+  (it marks results and links). Switched by the site's `data-theme`, not the system
+  setting; DM Mono, 8px corners, `--pane` with `--line` borders, no shadow and no
+  coloured tab marker (set in `astro.config`); inline code
   is a mono chip on a faint `--ink` 10% wash, 4px corners. Never hand-restyle
   Expressive Code blocks.
 

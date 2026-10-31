@@ -23,7 +23,7 @@
 .prose .runs i {
   flex: 0 1 auto;
   min-width: 1px;
-  background: var(--muted);
+  background: var(--bar);
   border-radius: 2px;
 }
 .prose .runs b {

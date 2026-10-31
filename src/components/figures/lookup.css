@@ -16,10 +16,12 @@
   align-content: start;
   gap: 0.25rem;
 }
+/* The dictionary sits in a well, like every inset in a figure: by tone,
+   not a border. */
 .prose .lookup__dict {
   padding: 0.6rem 0.8rem;
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  background: var(--well);
+  border-radius: var(--r-chip);
 }
 .prose .lookup__row {
   display: flex;

@@ -20,7 +20,7 @@ const basis = (v: number) => `flex-basis:${((v / max) * 100).toFixed(2)}%`;
 ---
 
 <p class="splits__key">
-  {keys.map((k, i) => <span class:list={{ "sbar--hi": i === 0 }}>{k}</span>)}
+  {keys.map((k, i) => <span class:list={{ "sbar--a": i === 0 }}>{k}</span>)}
 </p>
 <div class="splits">
   {rows.map((r) => (
@@ -33,7 +33,7 @@ const basis = (v: number) => `flex-basis:${((v / max) * 100).toFixed(2)}%`;
         {r.parts.map((p, i) => (
           <i
             class:list={{
-              "sbar--hi": i === 0,
+              "sbar--a": i === 0,
               "sbar--est": r.est,
               "sbar--thin": !p.text,
             }}

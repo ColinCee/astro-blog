@@ -58,7 +58,7 @@
 .prose .qmini i {
   height: 0.6rem;
   width: calc(var(--w) * 100%);
-  background: var(--muted);
+  background: var(--bar);
   border-radius: 1px;
 }
 .prose .qmini i:first-of-type {

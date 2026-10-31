@@ -15,6 +15,12 @@
   line-height: 1.5;
   color: var(--muted);
 }
+/* DM Mono stops at 500: a plain <b> would be synthesised at 700 and read
+   thick, so emphasis inside a figure is 500. */
+.prose .fig b,
+.prose .fig strong {
+  font-weight: 500;
+}
 .prose .fig figcaption {
   font-size: 0.74rem;
   color: var(--faint);

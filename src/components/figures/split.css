@@ -28,5 +28,5 @@
   background: color-mix(in oklch, var(--bar) 30%, transparent);
 }
 .prose .box--fast {
-  border-color: color-mix(in oklch, var(--accent) 45%, transparent);
+  border-color: var(--line-strong);
 }

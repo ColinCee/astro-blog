@@ -49,6 +49,11 @@
   color: var(--ink);
   font-weight: 600;
 }
+/* A bold link already stands out by its colour; 600 on top read heavy */
+.prose a strong,
+.prose strong a {
+  font-weight: 500;
+}
 .prose em {
   font-style: italic;
 }

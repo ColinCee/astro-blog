@@ -5,7 +5,13 @@
   gap: 0.8rem 1.2rem;
   margin: 0;
 }
+/* Labels may wrap on a phone; values still share one line */
+.prose .tally div {
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
 .prose .tally dt {
+  align-self: end;
   font-size: 0.6875rem;
   color: var(--faint);
 }

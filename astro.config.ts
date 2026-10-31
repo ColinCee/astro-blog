@@ -4,6 +4,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 import expressiveCode from "astro-expressive-code";
+import { codeThemes } from "./src/styles/code-theme";
 
 // The commit the site is built from, for the homepage status bar, footer and
 // the site's own tile. Read once here and handed to pages as __BUILD__. In CI
@@ -63,14 +64,19 @@ export default defineConfig({
   },
   integrations: [
     expressiveCode({
-      // Dark and light variants, switched with the site's own theme (data-theme on
-      // <html>, dark unless the visitor chose light), not the system setting.
-      themes: ["github-dark", "github-light"],
+      // The site's own code theme (its greys, no accent), dark and
+      // light, switched with the site's theme (data-theme on <html>, dark unless
+      // the visitor chose light), not the system setting.
+      themes: codeThemes,
       useDarkModeMediaQuery: false,
       themeCssSelector: (theme) =>
         theme.type === "dark" ? ":root" : ':root[data-theme="light"]',
       // Sit code blocks on the site's raised surface instead of pure white/black.
       styleOverrides: {
+        // The site's mono and corners, so a code block matches the figures
+        codeFontFamily: "var(--mono)",
+        uiFontFamily: "var(--mono)",
+        borderRadius: "var(--r)",
         codeBackground: "var(--pane)",
         borderColor: "var(--line)",
         frames: {
@@ -82,6 +88,9 @@ export default defineConfig({
           editorTabBarBorderBottomColor: "var(--line)",
           terminalTitlebarBackground: "var(--panel)",
           terminalTitlebarBorderBottomColor: "var(--line)",
+          // One file tab per block; it needs no coloured marker.
+          editorActiveTabIndicatorTopColor: "transparent",
+          editorActiveTabIndicatorBottomColor: "transparent",
         },
       },
     }),

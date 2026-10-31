@@ -51,9 +51,12 @@
 .prose .decide__mini .decide__top {
   font-weight: 500;
 }
-.prose .decide__mini .decide__top,
-.prose .decide__jev {
+/* The pick is the result; the "Jev" row label stays ink beside it. */
+.prose .decide__mini .decide__top {
   color: var(--accent-text);
+}
+.prose .decide__jev {
+  color: var(--ink);
 }
 .prose .decide__axis {
   margin-top: 0.4rem;

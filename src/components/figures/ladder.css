@@ -28,8 +28,10 @@
   cursor: pointer;
   outline: none;
 }
+/* The picked step's column: a neutral band, so its riser is the one
+   purple thing (a tinted band read as a surface in the accent). */
 .prose .ladder .hit.is-on {
-  fill: color-mix(in oklch, var(--accent) 10%, transparent);
+  fill: color-mix(in oklab, var(--ink) 6%, transparent);
 }
 .prose .ladder .hit:focus-visible {
   stroke: var(--accent);

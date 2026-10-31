@@ -238,4 +238,10 @@
   .prose .pts__axis span {
     font-size: 0.6875rem;
   }
+  /* The bar column is too narrow for five ticks: 75 and a right-aligned
+     100 ran together. Keep 0, 50 and 100. */
+  .prose .pts__axis span:nth-child(2),
+  .prose .pts__axis span:nth-child(4) {
+    display: none;
+  }
 }
