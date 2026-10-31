@@ -100,8 +100,11 @@ export function lineChart(d: LineData, W: number, H: number): string {
       points: [...up, ...down].join(" "),
     });
   }
+  // pathLength 1 makes one dash the whole line, for its draw-in (draw.css);
+  // set here so a redraw keeps it
   el("polyline", {
     class: "ln",
+    pathLength: 1,
     points: d.line.map(([x, v]) => `${X(x)},${Y(v)}`).join(" "),
   });
   if (d.dots) {

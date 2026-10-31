@@ -282,6 +282,13 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   the links with its right edge (and with the footer). On the homepage it spans
   `--w-poster`; its links show at every width.
 
+### Favicon
+- **Before → after** (`public/favicon.svg`): every post's headline result as a
+  mark, a long `n8` bar over a short accent one on the page colour, dark unless
+  the browser chrome is light. Solid shapes so it holds at 16px. `pnpm og`
+  renders `favicon.ico` and `apple-touch-icon.png` from it; bump the `?v=` on
+  the links in `Head.astro` when it changes.
+
 ### Footer
 - One `components/site/Footer.astro`: `Colin Cheung` (mono, `--muted`) and
   `© {year} · built in Glasgow` (`--faint`), centered on `--w-page`, `1px` top
@@ -397,6 +404,28 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   Headline line "Best way to reach me is LinkedIn ↗" (the link in `--accent-text`)
   and a mono line linking GitHub.
 
+### Motion
+One scale for everything the interface does (`tokens.css`); a raw duration or
+curve in a component is a bug unless it is a content timing.
+- **Speeds:** `--dur-fast` 0.16s for hover and colour, `--dur-base` 0.3s for a
+  small state change (a chevron, a flip, a layer fading), `--dur-slow` 0.5s for
+  anything arriving, `--dur-draw` 0.9s for a figure's bars growing, `--dur-line`
+  1.4s for a chart line drawing.
+- **Curves:** `--ease` for colour, `--ease-out` (fast start, long settle) for
+  anything moving into place, `--ease-in-out` for something that turns over or
+  swaps in place.
+- **Order:** rows follow one another by `--stagger` (70ms); a dense figure (many
+  runs in a row, a grid of frames) may go faster and says so where it does.
+- **Entrances** are one move: fade and rise 12px (`rise`, or the same as a
+  transition), `--dur-slow` `--ease-out`, armed by JS so without it everything
+  is simply there.
+- **Content timings** (the reel's 5 s, a loop's period, the marquee) are not
+  interface motion and stay written where they are.
+- **Reduced motion:** `Base.astro` zeroes every animation and transition; a
+  component adds its own rule only where the resting state differs (bars at
+  full length, the marquee's copies hidden). Anything that moves on its own
+  stops under hover or focus.
+
 ### Homepage motion
 - The name and the terminal rise in on load (the shared `rise` keyframe).
 - One thing moves on the first screen: the reel. The terminal types its commands,
@@ -416,7 +445,15 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 - Posts render on the shared `Base` shell via `layouts/Post.astro`; the prose styles are `styles/prose.css`. Below `64rem` it is a
   single `--w-prose` column. At `64rem` and up the post sits on `--w-page`, inset by
   `--rail` (`9rem`) plus `--rail-gap` (`3.5rem`), so timeline dates sit in the left
-  margin and plain and timeline posts share one left edge. Content carries a `// writing` back-kicker, a Sora 600 title
+  margin and plain and timeline posts share one left edge. A plain post with three
+  or more sections lists them in that margin (`.toc`), sticky, level with the body:
+  a `// sections` kicker, then a rail with a numbered dot per section (the
+  timeline's vocabulary in grey: no accent, it is chrome). The rail fills
+  `--muted` as you read, through each section, not jumping between them; read
+  sections are `--muted` with a filled dot, the one being read ink with a ringed
+  dot, the rest `--faint` and hollow; under them the minutes left (the header's
+  read time, scaled by the words still to read). It follows the title in the
+  page, so keyboards and screen readers reach the title first. Content carries a `// writing` back-kicker, a Sora 600 title
   (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em), and a mono meta line (date · N min read).
 - **Headline stat:** the post's `stat` renders under the title between hairlines,
   its `statLabel` above it in 11px mono `--faint`, the value in Sora 600. A result
@@ -431,9 +468,9 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   post's MDX (no import needed): give them the raw numbers and they compute the
   bars, positions and shares. Each one's styles sit beside it as a `.css` file,
   global and under `.prose`, all loaded for every post through `figures.css` in
-  the order they apply. `<Fig title caption grow>` is the frame: one panel on
-  `--pane`, 8px, no border, a short title above, a caption below; `grow` animates
-  its bars in once when seen.
+  the order they apply. `<Fig title caption>` is the frame: one panel on
+  `--pane`, 8px, no border, a short title above, a caption below. Every figure
+  draws itself in once when seen (`draw.css`), so there is no prop for it.
   Inside it: `<Cmp>` (before/after bars to scale; `from` makes a step of a
   waterfall, `ref` a dashed reference line, `cols` the column widths), `<Dots>` (a
   dot plot on one axis, in titled groups), `<Stack>` (one bar split into shares,

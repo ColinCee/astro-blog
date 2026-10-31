@@ -6,7 +6,9 @@
 // Posts whose H2s are dated ("16 December: they move the flight") render as a
 // timeline: each dated section becomes an entry with its date set in a left
 // column beside a spine. Everything else renders as plain prose.
+
 import type { CollectionEntry } from "astro:content";
+import { existsSync } from "node:fs";
 import type { MarkdownHeading } from "astro";
 import FormattedDate from "../components/site/FormattedDate.astro";
 import Base from "./Base.astro";
@@ -99,6 +101,12 @@ const chunks = marks.map((mk, i) => ({
 const firstUndated = chunks.findIndex((c) => !c.meta?.month);
 const run = firstUndated === -1 ? chunks.length : firstUndated;
 const isTimeline = run >= 3;
+// A plain post with three or more sections lists them in its left margin on
+// wide screens (the timeline's date column, empty otherwise), the one being
+// read in ink. The footnotes' hidden heading is not a section.
+const sections = isTimeline
+  ? []
+  : headings.filter((h) => h.depth === 2 && h.slug !== "footnote-label");
 const intro = isTimeline ? html.slice(0, marks[0].start) : html;
 const dated = isTimeline ? chunks.slice(0, run) : [];
 const after = isTimeline ? html.slice(chunks[run]?.start ?? html.length) : "";
@@ -141,6 +149,12 @@ const first = entries[0];
 const last = entries[entries.length - 1];
 // A stat like "428 s → 23 s" is a result that got better: split it so the
 // old value can go grey and the new one take the accent.
+// The post's own share card (title and result), rendered by `pnpm og` into
+// public/og/<slug>.png; a post without one yet shares the site's card.
+const slug = Astro.url.pathname.split("/").filter(Boolean).pop();
+const card = existsSync(`public/og/${slug}.png`)
+  ? `/og/${slug}.png`
+  : undefined;
 const statParts = stat?.includes("→")
   ? (stat.split("→").map((x) => x.trim()) as [string, string])
   : undefined;
@@ -152,6 +166,7 @@ const statParts = stat?.includes("→")
     ? `${title}: ${stat}${statLabel ? `, ${statLabel}` : ""}`
     : title}
   ogType="article"
+  image={card}
   article={{ headline: title, published: pubDate, modified: updatedDate }}
 >
   <article class="post">
@@ -198,6 +213,30 @@ const statParts = stat?.includes("→")
         )}
       </p>
     </header>
+
+    {sections.length >= 3 && (
+      <nav
+        class="toc"
+        aria-label="Sections"
+        data-toc-nav
+        data-mins={minutesRead}
+      >
+        <div class="toc__in">
+          <p class="toc__k">{"// sections"}</p>
+          <ol class="toc__list" data-toc-list>
+            {sections.map((h, i) => (
+              <li>
+                <a href={`#${h.slug}`} data-toc={h.slug}>
+                  <span class="toc__n">{String(i + 1).padStart(2, "0")}</span>
+                  <span class="toc__t">{h.text}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+          <p class="toc__left" data-toc-left hidden></p>
+        </div>
+      </nav>
+    )}
 
     <div class="prose" set:html={intro} />
 
@@ -278,8 +317,124 @@ const statParts = stat?.includes("→")
   }
   @media (min-width: 64rem) {
     .post {
+      position: relative;
       max-width: var(--w-page);
       padding-left: calc(var(--rail) + var(--rail-gap));
+    }
+  }
+
+  /* The sections, in the left margin from 64rem: a rail with a dot per
+     section, numbered, the line filling as you read (the timeline's
+     vocabulary, in grey: chrome takes no accent). Read sections are muted, the
+     one being read is ink with a ringed dot, the rest faint; under them, the
+     minutes left. The script starts it level with the body (--toc-top). */
+  .toc {
+    display: none;
+  }
+  @media (min-width: 64rem) {
+    .toc {
+      display: block;
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: var(--rail);
+      padding-top: var(--toc-top, 13rem);
+    }
+    .toc__in {
+      position: sticky;
+      top: 5.5rem;
+      display: grid;
+      gap: 0.9rem;
+    }
+    .toc__k,
+    .toc__left {
+      margin: 0;
+      font-family: var(--mono);
+      font-size: 0.6875rem;
+      color: var(--faint);
+    }
+    .toc__list {
+      --dot: 7px;
+      position: relative;
+      display: grid;
+      gap: 0.85rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    /* the rail, and its fill down to where you are (--fill, set by the script) */
+    .toc__list::before,
+    .toc__list::after {
+      content: "";
+      position: absolute;
+      left: calc(var(--dot) / 2 - 0.5px);
+      top: 0.45rem;
+      width: 1px;
+    }
+    .toc__list::before {
+      bottom: 0.45rem;
+      background: var(--line);
+    }
+    .toc__list::after {
+      height: var(--fill, 0px);
+      background: var(--muted);
+    }
+    .toc a {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: 0.5rem;
+      padding-left: calc(var(--dot) + 0.75rem);
+      font-size: 0.78rem;
+      line-height: 1.35;
+      color: var(--faint);
+      text-decoration: none;
+      transition: color var(--dur-fast) var(--ease);
+    }
+    /* the dot: hollow ahead, filled once read, ringed while being read */
+    .toc a::before {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      top: 0.45rem;
+      width: var(--dot);
+      height: var(--dot);
+      border-radius: 50%;
+      box-sizing: border-box;
+      background: var(--bg);
+      border: 1.5px solid color-mix(in oklch, var(--faint) 70%, transparent);
+      transform: translateY(-50%);
+      transition:
+        background var(--dur-fast) var(--ease),
+        border-color var(--dur-fast) var(--ease),
+        box-shadow var(--dur-fast) var(--ease);
+    }
+    .toc__n {
+      font-family: var(--mono);
+      font-size: 0.6875rem;
+      line-height: 1.6;
+      font-variant-numeric: tabular-nums;
+    }
+    .toc a.is-past {
+      color: var(--muted);
+    }
+    .toc a.is-past::before {
+      background: var(--muted);
+      border-color: var(--muted);
+    }
+    .toc a[aria-current="true"] {
+      color: var(--ink);
+    }
+    .toc a[aria-current="true"]::before {
+      background: var(--ink);
+      border-color: var(--ink);
+      box-shadow: 0 0 0 3px color-mix(in oklch, var(--ink) 18%, transparent);
+    }
+    .toc a:hover {
+      color: var(--ink);
+    }
+    .toc a:hover::before {
+      border-color: var(--ink);
     }
   }
 
@@ -623,15 +778,17 @@ const statParts = stat?.includes("→")
       animation: rise var(--dur-slow) var(--ease-out) both;
     }
     .post > .prose {
-      animation-delay: 0.05s;
+      animation-delay: var(--stagger);
     }
     .tl {
-      animation-delay: 0.1s;
+      animation-delay: calc(2 * var(--stagger));
     }
   }
 </style>
 
 <script>
+  import { onceSeen, still } from "../scripts/in-view";
+
   // A link to a collapsed <details> (#internals) opens it before jumping.
   const openTarget = () => {
     const el = location.hash && document.getElementById(location.hash.slice(1));
@@ -678,39 +835,142 @@ const statParts = stat?.includes("→")
   }
 
   // Figures: recordings play only while on screen (and never on their own
-  // under reduced motion); [data-grow] figures animate once when seen.
-  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const seen = new IntersectionObserver(
+  // under reduced motion); every figure draws itself in once when seen
+  // (draw.css), so it is marked [data-grow] here, never in the markup.
+  const playing = new IntersectionObserver(
     (items) => {
       for (const it of items) {
-        const el = it.target as HTMLElement;
-        if (el instanceof HTMLVideoElement) {
-          el.playbackRate = Number(el.dataset.rate ?? 1);
-          // A video inside a qview waits for its data (data-ready) so the
-          // scores under it start with it; the widget starts it then.
-          const waits =
-            el.closest("[data-widget='qview']") && !el.dataset.ready;
-          if (it.isIntersecting && !still && !el.dataset.hold && !waits)
-            el.play().catch(() => {});
-          else el.pause();
-        } else if (it.isIntersecting) {
-          el.classList.add("is-in");
-          seen.unobserve(el);
-        }
+        const el = it.target as HTMLVideoElement;
+        el.playbackRate = Number(el.dataset.rate ?? 1);
+        // A video inside a qview waits for its data (data-ready) so the
+        // scores under it start with it; the widget starts it then.
+        const waits = el.closest("[data-widget='qview']") && !el.dataset.ready;
+        if (it.isIntersecting && !still && !el.dataset.hold && !waits)
+          el.play().catch(() => {});
+        else el.pause();
       }
     },
     { threshold: 0.35 },
   );
   document.querySelectorAll<HTMLVideoElement>(".prose video").forEach((v) => {
     if (still) v.controls = true;
-    seen.observe(v);
+    playing.observe(v);
   });
-  document
-    .querySelectorAll<HTMLElement>(".prose [data-grow]")
-    .forEach((f) => seen.observe(f));
+  const bars =
+    ".cmp i, .gain i, .trow i, .qmini i, .decide__pass > i, .pts__t i, .sbar i, .stack span, .dot i";
+  if (!still) {
+    const figs = document.querySelectorAll<HTMLElement>(".prose .fig");
+    for (const f of figs) {
+      f.querySelectorAll(bars).forEach((b, i) =>
+        (b as HTMLElement).style.setProperty("--row", String(Math.min(i, 8))),
+      );
+      // a hand-written chart's solid lines (lineChart() sets its own)
+      for (const l of f.querySelectorAll(".chart .ln:not(.ln--dash)"))
+        l.setAttribute("pathLength", "1");
+      // a diagram's boxes, labels and arrows, in reading order
+      f.querySelectorAll(".diag svg > :is(g, text, .arr)").forEach((el, i) => {
+        (el as SVGElement).style.setProperty("--row", String(Math.min(i, 12)));
+        if (el.classList.contains("arr")) el.setAttribute("pathLength", "1");
+      });
+      f.dataset.grow = "";
+    }
+    onceSeen(figs, (f) => f.classList.add("is-in"), { threshold: 0.35 });
+  }
 
   // Interactive figures load their code only on posts that use them.
   if (document.querySelector("[data-widget]")) import("../scripts/widgets");
+
+  // Sections: the one whose heading last crossed a line 40% down the
+  // viewport is being read; the rail fills to that heading's dot plus how far
+  // through the section you are. The minutes left are the header's read time
+  // times the share of words still below the line, so the two agree at the
+  // top; at the foot of the page it is done, however short the last section.
+  const tocNav = document.querySelector<HTMLElement>("[data-toc-nav]");
+  if (tocNav) {
+    const links = Array.from(
+      tocNav.querySelectorAll<HTMLAnchorElement>("[data-toc]"),
+    );
+    const list = tocNav.querySelector<HTMLElement>("[data-toc-list]")!;
+    const left = tocNav.querySelector<HTMLElement>("[data-toc-left]")!;
+    const heads = links.map((a) => document.getElementById(a.dataset.toc!)!);
+    const post = tocNav.closest<HTMLElement>(".post")!;
+    const head = post.querySelector<HTMLElement>(".post__head")!;
+    const prose = Array.from(post.querySelectorAll<HTMLElement>(".prose"));
+    // words before each heading, and in all, from the text in document order
+    const words = (t: string) => t.split(/\s+/).filter(Boolean).length;
+    const total = prose.reduce((n, p) => n + words(p.textContent ?? ""), 0);
+    const before = heads.map((h) => {
+      const r = document.createRange();
+      r.setStart(prose[0], 0);
+      r.setEndBefore(h);
+      return words(r.toString());
+    });
+    // level with the body: the header's foot, in the article's frame
+    const place = () =>
+      tocNav.style.setProperty(
+        "--toc-top",
+        `${head.offsetTop + head.offsetHeight + 24}px`,
+      );
+    let ticking = false;
+    const spy = () => {
+      ticking = false;
+      const line = window.innerHeight * 0.4;
+      const tops = heads.map((h) => h.getBoundingClientRect().top);
+      const end = post.getBoundingClientRect().bottom - window.innerHeight;
+      const atEnd =
+        window.scrollY >=
+        document.documentElement.scrollHeight - window.innerHeight - 1;
+      let cur = -1;
+      tops.forEach((t, i) => {
+        if (t <= line) cur = i;
+      });
+      if (atEnd) cur = tops.length - 1;
+      // how far through the current section, 0 to 1
+      const from = tops[cur] ?? 0;
+      const to = cur + 1 < tops.length ? tops[cur + 1] : end + line;
+      const p = atEnd
+        ? 1
+        : cur < 0
+          ? 0
+          : Math.min(1, Math.max(0, (line - from) / (to - from || 1)));
+      links.forEach((a, i) => {
+        a.setAttribute("aria-current", String(i === cur));
+        a.classList.toggle("is-past", i < cur);
+      });
+      const y = (i: number) => links[i].offsetTop;
+      const last = links.length - 1;
+      const fill =
+        cur < 0 ? 0 : cur < last ? y(cur) + p * (y(cur + 1) - y(cur)) : y(last);
+      list.style.setProperty("--fill", `${fill}px`);
+      const read =
+        cur < 0
+          ? 0
+          : before[cur] + p * ((before[cur + 1] ?? total) - before[cur]);
+      const mins = Math.ceil(
+        Number(tocNav.dataset.mins ?? 0) * (1 - read / total),
+      );
+      left.hidden = false;
+      left.textContent = mins > 0 ? `${mins} min left` : "done";
+    };
+    place();
+    spy();
+    // the article's size moves the headings; the window's height moves the line
+    new ResizeObserver(() => {
+      place();
+      spy();
+    }).observe(post);
+    window.addEventListener("resize", spy);
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(spy);
+        }
+      },
+      { passive: true },
+    );
+  }
 
   // Timeline scroll-spy: the entry crossing a line 40% down the viewport is
   // current; entries above it are past. Their nodes fill in as you read.

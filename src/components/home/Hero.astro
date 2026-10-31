@@ -164,7 +164,7 @@ const quips = [
     list-style: none;
   }
   .reel__track.is-moving {
-    transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.2, 1);
+    transition: transform var(--dur-slow) var(--ease-out);
   }
   .reel__bar {
     width: 12rem;
@@ -238,14 +238,14 @@ const quips = [
     color: var(--ink);
     text-wrap: balance;
     opacity: 0;
-    transition: opacity 0.7s;
+    transition: opacity var(--dur-slow) var(--ease);
   }
   .reel__item.is-cur {
     opacity: 1;
   }
   .reel__item.is-gone {
     opacity: 0;
-    transition-duration: 0.35s;
+    transition-duration: var(--dur-base);
   }
   /* One purple thing per line: the punchline word, unless a drawing or the
      counter already is. Colour, not bold: a heavy Sora reads thick next to
@@ -286,7 +286,7 @@ const quips = [
   .q-arrow {
     transform-box: fill-box;
     transform-origin: center;
-    animation: q-reverse 0.45s ease-in-out 0.9s forwards;
+    animation: q-reverse var(--dur-slow) var(--ease-in-out) 0.9s forwards;
   }
   .q-arrow--2 {
     animation-delay: 1.4s;
@@ -296,10 +296,10 @@ const quips = [
   }
   .q-node--tail {
     fill: var(--accent-solid);
-    animation: q-cool 0.3s ease 2s forwards;
+    animation: q-cool var(--dur-base) var(--ease) 2s forwards;
   }
   .q-node--head {
-    animation: q-hot 0.3s ease 2s forwards;
+    animation: q-hot var(--dur-base) var(--ease) 2s forwards;
   }
   @keyframes q-reverse {
     to {
@@ -329,7 +329,7 @@ const quips = [
     font-variant-numeric: tabular-nums;
   }
   .q-ctr.is-flipping {
-    animation: q-flip 0.32s ease-in-out;
+    animation: q-flip var(--dur-base) var(--ease-in-out);
   }
   @keyframes q-flip {
     50% {
@@ -353,12 +353,12 @@ const quips = [
   .q-meter--drain i {
     width: 12%;
     background: var(--n8);
-    animation: q-drain 2.6s 0.3s ease-in-out backwards;
+    animation: q-drain 2.6s 0.3s var(--ease-in-out) backwards;
   }
   .q-meter--fill i {
     width: 100%;
     background: var(--accent-solid);
-    animation: q-fill 2.6s 0.3s ease-in-out backwards;
+    animation: q-fill 2.6s 0.3s var(--ease-in-out) backwards;
   }
   @keyframes q-drain {
     from {
@@ -405,7 +405,7 @@ const quips = [
 </style>
 
 <script>
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  import { still as reduce } from "../../scripts/in-view";
 
   for (const reel of document.querySelectorAll<HTMLElement>("[data-reel]")) {
     const quips = JSON.parse(reel.dataset.quips || "[]") as string[];
@@ -431,7 +431,8 @@ const quips = [
         timers.push(
           window.setTimeout(() => {
             flip.classList.add("is-flipping");
-            timers.push(window.setTimeout(() => (flip.textContent = to), 160));
+            // halfway through the flip (--dur-base)
+            timers.push(window.setTimeout(() => (flip.textContent = to), 150));
           }, 1300),
         );
       }

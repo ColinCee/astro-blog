@@ -84,7 +84,7 @@ const procs = (await getCollection("skills"))
     margin: 0;
     white-space: nowrap;
     color: var(--ink);
-    transition: opacity 0.25s ease;
+    transition: opacity var(--dur-base) var(--ease);
   }
   /* While booting, a line stays hidden until the script reveals it. Said with
      :not(.is-in), not by a later rule winning: scoping gives the booting rule
@@ -179,8 +179,8 @@ const procs = (await getCollection("skills"))
   /* boot choreography — enhances the SSR-visible default */
   .js-out {
     transition:
-      opacity 0.3s ease,
-      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity var(--dur-base) var(--ease),
+      transform var(--dur-base) var(--ease-out);
   }
   .is-booting .js-out:not(.is-in) {
     opacity: 0;
@@ -194,7 +194,7 @@ const procs = (await getCollection("skills"))
 </style>
 
 <script>
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  import { onceSeen, still as reduce } from "../../scripts/in-view";
 
   // Live Glasgow weather (open-meteo, no API key).
   const wxEl = document.querySelector<HTMLElement>("[data-weather]");
@@ -319,15 +319,9 @@ const procs = (await getCollection("skills"))
       matchMedia("(max-width: 900px)").matches &&
       "IntersectionObserver" in window
     ) {
-      const io = new IntersectionObserver(
-        (entries) => {
-          if (!entries.some((e) => e.isIntersecting)) return;
-          io.disconnect();
-          start();
-        },
-        { rootMargin: "0px 0px -12% 0px" },
-      );
-      io.observe(session.closest(".pane") ?? session);
+      onceSeen([session.closest(".pane") ?? session], start, {
+        rootMargin: "0px 0px -12% 0px",
+      });
     } else {
       start();
     }

@@ -30,7 +30,7 @@
   border-right: 2px solid var(--accent-text);
   border-bottom: 2px solid var(--accent-text);
   transform: translateY(-25%) rotate(45deg);
-  transition: transform 0.2s;
+  transition: transform var(--dur-base) var(--ease-out);
 }
 .prose details.more[open] > summary::after {
   transform: translateY(25%) rotate(-135deg);

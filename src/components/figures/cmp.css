@@ -77,13 +77,15 @@
   }
 }
 /* Bars grow in once when their figure scrolls into view (JS adds .is-in). */
-@media (prefers-reduced-motion: no-preference) {
+@media screen and (prefers-reduced-motion: no-preference) {
   .prose .fig[data-grow] .cmp i {
     transform-origin: left;
-    transform: scaleX(0);
-    transition: transform 0.9s var(--ease-out);
   }
   .prose .fig[data-grow].is-in .cmp i {
-    transform: none;
+    transition: transform var(--dur-draw) var(--ease-out)
+      calc(var(--row, 0) * var(--stagger));
+  }
+  .prose .fig[data-grow]:not(.is-in) .cmp i {
+    transform: scaleX(0);
   }
 }

@@ -170,3 +170,22 @@ test("a printed post's code is dark on light", async ({ page }) => {
   expect(Math.max(...texts.map(lum))).toBeLessThan(0.5);
   expect(lum(ground)).toBeGreaterThan(0.85);
 });
+
+// Every post shares its own card (title and result, rendered by `pnpm og`),
+// and the image is there.
+test("every post links its own share card", async ({ page, request }) => {
+  await page.goto("/blog");
+  const hrefs = await page.$$eval(".log__link", (as) =>
+    as.map((a) => a.getAttribute("href")!),
+  );
+  for (const href of hrefs) {
+    await page.goto(href);
+    const image = await page.getAttribute(
+      'meta[property="og:image"]',
+      "content",
+    );
+    const slug = href.split("/").filter(Boolean).pop();
+    expect(image, href).toContain(`/og/${slug}.png`);
+    expect((await request.get(new URL(image!).pathname)).ok(), href).toBe(true);
+  }
+});

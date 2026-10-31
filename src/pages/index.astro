@@ -39,39 +39,25 @@ import Base from "../layouts/Base.astro";
   /* Sections below the terminal rise in as they scroll into view. */
   [data-reveal].is-armed {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   [data-reveal].is-in {
     opacity: 1;
     transform: none;
     transition:
-      opacity 0.6s var(--ease-out),
-      transform 0.6s var(--ease-out);
+      opacity var(--dur-slow) var(--ease-out),
+      transform var(--dur-slow) var(--ease-out);
   }
 </style>
 
 <script>
+  import { onceSeen, still } from "../scripts/in-view";
+
   // Armed by JS only, so without it (or with reduced motion) the sections are
   // simply visible.
   const reveals = document.querySelectorAll<HTMLElement>("[data-reveal]");
-  if (
-    reveals.length &&
-    !matchMedia("(prefers-reduced-motion: reduce)").matches &&
-    "IntersectionObserver" in window
-  ) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (!e.isIntersecting) return;
-          e.target.classList.add("is-in");
-          io.unobserve(e.target);
-        });
-      },
-      { threshold: 0.15 },
-    );
-    reveals.forEach((el) => {
-      el.classList.add("is-armed");
-      io.observe(el);
-    });
+  if (!still) {
+    for (const el of reveals) el.classList.add("is-armed");
+    onceSeen(reveals, (el) => el.classList.add("is-in"), { threshold: 0.15 });
   }
 </script>

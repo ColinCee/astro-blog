@@ -11,6 +11,9 @@ interface Props {
   // The social card's line, when it should differ from the description.
   ogDescription?: string;
   ogType?: string;
+  // The social card image, when the page has its own (a post's, from
+  // `pnpm og`); else the site's.
+  image?: string;
   article?: { headline: string; published: Date; modified?: Date };
   person?: boolean;
 }
@@ -19,11 +22,12 @@ const {
   description,
   ogDescription = description,
   ogType = "website",
+  image = "/og.png",
   article,
   person,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const ogImage = new URL("/og.png", Astro.site);
+const ogImage = new URL(image, Astro.site);
 
 const author = {
   "@type": "Person",
@@ -73,7 +77,10 @@ const schema = article
     delete r.dataset.screenTheme;
   });
 </script>
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<!-- ?v= changes with the icon, so browsers drop the one they cached -->
+<link rel="icon" href="/favicon.ico?v=2" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
 <!-- Fonts: linked here, not imported from a stylesheet, so the browser asks
      for them as soon as it reads the head. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -169,7 +169,7 @@
   }
 }
 .prose .pts__r > * {
-  transition: opacity 0.15s;
+  transition: opacity var(--dur-fast) var(--ease);
 }
 .prose
   .pts:has(.pts__r:hover, .pts__r:focus-within)

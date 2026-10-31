@@ -22,8 +22,8 @@
     opacity: 0;
     visibility: hidden;
     transition:
-      opacity 0.2s,
-      visibility 0.2s;
+      opacity var(--dur-fast) var(--ease),
+      visibility var(--dur-fast) var(--ease);
   }
   .recipe.is-on {
     opacity: 1;

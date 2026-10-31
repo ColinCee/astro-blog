@@ -1,6 +1,7 @@
 // Interactive figures, loaded by layouts/Post.astro only on posts that have a
 // [data-widget] element. Each widget reads its numbers from data- attributes in
 // the post, so the post stays the one place its figures live.
+import { onceSeen, still } from "./in-view";
 import { chartHeight, type LineData, lineChart } from "./line-chart";
 
 const fmt = new Intl.NumberFormat("en-GB");
@@ -188,12 +189,14 @@ async function qview(root: HTMLElement) {
   // Post.astro's autoplay holds this video until its data is ready; start it
   // now if it's on screen (and the reader allows motion).
   video.dataset.ready = "1";
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-    new IntersectionObserver(([e], io) => {
-      if (!e.isIntersecting) return;
-      io.disconnect();
-      if (!video.dataset.hold) video.play().catch(() => {});
-    }, { threshold: 0.35 }).observe(video);
+  if (!still)
+    onceSeen(
+      [video],
+      () => {
+        if (!video.dataset.hold) video.play().catch(() => {});
+      },
+      { threshold: 0.35 },
+    );
 
   // Controls. data-hold on the video tells Post.astro's autoplay-when-visible
   // observer to leave a video the reader paused alone.

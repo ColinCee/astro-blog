@@ -185,12 +185,14 @@ const companies = (await getCollection("companies"))
 </style>
 
 <script>
+  import { still } from "../../scripts/in-view";
+
   // The strip scrolls by itself; this stops and restarts it. Under reduced
   // motion the strip stands still, so the button stays hidden.
   const toggle = document.querySelector<HTMLButtonElement>(
     "[data-strip-toggle]",
   );
-  if (toggle && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if (toggle && !still) {
     toggle.hidden = false;
     toggle.addEventListener("click", () => {
       const paused = toggle.closest(".strip")!.classList.toggle("is-paused");
