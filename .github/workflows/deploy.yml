@@ -59,6 +59,9 @@ jobs:
       - name: Layout and typography tests
         run: pnpm test
 
+      - name: Speed budgets
+        run: pnpm playwright test -c playwright.speed.config.ts
+
       - name: Deploy to Cloudflare
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: pnpm wrangler deploy
