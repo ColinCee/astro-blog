@@ -864,6 +864,9 @@ const statParts = stat?.includes("→")
       f.querySelectorAll(bars).forEach((b, i) =>
         (b as HTMLElement).style.setProperty("--row", String(Math.min(i, 8))),
       );
+      // a hand-written chart's solid lines (lineChart() sets its own)
+      for (const l of f.querySelectorAll(".chart .ln:not(.ln--dash)"))
+        l.setAttribute("pathLength", "1");
       // a diagram's boxes, labels and arrows, in reading order
       f.querySelectorAll(".diag svg > :is(g, text, .arr)").forEach((el, i) => {
         (el as SVGElement).style.setProperty("--row", String(Math.min(i, 12)));
@@ -951,10 +954,12 @@ const statParts = stat?.includes("→")
     };
     place();
     spy();
+    // the article's size moves the headings; the window's height moves the line
     new ResizeObserver(() => {
       place();
       spy();
     }).observe(post);
+    window.addEventListener("resize", spy);
     window.addEventListener(
       "scroll",
       () => {
