@@ -13,9 +13,9 @@ colors:
   muted: "#b2b8bf"
   faint: "#a0a5ac"
   accent: "#9951fc"
-  accent-solid: "#8c1ffa"
+  accent-solid: "#782dd1"
   accent-soft: "#a977ff"
-  accent-ink: "#0c0d0f"
+  accent-ink: "#fff"
   gain: "#7cd591"
   loss: "#fda19a"
 typography:
@@ -338,7 +338,9 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   under it (no previous line), and a thin bar for the time left. One every 5 s;
   hover pauses, a click skips. Lines are Voice type in ink; some carry a small
   inline drawing with neutral marks (n5–n8) and the punchline mark in
-  `--accent-solid`. Below 56rem the reel stacks under the name.
+  `--accent-solid`, a deeper violet than the text accent so the marks read rich,
+  not electric; the counter is a solid `--accent-solid` chip with `--accent-ink`
+  (white). Below 56rem the reel stacks under the name.
 
 ### Terminal Session (homepage only)
 - `components/home/Terminal.astro`: a `--panel` window titled `~/ColinOS` with

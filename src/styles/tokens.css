@@ -41,7 +41,7 @@
   --accent-solid: var(--a9);
   --accent-soft: var(--a11);
   --accent-text: var(--a11);
-  --accent-ink: var(--n1);
+  --accent-ink: #fff;
   --accent-wash: var(--a3);
   /* A chart's real gain and real drop: the status green and red. */
   --gain: var(--ok11);
@@ -94,7 +94,6 @@
   --well: var(--n4);
   --prose-ink: var(--n12);
   --accent: var(--a9);
-  --accent-ink: #fff;
 }
 
 /* Large monitors: nudge the whole rem-based system up a little, so a wide
