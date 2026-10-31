@@ -1,6 +1,6 @@
 ---
 name: pr-visuals
-description: Show a front-end change in its pull request, with before/after screenshots or a synced side-by-side video. Use when opening or updating a PR that changes how a page looks or moves.
+description: Show a change in its pull request so Colin can scan it, with before/after screenshots, a synced side-by-side video, or a before/after chart of its numbers. Use when opening or updating a PR that changes how a page looks, moves or performs.
 ---
 
 # Showing a change in its PR
@@ -9,7 +9,7 @@ Colin wants to see a visual change from the PR itself, before he merges, without
 
 ## Decide what to show
 
-Show only what a reader would see change. When the pages look the same (a speed, refactor or test change), say so in one line and add no images: identical before and after pictures tell Colin nothing.
+Show only what a reader would see change. When the pages look the same (a speed, refactor or test change), say so in one line and add no screenshots: identical before and after pictures tell Colin nothing. When the change has numbers instead (time, size, a score), show them as a chart, not a list: he scans a PR, and bars show the gain faster than text. `pnpm chart <data.json> <out.png>` makes a before/after bar chart (the format is at the top of `scripts/chart.ts`); one chart per measure, before and after measured the same way.
 
 That part is yours, per PR: which page and path, which interaction, and which views changed (phone, desktop, or both).
 
