@@ -222,6 +222,16 @@ badges, always with a word, never colour alone. Red in the chrome means a real
 failure (a homelab service down); a result that got worse stays ink. In charts,
 `--gain` and `--loss` appear only on charts that compare runs, with a key.
 
+**The No Grey Pairs Rule.** Two things a chart tells apart never differ by a
+shade of grey alone: side by side, n7 and n8, or a grey and a faded grey, read
+as one colour. When one is what the figure is about, it takes the accent (the
+figure's one purple). When both matter, or the accent is taken, they differ by
+far more than a shade: ink against grey (light on dark, dark on light), filled
+against hollow, solid against hatched, or a label on the mark itself. An
+estimate says so in its label, not in a lighter grey. (Set 3 Nov 2026: Game
+and Agent in two greys on the dissertation speed post were "basically the
+same".)
+
 ## 3. Typography
 
 **Names, headings, the voice:** Sora (`--head`), weights 200–600.
@@ -474,14 +484,14 @@ curve in a component is a bug unless it is a content timing.
   `--pane`, 8px, no border, a short title above, a caption below. Every figure
   draws itself in once when seen (`draw.css`), so there is no prop for it.
   Inside it: `<Cmp>` (before/after bars to scale; `from` makes a step of a
-  waterfall, `ref` a dashed reference line, `cols` the column widths), `<Dots>` (a
+  waterfall, drawn hollow, `ref` a dashed reference line, `cols` the column widths), `<Dots>` (a
   dot plot on one axis, in titled groups), `<Stack>` (one bar split into shares,
   with a legend), `<Split>` + `<Panel title>` (panels side by side),
   `<Morph>` (JSONL text rearranging into columns and back, built on `Frames`, text that moves between stages; on a loop while seen, hover pauses it, a tab stops it), `<Lookup>` (dictionary encoding: values pointing at numbers and the dictionary they look up, each entry's number in its own neutral style on both sides), `<Repeats>` (how Zstandard finds repeats on one column: before with the repeated stretch marked, after with it as one "repeat" chip), `<Boxes>` (a row of
   jobs or steps), `<Runs>` (blocks on a shared time axis: how long each run takes
-  and how many fit), `<Splits>` (bars cut into parts with a key above; a part with
-  no text is a sliver whose time goes after the bar; `est` rows are estimates,
-  drawn lighter), `<Breakdown>` (one row per part of a total: explanation,
+  and how many fit), `<Splits>` (bars cut into parts with a key above, the
+  first part filled `--ink` and the rest grey, since both matter; a part with no text is a sliver whose time goes after the bar; an
+  estimate says so in the row's `note`), `<Breakdown>` (one row per part of a total: explanation,
   bar, time and share) and `<Pts>` (win rate as the bar with the runs' range,
   win rate and points beside it; each change from `prev` in `--gain` green for a real gain,
   `--loss` red for a real drop, faint when the test can't tell it from luck, by the `real` flags; the kept
@@ -492,8 +502,9 @@ curve in a component is a bug unless it is a content timing.
   panel floating in the right margin (only where the margin fits it), the passed
   steps in ink and the current one in the accent, shown from the "Step 1"
   heading until the `until` one.
-  Marks are neutral (`--bar` / n7, estimates lighter, the baseline striped); only
-  the result takes the accent. The chart palette and forms are drawn on the
+  Marks are neutral (`--bar` / n7, the baseline striped); only the result takes
+  the accent, and two neutral things never differ by grey shade alone (the No
+  Grey Pairs Rule). The chart palette and forms are drawn on the
   design page. Aim for at least one figure
   per post so no screen is text alone. Explanations sit next to what they explain
   (a short title above, labels on the marks), not in a paragraph under the figure.
@@ -586,6 +597,9 @@ curve in a component is a bug unless it is a content timing.
 - **Don't** add a second accent hue, use the accent for a surface, heading or
   button, or use gradient text or `background-clip: text`.
 - **Don't** use colour alone for status; a dot or badge always has its word.
+- **Don't** tell two things in a chart apart by two greys; the subject takes
+  the accent, or they are ink against grey, or differ by fill, outline or
+  hatching.
 - **Don't** strike text through, in a figure or a stat. It makes the words hard
   to read; grey them and say what changed in a word instead.
 - **Don't** use cards as the default container, nested cards, or `border-left`/

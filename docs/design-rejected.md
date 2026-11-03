@@ -61,6 +61,7 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | The picker list as cards, or with no subtitles | Plain with short subtitles chosen (Oct 2026). |
 | Two time columns in `top` (since and age) plus blue on every age | One column, in ink (Oct 2026). |
 | A before/after label on every shipped bar, or a legend | Grey above, blue below is obvious enough (Oct 2026). |
+| Two parts of a bar, or two series, in two greys (Splits' Game and Agent in n8 and n7; estimates drawn lighter) | "Basically the same" next to each other (Nov 2026). Both matter, so one is ink and one grey; a subject would take the accent instead. |
 
 ## Colour and chrome
 

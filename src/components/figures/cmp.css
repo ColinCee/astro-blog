@@ -14,6 +14,12 @@
   background: var(--bar);
   border-radius: 1px;
 }
+/* A waterfall step is hollow, so it reads as taken away, not as a second
+   grey next to the totals. */
+.prose .cmp i.step {
+  background: none;
+  box-shadow: inset 0 0 0 1.5px var(--faint);
+}
 .prose .cmp b {
   font-weight: 500;
   color: var(--ink);

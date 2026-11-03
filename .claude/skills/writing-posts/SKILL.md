@@ -41,7 +41,7 @@ Write how he talks in chat and writes himself: casual, conversational British En
 - **In figures, numbers are symbols and digits, not words:** "< $0.01", "~ 200 ms", "1 game", not "under 1¢", "about 200 ms", "a game".
 - **One way to say each number** (1.4×, not also "31% less time"), the same everywhere.
 - **A reduction is a % smaller ("−66%"), never a ×**, which reads as if it got bigger.
-- **Measured data only.** No estimates or demo data when the real thing can be run. If an estimate has to stay, mark it (`est`) so it draws lighter. Get his OK before any GPU run.
+- **Measured data only.** No estimates or demo data when the real thing can be run. If an estimate has to stay, say so in its label (a Splits row's `note`, "~" on the number), never with a lighter grey. Get his OK before any GPU run.
 - **When the real data is private, measure a fake one at full scale.** A few toy rows give sizes and ratios that aren't right. Make a fake dataset the same shape and size with a script (DuckDB for data), commit the script, a small sample and the measuring script, link them, and take every number after the hook from it. The real result stays as the hook. Say it's fake once, without hedging about how good the guess is, and never tune it to hit a number.
 - **Comparisons that could be noise get a significance test** (e.g. Welch's t-test over 5 runs, p < 0.05). Fix the decision rule before looking: a tie keeps the simpler or cheaper option. Never pick or headline the better-looking number after the fact.
 - **Don't overclaim.** Untested gaps say "could be luck", a single run says so, and a caveat on one claim goes in a one-line footnote.

@@ -48,7 +48,9 @@
   color: var(--ink);
   font-weight: 500;
 }
-/* One neutral style per dictionary entry, the same on both sides. */
+/* One neutral style per dictionary entry, the same on both sides: grey,
+   outlined, ink, outlined and grey. Never two greys, which read as
+   one. */
 .prose .lookup .e0 {
   background: var(--bar);
 }
@@ -56,11 +58,12 @@
   box-shadow: inset 0 0 0 1.5px var(--muted);
 }
 .prose .lookup .e2 {
-  background: color-mix(in oklch, var(--bar) 45%, transparent);
+  background: var(--ink);
+  color: var(--bg);
 }
 .prose .lookup .e3 {
   box-shadow: inset 0 0 0 1.5px var(--muted);
-  background: color-mix(in oklch, var(--bar) 45%, transparent);
+  background: var(--bar);
 }
 /* Hover a row to light up every row with the same number, and its entry. */
 .prose .lookup:has([data-e="0"]:hover) [data-e="0"],

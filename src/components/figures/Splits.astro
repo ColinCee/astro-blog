@@ -1,14 +1,13 @@
 ---
 // Bars cut into parts on one scale from 0 to `max`, one row each, with a key
-// above naming the parts (the first takes the accent). A part too small to
+// above naming the parts (the first in ink, the rest grey). A part too small to
 // hold its time has no `text`; the row's `after` text then sits after the
-// bar. `est` rows are estimates, drawn lighter. Styles: splits.css.
+// bar. Say an estimate in the row's `note`. Styles: splits.css.
 interface Row {
   label: string;
   note?: string;
   parts: { value: number; text?: string }[];
   after?: string;
-  est?: boolean;
 }
 interface Props {
   keys: string[];
@@ -34,7 +33,6 @@ const basis = (v: number) => `flex-basis:${((v / max) * 100).toFixed(2)}%`;
           <i
             class:list={{
               "sbar--a": i === 0,
-              "sbar--est": r.est,
               "sbar--thin": !p.text,
             }}
             style={basis(p.value)}
