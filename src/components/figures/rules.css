@@ -1,0 +1,87 @@
+/* Two rules side by side, one switched off by a condition (Rules). The one
+   switched off goes grey rather than struck through: a strike made the words
+   hard to read (Nov 2026). Its answer is a dot and a word in --loss, the
+   other's in --gain. */
+.prose .rules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 0.6rem;
+}
+.prose .rule {
+  display: grid;
+  align-content: start;
+  gap: 0.45rem;
+  padding: 0.85rem 0.95rem 0.9rem;
+  background: var(--well);
+  border-radius: var(--r-ctl);
+}
+.prose .rule p {
+  margin: 0;
+}
+.prose .rule__name {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.2rem 0.8rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.prose .rule__tag {
+  font-size: 0.6875rem;
+  color: var(--faint);
+}
+.prose .rule__gives {
+  font-family: var(--head);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.prose .rule--off .rule__gives {
+  color: var(--faint);
+}
+.prose .rule__test {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.2rem 0.8rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.75rem;
+}
+.prose .rule__test b {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--gain);
+}
+.prose .rule__test b::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.prose .rule--off .rule__test b {
+  color: var(--loss);
+}
+/* Once seen, the answers land, then the rule switched off fades to grey. */
+@media screen and (prefers-reduced-motion: no-preference) {
+  .prose .fig[data-grow].is-in .rule__test b {
+    transition:
+      opacity var(--dur-slow) var(--ease-out),
+      translate var(--dur-slow) var(--ease-out);
+    transition-delay: 0.25s;
+  }
+  .prose .fig[data-grow].is-in .rule--off .rule__gives {
+    transition: color var(--dur-slow) var(--ease) 0.6s;
+  }
+  .prose .fig[data-grow]:not(.is-in) .rule__test b {
+    opacity: 0;
+    translate: 0 4px;
+  }
+  .prose .fig[data-grow]:not(.is-in) .rule--off .rule__gives {
+    color: var(--ink);
+  }
+}

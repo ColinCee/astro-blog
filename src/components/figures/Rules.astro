@@ -1,0 +1,34 @@
+---
+// Two rules side by side and what one condition does to each: the one it
+// switches off goes grey with a red "switched off", the other keeps its ink
+// with a green "still owed". `href` links a rule's name to its source and
+// `claimed` marks the one the post is about. Styles: rules.css.
+interface Rule {
+  name: string;
+  href?: string;
+  gives: string;
+  off: boolean;
+  claimed?: boolean;
+}
+interface Props {
+  test: string;
+  rules: Rule[];
+}
+const { test, rules } = Astro.props;
+---
+
+<div class="rules">
+  {rules.map((r) => (
+    <div class:list={["rule", { "rule--off": r.off }]}>
+      <p class="rule__name">
+        {r.href ? <a href={r.href}>{r.name}</a> : r.name}
+        {r.claimed && <span class="rule__tag">what we claimed</span>}
+      </p>
+      <p class="rule__gives">{r.gives}</p>
+      <p class="rule__test">
+        {test}
+        <b>{r.off ? "switched off" : "still owed"}</b>
+      </p>
+    </div>
+  ))}
+</div>

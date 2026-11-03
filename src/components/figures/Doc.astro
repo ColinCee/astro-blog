@@ -1,0 +1,53 @@
+---
+// An excerpt from a real document with the parts that matter marked, each
+// mark numbered and explained in a note under the page. In `lines`, wrap a
+// marked part in [[ ]]; a line that is just "…" stands for text left out.
+// The marks sweep in, in order, once seen. Styles: doc.css.
+interface Props {
+  lines: string[];
+  notes: string[];
+}
+const { lines, notes } = Astro.props;
+let n = 0;
+// Leading spaces indent the line (a form's columns); the rest is the text.
+const parsed = lines.map((l) => ({
+  indent: l.length - l.trimStart().length,
+  parts: l
+    .trimStart()
+    .split(/\[\[(.+?)\]\]/)
+    .map((text, i) => (i % 2 ? { text, n: ++n } : { text, n: 0 })),
+}));
+---
+
+<div class="doc">
+  <div class="doc__page">
+    {parsed.map(({ indent, parts }, i) =>
+      lines[i] === "…" ? (
+        <p class="doc__skip">…</p>
+      ) : (
+        <p style={indent ? `padding-left:${indent}ch` : undefined}>
+          {parts.map((p) =>
+            p.n ? (
+              <mark style={`--m:${p.n - 1}`}>
+                {p.text}
+                <sup>{p.n}</sup>
+              </mark>
+            ) : (
+              p.text
+            ),
+          )}
+        </p>
+      ),
+    )}
+  </div>
+  {notes.length > 0 && (
+    <div class="doc__notes">
+      {notes.map((t, i) => (
+        <p style={`--m:${i}`}>
+          <span class="doc__n">{i + 1}</span>
+          <span>{t}</span>
+        </p>
+      ))}
+    </div>
+  )}
+</div>

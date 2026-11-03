@@ -455,17 +455,7 @@ curve in a component is a bug unless it is a content timing.
 - Posts render on the shared `Base` shell via `layouts/Post.astro`; the prose styles are `styles/prose.css`. Below `64rem` it is a
   single `--w-prose` column. At `64rem` and up the post sits on `--w-page`, inset by
   `--rail` (`9rem`) plus `--rail-gap` (`3.5rem`), so timeline dates sit in the left
-  margin and plain and timeline posts share one left edge. A plain post with three
-  or more sections lists them in that margin (`.toc`), sticky, level with the body:
-  a `// sections` kicker, then a rail with a numbered dot per section (the
-  timeline's vocabulary in grey: no accent, it is chrome). The rail fills
-  `--muted` as you read, through each section, not jumping between them; read
-  sections are `--muted` with a filled dot, the one being read ink with a ringed
-  dot, the rest `--faint` and hollow; under them the minutes left (the header's
-  read time, scaled by the words still to read). It follows the title in the
-  page, so keyboards and screen readers reach the title first. Where it shows,
-  its rail is the reading progress, so the purple bar along the top of the
-  window is hidden; below 64rem (and on posts without the list) the bar stays. Content carries a `// writing` back-kicker, a Sora 600 title
+  margin and plain and timeline posts share one left edge. Content carries a `// writing` back-kicker, a Sora 600 title
   (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em), and a mono meta line (date · N min read).
 - **Headline stat:** the post's `stat` renders under the title between hairlines,
   its `statLabel` above it in 11px mono `--faint`, the value in Sora 600. A result
@@ -496,7 +486,7 @@ curve in a component is a bug unless it is a content timing.
   win rate and points beside it; each change from `prev` in `--gain` green for a real gain,
   `--loss` red for a real drop, faint when the test can't tell it from luck, by the `real` flags; the kept
   row alone in the accent; `base` stripes the 2018 baseline; one dashed line
-  for holding shoot; a key under the number columns names that line and says green / red is a real change and grey could be luck; there's no colour key, the rows label themselves: the striped row's tag says it's the baseline and the accent row's name is in the accent too (the accent is the post's subject: the final agent in part 2, Jev in part 3); column titles centred, linking the post's footnote on the test). `<Tally items>` is a few headline numbers in a row, each with a small label above, the first in the accent. `<Days then now thenLabel nowLabel>` draws time as one square a day, the `now` days lit in the accent. `<Json value fold>` draws a JSON request or reply like a code block, each string longer than `fold` characters cut to one line with an ellipsis that opens in full on a click. `<Decide tokens choices>` is a timeline (a Gantt chart) of an LLM against a decision model: a column per pass, left to right in time, each pass a bar with its output centred on top, a token for each of the LLM's passes and every choice's probability, stacked, for the decision model's one pass, its pick in the accent. Recordings are `<Clip src label rate hi>` (pixelated, playing only while
+  for holding shoot; a key under the number columns names that line and says green / red is a real change and grey could be luck; there's no colour key, the rows label themselves: the striped row's tag says it's the baseline and the accent row's name is in the accent too (the accent is the post's subject: the final agent in part 2, Jev in part 3); column titles centred, linking the post's footnote on the test). `<Said rows>` is a dispute as a short timeline down a spine, one plain line per turn in the story with the month shown when it changes; rows that are an answer have its word in a column of their own: `no` in `--loss`, `yes` in `--gain`, `no show` grey, `paid` in the accent. Keep it to the beats (about nine); exact dates, who said it and quotes were tried and made it hard to read, as was a two-lane yes/no step chart. `<Rules test rules>` is two rules side by side, the one a condition switches off greyed with a red `switched off`, the other with a green `still owed`, each name linking to its source. `<Doc lines notes>` is an excerpt from a real document with its key parts in an amber highlighter (`--warn9`), each numbered and explained under it. `<Balance steps>` is a running balance as a step line from £0, money out filled red below the line and money back green above it, the days spent below zero counted on it, the lowest point under its step and where it ends in the accent. These four carry status colour as fills and dots because the easyJet post read as monotone (Nov 2026); red and green still only ever mean out/no and back/yes. `<Tally items>` is a few headline numbers in a row, each with a small label above, the first in the accent. `<Days then now thenLabel nowLabel>` draws time as one square a day, the `now` days lit in the accent. `<Json value fold>` draws a JSON request or reply like a code block, each string longer than `fold` characters cut to one line with an ellipsis that opens in full on a click. `<Decide tokens choices>` is a timeline (a Gantt chart) of an LLM against a decision model: a column per pass, left to right in time, each pass a bar with its output centred on top, a token for each of the LLM's passes and every choice's probability, stacked, for the decision model's one pass, its pick in the accent. Recordings are `<Clip src label rate hi>` (pixelated, playing only while
   on screen and never on their own under reduced motion); anything inside a Clip
   is its caption, and several sit side by side in a `<div class="vids">`. A post told as numbered steps can carry `<Recipe steps until>`: a
   panel floating in the right margin (only where the margin fits it), the passed
@@ -536,8 +526,9 @@ curve in a component is a bug unless it is a content timing.
   and read time (prose words only, at 200 a minute; figures do not count). Header, prose, timeline and footer all share one measure, `--measure` (44rem),
   so every block on a post (text, figures, code, tables) has the same left and
   right edge. Wider "breakout" figures and code were tried and rejected (Oct 2026).
-- **Reading progress:** a 2px accent bar fixed to the top of the viewport, hidden
-  from 64rem on posts with the section list, whose rail shows the progress there.
+- **Reading progress:** a 2px accent bar fixed to the top of the viewport. A
+  sticky section list in the left margin was tried and removed (Nov 2026): it
+  pulled the eye off the text.
 - **Post footer:** `older` / `newer` links by publish date, then `all writing`.
 - **Sections:** each `##` (Sora 600) gets a hairline above it so long posts scan as sections.
 - **`.prose`** styles the slotted Markdown: `--prose-ink`, `--prose-size`, line-height
@@ -595,6 +586,8 @@ curve in a component is a bug unless it is a content timing.
 - **Don't** add a second accent hue, use the accent for a surface, heading or
   button, or use gradient text or `background-clip: text`.
 - **Don't** use colour alone for status; a dot or badge always has its word.
+- **Don't** strike text through, in a figure or a stat. It makes the words hard
+  to read; grey them and say what changed in a word instead.
 - **Don't** use cards as the default container, nested cards, or `border-left`/
   `border-right` coloured side-stripes on cards, list items, quotes, callouts, or
   alerts. Depth is tonal.

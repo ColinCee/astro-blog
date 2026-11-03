@@ -1,114 +1,102 @@
 ---
-title: "I Sued easyJet and Won"
-stat: "£127 → £826.61"
-statLabel: "one hearing"
+title: "I sued easyJet and they didn't turn up"
+stat: "−£671.92 → +£154.69"
+statLabel: "out of pocket → net gain"
 pubDate: "Aug 24 2026"
+updatedDate: "Nov 02 2026"
 ---
-Last December easyJet moved our flight to Berlin forward by about 20 hours, and then wouldn't put us on a different one. So my brother and I ended up booking our own replacement flights, which cost us £544.92.
+Last December easyJet moved our flight to Berlin a whole day earlier and wouldn't put us on another airline, so my brother and I had to book KLM ourselves for £544.92. Getting that back took eight months, a free complaints service that sided with easyJet, and £127 to take them to court, where nobody from easyJet turned up. In the end they paid £826.61, so we came out £154.69 up, but we were out of pocket for 239 days first:
 
-Getting that money back took eight months. There's a free complaints service that the regulator approves and that you're supposed to try before anything else. We tried it, and it decided we weren't owed a penny.
+<Fig title="Our money on top of the original easyJet tickets, Dec 2025 → Aug 2026">
+  <Balance
+    start="2025-12-01"
+    end="2026-08-31"
+    under="out of pocket"
+    steps={[
+      { date: "2025-12-24", change: -544.92, label: "KLM flights" },
+      { date: "2026-04-12", change: -127, label: "court fee" },
+      { date: "2026-08-20", change: 826.61, label: "easyJet pays" },
+    ]}
+    ticks={[
+      { date: "2025-12-01", label: "Dec" },
+      { date: "2026-02-01", label: "Feb" },
+      { date: "2026-04-01", label: "Apr" },
+      { date: "2026-06-01", label: "Jun" },
+      { date: "2026-08-01", label: "Aug" },
+    ]}
+  />
+</Fig>
 
-So I paid £127 and took easyJet to court instead.
+This is how it went:
 
-## 16 December: they move the flight
+<Fig title="What happened">
+  <Said
+    rows={[
+      { date: "Dec", year: "2025", text: "easyJet moves our flight to Berlin a day earlier" },
+      { date: "Dec", said: "no", text: "easyJet won't get us there on our original day" },
+      { date: "Dec", text: "We book KLM ourselves for £544.92" },
+      { date: "Jan", year: "2026", said: "yes", text: "easyJet says in writing, twice, that we can claim it back" },
+      { date: "Apr", said: "no", text: "The free complaints service sides with easyJet" },
+      { date: "Apr", text: "We take easyJet to court for £127" },
+      { date: "Jun", said: "no", text: "easyJet's defence denies the claim" },
+      { date: "Aug", said: "absent", text: "Nobody from easyJet turns up to the hearing" },
+      { date: "Aug", said: "paid", text: "easyJet pays £826.61" },
+    ]}
+  />
+</Fig>
 
-We'd booked Glasgow to Berlin, flying out on 27 May and back on the 31st. In November easyJet moved us to Edinburgh. It was a bit annoying, but the dates were the same so we went with it.
+## Why was moving the flight a big deal?
 
-Then on 16 December they moved the outbound flight to 26 May. This wasn't a delay. They'd moved the whole flight about 20 hours earlier.
+An EU court has said a flight brought forward by more than an hour [counts as a cancellation](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:62020CJ0146), and ours moved by 20 hours. Once a flight's cancelled, [Article 8 of UK261](https://www.legislation.gov.uk/eur/2004/261/article/8) says the airline has to either refund you or get you there, and it's you that picks. We picked getting there on the day we'd booked, which is why we asked for other airlines' flights and, when easyJet didn't book any, booked KLM ourselves.
 
-## 17 December: we ask for another one
+## Why did the free service say no?
 
-The rule that covers this is UK261, the air passenger rights regulation. The part that mattered for us is **Article 8**. It says that if your flight is cancelled, the airline has to either get you where you're going or give you your money back, and it's the passenger who picks which.
+ADR is a free complaints service, and for easyJet it's [AviationADR](https://www.aviationadr.org.uk/), which says it's approved by the CAA. They sided with easyJet because the change was made "more than 14 days prior to departure". The 14-day rule is real, but it only switches off Article 7, the cash compensation, which we never asked for.
 
-So the next day we wrote to easyJet asking to be re-routed on the 27th, and pointed them at two Lufthansa flights that would have worked.
+<Fig title="What 14 days' notice switches off">
+  <Rules
+    test="14+ days' notice"
+    rules={[
+      { name: "Article 7", href: "https://www.legislation.gov.uk/eur/2004/261/article/7", gives: "£220 to £520 cash compensation", off: true },
+      { name: "Article 8", href: "https://www.legislation.gov.uk/eur/2004/261/article/8", gives: "a refund, or get you there, your pick", off: false, claimed: true },
+    ]}
+  />
+</Fig>
 
-They came back offering a different easyJet flight, a voucher, or a refund. None of those got us there on the 27th.
+When I complained they said decisions are final, and didn't answer any of the problems I'd pointed out with it. But an ADR decision only binds you if you accept it, so we didn't, and took easyJet to court instead.
 
-We tried again. This time we named a specific KLM itinerary that cost £537.72 and gave them until 5pm on 23 December to book it.
+## What's it like taking an airline to court?
 
-We never heard back.
+In Scotland it's [Simple Procedure](https://www.scotcourts.gov.uk/taking-action/simple-procedure/civil-online). You fill in a form online, pay a fee, £127 for us, and a sheriff hears the case, no solicitor needed. England and Wales have the small claims track, which is similar.
 
-## 24 December: we book it ourselves
+easyJet sent in a defence denying the claim, and to be honest it was a bit of a mess:
 
-So on Christmas Eve we booked the KLM flights ourselves. By then the price had gone up a bit, to £544.92. We sent easyJet the invoice the same day.
+<Fig title="easyJet's defence, 8 June 2026">
+  <Doc
+    lines={[
+      "GLASGOW SHERIFF COURT",
+      "[[EASY JET RESPONDENT COMPANY LIMITED]]   Respondent",
+      "…",
+      "7. The Particulars of Claim set out a claim to compensation on behalf of [[another person who are not parties to these proceedings]].",
+      "…",
+      "To the [[District Judge]]",
+    ]}
+    notes={[
+      "Not their name.",
+      "My brother, who's the second claimant on the claim form.",
+      "That's England. In Scotland it's a sheriff.",
+    ]}
+  />
+</Fig>
 
-## 7 January: easyJet says we can claim it
+It also never mentions the January emails. I still wrote up answers to the main points, and we turned up to the hearing with a folder of printed emails. Nobody from easyJet came, and the sheriff's order, the decree, just says "Alt: Absent".
 
-A couple of weeks later easyJet emailed us this:
+The £826.61 is the £544.92 back, £27.59 of interest and £254.10 of expenses. Only £127 of the expenses is the court fee, and the other £127.10 is for our own time, which a court can award when you represent yourself. That and the interest are the £154.69 we're up. easyJet kept what we'd paid for the original tickets, since taking a refund would've stopped us claiming, but that's what the trip was always going to cost.
 
-> "As there are no flights available in 24 hours... you are eligible to claim reimbursement of alternate transport."
-
-So they'd told us in writing that we could claim. Nine days later they said it again in another email. Those two emails ended up being more useful than any argument I came up with myself.
-
-## 9 April: the free service says no
-
-You're expected to try ADR before going to court. It's a free complaints service approved by the CAA, and the one for our case was AviationADR. We sent them everything we had.
-
-They sided with easyJet, and the whole decision rested on this one sentence:
-
-> "The Airline has confirmed the schedule change was made more than 14 days prior to departure, therefore, no entitlement is due under the Regulation."
-
-Now, the 14-day rule is a real thing. If an airline gives you more than 14 days' notice, you don't get the *fixed cash compensation* under Article 7, which is the £220 to £520 payout. But we never asked for that. We were claiming under Article 8, and Article 8 doesn't have a 14-day exemption.
-
-| | Article 7 | Article 8 |
-| --- | --- | --- |
-| What you get | Fixed cash compensation, £220 to £520 | Re-routing or your money back |
-| 14-day notice exemption | Yes | No |
-| What we claimed | No | **Yes** |
-
-The annoying part is that the decision explains that difference correctly in its own summary of the law on page two. Then it applies the exemption to our whole claim anyway.
-
-I complained. They told me adjudicator decisions are final and that they wouldn't look at it again. They didn't respond to a single point I'd made.
-
-That was about when I stopped asking nicely.
-
-## 12 April: I fill in a £127 form
-
-Three days after the decision, I raised a Simple Procedure claim. That's how you bring a small claim in Scotland. You fill in a form, pay a fee, and a sheriff hears the case. You don't need a solicitor.
-
-The reason I could do this at all is that **an ADR decision only binds you if you accept it**, and we hadn't accepted ours. So going to court only cost us the £127 fee.
-
-## 8 June: easyJet files a defence
-
-easyJet sent in their defence the day before the deadline. They denied liability for everything.
-
-It was a bit of a mess, to be honest. It named the wrong court. It was addressed to an English "District Judge", and we're in Scotland. It called the company "EasyJet Respondent Company Limited". It only acknowledged one of the two of us as claimants. And it didn't mention the January emails at all, the ones where easyJet told us we could claim exactly what we were now claiming.
-
-I still spent weeks preparing an answer to every argument in it.
-
-## 12 August: nobody turns up
-
-On the day, we walked into Paisley Sheriff Court with a folder of printed emails and a page of answers I'd rehearsed.
-
-The clerk called our case, and nobody from easyJet was there.
-
-The sheriff granted "decree as craved", which basically means we got everything we asked for:
-
-| Item | Amount |
-| --- | ---: |
-| The flights we had to book | £544.92 |
-| Interest at 8%, from the day we booked them | £27.59 |
-| Expenses | £254.10 |
-| **Total** | **£826.61** |
-
-## 20 August: they pay
-
-easyJet paid eight days later. They paid the full amount, didn't say a word about it, and were six days inside the deadline the court had set.
-
-## What I'd tell you
-
-1. **Ask for what you want in writing, and give them a deadline.** Don't just ask for help. Name the actual flight you want, mention Article 8, and give a date and time to reply by. That email is what you'll end up relying on later.
-2. **Keep every reply from customer service.** Airlines will say quite generous things in a support email that they'd never put in a court document. You can use those emails as evidence.
-3. **Article 8 and Article 7 are different things.** If someone tells you 14 days' notice kills your claim, they're talking about the cash compensation. Re-routing and reimbursement aren't affected by it.
-4. **Don't accept an ADR decision if you think it's wrong.** Once you accept it, that's it. If you don't accept, it costs you nothing and you can still go to court.
-5. **You might get back more than you spent.** We paid £127 and were awarded <b class="hl">£254.10</b> in expenses. That's because a court can award you a reasonable amount for your own time if you represent yourself.
+Normally expenses on a claim this small are capped at £150, but [the cap doesn't apply](https://www.legislation.gov.uk/asp/2014/18/section/81) when the other side files a defence and then doesn't follow it through.
 
 ## Was it worth it?
 
-I spent eight months of evenings chasing £544.92. If you work that out as an hourly rate, definitely not.
+Filing a defence costs an airline almost nothing, and turning up to court over £544 doesn't make sense for them. I can't say whether that's deliberate, but the effect is that plenty of people would give up the moment a defence lands. As an hourly rate it definitely wasn't worth it, but it was very satisfying.
 
-I'll admit it was very satisfying though. One of Europe's biggest airlines told me no, so I went and read the regulation properly, filled in a £127 form, and a sheriff told them yes.
-
-What still bugs me is that the free service, the one that's meant to help passengers, got it wrong and then refused to look again. The one I had to pay for sorted it in a single hearing that easyJet didn't even turn up to.
-
-I've since sent the whole file to the CAA and to the ADR regulator. I've already got my money, so it isn't about that. I just don't want the next person to read "no entitlement is due under the Regulation" and assume it's true.
+I've since sent the decision, the decree and the complaints service's reply to the CAA and to CTSI, which I believe took over ADR oversight in April, so the next person doesn't read "no entitlement is due under the Regulation" and believe it.

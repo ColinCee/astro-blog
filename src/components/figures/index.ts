@@ -1,11 +1,13 @@
 // The figure components, handed to every post (src/pages/blog/[...slug].astro)
 // so a post uses them by name without importing them.
+export { default as Balance } from "./Balance.astro";
 export { default as Boxes } from "./Boxes.astro";
 export { default as Breakdown } from "./Breakdown.astro";
 export { default as Clip } from "./Clip.astro";
 export { default as Cmp } from "./Cmp.astro";
 export { default as Days } from "./Days.astro";
 export { default as Decide } from "./Decide.astro";
+export { default as Doc } from "./Doc.astro";
 export { default as Dots } from "./Dots.astro";
 export { default as Fig } from "./Fig.astro";
 export { default as Json } from "./Json.astro";
@@ -18,7 +20,9 @@ export { default as Pts } from "./Pts.astro";
 export { default as QView } from "./QView.astro";
 export { default as Recipe } from "./Recipe.astro";
 export { default as Repeats } from "./Repeats.astro";
+export { default as Rules } from "./Rules.astro";
 export { default as Runs } from "./Runs.astro";
+export { default as Said } from "./Said.astro";
 export { default as Split } from "./Split.astro";
 export { default as Splits } from "./Splits.astro";
 export { default as Stack } from "./Stack.astro";
