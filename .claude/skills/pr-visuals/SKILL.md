@@ -13,6 +13,8 @@ Show only what a reader would see change. When the pages look the same (a speed,
 
 That part is yours, per PR: which page and path, which interaction, and which views changed (phone, desktop, or both).
 
+**One comparison is usually enough.** Pick the single view that shows the change best and leave the rest out; add a second only when the change can't be seen in the first. Four before/afters on one PR (desktop, phone, a video and a second page) was "way too many" (Nov 2026).
+
 - **A still change** (layout, colour, copy): screenshots, before and after.
 - **Motion** (animation, scroll behaviour, loading): one side-by-side MP4 that plays in sync, plus a still of the moment that shows the difference.
 - Never GIFs (laggy, blurry) and never two separate clips (they loop out of step).

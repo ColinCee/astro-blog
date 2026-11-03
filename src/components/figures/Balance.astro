@@ -68,7 +68,14 @@ const money = (v: number) =>
 <div
   class="bal"
   role="img"
-  aria-label={pts.map((p) => `${p.label}: ${money(p.change)}`).join(", ")}
+  aria-label={[
+    ...pts.map((p) => `${p.label}: ${money(p.change)}`),
+    days ? `${days} days ${under}` : "",
+    `${money(lo)} at the lowest`,
+    `${money(bal)} at the end`,
+  ]
+    .filter(Boolean)
+    .join(", ")}
 >
   <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
     <path class="bal__out" d={area((v) => v < 0)} />

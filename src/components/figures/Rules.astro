@@ -1,7 +1,7 @@
 ---
 // Two rules side by side and what one condition does to each: the one it
 // switches off goes grey with a red "switched off", the other keeps its ink
-// with a green "still applies". `href` links a rule's name to its source and
+// with a green "still owed". `href` links a rule's name to its source and
 // `claimed` marks the one the post is about. Styles: rules.css.
 interface Rule {
   name: string;
@@ -27,7 +27,7 @@ const { test, rules } = Astro.props;
       <p class="rule__gives">{r.gives}</p>
       <p class="rule__test">
         {test}
-        <b>{r.off ? "switched off" : "still applies"}</b>
+        <b>{r.off ? "switched off" : "still owed"}</b>
       </p>
     </div>
   ))}
