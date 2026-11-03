@@ -1,0 +1,106 @@
+---
+// A running balance over time, as a step line from zero: each step a payment
+// out (below the line, red) or back (above it, green), labelled on the line.
+// The lowest point and where it ends are added under their steps' labels, and
+// the stretch spent below zero is counted in days and named by `under`. The
+// shapes are one SVG stretched to the box; the labels are HTML on top, so
+// they stay at text size on a phone. Draws left to right once seen.
+// Styles: balance.css.
+interface Step {
+  date: string; // ISO day
+  change: number; // + money back, − money out
+  label: string;
+}
+interface Props {
+  start: string;
+  end: string;
+  steps: Step[];
+  under: string;
+  ticks: { date: string; label: string }[];
+}
+const { start, end, steps, under, ticks } = Astro.props;
+
+const DAY = 86_400_000;
+const t0 = Date.parse(start);
+const span = (Date.parse(end) - t0) / DAY;
+const x = (d: string) => ((Date.parse(d) - t0) / DAY / span) * 100;
+
+let bal = 0;
+const pts = steps.map((s) => {
+  const from = bal;
+  bal = Math.round((bal + s.change) * 100) / 100;
+  return { ...s, x: x(s.date), from, to: bal };
+});
+const lo = Math.min(0, ...pts.map((p) => p.to));
+const hi = Math.max(0, ...pts.map((p) => p.to));
+// a little room above and below the extremes
+const top = hi + (hi - lo) * 0.5;
+const bot = lo - (hi - lo) * 0.06;
+const y = (v: number) => ((top - v) / (top - bot)) * 100;
+
+// the line: flat at zero, then a step at each payment, then on to the end
+let line = `M0 ${y(0)}`;
+for (const p of pts) line += ` H${p.x} V${y(p.to)}`;
+line += " H100";
+// the areas between the line and zero, split where it crosses
+const area = (keep: (v: number) => boolean) => {
+  let d = "";
+  pts.forEach((p, i) => {
+    if (!keep(p.to)) return;
+    const x2 = pts[i + 1]?.x ?? 100;
+    d += `M${p.x} ${y(0)} V${y(p.to)} H${x2} V${y(0)} Z `;
+  });
+  return d;
+};
+const firstUnder = pts.find((p) => p.to < 0);
+const backAbove =
+  firstUnder && pts.find((p) => p.x > firstUnder.x && p.to >= 0);
+const days =
+  firstUnder && backAbove
+    ? Math.round(
+        (Date.parse(backAbove.date) - Date.parse(firstUnder.date)) / DAY,
+      )
+    : 0;
+const money = (v: number) =>
+  `${v < 0 ? "−" : "+"}£${Number.isInteger(v) ? Math.abs(v) : Math.abs(v).toFixed(2)}`;
+---
+
+<div
+  class="bal"
+  role="img"
+  aria-label={pts.map((p) => `${p.label}: ${money(p.change)}`).join(", ")}
+>
+  <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    <path class="bal__out" d={area((v) => v < 0)} />
+    <path class="bal__in" d={area((v) => v > 0)} />
+    <line class="bal__zero" x1="0" x2="100" y1={y(0)} y2={y(0)} />
+    <path class="bal__ln" d={line} />
+  </svg>
+  <span class="bal__k" style={`top:${y(0)}%`}>£0</span>
+  {days > 0 && firstUnder && backAbove && (
+    <span
+      class="bal__days"
+      style={`left:${(firstUnder.x + backAbove.x) / 2}%;top:calc(${y(0)}% + 1.4rem);--d:${(firstUnder.x + backAbove.x) / 200}`}
+    >
+      {days} days {under}
+    </span>
+  )}
+  {pts.map((p, i) => (
+    <span
+      class:list={["bal__lbl", p.change < 0 ? "bal__lbl--out" : "bal__lbl--in"]}
+      style={`left:${p.x}%;top:${y(p.to)}%;--d:${p.x / 100}`}
+    >
+      <b>{money(p.change)}</b>
+      {p.label}
+      {i > 0 && p.to === lo && p.change < 0 && (
+        <small>{money(lo)} in all</small>
+      )}
+      {i === pts.length - 1 && p.to > 0 && (
+        <small class="bal__net">{money(p.to)} overall</small>
+      )}
+    </span>
+  ))}
+  <div class="bal__ticks" aria-hidden="true">
+    {ticks.map((t) => <span style={`left:${x(t.date)}%`}>{t.label}</span>)}
+  </div>
+</div>

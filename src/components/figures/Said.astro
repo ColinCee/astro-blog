@@ -1,0 +1,36 @@
+---
+// A dispute as a short timeline down a spine, one line per turn in the story:
+// the month (shown when it changes), a dot, the answer if the row is one, and
+// what happened. The answers sit in their own column in the status colour they
+// stand for (no, yes, no show, paid), so the back and forth reads straight
+// down it. A `year` on a row puts that year above it. Rows land one after
+// another once seen. Styles: said.css.
+interface Row {
+  date: string;
+  year?: string;
+  said?: "no" | "yes" | "absent" | "paid";
+  text: string;
+}
+interface Props {
+  rows: Row[];
+}
+const { rows } = Astro.props;
+const word = { no: "no", yes: "yes", absent: "no show", paid: "paid" };
+---
+
+<ol class="said">
+  {rows.map((r, i) => (
+    <li
+      class:list={["said__row", r.said && `said__row--${r.said}`]}
+      style={`--i:${i}`}
+    >
+      <time>
+        {r.year && <span class="said__yr">{r.year}</span>}
+        {(r.year || r.date !== rows[i - 1]?.date) && r.date}
+      </time>
+      <span class="said__dot" aria-hidden="true" />
+      <b class="said__ans">{r.said && word[r.said]}</b>
+      <span class="said__what">{r.text}</span>
+    </li>
+  ))}
+</ol>

@@ -60,6 +60,14 @@ for (const file of readdirSync(blog).filter((f) => /\.mdx?$/.test(f))) {
     }
   }, post);
   await page.evaluate(() => document.fonts.ready);
+  // A long stat ("−£671.92 → +£154.69") steps down until it fits on one line
+  await page.evaluate(() => {
+    const value = document.querySelector("[data-value]") as HTMLElement;
+    for (let px = 104; value.scrollWidth > value.clientWidth && px > 56; ) {
+      px -= 4;
+      value.style.fontSize = `${px}px`;
+    }
+  });
   await page.screenshot({ path: here(`../../public/og/${slug}.png`) });
   console.log(`wrote public/og/${slug}.png`);
 }

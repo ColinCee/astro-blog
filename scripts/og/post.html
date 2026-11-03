@@ -82,14 +82,19 @@
         line-height: 1;
         letter-spacing: -0.04em;
         font-variant-numeric: tabular-nums;
+        /* one line; render.ts shrinks a long stat to fit */
+        white-space: nowrap;
       }
       /* The old value grey, the new one the one thing in the accent */
       .value .was {
         color: var(--faint);
         font-weight: 400;
       }
+      /* lifted from x-height to the middle of the digits */
       .value .to {
+        display: inline-block;
         margin: 0 0.25em;
+        transform: translateY(-0.1em);
         color: var(--faint);
         font-weight: 400;
       }

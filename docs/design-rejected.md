@@ -74,6 +74,7 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | Pill-shaped buttons and 16–20px corners | "Overly rounded"; 8px chosen. |
 | Four-hue palette, stronger spacing scale, wider breakout figures | See DESIGN.md, where each is noted at the rule it informed. |
 | Striking through the old value of a stat ("~~428 s~~ → 23 s") | The arrow already says it changed; the strike read as an error. Old value grey instead. |
+| Striking through anything, e.g. the rule a condition switches off (easyJet post) | "Really hard to read" (Nov 2026). Never strike text through: grey it and say what happened in a word ("switched off"). |
 | Bold punchlines in the one-liners (Sora 400 in a 200 line) | Heavier Sora reads thick next to the thin voice; the punchline is violet at 300 instead, one violet thing per line. |
 | Button hover that turns only the icon violet | The violet icon read dimmer than the white one at rest ("washed out"); a violet-tinted fill with a bright icon instead. |
 | Violet (hue 296) as the accent | Lightened enough to read in dark, it turned into a muted lavender ("washed out"); at full strength it was "too vivid". Purple 308 keeps its colour in both themes (31 Oct 2026). |
@@ -84,3 +85,9 @@ One line per idea, so nobody proposes it again. Add to it in the same change tha
 | The prompt mark (`>_`) as the favicon; a cc monogram, 張, a caret or c/ instead | The prompt read as code, not as the site, and its thin strokes blurred at 16px. Before → after won: the site's stat as a mark (31 Oct 2026; sheet in comps/logo-ideas.html). |
 | A purple result on every row of the home terminal; two purple things in one project figure | The terminal outshouted the page; one purple per figure (the result keeps it) (31 Oct 2026). |
 | The headline (name, page title, blog rows) rising in without the fade, so LCP counts it at first paint | Less visually interesting; the fade is design, not load time. The speed tests measure with motion off instead (31 Oct 2026). |
+
+## Posts
+
+| Idea | Why it was dropped |
+|---|---|
+| A sticky section list in the left margin, a numbered dot per section filling as you read | "Kinda distracting"; removed from every post (Nov 2026). The reading bar along the top is enough. |

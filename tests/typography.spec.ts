@@ -57,10 +57,6 @@ for (const vp of viewports) {
         .evaluate(async (p) => {
           const cs = getComputedStyle(p);
           const size = parseFloat(cs.fontSize);
-          const ctx = document.createElement("canvas").getContext("2d")!;
-          // At 100px and scaled down: at a whole-pixel body size, Linux hints
-          // glyph widths, so the same page measured about 1% wider there.
-          ctx.font = `${cs.fontWeight} 100px ${cs.fontFamily}`;
           // Measure the real font, not its fallback: load it first (fonts.ready
           // can resolve before the fetch starts). Only the first family: the
           // sized fallback is local Arial, which Linux lacks, and fails the load.
@@ -68,13 +64,28 @@ for (const vp of viewports) {
           await document.fonts.load(
             `${cs.fontWeight} ${cs.fontSize} ${family}`,
           );
-          const text = p.textContent ?? "";
-          const charWidth =
-            ((ctx.measureText(text).width / text.length) * size) / 100;
+          // Characters on the first line as rendered, counted until one sits
+          // below it. An estimate from average glyph width moved with the
+          // wording of the paragraph, not the width of the column.
+          const range = document.createRange();
+          const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
+          let firstTop: number | undefined;
+          let chars = 0;
+          lines: for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+            for (let i = 0; i < n.textContent!.length; i++) {
+              range.setStart(n, i);
+              range.setEnd(n, i + 1);
+              const r = range.getBoundingClientRect();
+              if (!r.height) continue;
+              firstTop ??= r.top;
+              if (r.top > firstTop + size / 2) break lines;
+              chars++;
+            }
+          }
           return {
             size,
             lineHeight: parseFloat(cs.lineHeight) / size,
-            charsPerLine: p.getBoundingClientRect().width / charWidth,
+            charsPerLine: chars,
           };
         });
       expect(m.size).toBeGreaterThanOrEqual(BODY_PX[0]);

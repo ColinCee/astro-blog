@@ -1,0 +1,122 @@
+/* A running balance as a step line from zero (Balance): money out below the
+   line in the loss red, money back above it in the gain green. */
+.prose .bal {
+  position: relative;
+  height: 15rem;
+  margin: 0.4rem 2.2rem 1.6rem 1.6rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+.prose .bal svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.prose .bal__out {
+  fill: color-mix(in oklch, var(--danger9) 26%, transparent);
+}
+.prose .bal__in {
+  fill: color-mix(in oklch, var(--ok9) 34%, transparent);
+}
+.prose .bal__zero {
+  stroke: var(--faint);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  vector-effect: non-scaling-stroke;
+}
+.prose .bal__ln {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.prose .bal__k {
+  position: absolute;
+  left: -1.6rem;
+  translate: 0 -50%;
+  font-size: 0.6875rem;
+  color: var(--faint);
+}
+.prose .bal__lbl,
+.prose .bal__days {
+  position: absolute;
+  display: grid;
+  white-space: nowrap;
+  color: var(--muted);
+}
+.prose .bal__lbl b {
+  font-size: 0.8rem;
+}
+.prose .bal__lbl small {
+  font-size: 0.6875rem;
+  color: var(--faint);
+}
+/* where it ends is the result */
+.prose .bal__lbl small.bal__net {
+  font-size: 0.8rem;
+  color: var(--accent-text);
+}
+/* money out: just right of its step, above the line */
+.prose .bal__lbl--out {
+  translate: 0.45rem calc(-100% - 0.3rem);
+}
+.prose .bal__lbl--out b {
+  color: var(--loss);
+}
+/* money back: left of its step, above the top of it */
+.prose .bal__lbl--in {
+  translate: calc(-100% - 0.5rem) calc(-100% + 0.2rem);
+  text-align: right;
+}
+.prose .bal__lbl--in b {
+  color: var(--gain);
+}
+.prose .bal__days {
+  translate: -50% 0;
+  color: var(--loss);
+  font-size: 0.8rem;
+}
+.prose .bal__ticks {
+  position: absolute;
+  inset: 100% 0 auto;
+  height: 1.4rem;
+}
+.prose .bal__ticks span {
+  position: absolute;
+  top: 0.4rem;
+  translate: -50% 0;
+  font-size: 0.6875rem;
+  color: var(--faint);
+}
+@media (max-width: 30rem) {
+  .prose .bal {
+    height: 13rem;
+    margin-right: 0.4rem;
+  }
+}
+/* Drawn once when seen: the drawing uncovers left to right over --bal-t (a
+   content timing, slow enough to feel the months), and each label lands as
+   the line reaches it (--d, its place along the axis). A dash-drawn line
+   breaks with non-scaling strokes, so the whole SVG is clipped instead. */
+@media screen and (prefers-reduced-motion: no-preference) {
+  .prose .fig[data-grow] .bal {
+    --bal-t: 2.4s;
+  }
+  .prose .fig[data-grow].is-in .bal svg {
+    clip-path: inset(-2px);
+    transition: clip-path var(--bal-t) linear;
+  }
+  .prose .fig[data-grow]:not(.is-in) .bal svg {
+    clip-path: inset(-2px 100% -2px -2px);
+  }
+  .prose .fig[data-grow].is-in :is(.bal__lbl, .bal__days) {
+    transition: opacity var(--dur-slow) var(--ease-out);
+    transition-delay: calc(var(--d) * var(--bal-t) + 0.15s);
+  }
+  .prose .fig[data-grow]:not(.is-in) :is(.bal__lbl, .bal__days) {
+    opacity: 0;
+  }
+}
