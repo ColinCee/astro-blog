@@ -11,8 +11,14 @@
   flex: var(--w) 0 0;
   background: var(--bar);
 }
+/* A second neutral part is hatched, not a second grey: two greys side by
+   side read as one. */
 .prose .stack span:nth-child(2) {
-  background: color-mix(in oklch, var(--bar) 60%, var(--pane));
+  background: repeating-linear-gradient(
+    135deg,
+    var(--bar) 0 3px,
+    transparent 3px 6px
+  );
 }
 /* span.is-data ties with :nth-child(2) and wins by coming later, so the result
    keeps the accent whatever position it is in. */
@@ -41,8 +47,12 @@
   background: var(--bar);
 }
 .prose .legend li:nth-child(2)::before {
-  background: color-mix(in oklch, var(--bar) 60%, var(--pane));
-  border: 1px solid var(--line);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--bar) 0 2px,
+    transparent 2px 4px
+  );
+  border: 1px solid var(--bar);
 }
 .prose .legend li.is-data::before {
   background: var(--accent);
