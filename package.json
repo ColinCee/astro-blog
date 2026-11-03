@@ -19,7 +19,7 @@
     "astro": "astro",
     "dev": "astro dev",
     "build": "astro build",
-    "check": "pnpm typecheck && biome check . && astro build && wrangler deploy --dry-run && playwright test && playwright test -c playwright.speed.config.ts",
+    "check": "pnpm typecheck && biome ci . && astro build && wrangler deploy --dry-run && playwright test && playwright test -c playwright.speed.config.ts",
     "format": "biome check --write .",
     "test": "playwright test",
     "speed": "astro build && playwright test -c playwright.speed.config.ts",
