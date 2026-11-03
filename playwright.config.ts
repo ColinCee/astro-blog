@@ -2,6 +2,9 @@ import { defineConfig } from "@playwright/test";
 
 // The tests start their own dev server, on PORT or 4380, so they never test a
 // server another checkout left running on Astro's default 4321.
+// --ignore-lock keeps the server in the foreground: when Astro sees an AI
+// agent it otherwise starts it in the background and exits, which Playwright
+// reports as "exited early".
 const port = Number(process.env.PORT ?? 4380);
 
 export default defineConfig({
@@ -12,7 +15,7 @@ export default defineConfig({
   reporter: "list",
   use: { baseURL: `http://localhost:${port}` },
   webServer: {
-    command: `pnpm astro dev --port ${port}`,
+    command: `pnpm astro dev --port ${port} --ignore-lock`,
     url: `http://localhost:${port}`,
     reuseExistingServer: false,
     timeout: 120_000,
