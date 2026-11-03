@@ -16,6 +16,8 @@ Colin is a visual reader who skims. A post is one story, results first, in his o
 - **Gauge depth.** Ask him (a few options) how much his readers already know about the domain before deciding how much background to give. Define jargon on first use, as a link or a one-line list item.
 - **Title short and catchy, and it says the result** ("CI faster than GitHub's"). The `stat` is the result and `statLabel` says what it measures, and that's all the frontmatter says about it: no subtitle. Use the same words on the card, the index and the embed.
 - **An overall limitation gets a line at the end** when the comparison isn't fully like for like, not a section.
+- **The headline number covers the whole story, and its chart sits at the top.** Count what the reader actually lost and gained (net of what they would have paid anyway), not one side of it; ask him which figure he means.
+- **Each timeline row makes sense alone and is one turn of the story**, in months not exact dates, with no code or number that needs context. Too detailed is as bad as too thin.
 - **Draft the content high level first**, then the figures, then the wording.
 - **When he asks for versions, make them distinct** in opening, structure, figures and depth, on the same facts.
 
@@ -53,6 +55,7 @@ Show, don't ask: build the change or two or three distinct variations, put them 
 - **Pick the form by the job.** Bars drawn to scale for A vs B. A step chart for sequential improvements. A dot plot for comparing options. A bridge chart for where time goes. A grid of squares for time at a glance. Trees or arrows for structure. Never plain boxes with text in them, and skip 3D or click-to-reveal unless it explains better than a still.
 - **A post in steps shows each step the same way.** Each step's figure ends with the same whole-file before → after bars, on one scale, and the closing step chart follows the post's order from the baseline, with nothing else mixed in.
 - **A mechanism is drawn on a few real rows; its sizes are the whole file's.** Animate how it works when that explains more than a still (text that rearranges itself, looping slowly: a quick move, a hold of about 7 s, hover or focus pausing it, a tab stopping it).
+- **No strikethrough.** It is hard to read; grey the text and label it ("switched off"). A named source, article or law is a link.
 - **Colour links what belongs together.** Matching neutral styles tie a value to its dictionary entry; the accent everywhere ties nothing.
 - **Chart basics, every time.**
   - A short title above.
