@@ -55,7 +55,7 @@ Show, don't ask: build the change or two or three distinct variations, put them 
 - **Pick the form by the job.** Bars drawn to scale for A vs B. A step chart for sequential improvements. A dot plot for comparing options. A bridge chart for where time goes. A grid of squares for time at a glance. Trees or arrows for structure. Never plain boxes with text in them, and skip 3D or click-to-reveal unless it explains better than a still.
 - **A post in steps shows each step the same way.** Each step's figure ends with the same whole-file before → after bars, on one scale, and the closing step chart follows the post's order from the baseline, with nothing else mixed in.
 - **A mechanism is drawn on a few real rows; its sizes are the whole file's.** Animate how it works when that explains more than a still (text that rearranges itself, looping slowly: a quick move, a hold of about 7 s, hover or focus pausing it, a tab stopping it).
-- **No strikethrough.** It is hard to read; grey the text and label it ("switched off"). A named source, article or law is a link.
+- **No strikethrough.** It is hard to read; grey the text and label it ("switched off"). Name a cited article or law as a link.
 - **Colour links what belongs together.** Matching neutral styles tie a value to its dictionary entry; the accent everywhere ties nothing.
 - **Chart basics, every time.**
   - A short title above.
