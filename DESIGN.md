@@ -227,10 +227,10 @@ shade of grey alone: side by side, n7 and n8, or a grey and a faded grey, read
 as one colour. When one is what the figure is about, it takes the accent (the
 figure's one purple). When both matter, or the accent is taken, they differ by
 far more than a shade: ink against grey (light on dark, dark on light), filled
-against outlined or dashed, solid against hatched, or a label on the mark
-itself. An estimate says so in its label, not
-in a lighter grey. (Set 3 Nov 2026: Game and Agent in two greys on the
-dissertation speed post were "basically the same".)
+against hollow, solid against hatched, or a label on the mark itself. An
+estimate says so in its label, not in a lighter grey. (Set 3 Nov 2026: Game
+and Agent in two greys on the dissertation speed post were "basically the
+same".)
 
 ## 3. Typography
 
@@ -484,7 +484,7 @@ curve in a component is a bug unless it is a content timing.
   `--pane`, 8px, no border, a short title above, a caption below. Every figure
   draws itself in once when seen (`draw.css`), so there is no prop for it.
   Inside it: `<Cmp>` (before/after bars to scale; `from` makes a step of a
-  waterfall, `ref` a dashed reference line, `cols` the column widths), `<Dots>` (a
+  waterfall, drawn hollow, `ref` a dashed reference line, `cols` the column widths), `<Dots>` (a
   dot plot on one axis, in titled groups), `<Stack>` (one bar split into shares,
   with a legend), `<Split>` + `<Panel title>` (panels side by side),
   `<Morph>` (JSONL text rearranging into columns and back, built on `Frames`, text that moves between stages; on a loop while seen, hover pauses it, a tab stops it), `<Lookup>` (dictionary encoding: values pointing at numbers and the dictionary they look up, each entry's number in its own neutral style on both sides), `<Repeats>` (how Zstandard finds repeats on one column: before with the repeated stretch marked, after with it as one "repeat" chip), `<Boxes>` (a row of
