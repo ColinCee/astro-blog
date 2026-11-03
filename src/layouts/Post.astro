@@ -394,13 +394,20 @@ const statParts = stat?.includes("→")
     .figs {
       grid-template-columns: 1fr;
     }
+    /* label beside the value, or above it when both don't fit on one line;
+       the value itself never breaks ("+" alone on a line) */
     .figs__item,
     .figs__item + .figs__item {
       display: flex;
+      flex-wrap: wrap;
       align-items: baseline;
       justify-content: space-between;
+      gap: 0.35rem 1rem;
       padding: 0.7rem 0;
       border-left: 0;
+    }
+    .figs dd {
+      white-space: nowrap;
     }
     .figs__item + .figs__item {
       border-top: 1px solid var(--line);
