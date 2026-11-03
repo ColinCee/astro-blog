@@ -42,7 +42,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Type check
-        run: pnpm astro check
+        run: pnpm typecheck
 
       - name: Lint and format check
         run: pnpm biome ci .

@@ -7,7 +7,7 @@
     "astro": "7.4.2",
     "astro-expressive-code": "0.44.3",
     "cookie": "2.0.1",
-    "typescript": "6.0.3"
+    "typescript": "7.0.2"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
@@ -19,7 +19,7 @@
     "astro": "astro",
     "dev": "astro dev",
     "build": "astro build",
-    "check": "astro check && biome check . && astro build && wrangler deploy --dry-run && playwright test && playwright test -c playwright.speed.config.ts",
+    "check": "pnpm typecheck && biome check . && astro build && wrangler deploy --dry-run && playwright test && playwright test -c playwright.speed.config.ts",
     "format": "biome check --write .",
     "test": "playwright test",
     "speed": "astro build && playwright test -c playwright.speed.config.ts",
@@ -29,7 +29,8 @@
     "record": "node scripts/capture.ts",
     "compare": "node scripts/compare.ts",
     "screenshot": "node scripts/capture.ts --still",
-    "chart": "node scripts/chart.ts"
+    "chart": "node scripts/chart.ts",
+    "typecheck": "astro sync && astro-check && tsc"
   },
   "type": "module",
   "volta": {
