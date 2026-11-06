@@ -2,12 +2,12 @@
   {
     "id": "observability",
     "order": 1,
-    "services": "grafana \u00b7 prometheus \u00b7 loki \u00b7 alloy"
+    "services": "grafana · prometheus · loki · alloy"
   },
   {
     "id": "flight-tracker",
     "order": 2,
-    "services": "backend \u00b7 cloudflared"
+    "services": "backend · cloudflared"
   },
   {
     "id": "home-assistant",
@@ -15,8 +15,13 @@
     "services": "homeassistant"
   },
   {
-    "id": "backup",
+    "id": "kaizen-control-room",
     "order": 4,
+    "services": "control-room"
+  },
+  {
+    "id": "backup",
+    "order": 5,
     "services": "restic, nightly"
   }
 ]
