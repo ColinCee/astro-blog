@@ -15,9 +15,9 @@
     "services": "homeassistant"
   },
   {
-    "id": "crowdsec",
+    "id": "kaizen-control-room",
     "order": 4,
-    "services": "crowdsec"
+    "services": "control-room"
   },
   {
     "id": "backup",

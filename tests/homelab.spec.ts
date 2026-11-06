@@ -29,7 +29,7 @@ test("the figures show the server's numbers, and the dots go green", async ({
   const lab = await open(page, "home-lab");
   await expect(lab.locator(".pj__cap")).toContainText("live, 2 min ago");
   await expect(lab.locator(".dg--lab")).toHaveAttribute("data-up", "");
-  await expect(lab.locator(".lab")).toContainText("blocking 1,212 ips");
+  await expect(lab.locator(".lab")).toContainText("tracking 237 now");
   const radar = await open(page, "flight-tracker");
   await expect(radar.locator(".pj__cap")).toContainText("live, 2 min ago");
   await expect(radar.locator(".rd__nodes")).toContainText("237");
@@ -54,7 +54,7 @@ test("without the server, the dashes stay and the caption says offline", async (
   await page.goto("/");
   const lab = await open(page, "home-lab");
   await expect(lab.locator(".pj__cap")).toContainText("offline");
-  await expect(lab.locator(".lab")).toContainText("blocking – ips");
+  await expect(lab.locator(".lab")).toContainText("tracking – now");
 });
 
 test("the Worker accepts only the known numbers, freshly gathered", () => {
