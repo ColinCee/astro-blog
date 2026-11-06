@@ -26,7 +26,6 @@ const stacks = (await getCollection("homelabStacks"))
 // in [data-stat]. Until it arrives, or without it, the number is a dash.
 const stackNow: Record<string, [string, string, string]> = {
   "flight-tracker": ["tracking", "tracking", "now"],
-  crowdsec: ["blocking", "blocked", "ips"],
 };
 
 // One training run: 12 hours in 2018, 11 minutes in 2026.
