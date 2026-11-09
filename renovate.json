@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
+  "automerge": true,
+  "automergeType": "pr",
+  "platformAutomerge": false,
+  "minimumReleaseAge": "3 days",
+  "vulnerabilityAlerts": {
+    "minimumReleaseAge": "0 days",
+    "schedule": ["at any time"]
+  },
+  "packageRules": [
+    { "matchUpdateTypes": ["major"], "automerge": false },
+    {
+      "description": "One weekly PR for all non-major updates, so they don't make each other rebase.",
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
+      "groupName": "non-major dependencies",
+      "schedule": ["before 6am on monday"]
+    }
+  ]
+}
