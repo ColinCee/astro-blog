@@ -1,0 +1,27 @@
+{
+  // Biome formats on save and applies its safe fixes, the same as `pnpm format`.
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
+  // Set per language too, so a personal per-language formatter does not win here.
+  "[typescript]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[javascript]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[json]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[jsonc]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[css]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[html]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[astro]": { "editor.defaultFormatter": "biomejs.biome" },
+  // Biome does not format posts; `pnpm format` wraps their prose at 100
+  // columns (scripts/wrap.ts). The editor shows long lines wrapped at the
+  // same width, with a ruler there.
+  "[mdx]": {
+    "editor.formatOnSave": false,
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 100,
+    "editor.rulers": [100]
+  },
+  "[markdown]": { "editor.formatOnSave": false }
+}
