@@ -1,0 +1,163 @@
+---
+title: "Grafana, Prometheus and Loki, now one OpenObserve"
+stat: "3 → 1"
+statLabel: "programs holding my monitoring"
+pubDate: "Nov 11 2026"
+---
+<Fig title="What holds the homelab's logs, metrics and alerts" caption="Alloy collects the data on both sides. Alertmanager is new, and only posts the alerts.">
+  <Split>
+    <Panel title="Before">
+      <Boxes
+        boxes={[
+          { name: "Grafana", note: "dashboards, alerts" },
+          { name: "Prometheus", note: "metrics" },
+          { name: "Loki", note: "logs" },
+        ]}
+      />
+    </Panel>
+    <Panel title="After">
+      <Boxes
+        boxes={[
+          { name: "OpenObserve", note: "logs, metrics, traces, dashboards, alerts", kind: "fast" },
+          { name: "Alertmanager", note: "posts alerts" },
+        ]}
+      />
+    </Panel>
+  </Split>
+</Fig>
+
+My homelab is a mini PC that runs Home Assistant, a few small sites and my own CI, and the CI VMs take most of its memory. Watching it all was Grafana, Prometheus and Loki, with Grafana's Alloy collecting, so three programs to run and keep up to date, and adding traces would have meant a fourth (Tempo). So I went looking for one program that does the lot.
+
+That's now [OpenObserve](https://openobserve.ai/), and the old stack was deleted on 10 November. Memory came out about the same, the alerts got a proper rethink on the way, and it uses more disk a day.
+
+## How did I pick it?
+
+We tested seven setups on one real day of data from the homelab and my agent setup, replayed with fresh timestamps, each in its own 2.5 GiB container on my desktop. The answer key was 14 questions I actually ask of my logs and metrics, answered from the raw data first. The rule was fixed before any results: must-haves first, then memory, and if nothing was 250 MB lighter than what I had, the simpler one wins.[^adr]
+
+<Fig title="Memory in the bake-off, by setup" caption="Each finalist's dot is its worst round, with the range beside it, and the old setup is one round, estimated. The two groups ran different loads, so only compare within a group.">
+  <Dots
+    max={2500}
+    unit="MiB"
+    groups={[
+      {
+        title: "Finalists, at the real rate, 3 rounds",
+        rows: [
+          { label: "Old setup", value: 684, text: "~684" },
+          { label: "OpenObserve", value: 751, text: "724-751", after: true },
+          { label: "GreptimeDB + Grafana", value: 755, text: "723-755" },
+          { label: "Victoria + Grafana", value: 741, text: "731-741" },
+        ],
+      },
+      {
+        title: "Cut earlier, at 24× the real rate",
+        rows: [
+          { label: "SigNoz", value: 1048, text: "1048" },
+          { label: "ClickStack", value: 1281, text: "1281" },
+          { label: "Grafana stack + Tempo", value: 1492, text: "1339-1492" },
+          { label: "Parseable", value: 2379, text: "2379" },
+        ],
+      },
+    ]}
+  />
+</Fig>
+
+The three finalists tied on memory, so simplicity decided it. OpenObserve is one program for logs, metrics, traces, dashboards, logins and alerts, and the other two each needed Grafana on top. The Grafana stack with Tempo also only got 10 of the 14 questions right, and SigNoz took 222 seconds to send its first alert.
+
+At its default settings a killed OpenObserve lost the last few seconds of data, because it says a write is done before it's on disk. With two settings changed it lost no logs or spans in the one run we did (68 metric points did go), and those settings run now. It also wants about 2.3 times the disk GreptimeDB does, around 24 GB for 30 days.[^results]
+
+## Running both side by side
+
+We ran OpenObserve beside the old stack, with Alloy writing to both, and it started refusing writes as soon as it was on. It holds 10 minutes of data in memory before writing it out, and 10 minutes of the box's 426 metric streams didn't fit in the quarter of its 2 GiB cap it uses for that, so it refused about 20 writes a minute. Writing out every 2 minutes fixed it. Alloy had its own problem, sending every log line as its own request until its queue filled up, so that got batching.
+
+Before deleting anything we checked the two sides matched. 5,317 metric series were identical, with no value off by more than 1%, and every container had at least as many log lines in OpenObserve as in Loki every hour. Loki had actually missed a backup run that OpenObserve kept.
+
+## The alerts were the hard part
+
+All the rules went into one file in Git that gets applied on every deploy, and probing OpenObserve turned up a lot of odd behaviour:
+
+- a "resolved" message waits until the repeat interval ends, so with a 4-hour reminder it's up to 4 hours late
+- an alert per container never sends a resolve at all
+- its `keep_firing_for` setting never sends one either
+- metric and label names come out lower-cased
+- it can't hold one alert back while another is firing
+
+So [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/) sits between OpenObserve and Discord now and does the repeats, the "Cleared" posts and the holding back.[^am] I also used the move to write down what an alert is for: something is harmed now or soon, I can do something about it, and the post says what. That turned 15 rules into 13. High CPU and the CI rules went, since busy isn't harm and the CI runner is off, and "metrics stopped", "restarting in a loop", "Home Assistant down" and "DNS down" came in.
+
+To keep it honest there's a replay that runs every rule over the stored history and counts the posts it would have made, and it caught a bug the day the old stack went.
+
+<Fig title="Alert posts over the same replayed history" caption="OpenObserve's history since 9 November, the same rules, before and after fixing how each rule waits.">
+  <Cmp
+    cols={["8.5rem", "5rem"]}
+    rows={[
+      { label: "Rules as written", value: 40, text: "40 posts" },
+      { label: "Fixed", value: 2, text: "2 · −95%", after: true },
+    ]}
+  />
+</Fig>
+
+Each rule waits a while before firing (its "for"), and the query we built for that passed as soon as a series had a single value. So five test containers that lived about a minute each fired "Unknown container started" as an urgent alert. The fix makes the condition hold at every minute of the wait, and the replay now runs the exact query OpenObserve runs, because its own copy had said those blips wouldn't fire.[^for]
+
+## OpenObserve logs a lot about itself
+
+Once it was the only store I could see what it was actually holding, and it was about 6.2 million log lines a day, 97% of it noise. About 4.8 million were OpenObserve's own, almost all INFO lines from its search, query and compaction code, and another 1.2 million came from a small proxy whose lines we thought were already dropped.
+
+<Fig title="Log lines stored in an hour, all containers, 10 November (UTC)" caption="The fix went live at 13:55, so the hour in between is left out.">
+  <Cmp
+    cols={["5.5rem", "6rem"]}
+    rows={[
+      { label: "12:00-13:00", value: 221202, text: "221,202" },
+      { label: "14:00-15:00", value: 429, text: "429 · −99.8%", after: true },
+    ]}
+  />
+</Fig>
+
+OpenObserve's warnings and errors are still kept, and the new Home dashboard has panels for error lines, which the old one didn't.[^logs]
+
+## What does it cost?
+
+Memory came out about the same. The plan put the old stack at about 840 MiB with Alloy, a rough figure I can't measure again now it's gone.
+
+<Fig title="Monitoring memory on the mini PC (MiB)" caption="After is OpenObserve, Alloy, Alertmanager, the gateway and a probe, 10 readings over 5 minutes from 16:00 UTC on 10 November.">
+  <Cmp
+    cols={["9rem", "6rem"]}
+    rows={[
+      { label: "Grafana, Prometheus, Loki", value: 840, text: "~840 MiB" },
+      { label: "New stack", value: 721, text: "670-720 MiB", after: true },
+    ]}
+  />
+</Fig>
+
+I wouldn't read much into the gap.[^mem] OpenObserve had restarted 41 minutes before I measured, it went anywhere from 330 to 890 MiB on its first day, and with 6 days stored and nothing coming in it sat at 613 MiB in the bake-off, so give it a month before calling it.
+
+Disk is the one that grows faster.
+
+<Fig title="Disk used (GB)" caption="Both as Docker counts a volume, on 10 November. The old stack kept up to 30 days of metrics, OpenObserve had a day and a half.">
+  <Cmp
+    cols={["9rem", "5rem"]}
+    rows={[
+      { label: "Grafana, Prometheus, Loki", value: 3.2, text: "3.2 GB" },
+      { label: "OpenObserve", value: 2.9, text: "2.9 GB", after: true },
+    ]}
+  />
+</Fig>
+
+That's nearly as much in a day and a half as the old stack held in total. The bake-off estimated about 24 GB for 30 days, and the first day and a half is on a slightly faster pace, about 28 GB, but still inside the 100 GB I'd set aside for it.[^disk]
+
+The rest of the downsides:
+
+- All the history from before 9 November went with the old stack.
+- The free edition only has an admin login, so anything that reads it goes through a tiny read-only gateway with its own logins and a list of paths each one can read. Review caught a way past that list before it shipped.
+- Dashboards can't fold rows and PromQL bar charts can't be sorted, so a few panels are SQL instead.
+- The alerting needs Alertmanager next to it to behave.
+
+## Closing remarks
+
+It's one program with one UI now, the rules and the dashboard live in Git, and traces have somewhere to go when I get round to sending them. Memory is about where it was and disk is higher, so this was about having less to run, not about saving resources. I'll check again in a month, once it's got 30 days of data and has to start deleting some.
+
+[^adr]: The decision and why: [ADR 0001](https://github.com/ColinCee/homelab/blob/main/docs/adr/0001-openobserve.md), in my homelab repo.
+[^results]: Method and every bake-off number: [results](https://github.com/ColinCee/homelab/blob/main/docs/adr/0001-openobserve/results.md). The old setup's 684 MiB is one round, estimated, and OpenObserve's rounds missed the homelab's own load (about 10 metric points and 1 log line a second). The test ran v1.2.0-rc1, and v1.1.2 runs now.
+[^am]: [ADR 0002](https://github.com/ColinCee/homelab/blob/main/docs/adr/0002-alertmanager.md).
+[^for]: The fix and the replay: [homelab#1307](https://github.com/ColinCee/homelab/pull/1307). Both counts are from history starting 9 November, so about a day and a half.
+[^logs]: [homelab#1305](https://github.com/ColinCee/homelab/pull/1305).
+[^mem]: Two small helpers that ran on both sides, a Docker socket proxy and a stats page, are left out. I don't know if the 840 counted them.
+[^disk]: Docker counts files at their full size. `du` puts OpenObserve's actual use at 1.5 GB, which is the 28 GB pace. The old stack's sizes are from [homelab#1306](https://github.com/ColinCee/homelab/pull/1306).
