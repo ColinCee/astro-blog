@@ -514,7 +514,7 @@ curve in a component is a bug unless it is a content timing.
   script), so their text never scales with the drawing.
 - **Interactive figures** are components too, and load `src/scripts/widgets.ts`
   only on posts that use one: `<LineChart>` (a line chart from data: axes, an
-  optional band, a line, dots, a dashed `ref` line where something changed and a legend; the band takes the accent unless `accent` gives it to the dots; one function in
+  optional band, a line, dots, a dotted `base` line the main line is read against (a forecast), a dashed `ref` line where something changed and a legend; the band takes the accent unless `accent` gives it to the dots; one function in
   `src/scripts/line-chart.ts` draws it at build time as the no-script fallback and
   in the browser at the figure's real width), `<Ladder>` (a step chart of a
   sequence of speed changes, x axis the change number; tap or drag across a step

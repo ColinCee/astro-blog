@@ -79,6 +79,12 @@
 .prose .chart .ln--dash {
   stroke-dasharray: 5 4;
 }
+/* What the line is read against (a forecast): thinner and dotted */
+.prose .chart .ln--base {
+  stroke: var(--faint);
+  stroke-width: 1.5;
+  stroke-dasharray: 1 5;
+}
 .prose .chart .ln.hi {
   fill: none;
   stroke: var(--accent);

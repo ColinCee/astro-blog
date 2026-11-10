@@ -4,7 +4,8 @@
 // Data: x and y axes with a max, ticks and a title; an optional band of
 // [x, low, high]; a line of [x, y]; optional dots of [x, y] (a run known only
 // at a few points, joined dashed); labels placed at data points with pixel
-// offsets; an optional dashed vertical line at an x with its name beside it
+// offsets; an optional `base` of [x, y], a thin dotted line the main line is
+// read against (a forecast, a target); an optional dashed vertical line at an x with its name beside it
 // (when something changed); and a legend drawn in the plot's empty top-left
 // corner. One series is what the chart is about and takes the accent: the
 // band unless `accent` says the dots. Everything it is read against stays
@@ -19,13 +20,14 @@ export type Label = {
   dx?: number;
   dy?: number;
 };
-export type Key = { kind: "line" | "dots" | "band"; text: string };
+export type Key = { kind: "line" | "dots" | "band" | "base"; text: string };
 export type LineData = {
   x: Axis;
   y: Axis;
   band?: number[][];
   line: number[][];
   dots?: number[][];
+  base?: number[][];
   accent?: "band" | "dots";
   ref?: { x: number; text: string };
   labels?: Label[];
@@ -113,6 +115,11 @@ export function lineChart(d: LineData, W: number, H: number): string {
       d.ref.text,
     );
   }
+  if (d.base)
+    el("polyline", {
+      class: "ln ln--base",
+      points: d.base.map(([x, v]) => `${X(x)},${Y(v)}`).join(" "),
+    });
   // pathLength 1 makes one dash the whole line, for its draw-in (draw.css);
   // set here so a redraw keeps it
   el("polyline", {
@@ -141,7 +148,12 @@ export function lineChart(d: LineData, W: number, H: number): string {
       });
     else
       el("line", {
-        class: k.kind === "dots" ? "ln ln--dash" : "ln",
+        class:
+          k.kind === "dots"
+            ? "ln ln--dash"
+            : k.kind === "base"
+              ? "ln ln--base"
+              : "ln",
         x1: kx,
         x2: kx + 22,
         y1: ky,
