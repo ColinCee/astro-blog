@@ -5,7 +5,7 @@
 // group. A row with `lo` and `hi` also draws that range as a whisker (a
 // confidence interval), and a row with a range but no `value` is a plain band
 // (a spread with no best guess). An axis that starts below 0 gets a line at
-// 0. The `after` row is the result. The value column is as wide as the
+// 0. `axis` names the axis under its ticks. The `after` row is the result. The value column is as wide as the
 // longest value; when values are long (an estimate with its range) a phone
 // puts each beside its label so the axis keeps the full width. Styles: dot.css.
 interface Row {
@@ -21,9 +21,10 @@ interface Props {
   min?: number;
   ticks?: number[];
   unit?: string;
+  axis?: string;
   groups: { title?: string; rows: Row[] }[];
 }
-const { max, min = 0, unit = "", groups } = Astro.props;
+const { max, min = 0, unit = "", axis, groups } = Astro.props;
 const ticks = Astro.props.ticks ?? [min, (min + max) / 2, max];
 const x = (v: number) => ((v - min) / (max - min)).toFixed(3);
 // Figure text is monospace, so the longest value's width is its length in ch.
@@ -76,3 +77,14 @@ const grid = `--dot-value:max(4.2rem,${chars}ch)${min < 0 ? `;--zero:${x(0)}` : 
   </i>
   <b></b>
 </div>
+{axis && (
+  <div
+    class:list={["dot", "dot--axis", "dot--name", { "dot--long": long }]}
+    style={grid}
+    aria-hidden="true"
+  >
+    <span></span>
+    <i>{axis}</i>
+    <b></b>
+  </div>
+)}

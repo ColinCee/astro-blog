@@ -133,3 +133,15 @@
     display: none;
   }
 }
+/* The axis's name, centred under its ticks */
+.prose .dot--name i {
+  height: auto;
+  font-style: normal;
+  font-size: 0.6875rem;
+  color: var(--faint);
+  text-align: center;
+}
+/* A later group's title stands clear of the group above it */
+.prose .dot + .fig__k {
+  margin-top: 1rem;
+}

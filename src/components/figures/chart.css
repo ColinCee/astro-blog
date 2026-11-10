@@ -57,7 +57,34 @@
   fill: color-mix(in oklch, var(--accent) 80%, transparent);
 }
 .prose .chart .band {
-  fill: color-mix(in oklch, var(--bar) 45%, transparent);
+  fill: var(--bar);
+}
+/* A point's value shows while its strip of the plot is pointed at (or
+   tapped): the strip is clear, the dot and number hidden until then. The
+   number has an outline in the panel's colour so it reads over the lines. */
+.prose .chart .pt rect {
+  fill: transparent;
+}
+.prose .chart .pt circle,
+.prose .chart .pt text {
+  opacity: 0;
+  pointer-events: none;
+}
+.prose .chart .pt circle {
+  fill: var(--ink);
+}
+.prose .chart .pt text {
+  fill: var(--ink);
+  font-size: calc(0.8rem * var(--k, 1));
+  font-weight: 500;
+  paint-order: stroke;
+  stroke: var(--pane);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.prose .chart .pt:hover circle,
+.prose .chart .pt:hover text {
+  opacity: 1;
 }
 .prose .chart .mk {
   fill: var(--muted);
@@ -78,12 +105,6 @@
 }
 .prose .chart .ln--dash {
   stroke-dasharray: 5 4;
-}
-/* What the line is read against (a forecast): thinner and dotted */
-.prose .chart .ln--base {
-  stroke: var(--faint);
-  stroke-width: 1.5;
-  stroke-dasharray: 1 5;
 }
 .prose .chart .ln.hi {
   fill: none;

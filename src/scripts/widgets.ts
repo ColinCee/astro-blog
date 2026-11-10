@@ -431,12 +431,15 @@ function flow(root: HTMLElement) {
 }
 
 // Cards (Flashcards): the play buttons are links to the recording, so they
-// work without this; here a click plays it in place instead.
+// work without this; here a click plays it in place instead. The recording
+// is a few kilobytes and shared by the buttons, fetched up front so the
+// first click plays at once.
 function cards(root: HTMLElement) {
+  const players = new Map<string, HTMLAudioElement>();
   root.querySelectorAll<HTMLAnchorElement>("a[data-play]").forEach((a) => {
-    const audio = new Audio();
-    audio.preload = "none";
-    audio.src = a.href;
+    const audio = players.get(a.href) ?? new Audio(a.href);
+    audio.preload = "auto";
+    players.set(a.href, audio);
     a.setAttribute("role", "button");
     a.addEventListener("click", (e) => {
       e.preventDefault();

@@ -1,16 +1,23 @@
 // A line chart from data, as SVG markup for a W × H drawing. The lines widget
 // draws it in the browser at the figure's real width; LineChart.astro draws
 // it at build time as the no-script fallback, so the data lives in one place.
-// Data: x and y axes with a max, ticks and a title; an optional band of
+// Data: x and y axes with a max, ticks and a title (the y title sits level
+// above the plot, not turned on its side); an optional band of
 // [x, low, high]; a line of [x, y]; optional dots of [x, y] (a run known only
 // at a few points, joined dashed); labels placed at data points with pixel
-// offsets; an optional `base` of [x, y], a thin dotted line the main line is
-// read against (a forecast, a target); an optional dashed vertical line at an x with its name beside it
-// (when something changed); and a legend drawn in the plot's empty top-left
-// corner. One series is what the chart is about and takes the accent: the
-// band unless `accent` says the dots. Everything it is read against stays
-// neutral.
-export type Axis = { max: number; ticks: number[]; title: string };
+// offsets; an optional dashed vertical line at an x (when something
+// changed), its name above its top end, clear of anything drawn in the plot;
+// and a legend drawn in the plot's empty top-left corner. One series is what
+// the chart is about and takes the accent: the band unless `accent` says the
+// dots. Everything it is read against stays neutral. Pointing at a point of
+// the line or the dots shows its value, with the y axis's `unit` after it
+// (chart.css, no script needed).
+export type Axis = {
+  max: number;
+  ticks: number[];
+  title: string;
+  unit?: string;
+};
 export type Label = {
   x: number;
   y: number;
@@ -20,14 +27,13 @@ export type Label = {
   dx?: number;
   dy?: number;
 };
-export type Key = { kind: "line" | "dots" | "band" | "base"; text: string };
+export type Key = { kind: "line" | "dots" | "band"; text: string };
 export type LineData = {
   x: Axis;
   y: Axis;
   band?: number[][];
   line: number[][];
   dots?: number[][];
-  base?: number[][];
   accent?: "band" | "dots";
   ref?: { x: number; text: string };
   labels?: Label[];
@@ -65,7 +71,7 @@ export function lineChart(d: LineData, W: number, H: number): string {
   };
   const L = 52,
     R = 12,
-    T = 12,
+    T = 28,
     B = 44;
   const X = (v: number) => L + (v / d.x.max) * (W - L - R);
   const Y = (v: number) => H - B - (v / d.y.max) * (H - T - B);
@@ -87,17 +93,8 @@ export function lineChart(d: LineData, W: number, H: number): string {
     { x: L + (W - L - R) / 2, y: H - 6, "text-anchor": "middle" },
     d.x.title,
   );
-  const yt = (T + H - B) / 2;
-  el(
-    "text",
-    {
-      x: 11,
-      y: yt,
-      "text-anchor": "middle",
-      transform: `rotate(-90 11 ${yt})`,
-    },
-    d.y.title,
-  );
+  // The y axis's title reads level, above the top gridline at the left edge
+  el("text", { x: 4, y: 11 }, d.y.title);
   const accent = d.accent ?? "band";
   const bandCls = accent === "band" ? "band band--runs" : "band";
   const dotCls = accent === "dots" ? "mk hi" : "mk";
@@ -108,18 +105,21 @@ export function lineChart(d: LineData, W: number, H: number): string {
   }
   if (d.ref) {
     const rx = X(d.ref.x);
-    el("line", { class: "ref", x1: rx, x2: rx, y1: T, y2: H - B });
+    // The name sits in the top margin, centred on the line unless that
+    // would run it off the right edge (figure text is about 8px a letter).
+    const half = d.ref.text.length * 4;
+    el("line", { class: "ref", x1: rx, x2: rx, y1: 17, y2: H - B });
     el(
       "text",
-      { class: "ink", x: rx - 5, y: H - B - 8, "text-anchor": "end" },
+      {
+        class: "ink",
+        x: Math.min(rx, W - R - half),
+        y: 11,
+        "text-anchor": "middle",
+      },
       d.ref.text,
     );
   }
-  if (d.base)
-    el("polyline", {
-      class: "ln ln--base",
-      points: d.base.map(([x, v]) => `${X(x)},${Y(v)}`).join(" "),
-    });
   // pathLength 1 makes one dash the whole line, for its draw-in (draw.css);
   // set here so a redraw keeps it
   el("polyline", {
@@ -148,12 +148,7 @@ export function lineChart(d: LineData, W: number, H: number): string {
       });
     else
       el("line", {
-        class:
-          k.kind === "dots"
-            ? "ln ln--dash"
-            : k.kind === "base"
-              ? "ln ln--base"
-              : "ln",
+        class: k.kind === "dots" ? "ln ln--dash" : "ln",
         x1: kx,
         x2: kx + 22,
         y1: ky,
@@ -175,5 +170,28 @@ export function lineChart(d: LineData, W: number, H: number): string {
       l.text,
     );
   }
+  // One group per point, drawn last so it is on top: a clear strip as wide
+  // as the point's share of the axis, and a dot and the value that show
+  // while the strip is pointed at.
+  const pts = [...d.line, ...(d.dots ?? [])].sort((a, b) => a[0] - b[0]);
+  pts.forEach(([x, v], i) => {
+    const px = X(x),
+      py = Y(v);
+    const from = i === 0 ? L : (X(pts[i - 1][0]) + px) / 2;
+    const to = i === pts.length - 1 ? W - R : (px + X(pts[i + 1][0])) / 2;
+    out.push('<g class="pt">');
+    el("rect", { x: from, y: T, width: to - from, height: H - T - B });
+    el("circle", { cx: px, cy: py, r: 4 });
+    el(
+      "text",
+      {
+        x: Math.min(Math.max(px, L + 24), W - R - 24),
+        y: py - 12 < T + 4 ? py + 22 : py - 12,
+        "text-anchor": "middle",
+      },
+      `${fmt.format(v)}${d.y.unit ?? ""}`,
+    );
+    out.push("</g>");
+  });
   return out.join("");
 }

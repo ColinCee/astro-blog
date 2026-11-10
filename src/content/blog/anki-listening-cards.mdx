@@ -1,190 +1,265 @@
 ---
-title: "Half my Anki cards took 73% of my time"
+title: "Why you might not need to handwrite Chinese"
 stat: "32 → 9 min"
-statLabel: "Anki a day"
+statLabel: "flashcards a day"
 pubDate: "Nov 10 2026"
 ---
-I learn Mandarin with a teacher, and I keep an [Anki](https://apps.ankiweb.net/) deck of the
-characters we cover so they stick between lessons. Anki shows you a card just before you'd forget
-it, so the gap between reviews grows from a day to weeks to months for as long as you keep getting
-it right.
 
-Each character has two cards. The Recognition card shows the character and asks what it means and
-how it sounds, so that's reading. The Listening card hides the written Chinese until you flip it, so
-you have to recall the character from memory, which is really practice for writing it.
-
-<Fig title="The two cards for one character, 茶" caption="Simplified from my real cards, which also have an example sentence under the character.">
-  <Flashcards hanzi="茶" pinyin="chá" meaning="tea" audio="/blog/anki-listening-cards/listen.mp3" />
-</Fig>
-
-I read, listen and speak Chinese with books, TV and my teacher, and I never need to handwrite it, so
-on 4 October I suspended every Listening card. Five weeks later I pulled the review log to see what
-that did.
-
-<Fig title="Minutes a day on Anki, 5 weeks before vs 5 weeks after" caption="31 Aug to 4 Oct vs 5 Oct to 8 Nov, 35 days each. Striped is before, the outline the Listening time that went, purple what's left.">
+<Fig title="Daily time spent reviewing Anki flashcards" caption="35 days before vs after">
   <Cmp
     rows={[
       { label: "before", value: 31.6, text: "32 min", base: true },
-      { label: "Listening off", from: 31.6, value: 8.6, text: "−23 min" },
+      { label: "Writing off", from: 31.6, value: 8.6, text: "−23 min" },
       { label: "after", value: 8.6, text: "9 min · −73%", after: true },
     ]}
   />
 </Fig>
 
-Listening was half the deck and nearly three quarters of the time, and the share had crept up from
-50% in February to 73% in September. Recognition didn't move, 8.2 to 8.6 minutes a day, so the
-saving is 23 minutes a day (95% CI 17 to 29, p < 0.001).
+I learn Chinese with flashcards, and half of them were for handwriting. I turned those off and my
+daily reviews went from 32 minutes to 9.
 
-## What do the brackets mean?
+My reading did get a bit worse, but only enough to cost me about 2 minutes a day.
 
-I'll give each result the way a paper would. The first number is my best estimate. The CI is a
-confidence interval, the range the true number plausibly sits in, so a narrow one means I'm sure and
-a wide one means I'm not. The p is the chance I'd see a gap this big if nothing had really changed,
-and the usual bar is under 0.05, which is 1 in 20. There's a bit more on [how each test
+---
+
+For the past 9 months, I have been learning Mandarin from the basics. Every week I have a 2-hour
+in-class session with my teacher to practice speaking and reading. On top of that, I built a custom
+Anki deck that was originally based off [Remembering Simplified
+Hanzi](https://www.goodreads.com/book/show/5862954-remembering-simplified-hanzi-1). However, I found
+out that it wasn't very good for what I wanted to learn which was how to speak, read, and write
+which is why I built my own.
+
+If you don't know what [Anki](https://apps.ankiweb.net/) is, it's a tool to help with studying.
+Basically flashcards, see [spaced repetition](https://en.wikipedia.org/wiki/Spaced_repetition). Now,
+my deck had two different types:
+
+<Flashcards hanzi="茶" pinyin="chá" meaning="tea" audio="/blog/anki-listening-cards/listen.mp3" />
+
+- Reading -> practice the sound + meaning
+- Writing -> practice handwriting + meaning
+
+## Why did Writing take so long?
+
+Writing was half the deck but 74% of my review time in the five weeks before I turned it off. An
+average review took:
+
+- 17.5s for Writing
+- 8.8s for Reading
+
+Fundamentally writing takes longer because I listen to the audio then write it down by hand. It's
+much slower than the reading side which when you see the character, you either recognize it or not
+in seconds.
+
+## Danger, Here come the stats
+
+To be scientific I'm giving each result with a confidence interval and a significance test, so each
+figure will have the following.
+
+- The result itself, like 35% of reviews
+- The CI is a [confidence interval](https://en.wikipedia.org/wiki/Confidence_interval), the range
+  the true number plausibly sits in.
+- The [p](https://en.wikipedia.org/wiki/P-value) is the chance I'd see a gap this big if nothing had
+  really changed
+
+Typically in science you want to find the 95% CI, p < 0.05. There's more on [how each test
 works](#tests) at the end.
-
-## Why did Listening take so long?
-
-It's a harder card. A Listening review took 17.5 seconds vs 8.8 for Recognition, and I got it wrong
-17% of the time vs 11%. A wrong answer is the expensive part, because Anki drops the card back to
-short gaps and you see it again and again until it recovers. Over the next 90 days a wrong Listening
-answer cost me about 105 seconds of extra reviews, and a wrong Recognition answer about a
-minute.[^cost]
 
 ## Did my reading get worse?
 
-Yes, and since the Listening card was a second look at every character it's not a surprise. In the
-five weeks before I suspended it I got about 8% of my reading reviews wrong, and in the five weeks
-since it's been about 15%.
-
-That comparison is too kind to Listening though. I spent most of September in China reading signs
-and menus all day, so the weeks just before were my best in the log, and the cards coming up now
-aren't the same mix as then. Anki has a fairer yardstick built in. For every review its scheduler
-has a forecast of the chance I've forgotten the card, so I replayed the scheduler over my whole log
-and compared what it expected with what I did.
+Yes, measurably so. I spent most of September in China reading signs and menus all day, so some of
+the weeks just before were among my best in the log.
 
 <LineChart
-  title="Reading reviews I got wrong each week vs what Anki expected"
-  caption="Weeks start on a Monday, from 4 May when the deck was three months old. The dotted line is Anki's forecast, the dashed line is when Listening went off, and purple is the weeks since."
-  label="Share of Recognition reviews answered Again each week from 4 May to 8 November, against the share Anki's scheduler expected. In the 22 weeks with Listening I got between 3.7% and 14.3% wrong and was more than a point over the forecast in only one. Listening is switched off after week 21, and the weeks since run 7.4%, 13.3%, 16.7%, 15.0% and 20.3% against a forecast of 12.1%, 13.7%, 13.5%, 10.2% and 11.6%, so the last three are over it."
+  title="Reading reviews I got wrong each week"
+  label="Share of Reading reviews answered Again each week from 4 May to 8 November. In the 22 weeks with Writing I got between 3.7% and 14.3% wrong, and the last four of those include the weeks I was in China. Writing is switched off after week 21, and the weeks since run 7.4%, 13.3%, 16.5%, 15.0% and 20.3%."
   data={{
     x: { max: 26, ticks: [0, 5, 10, 15, 20, 26], title: "weeks from 4 May →" },
-    y: { max: 30, ticks: [0, 10, 20, 30], title: "answered Again (%)" },
-    base: [[0, 14.4], [1, 14.7], [2, 15.7], [3, 16.1], [4, 13.6], [5, 14.9], [6, 11.9], [7, 12.7], [8, 13.1], [9, 12.6], [10, 12.4], [11, 12.2], [12, 12.4], [13, 11.6], [14, 11.2], [15, 11.4], [16, 14.3], [17, 11.5], [18, 10.7], [19, 11.8], [20, 14.5], [21, 13.6], [22, 12.1], [23, 13.7], [24, 13.5], [25, 10.2], [26, 11.6]],
-    line: [[0, 11.4], [1, 8.6], [2, 9.8], [3, 10.0], [4, 9.2], [5, 13.1], [6, 6.5], [7, 13.9], [8, 13.6], [9, 12.0], [10, 12.6], [11, 8.3], [12, 12.6], [13, 4.4], [14, 7.6], [15, 8.9], [16, 14.3], [17, 8.5], [18, 3.7], [19, 7.0], [20, 9.0], [21, 7.8]],
-    dots: [[22, 7.4], [23, 13.3], [24, 16.7], [25, 15.0], [26, 20.3]],
+    y: { max: 30, ticks: [0, 10, 20, 30], title: "got wrong (%)", unit: "%" },
+    band: [[18.1, 0, 30], [20.9, 0, 30]],
+    line: [[0, 11.4], [1, 8.6], [2, 9.7], [3, 10.0], [4, 9.2], [5, 13.1], [6, 6.5], [7, 13.9], [8, 13.6], [9, 12.0], [10, 12.6], [11, 8.3], [12, 12.6], [13, 4.4], [14, 7.6], [15, 8.9], [16, 14.3], [17, 8.5], [18, 3.7], [19, 7.6], [20, 10.7], [21, 9.1]],
+    dots: [[22, 7.4], [23, 13.3], [24, 16.5], [25, 15.0], [26, 20.3]],
     accent: "dots",
-    ref: { x: 21.5, text: "Listening off" },
+    ref: { x: 21.5, text: "Writing off" },
     labels: [{ x: 26, y: 20.3, text: "20%", cls: "hi", anchor: "end", dx: -8, dy: 4 }],
     legend: [
-      { kind: "base", text: "Anki expected" },
-      { kind: "line", text: "with Listening" },
+      { kind: "line", text: "with Writing" },
       { kind: "dots", text: "without it" },
+      { kind: "band", text: "in China" },
     ],
   }}
 />
 
-With Listening on I was at or under the forecast most weeks and never far over it. From May until I
-left for China I got 10.2% wrong where Anki expected 13.0%, because the scheduler treats the two
-cards of a character as strangers and never counted the Listening look. Since the switch-off I've
-got 14.6% wrong where it expected 12.3%, so against the forecast my reading is 5.1 points worse (95%
-CI 2.6 to 7.6, p < 0.001).
+In Anki there are [four options](https://docs.ankiweb.net/studying.html#answer-buttons) for each
+card:
+
+- Again
+- Hard
+- Good
+- Easy
+
+<Fig title="Reading reviews I forgot or struggled on (Again or Hard)">
+  <Dots
+    max={40}
+    ticks={[0, 10, 20, 30, 40]}
+    axis="% of reading reviews, with the 95% CI"
+    groups={[
+      {
+        rows: [
+          { label: "with Writing", value: 20.3, lo: 19.1, hi: 21.5, text: "20% (19 to 22)" },
+          { label: "without it", value: 34.6, lo: 30.1, hi: 38.9, text: "35% (30 to 39)", after: true },
+        ],
+      },
+    ]}
+  />
+</Fig>
+
+So 35% of my reviews in those five weeks I forgot or struggled on. The range is there because every
+review has some luck in it. For example a coin flip: get 55 heads in 100 flips and that still
+doesn’t make it a 55% coin.
+
+Each line shows how far luck alone could have pushed that number up or down. With Writing it could
+have been anywhere from 19% to 22%, and without it anywhere from 30% to 39%. Even my luckiest run
+without Writing (30%) would still be worse than my unluckiest with it (22%), so luck can’t explain
+the gap.
 
 ## How sure am I?
 
-Reading bounces around from week to week anyway, so I ran the same before and after at 22 earlier
-dates when nothing had changed. The biggest swing at any of them was 4.1 points, and at the real
-date it was 7.5.
+Sure that it isn't luck. If the Writing cards made no difference, luck alone would produce a gap
+this big less than 1 time in 1,000. That rules out luck, not something else changing in October.
 
-The cleanest check is inside the weeks since. Turning Listening off takes nothing away until a
-Listening review would have come up and didn't, which is why the first ten days were fine. So from
-15 October I split my reading reviews by whether that had happened yet. Where it had I got 19.5%
-wrong and where it hadn't 3.7%, and Anki expected about 10% for both. That's 15.8 points apart (95%
-CI 11.3 to 20.0, p < 0.001).[^skip]
+## Where did it get worse?
 
-<Fig title="How much worse my reading got, in points" caption="Points more wrong answers than Anki's forecast, vs my baseline with Listening. The dot is the estimate and the whisker its 95% CI. The grey band is how far the same before and after moved at 22 dates when nothing changed.">
-  <Dots
-    min={-5}
-    max={20}
-    ticks={[-5, 0, 5, 10, 15, 20]}
-    groups={[
-      {
-        rows: [
-          { label: "nothing changed", lo: -3.1, hi: 4.1, text: "−3.1 to +4.1" },
-          { label: "5 weeks since", value: 5.1, lo: 2.6, hi: 7.6, text: "5.1 (2.6 to 7.6)" },
-          { label: "review skipped", value: 12.3, lo: 8.9, hi: 15.7, text: "12.3 (8.9 to 15.7)", after: true },
-        ],
-      },
-    ]}
-  />
-</Fig>
+Two places:
 
-The longer a Listening review had been skipped the worse it got, from 4% wrong when it wasn't due to
-8% in the first week and about 20% after that (p < 0.001 for the trend), and then it levels off. The
-five week average is lower only because cards join the skipped group one at a time, and by the last
-week that was 73% of my reviews, so 12 points is roughly where it's heading. It also isn't me
-pressing Again more readily, because on the cards that hadn't missed a review nothing moved.
+- I forget characters I already knew a bit more
+- New characters are harder to learn
 
-## Was it worth it?
-
-The drop is real, but that only tells me it's there, not whether it matters. A wrong reading answer
-costs me about a minute of extra reviewing over the next 90 days (61 seconds, 95% CI 56 to 67). I do
-about 40 reading reviews a day, so 5 points is 2 wrong answers a day and 12 points is 5.
-
-<Fig title="What 23 minutes of Listening saved, in minutes of reading review a day" caption="The dot is the estimate and the whisker its 95% CI. Purple is the most Listening could be saving me, once every card has missed a look.">
+<Fig title="Reading reviews I got wrong (Again), with the Writing cards vs without">
   <Dots
     max={30}
     ticks={[0, 10, 20, 30]}
+    axis="% of reading reviews, with the 95% CI"
     groups={[
       {
+        title: "Characters I already knew",
         rows: [
-          { label: "Listening took", value: 23.4, lo: 18.8, hi: 28.3, text: "23.4 (18.8 to 28.3)" },
-          { label: "saved so far", value: 2.1, lo: 1.1, hi: 3.1, text: "2.1 (1.1 to 3.1)" },
-          { label: "saved at its best", value: 5.1, lo: 3.7, hi: 6.5, text: "5.1 (3.7 to 6.5)", after: true },
+          { label: "with Writing", value: 6.6, lo: 5.5, hi: 7.8, text: "7% (6 to 8)" },
+          { label: "without it", value: 11.1, lo: 8.0, hi: 14.0, text: "11% (8 to 14)", after: true },
+        ],
+      },
+      {
+        title: "New characters, in their first five weeks",
+        rows: [
+          { label: "with Writing", value: 12.6, lo: 11.3, hi: 13.9, text: "13% (11 to 14)" },
+          { label: "without it", value: 20.5, lo: 16.9, hi: 23.9, text: "21% (17 to 24)", after: true },
         ],
       },
     ]}
   />
 </Fig>
 
-So Listening's 23 minutes a day was saving me about 2 minutes of reading review, and about 5 at its
-best. Even the top of what it saved (6.5 minutes) is nowhere near the bottom of what it took (18.8),
-and it would only have paid for itself if a wrong answer cost me about 5 minutes and not 1.
+- So on characters I already knew I went from 7% wrong to 11%.
+- On new ones I went from 13% to 21%, and the ones I struggled on (Hard) tripled, from 10% to 31%.
+
+The new ones do come later in the deck though, so some of that is them being harder characters.
+
+These findings kinda match how it feels when learning, everything feels a bit fuzzier in my memory.
+I no longer have the slow, methodical handwriting to solidify not just old characters but new ones
+too.[^write]
+
+## Was it worth it?
+
+Hell no. Writing took 23 minutes a day but would only save about 2 minutes of reading reviews.
+
+<Fig title="What Writing took vs what it saved me in reading reviews">
+  <Dots
+    max={30}
+    ticks={[0, 10, 20, 30]}
+    axis="minutes a day, with the 95% CI"
+    groups={[
+      {
+        rows: [
+          { label: "Writing took", value: 23.4, lo: 18.8, hi: 28.3, text: "23 (19 to 28)" },
+          { label: "Writing saved", value: 1.8, lo: 0.8, hi: 2.9, text: "1.8 (0.8 to 2.9)", after: true },
+        ],
+      },
+    ]}
+  />
+</Fig>
+
+- I get about 2 extra reading cards wrong per day
+- Each wrong reading card adds about a minute in extra review time over 90 days[^cost]
+
+So dropping the Writing cards costs me an extra 2 minutes of reviews and saves 23, which leaves me
+about 21 minutes a day better off.
+
+<Fig title="What dropping the Writing cards does to my day">
+  <Cmp
+    rows={[
+      { label: "Writing took", value: 23, text: "23 min", base: true },
+      { label: "extra reviews", from: 23, value: 21, text: "−2 min" },
+      { label: "better off", value: 21, text: "21 min", after: true },
+    ]}
+  />
+</Fig>
+
+That 2 could grow, to 4 at most, as more characters go without their Writing review.[^best]
 
 ## What's still open?
 
-It's real and it wasn't worth it. What I don't know is exactly how big it ends up, because five
-weeks is a short time however many reviews are in it. Anki also brings a card back sooner after a
-wrong answer, so some of the cost should turn up as extra reviews, though so far reading takes the
-same 8.6 minutes a day.
+- **How big it ends up.** Five weeks is a short time. Anki also brings a card back sooner after a
+  wrong answer, so some of the cost should turn up as extra reviews, though so far reading takes
+  about the same, 8.6 minutes a day vs 8.2.
+- **My handwriting.** That will fade, and I've decided I don't need it.
+- **What the Writing cards did for my listening.** I've only counted reading inside Anki, and I get
+  listening from videos and my teacher anyway.
 
-This is also one person and one deck, so it shows what happened to me and not what would happen to
-you. And I've only counted what Listening did for my reading inside Anki. If those cards were
-helping my listening that isn't in any of these numbers, but I get that from TV and my teacher.
+## Closing remarks
 
-I'm keeping Listening off, and I'll look again in three months. Every number here comes from [this
-script](/blog/anki-listening-cards/measure.py), which reads the review log from Anki.
+I started with reading, writing and a bit of speaking because that's how Chinese school teaches it,
+it's just the traditional way. But the reviews were taking longer and longer out of my day, and I
+was dreading them and losing the motivation to do them at all.
+
+That's why I even looked into it and it turns out the handwriting was costing me 23 minutes a day to
+save 2 lmao.
+
+For now I'm keeping the Writing cards off and I'll revisit the numbers here in a few months. Every
+number here comes from [this script](/blog/anki-listening-cards/measure.py), which reads the review
+log from Anki.
 
 <details class="more" id="tests">
 <summary>How each test works</summary>
 
-- **Confidence intervals** are bootstraps. I redraw the data with replacement 10,000 times, work out
-  the answer each time and take the middle 95%. Whole days or whole cards are redrawn together,
-  because reviews on one day or of one card aren't independent.
-- **Before vs after** uses a permutation test. I shuffle which days count as after 10,000 times and
-  count how often the shuffled gap is as big as the real one. It never was, so p < 0.001.
-- **The 22 earlier dates** are every Sunday from 5 April to 30 August. The real date beat all of
-  them, and 1 in 23 is p = 0.043.
-- **Skipped vs not due** is Fisher's exact test on 88 wrong of 452 vs 6 wrong of 162, p = 0.0000002.
-- **The trend** across not due, 0 to 7 days, 8 to 21 days and 22 or more is a Cochran-Armitage test,
-  z = 6.7.
+- **Confidence intervals** are
+  [bootstraps](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)). I redraw the data with
+  replacement thousands of times, work out the answer each time and take the middle 95%. Whole days
+  or whole cards are redrawn together, because reviews on one day or of one card aren't independent.
+- **Before vs after** uses a [permutation test](https://en.wikipedia.org/wiki/Permutation_test). I
+  shuffle which days count as after 10,000 times and count how often the shuffled gap is as big as
+  the real one. It almost never is, so p < 0.001. That's also where the saving at the top comes
+  from: my total daily time fell 23 minutes (95% CI 17 to 29), with Reading flat at 8.2 → 8.6
+  minutes.
+- **The 22 earlier dates.** Reading bounces around from week to week anyway, so I ran the same 35
+  days before vs after on every Sunday from 5 April to 30 August, when nothing had changed. The
+  biggest jump at any of them was 2.3 percentage points. At the real date it was 7.5, or 5.8 if I
+  leave the China weeks out of the before. The real date beat all of them, and 1 in 23 is p = 0.043.
+- **Anki's own prediction.** In plain percentages my reading is 4.4 percentage points worse (95% CI
+  1.9 to 6.9). Anki's scheduler also has a prediction of the chance I've forgotten each card, which
+  I worked out by replaying it over my log. Against that it's 5.1 worse (95% CI 2.6 to 7.6).
+- **Known and new characters.** A character is new for the 35 days after I first see it and known
+  after that. New with Writing means first seen from 4 May to 6 August, and new without means first
+  seen from 5 October.
 
 </details>
 
 [^cost]: Review answers with 90 days of log after them, each compared with a right answer on a card
-    at the same interval, then averaged over the wrong answers: 105 seconds for Listening and 61 for
-    Recognition. Anki caps a review at 60 seconds and Listening hit the cap twice as often, so its
-    time is if anything an undercount.
-[^skip]: The reviews where Listening wasn't due yet are older, better-known characters, which is why
-    each group is set against what Anki expected. Against my baseline with Listening the skipped
-    reviews are 12.3 points worse (95% CI 8.9 to 15.7).
+    at a similar interval, then averaged over the wrong answers: 61 seconds for a Reading card and
+    105 for a Writing card.
+[^best]: The characters that have gone without a Writing review went from 14% wrong to 20%. If every
+    review ends up like that it's about 2.3 wrong a day, so a little over 2 minutes. Against all my
+    reviews from May to early September they're 9 percentage points worse (95% CI 6 to 13), which
+    would be 3.8 minutes (2.4 to 5.2), but those are harder characters to begin with, so 4 is the
+    top end.
+[^write]: There's research on this too. [Reading depends on writing, in
+    Chinese](https://doi.org/10.1073/pnas.0503523102) (Tan and others, 2005) found that how well
+    children read Chinese was closely tied to how well they could write the characters by hand.

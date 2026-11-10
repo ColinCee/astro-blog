@@ -20,6 +20,10 @@ Colin is a visual reader who skims. A post is one story, results first, in his o
 - **Each timeline row makes sense alone and is one turn of the story**, in months not exact dates, with no code or number that needs context. Too detailed is as bad as too thin.
 - **Draft the content high level first**, then the figures, then the wording.
 - **When he asks for versions, make them distinct** in opening, structure, figures and depth, on the same facts.
+- **Every section answers a question the reader of this story would ask**, and says how it connects to the one claim. A check that can't change the verdict (a sceptic's control, a second method that agrees) goes in the collapsed panel or a footnote. In the Anki post a section proving "it was really the Writing cards" was cut: whichever way it came out, he kept them off.
+- **A section has one shape:** a question as the heading, a one-line answer ("Yes, measurably so.", "Hell no."), the figure, then a plain reading of the figure.
+- **Name each thing once, in the reader's words, and use that name everywhere:** text, figures, the script. "Reading" and "Writing" cards, not the deck's own "Recognition" and "Listening".
+- **What he says it feels like is a lead, so measure it.** He felt new characters were harder to learn; the log showed 13% → 21% wrong, and it became the post's main cost.
 
 ## 2. His voice
 
@@ -35,6 +39,9 @@ Write how he talks in chat and writes himself: casual, conversational British En
 - **Open with the thing and why he tried it**, in his words ("I wanted to see it in action after seeing it play Doom"), not a recap of the last part. A link to the earlier part can sit later or in passing.
 - **Keep his words.** When he's written a passage, fix only facts and real grammar errors (not his missing commas or run-ons), and tell him what changed. Never "tidy" it into your prose, and never upgrade or downgrade how sure he sounds.
 - **Less is more, formatted for scanning.** Lists and tables are for things with real structure, like his dissertation's numbered "Fully Deterministic - …" definitions, not decoration. No bold lead-ins on every bullet, no restating the chart, no detail a curious reader can follow a link to.
+- **One finding per sentence.** Two or more numbers go in the figure or a short list, never stacked in a sentence or slapped on the end of a paragraph. He can't follow "it went from 20% to 35%, which is 14.2 points worse (95% CI 9.6 to 18.8)".
+- **No term he'd have to ask about.** "The estimate", "what I measured", "points" and "the forecast" all stopped him. Say "the result, like 35%", "what I actually got", "20% → 35%".
+- **Don't bring in a method the story doesn't need.** If plain percentages tell the same story as a model-adjusted number, use the plain ones and give the other one line in the collapsed panel.
 
 ## 3. Numbers and claims
 
@@ -44,6 +51,9 @@ Write how he talks in chat and writes himself: casual, conversational British En
 - **Measured data only.** No estimates or demo data when the real thing can be run. If an estimate has to stay, say so in its label (a Splits row's `note`, "~" on the number), never with a lighter grey. Get his OK before any GPU run.
 - **When the real data is private, measure a fake one at full scale.** A few toy rows give sizes and ratios that aren't right. Make a fake dataset the same shape and size with a script (DuckDB for data), commit the script, a small sample and the measuring script, link them, and take every number after the hook from it. The real result stays as the hook. Say it's fake once, without hedging about how good the guess is, and never tune it to hit a number.
 - **Comparisons that could be noise get a significance test** (e.g. Welch's t-test over 5 runs, p < 0.05). Fix the decision rule before looking: a tie keeps the simpler or cheaper option. Never pick or headline the better-looking number after the fact.
+- **Stats in the standard form, explained once.** A result is written "23 minutes (95% CI 17 to 29, p < 0.001)", with a short section near the top saying what the three parts are and the methods in a collapsed panel at the end. Explain a range the way he does: every result has some luck in it, the range is how far luck could have moved it, and if the luckiest case on one side is still worse than the unluckiest on the other it isn't luck. A full explanation of the stats is its own post.
+- **Compare like with like.** The same things before and after (the same characters against their own past), not two different groups that differ in other ways. Say what can't be separated in one line.
+- **Use the current, simple number in the body** ("about 2 minutes") and put the range of where it could end up in a footnote.
 - **Don't overclaim.** Untested gaps say "could be luck", a single run says so, and a caveat on one claim goes in a one-line footnote.
 - **Sources sit next to the claim** as inline links. A footnote is a one-line caveat or method note, never a paragraph, and there's no separate sources section.
 - **Fact-check before publishing.** A fresh agent on another model recomputes every number from the raw data and reads the post cold.
@@ -66,6 +76,7 @@ Show, don't ask: build the change or two or three distinct variations, put them 
   - Numbers aligned in their own columns, and even row spacing.
   - Text sizes as in `DESIGN.md`, nothing under 11px.
 - **No text jammed under a chart.** Labels go on the marks, and explanation goes in one sentence of prose before or after. If the chart already shows it, that sentence goes too: he cut the Jest vs Vitest post by half just by deleting prose that restated its figures.
+- **A figure explains itself.** A title that says what is counted, a named axis with its unit, the key and any marker's name on the chart, and the range drawn whenever one is quoted. No caption unless it is a one-line note. If it needs a paragraph to read it, or he asks "what is that line?", it's the wrong figure: fewer series, one measure.
 - **Deep detail goes in a collapsed panel**, linked from the one sentence that needs it (`[how X works](#internals)` to a `<details class="more" id="internals">`, which the post layout opens on the jump), not explained inline.
 - **In MDX an inline SVG sits on one line**, or the parser breaks it.
 - **Every mark is explained somewhere.** That covers a range bracket, a dashed reference line and a Δ. Do it once, in the key or the first chart's caption.
@@ -76,8 +87,9 @@ Show, don't ask: build the change or two or three distinct variations, put them 
 
 ## 5. Ship
 
-1. Branch, and show him a local preview link (the dev server on his Tailscale name works from his phone).
-2. Before merging:
+1. Branch, and show him a local preview link: the localhost address on his PC, where his browser live-reloads, and the dev server's Tailscale name for his phone.
+2. While he is rewording in his editor, don't rewrite the post on disk under him: his editor saves its own copy over yours. Give him the text to paste, or make the edit and tell him to reload the file first. Wrap the prose (`pnpm format`) and commit his draft only once he says he's done.
+3. Before merging:
    - He has read the draft and said publish. Ask it with his last content decision (a title, a final figure), so his yes to that covers publishing too.
    - `pubDate` is the publish day.
    - Series posts link to each other.
@@ -86,5 +98,5 @@ Show, don't ask: build the change or two or three distinct variations, put them 
    - `pnpm og` has rendered the post's link-preview card (`public/og/<slug>.png`: title and headline result from the frontmatter); without it the post shares the site's card.
    - `pnpm check` passes.
    - An independent review is done.
-3. Merge, watch the deploy, then load the live page.
-4. For LinkedIn, make a 4:5 card in the blog's look (gameplay or the one key chart, the headline number pair, one tagline). Add a short post in his voice: what he wanted to find out, the result, one interesting aside, then the link. Keep it to about five one-line paragraphs: the numbers are on the card, so the text gives the verdict in words ("It's kinda mid") and doesn't repeat them.
+4. Merge, watch the deploy, then load the live page.
+5. For LinkedIn, make a 4:5 card in the blog's look (gameplay or the one key chart, the headline number pair, one tagline). Add a short post in his voice: what he wanted to find out, the result, one interesting aside, then the link. Keep it to about five one-line paragraphs: the numbers are on the card, so the text gives the verdict in words ("It's kinda mid") and doesn't repeat them.

@@ -375,6 +375,13 @@ for label, blk in (("with Writing", hb_), ("without", ha_)):
 ah = mean_gap(ha_) - mean_gap(hb_)
 ah_lo, ah_hi = ci([mean_gap(random.choices(ha_, k=len(ha_))) - mean_gap(random.choices(hb_, k=len(hb_))) for _ in range(N)])
 print(f"  Again or Hard: {ah:.1f} points more (95% CI {ah_lo:.1f} to {ah_hi:.1f}, redrawing days)")
+pool_ah = hb_ + ha_
+hits = 0
+shuffler = random.Random(2)  # its own stream, so the draws below are unchanged
+for _ in range(N):
+    shuffler.shuffle(pool_ah)
+    hits += abs(mean_gap(pool_ah[len(hb_):]) - mean_gap(pool_ah[:len(hb_)])) >= ah
+print(f"  shuffling which days count as without: a gap that big in {hits} of {N} shuffles, p < {max(hits, 1) / N:.4f}")
 print("T3 from 15 Oct: characters whose Writing review was skipped vs not due yet")
 part = [r for r in late if day(r[TS]) >= dt.date(2026, 10, 15)]
 skip = [r for r in part if day(r[TS]) >= due[r[NOTE]]]
