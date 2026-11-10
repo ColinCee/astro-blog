@@ -7,96 +7,72 @@ description: How to plan, write, chart and ship a post on Colin's blog in his vo
 
 Colin is a visual reader who skims. A post is one story, results first, in his own voice, with a figure wherever a figure says it better than a paragraph. The figure components and tokens are in `DESIGN.md`; frontmatter and privacy rules are in `AGENTS.md`.
 
-## 1. Settle the story before any figure
+Work in this order: the story in a line, the sections, the figures, then the wording. Show him built things (a figure, two or three distinct versions on the same facts), not plans.
 
-- **One story, one comparison.** Say it in a line first ("Jest 7 min → Vitest 23 s", "73% → 99%"). Every section serves it, and anything else becomes a sentence or goes.
-- **Hook, problem, fix, in that order**, with the result scannable at the top (the stat, then a chart or clip).
-- **One baseline, used everywhere.** It's the first row of every chart, and every number agrees across text, charts, the card and the frontmatter. Jumping between baselines loses his trust faster than anything.
-- **Apples to apples.** Change one thing at a time against the same baseline, on the same test set. Leave out anything both sides share.
-- **Gauge depth.** Ask him (a few options) how much his readers already know about the domain before deciding how much background to give. Define jargon on first use, as a link or a one-line list item.
-- **Title short and catchy, and it says the result** ("CI faster than GitHub's"). The `stat` is the result and `statLabel` says what it measures, and that's all the frontmatter says about it: no subtitle. Use the same words on the card, the index and the embed.
-- **An overall limitation gets a line at the end** when the comparison isn't fully like for like, not a section.
-- **The headline number covers the whole story, and its chart sits at the top.** Count what the reader actually lost and gained (net of what they would have paid anyway), not one side of it; ask him which figure he means.
-- **Each timeline row makes sense alone and is one turn of the story**, in months not exact dates, with no code or number that needs context. Too detailed is as bad as too thin.
-- **Draft the content high level first**, then the figures, then the wording.
-- **When he asks for versions, make them distinct** in opening, structure, figures and depth, on the same facts.
-- **Every section answers a question the reader of this story would ask**, and says how it connects to the one claim. A check that can't change the verdict (a sceptic's control, a second method that agrees) goes in the collapsed panel or a footnote. In the Anki post a section proving "it was really the Writing cards" was cut: whichever way it came out, he kept them off.
-- **A section has one shape:** a question as the heading, a one-line answer ("Yes, measurably so.", "Hell no."), the figure, then a plain reading of the figure.
-- **Name each thing once, in the reader's words, and use that name everywhere:** text, figures, the script. "Reading" and "Writing" cards, not the deck's own "Recognition" and "Listening".
-- **What he says it feels like is a lead, so measure it.** He felt new characters were harder to learn; the log showed 13% → 21% wrong, and it became the post's main cost.
+## 1. The story
+
+- **One story, said in a line first** ("Jest 7 min → Vitest 23 s", "23 minutes a day to save 2"). Hook, problem, fix, with the result scannable at the top: the stat, then a chart or clip.
+- **Every section answers a question this story's reader would ask.** Anything that can't change the verdict (a sceptic's control, a second method that agrees, a model the plain numbers don't need) is one line in a collapsed panel or a footnote. The Anki post lost a whole section proving "it was really the Writing cards": whichever way it came out, he kept them off.
+- **A section has one shape:** a short heading, a one-line answer ("Yes, measurably so.", "Hell no."), the figure, then a plain reading of the figure. Headings are a question ("How did we beat it?"), a plain statement ("PPO actually wins more at 1M frames") or, in a sequence, a date ("16 December: they move the flight", which also builds the timeline in `DESIGN.md`). Only the last can be a label ("Closing remarks"). Never report-speak like "Background".
+- **The title is the hook, the stat is the result.** The title is a claim or question about the reader's world ("Why you might not need to handwrite Chinese", "CI faster than GitHub's"), not a number they can't place yet. `stat` is the headline result, `statLabel` what it measures in a reader's words ("flashcards a day"), and there is no subtitle. The same words go on the card, the index and the embed.
+- **The headline number covers the whole story:** what was lost and gained, net of what he'd have paid anyway. Ask him which figure he means.
+- **One baseline, like for like, everywhere.** It is the first row of every chart, and every number agrees across text, charts, card and frontmatter. Change one thing at a time against it, compare the same things before and after (the same characters against their own past, not two groups that differ in other ways), and leave out what both sides share. What can't be separated gets one line at the end, not a section.
+- **Name each thing once, in the reader's words, and use it everywhere:** text, figures, the script. "Reading" and "Writing" cards, not the deck's own "Recognition" and "Listening".
+- **Why he looked is part of the story.** Ask what made him try it and how it felt, and close on that in his words. What he says it feels like is also a lead to measure: he felt new characters were harder, and the log showed 13% → 21% wrong.
+- **Gauge depth.** Ask him (a few options) how much his readers know before deciding the background. Jargon is defined on first use, as a link or a one-line list item.
+- **In a timeline, each row is one turn of the story and makes sense alone,** in months not exact dates, with no code or number that needs context.
 
 ## 2. His voice
 
-Write how he talks in chat and writes himself: casual, conversational British English. Use "I" for his own work and memories, and "we" for what he and Claude did together. His 2018 dissertation and the passages he's written into posts are the reference; Claude's own prose isn't.
+Write how he talks in chat and writes himself: casual, conversational British English, "I" for his own work and "we" for what he and Claude did. His 2018 dissertation and the passages he has written into posts are the reference; Claude's prose isn't.
 
-- **Say things plainly, without AI drama.** He states strong claims straight ("Take a look at the massive difference in speed") and hedges where he's unsure ("I think", "kind of", "to be honest"). What he can't stand is manufactured contrast and invented consensus: "It isn't X. It's Y.", "everyone thinks", "the common take", clipped fragments ("Not once. 1,370 times."), one-line punchlines.
-- **Sentences run on the way he talks**, joined by commas, "but", "so" and "and". He sometimes opens with "However", "So", "Contrary to popular belief", "What it does is", "fundamentally" and "I remember". No semicolons, no em dashes, active voice.
-- **He explains through story and scale.** He'll give a short history to set the scene (Deep Blue, then Watson, then AlphaGo in his dissertation), a comparison that makes a number land (atoms in the universe), a memory ("leave the PC running overnight"), and a question that sets up the next part ("why not have multiple agents playing at the same time?").
-- **About three sentences a paragraph, each a new fact.** Cut what the previous sentence or a figure already says, never explain what a later section covers, and end on a nudge to the next part.
-- **Headings are short**: a question ("How did we beat it?"), a plain statement ("PPO actually wins more at 1M frames"), or a date ("16 December: they move the flight") when the post is a sequence (three dated headings build the timeline in `DESIGN.md`). Only the closing section can be a plain label ("Closing remarks"). Never use report-speak like "Background" or "Results and discussion".
-- **Everyday words, not writerly ones.** "vs", not "against" ("48 points vs 37"). "spamming shoot", "pretty decent", "kinda mid", "cool". His verdict goes in straight, the way he'd say it to a friend ("It's kinda mid, at least for this use-case"). Never a polished closing line ("practice still wins") or a neat summary of what something is "great for".
-- **Only what he knows, not reasons you inferred.** Don't add a "because" he didn't measure ("because it moves around and picks its targets"), and don't stack parenthetical asides ("(I used version 1.14, from October 2026)"). A detail that matters gets its own plain sentence or a footnote.
-- **Open with the thing and why he tried it**, in his words ("I wanted to see it in action after seeing it play Doom"), not a recap of the last part. A link to the earlier part can sit later or in passing.
-- **Keep his words.** When he's written a passage, fix only facts and real grammar errors (not his missing commas or run-ons), and tell him what changed. Never "tidy" it into your prose, and never upgrade or downgrade how sure he sounds.
-- **Less is more, formatted for scanning.** Lists and tables are for things with real structure, like his dissertation's numbered "Fully Deterministic - …" definitions, not decoration. No bold lead-ins on every bullet, no restating the chart, no detail a curious reader can follow a link to.
-- **One finding per sentence.** Two or more numbers go in the figure or a short list, never stacked in a sentence or slapped on the end of a paragraph. He can't follow "it went from 20% to 35%, which is 14.2 points worse (95% CI 9.6 to 18.8)".
+- **Keep his words.** In a passage he wrote, fix only facts and real grammar errors (not his missing commas or run-ons) and tell him what changed. Never tidy it into your prose or change how sure he sounds.
+- **Plain, with no AI drama.** He states strong claims straight ("Take a look at the massive difference in speed") and hedges where he's unsure ("I think", "kind of"). He can't stand manufactured contrast ("It isn't X. It's Y."), invented consensus ("everyone thinks"), clipped fragments ("Not once. 1,370 times.") or one-line punchlines and polished closers ("practice still wins").
+- **Sentences run on the way he talks,** joined by commas, "but", "so" and "and". Openers he uses: "However", "So", "Fundamentally", "What it does is", "I remember". No semicolons, no em dashes, active voice.
+- **Everyday words:** "vs" not "against", "pretty decent", "kinda mid", "cool". His verdict goes in the way he'd say it to a friend.
 - **No term he'd have to ask about.** "The estimate", "what I measured", "points" and "the forecast" all stopped him. Say "the result, like 35%", "what I actually got", "20% → 35%".
-- **Don't bring in a method the story doesn't need.** If plain percentages tell the same story as a model-adjusted number, use the plain ones and give the other one line in the collapsed panel.
+- **One finding per sentence, about three sentences a paragraph.** Two or more numbers go in the figure or a short list, never stacked in a sentence. He can't follow "it went from 20% to 35%, which is 14.2 points worse (95% CI 9.6 to 18.8)". Cut what a figure or the last sentence already says, don't explain what a later section covers, and end on a nudge to the next part.
+- **He explains through story and scale:** a short history to set the scene, a comparison that makes a number land (a coin flip, atoms in the universe), a memory, a question that sets up the next part.
+- **Only what he knows.** No "because" he didn't measure, no stacked parenthetical asides. A detail that matters gets its own sentence or a footnote.
+- **Open with the thing and why he tried it,** not a recap of the last part.
+- **Lists and tables are for real structure,** not decoration: no bold lead-in on every bullet, no detail a link can carry.
 
 ## 3. Numbers and claims
 
-- **In figures, numbers are symbols and digits, not words:** "< $0.01", "~ 200 ms", "1 game", not "under 1¢", "about 200 ms", "a game".
-- **One way to say each number** (1.4×, not also "31% less time"), the same everywhere.
-- **A reduction is a % smaller ("−66%"), never a ×**, which reads as if it got bigger.
-- **Measured data only.** No estimates or demo data when the real thing can be run. If an estimate has to stay, say so in its label (a Splits row's `note`, "~" on the number), never with a lighter grey. Get his OK before any GPU run.
-- **When the real data is private, measure a fake one at full scale.** A few toy rows give sizes and ratios that aren't right. Make a fake dataset the same shape and size with a script (DuckDB for data), commit the script, a small sample and the measuring script, link them, and take every number after the hook from it. The real result stays as the hook. Say it's fake once, without hedging about how good the guess is, and never tune it to hit a number.
-- **Comparisons that could be noise get a significance test** (e.g. Welch's t-test over 5 runs, p < 0.05). Fix the decision rule before looking: a tie keeps the simpler or cheaper option. Never pick or headline the better-looking number after the fact.
-- **Stats in the standard form, explained once.** A result is written "23 minutes (95% CI 17 to 29, p < 0.001)", with a short section near the top saying what the three parts are and the methods in a collapsed panel at the end. Explain a range the way he does: every result has some luck in it, the range is how far luck could have moved it, and if the luckiest case on one side is still worse than the unluckiest on the other it isn't luck. A full explanation of the stats is its own post.
-- **Compare like with like.** The same things before and after (the same characters against their own past), not two different groups that differ in other ways. Say what can't be separated in one line.
-- **Use the current, simple number in the body** ("about 2 minutes") and put the range of where it could end up in a footnote.
-- **Don't overclaim.** Untested gaps say "could be luck", a single run says so, and a caveat on one claim goes in a one-line footnote.
-- **Sources sit next to the claim** as inline links. A footnote is a one-line caveat or method note, never a paragraph, and there's no separate sources section.
-- **Fact-check before publishing.** A fresh agent on another model recomputes every number from the raw data and reads the post cold.
+- **Measured data only.** No estimates or demo data when the real thing can be run; an estimate that stays says so in its label ("~", a row's `note`). Get his OK before any GPU run.
+- **Private data: measure a fake one at full scale.** A script (DuckDB for data) makes a dataset of the same shape and size; commit it, a small sample and the measuring script, and take every number after the hook from it. Say it's fake once and never tune it to hit a number.
+- **One way to say each number,** the same everywhere (1.4×, not also "31% less"). A reduction is a % smaller ("−66%"), never a ×. In figures numbers are symbols and digits: "< $0.01", "~ 200 ms".
+- **Anything that could be noise gets a test,** with the rule fixed before looking: a tie keeps the simpler or cheaper option, and the better-looking number is never picked afterwards.
+- **Stats in the standard form, explained once.** A result reads "23 minutes (95% CI 17 to 29, p < 0.001)": a short section near the top says what the three parts are, and the methods sit in a collapsed panel at the end. Explain a range his way: every result has some luck in it, the range is how far luck could have moved it, and if the luckiest case on one side is still worse than the unluckiest on the other it isn't luck. Explaining the stats properly is its own post.
+- **The body uses the simple, current number** ("about 2 minutes"); where it could end up goes in a footnote.
+- **Don't overclaim.** An untested gap says "could be luck", a single run says so, and one person's data says that too.
+- **Sources sit next to the claim** as inline links, with a cited article or law named in the link. A footnote is a short caveat, method note or reference, and there is no sources section.
+- **Fact-check before he reads it for the last time, and again before publishing.** A fresh agent on another model recomputes every number from the raw data and reads the post cold; every number in the post must come out of the linked script.
 
 ## 4. Figures
 
-Show, don't ask: build the change or two or three distinct variations, put them in front of him, then iterate. The figures in his recent posts are the standard. Numbered captions underneath ("Figure 5.1: Comparison of…", as in his dissertation) suit a report, where figures float away from the text that cites them. In a post the figure sits next to its text, so it gets a short title above and, at most, a one-line caption below for a note.
+The figures in his recent posts are the standard. A figure sits next to its text with a short title above it.
 
-- **Pick the form by the job.** Bars drawn to scale for A vs B. A step chart for sequential improvements. A dot plot for comparing options. A bridge chart for where time goes. A grid of squares for time at a glance. Trees or arrows for structure. Never plain boxes with text in them, and skip 3D or click-to-reveal unless it explains better than a still.
-- **A post in steps shows each step the same way.** Each step's figure ends with the same whole-file before → after bars, on one scale, and the closing step chart follows the post's order from the baseline, with nothing else mixed in.
-- **A mechanism is drawn on a few real rows; its sizes are the whole file's.** Animate how it works when that explains more than a still (text that rearranges itself, looping slowly: a quick move, a hold of about 7 s, hover or focus pausing it, a tab stopping it).
-- **No strikethrough.** It is hard to read; grey the text and label it ("switched off"). Name a cited article or law as a link.
-- **Colour links what belongs together.** Matching neutral styles tie a value to its dictionary entry; the accent everywhere ties nothing.
-- **Chart basics, every time.**
-  - A short title above.
-  - Axis titles with units, e.g. "win rate (%)".
-  - The baseline first and striped.
-  - One accent (`--accent`, purple) for the result or the option kept.
-  - Changes in green (`--gain`, real gain), red (`--loss`, real drop) or grey (could be luck), with a key on the chart.
-  - Numbers aligned in their own columns, and even row spacing.
-  - Text sizes as in `DESIGN.md`, nothing under 11px.
-- **No text jammed under a chart.** Labels go on the marks, and explanation goes in one sentence of prose before or after. If the chart already shows it, that sentence goes too: he cut the Jest vs Vitest post by half just by deleting prose that restated its figures.
-- **A figure explains itself.** A title that says what is counted, a named axis with its unit, the key and any marker's name on the chart, and the range drawn whenever one is quoted. No caption unless it is a one-line note. If it needs a paragraph to read it, or he asks "what is that line?", it's the wrong figure: fewer series, one measure.
-- **Deep detail goes in a collapsed panel**, linked from the one sentence that needs it (`[how X works](#internals)` to a `<details class="more" id="internals">`, which the post layout opens on the jump), not explained inline.
-- **In MDX an inline SVG sits on one line**, or the parser breaks it.
-- **Every mark is explained somewhere.** That covers a range bracket, a dashed reference line and a Δ. Do it once, in the key or the first chart's caption.
-- **Interaction is a bonus, never required.** Hover can fade the other rows, but nothing should force a click to understand.
-- **Check every figure at phone width and in both themes**, with nothing overflowing its box.
-- **Nothing scrolls sideways.** Colin finds horizontal scrolling terrible: no long code lines, tables or figures that need it. Pretty-print a record and show a few of its fields, or wrap the code block (`wrap` after the language).
-- **A recording, when there is one, beats a chart for the hook.** Captions are short, e.g. "73% wins / this game: won, 57 points".
+- **Pick the form by the job.** Bars to scale for A vs B, a step chart for improvements in sequence, a dot plot for options (with a whisker when there is a range), a bridge for where time goes, a grid of squares for time at a glance, trees or arrows for structure. Never plain boxes with text in them, and no 3D or click-to-reveal unless it explains more than a still.
+- **A figure explains itself.** The title says what is counted, the axis is named with its unit, the key and any marker's name are on the chart, and a range is drawn whenever one is quoted. No caption unless it's a one-line note, and no text jammed underneath. If it needs a paragraph, or he asks "what is that line?", it's the wrong figure: fewer series, one measure.
+- **Chart basics:** the baseline first and striped, one accent (`--accent`) for the result or the option kept, changes in green (`--gain`), red (`--loss`) or grey (could be luck) with a key, numbers aligned in their own columns, even rows, text sizes from `DESIGN.md` and nothing under 11px.
+- **Prose never restates a chart.** One sentence before or after says what it means; he halved the Jest post by deleting text that repeated its figures.
+- **A post in steps shows each step the same way,** each ending on the same before → after bars on one scale, and the closing chart follows the post's order.
+- **A mechanism is drawn on a few real rows with the whole file's sizes,** animated only when that explains more than a still (a quick move, a hold of about 7 s, hover pauses it).
+- **Colour links what belongs together;** the accent everywhere ties nothing. No strikethrough: grey the text and label it.
+- **Deep detail goes in a collapsed panel** linked from the sentence that needs it (`[how X works](#internals)` to `<details class="more" id="internals">`).
+- **Interaction is a bonus, never required,** and nothing scrolls sideways: wrap long code (`wrap` after the language) and show a few fields of a record, not all.
+- **Check every figure at phone width and in both themes.** In MDX an inline SVG sits on one line.
+- **A recording beats a chart for the hook,** with a short caption ("73% wins / this game: won, 57 points").
 
 ## 5. Ship
 
-1. Branch, and show him a local preview link: the localhost address on his PC, where his browser live-reloads, and the dev server's Tailscale name for his phone.
-2. While he is rewording in his editor, don't rewrite the post on disk under him: his editor saves its own copy over yours. Give him the text to paste, or make the edit and tell him to reload the file first. Wrap the prose (`pnpm format`) and commit his draft only once he says he's done.
+1. Work on a branch and give him a preview link: the localhost address on his PC, where his browser live-reloads, and the dev server's Tailscale name for his phone.
+2. While he is rewording in his editor, don't rewrite the post on disk under him, because his editor saves its copy over yours. Give him the text, or make the edit and tell him to reload the file first. Wrap the prose (`pnpm format`) and commit his draft only once he says he's done.
 3. Before merging:
-   - He has read the draft and said publish. Ask it with his last content decision (a title, a final figure), so his yes to that covers publishing too.
-   - `pubDate` is the publish day.
-   - Series posts link to each other.
-   - Work posts name nothing private.
-   - The linked repos are pushed, so links show the current page.
-   - `pnpm og` has rendered the post's link-preview card (`public/og/<slug>.png`: title and headline result from the frontmatter); without it the post shares the site's card.
-   - `pnpm check` passes.
-   - An independent review is done.
+   - He has read the draft and said publish. Ask it with his last content decision, so that yes covers publishing.
+   - `pubDate` is the publish day, series posts link to each other, work posts name nothing private, and linked repos are pushed.
+   - `pnpm og` has rendered the link-preview card (`public/og/<slug>.png`) from the final title and stat.
+   - `pnpm check` passes and the independent review is done.
 4. Merge, watch the deploy, then load the live page.
-5. For LinkedIn, make a 4:5 card in the blog's look (gameplay or the one key chart, the headline number pair, one tagline). Add a short post in his voice: what he wanted to find out, the result, one interesting aside, then the link. Keep it to about five one-line paragraphs: the numbers are on the card, so the text gives the verdict in words ("It's kinda mid") and doesn't repeat them.
+5. For LinkedIn, make a 4:5 card in the blog's look (gameplay or the one key chart, the headline number pair, one tagline) and a short post in his voice: what he wanted to find out, the result, one aside, the link. About five one-line paragraphs; the numbers are on the card, so the text gives the verdict in words.
