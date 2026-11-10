@@ -471,17 +471,17 @@ def wrong_cost(cards):
 
 
 cards = list(per_card.values())
-cost = wrong_cost(cards)
+wrong_secs = wrong_cost(cards)
 c_lo, c_hi = ci([wrong_cost(random.choices(cards, k=len(cards))) for _ in range(1000)])
-print(f"  {cost:.0f} seconds (95% CI {c_lo:.0f} to {c_hi:.0f})")
+print(f"  {wrong_secs:.0f} seconds (95% CI {c_lo:.0f} to {c_hi:.0f})")
 
 print("\n# Figure 4: what Listening's minutes bought, in minutes of reading review a day")
 per_day = len(aft) / W
-print(f"{per_day:.1f} Recognition review answers a day; a wrong answer costs {cost / 60:.2f} min")
+print(f"{per_day:.1f} Recognition review answers a day; a wrong answer costs {wrong_secs / 60:.2f} min")
 for name, pts, p_lo, p_hi in (("so far", g_after - g_base, lo, hi), ("once every Listening review is skipped", g_skip - g_base, st_lo, st_hi)):
     f = per_day / 100
     print(f"{name}: {pts:.1f} points = {pts * f:.1f} wrong answers a day (95% CI {p_lo * f:.1f} to {p_hi * f:.1f}) "
-          f"= {pts * f * cost / 60:.1f} min a day saved ({p_lo * f * cost / 60:.1f} to {p_hi * f * cost / 60:.1f}); "
+          f"= {pts * f * wrong_secs / 60:.1f} min a day saved ({p_lo * f * wrong_secs / 60:.1f} to {p_hi * f * wrong_secs / 60:.1f}); "
           f"Listening paid {listening / (pts * f):.1f} min per wrong answer")
 print(f"Listening would have paid for itself only if a wrong answer cost {listening / ((g_skip - g_base) * per_day / 100):.1f} min, or {listening / (st_hi * per_day / 100):.1f} at the top of the range")
 # Over every interval length, weighted by how many wrong answers fell in
@@ -501,6 +501,60 @@ for o in (0, 1):
             extra += (sum(w) / len(w) - sum(ok) / len(ok)) * len(w)
             n += len(w)
     print(f"extra {NAME[o]} seconds over 90 days per wrong answer: {extra / n:.0f} ({n} wrong answers)")
+
+print("\n# The post's figures: plain shares of reading reviews answered Again, each with its 95% CI")
+# No forecast here, only counts. Days are redrawn for the two periods and
+# cards for the skipped and not-due groups.
+
+
+def wrong_blocks(rs, key):
+    out = collections.defaultdict(lambda: [0, 0])
+    for r in rs:
+        out[key(r)][0] += r[EASE] == 1
+        out[key(r)][1] += 1
+    return list(out.values())
+
+
+def level(blk):
+    return [mean_gap(random.choices(blk, k=len(blk))) for _ in range(N)]
+
+
+wb, wa = wrong_blocks(base, by_date), wrong_blocks(after, by_date)
+ws, wn = wrong_blocks(skip, by_cardid), wrong_blocks(notdue, by_cardid)
+draws = {"with Listening, 4 May to 10 Sep": (wb, level(wb)), "without, 5 Oct to 8 Nov": (wa, level(wa)),
+         "from 15 Oct, Listening not due yet": (wn, level(wn)), "from 15 Oct, Listening skipped": (ws, level(ws))}
+for label, (blk, dr) in draws.items():
+    l_, h_ = ci(dr)
+    print(f"  {label}: {mean_gap(blk):.1f}% (95% CI {l_:.1f} to {h_:.1f})")
+d_base, d_after, d_skip = (draws[k][1] for k in ("with Listening, 4 May to 10 Sep", "without, 5 Oct to 8 Nov", "from 15 Oct, Listening skipped"))
+so_far = mean_gap(wa) - mean_gap(wb)
+sf_lo, sf_hi = ci([a_ - b_ for a_, b_ in zip(d_after, d_base)])
+best = mean_gap(ws) - mean_gap(wb)
+be_lo, be_hi = ci([a_ - b_ for a_, b_ in zip(d_skip, d_base)])
+pool = wb + wa
+hits = 0
+for _ in range(N):
+    random.shuffle(pool)
+    hits += abs(mean_gap(pool[len(wb):]) - mean_gap(pool[:len(wb)])) >= so_far
+print(f"  without vs with: {so_far:.1f} percentage points more (95% CI {sf_lo:.1f} to {sf_hi:.1f}), p < {max(hits, 1) / N:.4f} (permutation test)")
+print(f"  skipped vs with Listening: {best:.1f} percentage points more (95% CI {be_lo:.1f} to {be_hi:.1f})")
+raw = []
+c = dt.date(2026, 4, 5)
+rate = lambda rs: 100 * sum(r[EASE] == 1 for r in rs) / len(rs)
+while c <= dt.date(2026, 8, 30):
+    raw.append(rate([r for r in scored if c < day(r[TS]) <= c + dt.timedelta(days=W)])
+               - rate([r for r in scored if c - dt.timedelta(days=W - 1) <= day(r[TS]) <= c]))
+    c += dt.timedelta(days=7)
+real_raw = rate([r for r in scored if between(r, A0, A1)]) - rate([r for r in scored if between(r, B0, B1)])
+print(f"  35 days after vs 35 before at {len(raw)} earlier dates: {min(raw):+.1f} to {max(raw):+.1f} percentage points; at the real date {real_raw:+.1f}")
+
+print("\n# Figure: what Listening's minutes saved, in minutes of reading review a day")
+f = per_day / 100 * wrong_secs / 60
+print(f"  {per_day:.1f} reading reviews a day, {wrong_secs:.0f} s per wrong answer")
+print(f"  Listening took {listening:.1f} min a day (95% CI {lis_lo:.1f} to {lis_hi:.1f})")
+print(f"  saved so far: {so_far * per_day / 100:.1f} wrong answers a day = {so_far * f:.1f} min (95% CI {sf_lo * f:.1f} to {sf_hi * f:.1f})")
+print(f"  saved once every Listening review is skipped: {best * per_day / 100:.1f} wrong answers a day = {best * f:.1f} min (95% CI {be_lo * f:.1f} to {be_hi * f:.1f})")
+print(f"  a wrong answer would have to cost {listening / (best * per_day / 100):.1f} min for Listening to pay for itself")
 
 print("\n# Figure 2: Recognition review answers each week, wrong % and what Anki expected (weeks start Monday)")
 # Week 0 starts 4 May, when the deck was three months old and the baseline
