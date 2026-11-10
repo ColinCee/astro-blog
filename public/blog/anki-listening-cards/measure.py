@@ -352,6 +352,25 @@ print(f"  {diff:.1f} points worse (95% CI {lo:.1f} to {hi:.1f}), p < {max(hits, 
 real = versus(after)[2] - versus([r for r in scored if between(r, B0, B1)])[2]
 print(f"  35 v 35 at the real date {real:+.1f} points, bigger than at all {len(swings)} earlier dates (largest {max(swings):+.1f}): p = {1 / (len(swings) + 1):.3f}")
 
+print("T2b the same two periods by button: Again is forgot, Hard is got it but struggled")
+for label, rs in (("with Listening", base), ("without", after)):
+    share = [100 * sum(r[EASE] == e for r in rs) / len(rs) for e in (1, 2, 3, 4)]
+    print(f"  {label}: Again {share[0]:.1f}%, Hard {share[1]:.1f}%, Good {share[2]:.1f}%, Easy {share[3]:.1f}%; "
+          f"Again or Hard {share[0] + share[1]:.1f}%, Good or Easy {share[2] + share[3]:.1f}%")
+
+
+def struggled(rs):
+    out = collections.defaultdict(lambda: [0, 0])
+    for r in rs:
+        out[day(r[TS])][0] += r[EASE] <= 2
+        out[day(r[TS])][1] += 1
+    return list(out.values())
+
+
+hb_, ha_ = struggled(base), struggled(after)
+ah = mean_gap(ha_) - mean_gap(hb_)
+ah_lo, ah_hi = ci([mean_gap(random.choices(ha_, k=len(ha_))) - mean_gap(random.choices(hb_, k=len(hb_))) for _ in range(N)])
+print(f"  Again or Hard: {ah:.1f} points more (95% CI {ah_lo:.1f} to {ah_hi:.1f}, redrawing days)")
 print("T3 from 15 Oct: characters whose Listening review was skipped vs not due yet")
 part = [r for r in late if day(r[TS]) >= dt.date(2026, 10, 15)]
 skip = [r for r in part if day(r[TS]) >= due[r[NOTE]]]
