@@ -6,7 +6,6 @@ import { chartHeight, type LineData, lineChart } from "./line-chart";
 
 const fmt = new Intl.NumberFormat("en-GB");
 
-
 // Chain (used only by the unpublished dissertation posts): one lost game as a row of decisions, the only reward at the end.
 // Plain Q-learning updates on random moves from the game (as replay does)
 // show how slowly that end signal reaches the early moves; the 2018 penalty
@@ -48,14 +47,23 @@ function chain(root: HTMLElement) {
     for (let i = 0; i < n; i++) {
       const strength = Math.min(1, Math.abs(v[i]));
       if (strength > 0.01 && i < first) first = i;
-      cells[i].style.fill = `color-mix(in oklch, var(--accent) ${Math.round(strength * 100)}%, var(--panel))`;
+      cells[i].style.fill =
+        `color-mix(in oklch, var(--accent) ${Math.round(strength * 100)}%, var(--panel))`;
     }
     out.value = fmt.format(updates);
-    reached.textContent = first === n ? "none yet" : first === 0 ? "every move" : `the last ${n - first}`;
+    reached.textContent =
+      first === n
+        ? "none yet"
+        : first === 0
+          ? "every move"
+          : `the last ${n - first}`;
   };
   slider.addEventListener("input", draw);
   toggle.addEventListener("click", () => {
-    toggle.setAttribute("aria-pressed", String(toggle.getAttribute("aria-pressed") !== "true"));
+    toggle.setAttribute(
+      "aria-pressed",
+      String(toggle.getAttribute("aria-pressed") !== "true"),
+    );
     draw();
   });
   draw();
@@ -94,7 +102,10 @@ async function qview(root: HTMLElement) {
   const box = root.querySelector<HTMLElement>(".qbars")!;
   const data: Recording = await (await fetch(root.dataset.src!)).json();
   const names: string[] = data.action_names.map((n: string) =>
-    n.replace(/^ACTION_/, "").toLowerCase().replace("use", "shoot"),
+    n
+      .replace(/^ACTION_/, "")
+      .toLowerCase()
+      .replace("use", "shoot"),
   );
   // Frame i of the video shows the screen after tick i.
   const fps: number = data.video.fps;
@@ -134,7 +145,9 @@ async function qview(root: HTMLElement) {
     cell.setAttribute("aria-label", `Enlarge frame ${i + 1} of 4`);
     const toggle = () => {
       zoomed = zoomed === i ? -1 : i;
-      seen.querySelectorAll("i").forEach((c, j) => c.classList.toggle("is-on", j === zoomed));
+      seen
+        .querySelectorAll("i")
+        .forEach((c, j) => c.classList.toggle("is-on", j === zoomed));
       showZoom();
     };
     cell.addEventListener("click", toggle);
@@ -168,14 +181,17 @@ async function qview(root: HTMLElement) {
     const min = Math.min(...q);
     const span = Math.max(...q) - min || 1;
     rows.forEach((row, i) => {
-      row.querySelector<HTMLElement>("i")!.style.setProperty("--w", String(0.04 + (0.96 * (q[i] - min)) / span));
+      row
+        .querySelector<HTMLElement>("i")!
+        .style.setProperty("--w", String(0.04 + (0.96 * (q[i] - min)) / span));
       row.querySelector("b")!.textContent = q[i].toFixed(2);
       row.classList.toggle("cmp--after", data.action_names[i] === d.action);
     });
     root.style.setProperty("--k", String(lo));
     showZoom();
     if (seenTicks) seenTicks.textContent = `frames ${d.tick - 3} to ${d.tick}`;
-    if (heldName) heldName.textContent = names[data.action_names.indexOf(d.action)];
+    if (heldName)
+      heldName.textContent = names[data.action_names.indexOf(d.action)];
     if (at) at.textContent = `${lo + 1} / ${decisions.length}`;
     if (scrub) scrub.value = String(lo);
   }
@@ -225,10 +241,14 @@ async function qview(root: HTMLElement) {
   let whole: Promise<void> | undefined;
   const loadWhole = () =>
     (whole ??= (async () => {
-      const source = [...video.querySelectorAll("source")].find((s) => video.canPlayType(s.type));
+      const source = [...video.querySelectorAll("source")].find((s) =>
+        video.canPlayType(s.type),
+      );
       if (!source) return;
       const blob = await (await fetch(source.src)).blob();
-      const loaded = new Promise((r) => video.addEventListener("loadedmetadata", r, { once: true }));
+      const loaded = new Promise((r) =>
+        video.addEventListener("loadedmetadata", r, { once: true }),
+      );
       video.src = URL.createObjectURL(blob);
       await loaded;
     })());
@@ -243,12 +263,13 @@ async function qview(root: HTMLElement) {
       video.currentTime = (decisions[i].tick + 0.5) / (fps * ticksPerFrame);
     });
   };
-  root.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((b) =>
-    b.addEventListener("click", () => goTo(last + Number(b.dataset.step))),
-  );
+  root
+    .querySelectorAll<HTMLButtonElement>("[data-step]")
+    .forEach((b) =>
+      b.addEventListener("click", () => goTo(last + Number(b.dataset.step))),
+    );
   scrub?.addEventListener("input", () => goTo(Number(scrub.value)));
 }
-
 
 // Ladder: a step chart of speed changes. Each step is a focusable column;
 // choosing one fills the panel below with what changed and by how much.
@@ -258,11 +279,19 @@ function ladder(root: HTMLElement) {
   const svg = root.querySelector("svg")!;
   const out = root.querySelector<HTMLElement>("[data-out]")!;
   const [baseName, baseNote] = (root.dataset.base ?? "").split("|");
-  const lo = Math.log10(20), hi = Math.log10(4000);
-  let risers: SVGElement[] = [], hits: SVGElement[] = [], baseHit: SVGElement | null = null;
-  let colL = 0, colW = 1; // where the columns sit, from the last draw
+  const lo = Math.log10(20),
+    hi = Math.log10(4000);
+  let risers: SVGElement[] = [],
+    hits: SVGElement[] = [],
+    baseHit: SVGElement | null = null;
+  let colL = 0,
+    colW = 1; // where the columns sit, from the last draw
   let picked = 0;
-  steps.forEach((s, i) => s.after / s.before > steps[picked].after / steps[picked].before && (picked = i));
+  steps.forEach(
+    (s, i) =>
+      s.after / s.before > steps[picked].after / steps[picked].before &&
+      (picked = i),
+  );
   const pick = (i: number) => {
     picked = i;
     risers.forEach((r, j) => r.classList.toggle("is-on", j === i));
@@ -281,40 +310,89 @@ function ladder(root: HTMLElement) {
     const W = Math.round(svg.parentElement!.clientWidth);
     if (!W) return;
     const H = Math.round(Math.min(300, Math.max(220, W * 0.42)));
-    const L = 58, R = 8, T = 12, B = 44;
+    const L = 58,
+      R = 8,
+      T = 12,
+      B = 44;
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.dataset.px = "";
     svg.style.setProperty("--k", "1");
     svg.replaceChildren();
     const el = svgEl(svg);
-    const y = (v: number) => T + (H - T - B) * (1 - (Math.log10(v) - lo) / (hi - lo));
+    const y = (v: number) =>
+      T + (H - T - B) * (1 - (Math.log10(v) - lo) / (hi - lo));
     const dx = (W - L - R) / (steps.length + 1); // column 0 is the 2018 engine, before any change
     colL = L;
     colW = dx;
     const X = (i: number) => L + (i + 1) * dx; // left edge of change i's column
     for (const v of [30, 100, 300, 1000, 3000]) {
       el("line", { class: "ax", x1: L, x2: W - R, y1: y(v), y2: y(v) });
-      el("text", { x: L - 6, y: y(v) + 4, "text-anchor": "end" }).textContent = fmt.format(v);
+      el("text", { x: L - 6, y: y(v) + 4, "text-anchor": "end" }).textContent =
+        fmt.format(v);
     }
     let pts = `${L},${y(steps[0].before)} ${X(0)},${y(steps[0].before)}`;
-    steps.forEach((s, i) => (pts += ` ${X(i)},${y(s.after)} ${X(i) + dx},${y(s.after)}`));
+    steps.forEach(
+      (s, i) => (pts += ` ${X(i)},${y(s.after)} ${X(i) + dx},${y(s.after)}`),
+    );
     el("polyline", { class: "ln", points: pts.trim() });
-    risers = steps.map((s, i) => el("line", { class: "riser", x1: X(i), x2: X(i), y1: y(s.before), y2: y(s.after) }));
+    risers = steps.map((s, i) =>
+      el("line", {
+        class: "riser",
+        x1: X(i),
+        x2: X(i),
+        y1: y(s.before),
+        y2: y(s.after),
+      }),
+    );
     hits = steps.map((s, i) => {
-      const r = el("rect", { class: "hit", x: X(i), y: T, width: dx, height: H - T - B, tabindex: 0, role: "button" });
-      r.setAttribute("aria-label", `${s.name}: ${s.before} to ${s.after} frames per second`);
+      const r = el("rect", {
+        class: "hit",
+        x: X(i),
+        y: T,
+        width: dx,
+        height: H - T - B,
+        tabindex: 0,
+        role: "button",
+      });
+      r.setAttribute(
+        "aria-label",
+        `${s.name}: ${s.before} to ${s.after} frames per second`,
+      );
       return r;
     });
     // The x axis is the order of the changes, not time.
     for (let i = 0; i <= steps.length; i++)
-      el("text", { x: L + (i + 0.5) * dx, y: H - B + 17, "text-anchor": "middle" }).textContent = String(i);
+      el("text", {
+        x: L + (i + 0.5) * dx,
+        y: H - B + 17,
+        "text-anchor": "middle",
+      }).textContent = String(i);
     // Axis titles: what each axis measures, in its units.
-    el("text", { x: L + (W - L - R) / 2, y: H - 6, "text-anchor": "middle" }).textContent = "change, in order (0 = the 2018 engine) →";
+    el("text", {
+      x: L + (W - L - R) / 2,
+      y: H - 6,
+      "text-anchor": "middle",
+    }).textContent = "change, in order (0 = the 2018 engine) →";
     const yt = (T + H - B) / 2;
-    el("text", { x: 11, y: yt, "text-anchor": "middle", transform: `rotate(-90 11 ${yt})` }).textContent = "frames per second (log)";
+    el("text", {
+      x: 11,
+      y: yt,
+      "text-anchor": "middle",
+      transform: `rotate(-90 11 ${yt})`,
+    }).textContent = "frames per second (log)";
     // Column 0, the starting point, is tappable too when the figure gives it
     // a data-base of "name|detail".
-    baseHit = baseName ? el("rect", { class: "hit", x: L, y: T, width: dx, height: H - T - B, tabindex: 0, role: "button" }) : null;
+    baseHit = baseName
+      ? el("rect", {
+          class: "hit",
+          x: L,
+          y: T,
+          width: dx,
+          height: H - T - B,
+          tabindex: 0,
+          role: "button",
+        })
+      : null;
     baseHit?.setAttribute("aria-label", `${baseName}: ${baseNote}`);
     [...hits, ...(baseHit ? [baseHit] : [])].forEach((r, i) => {
       const k = i < hits.length ? i : -1;
@@ -331,7 +409,10 @@ function ladder(root: HTMLElement) {
   const first = baseHit ? -1 : 0;
   const at = (e: PointerEvent) => {
     const x = e.clientX - svg.getBoundingClientRect().left;
-    return Math.max(first, Math.min(steps.length - 1, Math.floor((x - colL) / colW) - 1));
+    return Math.max(
+      first,
+      Math.min(steps.length - 1, Math.floor((x - colL) / colW) - 1),
+    );
   };
   let dragging = false;
   svg.addEventListener("pointerdown", (e) => {
@@ -339,7 +420,8 @@ function ladder(root: HTMLElement) {
     pick(at(e));
   });
   svg.addEventListener("pointermove", (e) => dragging && pick(at(e)));
-  for (const end of ["pointerup", "pointercancel", "pointerleave"]) svg.addEventListener(end, () => (dragging = false));
+  for (const end of ["pointerup", "pointercancel", "pointerleave"])
+    svg.addEventListener(end, () => (dragging = false));
   // Arrow keys move between steps once one has focus.
   svg.addEventListener("keydown", (e) => {
     const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
@@ -383,7 +465,9 @@ function lines(root: HTMLElement) {
 // Pick (used only by the unpublished dissertation posts): tappable parts of a figure ([data-pick]); choosing one shows its
 // <template data-for> in the figure's [data-panel]. Choosing it again closes it.
 function pick(root: HTMLElement) {
-  const items = [...root.querySelectorAll<HTMLElement | SVGElement>("[data-pick]")];
+  const items = [
+    ...root.querySelectorAll<HTMLElement | SVGElement>("[data-pick]"),
+  ];
   const panel = root.querySelector<HTMLElement>("[data-panel]")!;
   let open: Element | null = null;
   const show = (el: HTMLElement | SVGElement) => {
@@ -392,7 +476,11 @@ function pick(root: HTMLElement) {
       i.classList.toggle("is-on", i === open);
       i.setAttribute("aria-pressed", String(i === open));
     });
-    const t = open && root.querySelector<HTMLTemplateElement>(`template[data-for="${el.dataset.pick}"]`);
+    const t =
+      open &&
+      root.querySelector<HTMLTemplateElement>(
+        `template[data-for="${el.dataset.pick}"]`,
+      );
     panel.replaceChildren(...(t ? [t.content.cloneNode(true)] : []));
   };
   items.forEach((el) => {
@@ -422,9 +510,11 @@ function flow(root: HTMLElement) {
       const back = n - 1 - i;
       const v = back < p ? g ** back : 0;
       b.style.setProperty("--v", v.toFixed(3));
-      b.querySelector("b")!.textContent = v === 0 ? "0" : v === 1 ? "1" : v.toFixed(2);
+      b.querySelector("b")!.textContent =
+        v === 0 ? "0" : v === 1 ? "1" : v.toFixed(2);
     });
-    out.value = p === 0 ? "before any practice" : `after ${p} pass${p === 1 ? "" : "es"}`;
+    out.value =
+      p === 0 ? "before any practice" : `after ${p} pass${p === 1 ? "" : "es"}`;
   };
   slider.addEventListener("input", draw);
   draw();
@@ -455,7 +545,16 @@ function cards(root: HTMLElement) {
   });
 }
 
-const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, pick, ladder, flow, lines, cards };
+const widgets: Record<string, (el: HTMLElement) => void> = {
+  chain,
+  reveal,
+  qview,
+  pick,
+  ladder,
+  flow,
+  lines,
+  cards,
+};
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });

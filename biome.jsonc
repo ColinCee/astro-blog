@@ -41,13 +41,5 @@
       "complexity": { "noImportantStyles": "off" }
     }
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
-  "overrides": [
-    {
-      // Left as written so the dissertation-revival branch, which edits it,
-      // still merges cleanly.
-      "includes": ["src/scripts/widgets.ts"],
-      "formatter": { "enabled": false }
-    }
-  ]
+  "assist": { "actions": { "source": { "organizeImports": "on" } } }
 }
