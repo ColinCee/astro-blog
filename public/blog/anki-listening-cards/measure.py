@@ -564,6 +564,44 @@ for label, cards_ in (("missed a Writing review", missed_cards), ("nothing misse
     print(f"  {label} ({len(cards_)} characters): before {mean_gap(bef_):.1f}% (95% CI {bl:.1f} to {bh:.1f}, {sum(n for k, n in bef_)} reviews) "
           f"-> from 15 Oct {mean_gap(aft_):.1f}% (95% CI {al:.1f} to {ah_:.1f}, {sum(n for k, n in aft_)} reviews)")
 
+print("\n# Figure: what dropping the Writing cards cost, known characters and new ones")
+# A character is new for the 35 days after I first see its Reading card and
+# known after that. New with Writing: first seen 4 May to 6 Aug, so all 35
+# days fall before the China trip. New without: first seen from 5 Oct.
+YOUNG = 35
+seen = {}
+for r in rows:
+    if r[ORD] == 0:
+        seen.setdefault(r[CARD], day(r[TS]))
+age = lambda r: (day(r[TS]) - seen[r[CARD]]).days
+new_with = [r for r in allrec if BASE0 <= seen[r[CARD]] <= dt.date(2026, 8, 6) and age(r) <= YOUNG]
+new_without = [r for r in allrec if seen[r[CARD]] >= A0 and age(r) <= YOUNG and day(r[TS]) <= A1]
+known_with = [r for r in allrec if BASE0 <= day(r[TS]) < TRIP0 and age(r) > YOUNG]
+known_without = [r for r in allrec if between(r, A0, A1) and age(r) > YOUNG]
+for label, rs, key in (("known, with Writing", known_with, by_date), ("known, without", known_without, by_date),
+                       ("new, with Writing", new_with, by_cardid), ("new, without", new_without, by_cardid)):
+    blk = wrong_blocks(rs, key)
+    l_, h_ = ci(level(blk))
+    print(f"  {label}: wrong {mean_gap(blk):.1f}% (95% CI {l_:.1f} to {h_:.1f}) of {len(rs)} reviews, "
+          f"{len({r[CARD] for r in rs})} characters; Hard {100 * sum(r[EASE] == 2 for r in rs) / len(rs):.1f}%")
+# What a new character costs to learn: every review of it in its first 14
+# days, Reading alone and with its Writing card, for characters whose 14 days
+# are all in the log.
+note_of = {r[CARD]: r[NOTE] for r in rows}
+for label, lo_d, hi_d in (("with Writing", BASE0, dt.date(2026, 8, 6)), ("without", A0, A1 - dt.timedelta(days=14))):
+    chars = [c for c, d in seen.items() if lo_d <= d <= hi_d]
+    notes = {note_of[c]: seen[c] for c in chars}
+    secs = {0: 0.0, 1: 0.0}
+    count = {0: 0, 1: 0}
+    for r in rows:
+        d0_ = notes.get(r[NOTE])
+        if d0_ is not None and 0 <= (day(r[TS]) - d0_).days <= 14:
+            secs[r[ORD]] += r[TIME] / 1000
+            count[r[ORD]] += 1
+    n = len(chars)
+    print(f"  a new character's first 14 days, {label} ({n} characters): Reading {secs[0] / n:.0f} s in {count[0] / n:.1f} reviews, "
+          f"Writing {secs[1] / n:.0f} s in {count[1] / n:.1f} reviews, both {(secs[0] + secs[1]) / n:.0f} s")
+
 print("\n# Figure: what Writing's minutes saved, in minutes of reading review a day")
 f = per_day / 100 * wrong_secs / 60
 print(f"  {per_day:.1f} reading reviews a day, {wrong_secs:.0f} s per wrong answer")
