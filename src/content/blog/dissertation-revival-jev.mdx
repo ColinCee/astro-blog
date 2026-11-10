@@ -18,7 +18,10 @@ pubDate: "Oct 27 2026"
   <Decide tokens={["{\"", "move", "\":", " \"", "left", "\"}"]} choices={[{ name: "left", p: 42 }, { name: "right", p: 36 }, { name: "shoot", p: 22 }]} />
 </Fig>
 
-An LLM runs once for every token it writes, so even a short structured answer like `{"move": "left"}` takes about six passes, and it gives you the move, not a probability for every choice. Jev runs once and gives every choice a probability, in about 200 ms.
+An LLM runs once for every token it writes, so even a short structured answer
+like `{"move": "left"}` takes about six passes, and it gives you the move, not a
+probability for every choice. Jev runs once and gives every choice a
+probability, in about 200 ms.
 
 ## How do we ask it?
 
@@ -46,7 +49,9 @@ An LLM runs once for every token it writes, so even a short structured answer li
 }} />
 </Fig>
 
-Unlike my learning agents, Jev uses a structured state instead. The above is the input call to it and we get back a structured reply with probabilities. We just select the max option each time.[^json]
+Unlike my learning agents, Jev uses a structured state instead. The above is the
+input call to it and we get back a structured reply with probabilities. We just
+select the max option each time.[^json]
 
 ## One line of the prompt changed a lot
 
@@ -65,7 +70,10 @@ Bombs within 2 columns of your ship: column 12 (-2 from you), 5 rows above.
   ]} max={26} cols={["14rem", "2.5rem"]} />
 </Fig>
 
-Jev is very prompt dependent. Every bomb's position was already in the state, but Jev kept walking into them, so we added one line working out which bombs are close to the ship. It won 22 of the same 26 games, and 61 of the next 78 it hadn't seen.
+Jev is very prompt dependent. Every bomb's position was already in the state,
+but Jev kept walking into them, so we added one line working out which bombs are
+close to the ship. It won 22 of the same 26 games, and 61 of the next 78 it
+hadn't seen.
 
 ## How does it compare?
 
@@ -77,7 +85,9 @@ Jev is very prompt dependent. Every bomb's position was already in the state, bu
   ]} note={{ href: "#user-content-fn-test", n: 3 }} />
 </Fig>
 
-Jev wins about the same as [spamming shoot](/blog/dissertation-revival-beating-2018/)[^one] but it scores more. 48 points vs 37.[^test]
+Jev wins about the same as [spamming
+shoot](/blog/dissertation-revival-beating-2018/)[^one] but it scores more. 48
+points vs 37.[^test]
 
 <Fig title="What Jev cost">
   <Tally items={[
@@ -89,8 +99,15 @@ Jev wins about the same as [spamming shoot](/blog/dissertation-revival-beating-2
 
 ## Closing remarks
 
-It's kinda mid, at least for this use-case. It's cool that a generalized pre-trained model can do relatively well and it's cheap per call but this game application specifically it wasn't that great.
+It's kinda mid, at least for this use-case. It's cool that a generalized
+pre-trained model can do relatively well and it's cheap per call but this game
+application specifically it wasn't that great.
 
-[^json]: I also tried sending the state as JSON, which TypeSafe's docs allow, and it did no better: 75% of the same 104 games and 41 points.
-[^one]: One set of 104 games per setup, and I picked the bomb line after seeing the first 26. Every run is in [the results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md#jev-a-decision-model-with-no-training-aliens-26-oct-2026).
-[^test]: Jev played one set of 104 games, so a gap counts as real only when it's outside holding shoot's range over its 5 sets (36 to 38 points, 80% to 85% wins).
+[^json]: I also tried sending the state as JSON, which TypeSafe's docs allow,
+    and it did no better: 75% of the same 104 games and 41 points.
+[^one]: One set of 104 games per setup, and I picked the bomb line after seeing
+    the first 26. Every run is in [the
+    results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md#jev-a-decision-model-with-no-training-aliens-26-oct-2026).
+[^test]: Jev played one set of 104 games, so a gap counts as real only when it's
+    outside holding shoot's range over its 5 sets (36 to 38 points, 80% to 85%
+    wins).
