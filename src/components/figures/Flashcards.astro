@@ -1,0 +1,66 @@
+---
+// The two Anki cards made from one character, side by side and simplified:
+// Recognition shows the character and asks for its sound and meaning,
+// Listening plays the sound and asks for the character. Each has a "Show
+// answer" bar, like Anki's, that opens the back under the front. The bars are
+// <details>, so they work without JS; the play buttons are links to the
+// recording, which widgets.ts (cards) plays in place. Styles: flash.css.
+interface Props {
+  hanzi: string;
+  pinyin: string;
+  meaning: string;
+  // The recording of the character, an audio file under public/.
+  audio: string;
+}
+const { hanzi, pinyin, meaning, audio } = Astro.props;
+---
+
+<div class="flash" data-widget="cards">
+  <section class="flash__card">
+    <p class="fig__k">Recognition card</p>
+    <div class="flash__front">
+      <b class="flash__zh" lang="zh-Hans">{hanzi}</b>
+      <span>Recall the sound and the meaning.</span>
+    </div>
+    <details>
+      <summary><span>Show answer</span><span>Hide answer</span></summary>
+      <div class="flash__back">
+        <p>
+          <b lang="zh-Latn-pinyin">{pinyin}</b>
+          <a class="flash__play flash__play--sm" href={audio} data-play>
+            <svg viewBox="0 0 10 10" aria-hidden="true">
+              <path d="M2 1l7 4-7 4z" />
+            </svg>
+            <span class="sr-only">Play {pinyin}</span>
+          </a>
+        </p>
+        <p>{meaning}</p>
+      </div>
+    </details>
+  </section>
+  <section class="flash__card">
+    <p class="fig__k">Listening card</p>
+    <div class="flash__front">
+      <a
+        class="flash__play"
+        href={audio}
+        data-play
+        aria-label="Play the recording"
+      >
+        <svg viewBox="0 0 10 10" aria-hidden="true">
+          <path d="M2 1l7 4-7 4z" />
+        </svg>
+        Play
+      </a>
+      <span>Say the meaning. Picture the character.</span>
+    </div>
+    <details>
+      <summary><span>Show answer</span><span>Hide answer</span></summary>
+      <div class="flash__back">
+        <b class="flash__zh" lang="zh-Hans">{hanzi}</b>
+        <p><b lang="zh-Latn-pinyin">{pinyin}</b></p>
+        <p>{meaning}</p>
+      </div>
+    </details>
+  </section>
+</div>

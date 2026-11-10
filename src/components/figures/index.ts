@@ -10,6 +10,7 @@ export { default as Decide } from "./Decide.astro";
 export { default as Doc } from "./Doc.astro";
 export { default as Dots } from "./Dots.astro";
 export { default as Fig } from "./Fig.astro";
+export { default as Flashcards } from "./Flashcards.astro";
 export { default as Json } from "./Json.astro";
 export { default as Ladder } from "./Ladder.astro";
 export { default as LineChart } from "./LineChart.astro";

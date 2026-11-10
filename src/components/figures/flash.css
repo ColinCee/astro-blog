@@ -1,0 +1,110 @@
+/* Two Anki cards side by side (Flashcards): each a well with its front, a
+   "Show answer" bar and the back that opens under it. One column on a phone. */
+.prose .flash {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 0.75rem;
+  align-items: start;
+}
+.prose .flash__card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.8rem 0.9rem 0.9rem;
+  background: var(--well);
+  border-radius: var(--r-chip);
+  text-align: center;
+}
+.prose .flash__card .fig__k {
+  margin: 0;
+  text-align: left;
+}
+.prose .flash p {
+  margin: 0;
+}
+/* Both fronts are the same height, so the two answer bars line up. */
+.prose .flash__front {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: center;
+  align-content: center;
+  min-height: 8.5rem;
+}
+.prose .flash__zh {
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 3.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.prose .flash__back {
+  display: grid;
+  gap: 0.25rem;
+  justify-items: center;
+  padding-top: 0.75rem;
+  color: var(--ink);
+}
+.prose .flash__back p {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+/* The controls: ink on the panel tone, filling with the hover accent. */
+.prose .flash summary,
+.prose .flash__play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+.prose .flash summary {
+  list-style: none;
+}
+.prose .flash summary::-webkit-details-marker {
+  display: none;
+}
+.prose .flash details[open] summary span:first-child,
+.prose .flash details:not([open]) summary span:last-child {
+  display: none;
+}
+.prose .flash__play svg {
+  width: 0.7rem;
+  height: 0.7rem;
+  fill: currentColor;
+}
+.prose .flash__play--sm {
+  min-height: 2rem;
+  padding: 0 0.65rem;
+}
+@media (hover: hover) {
+  .prose .flash summary:hover,
+  .prose .flash__play:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-solid);
+    color: var(--ink);
+  }
+}
+.prose .flash summary:focus-visible,
+.prose .flash__play:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+/* The small play button's name, for screen readers only. */
+.prose .flash .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

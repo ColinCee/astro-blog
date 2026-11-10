@@ -13,16 +13,17 @@ import Fig from "./Fig.astro";
 interface Props {
   title: string;
   label: string;
+  caption?: string;
   data: LineData;
 }
-const { title, label, data } = Astro.props;
+const { title, label, caption, data } = Astro.props;
 // Drawn about as wide as a phone column, so without script (when chart text
 // scales with the drawing) the labels stay readable at every width.
 const W = 340;
 const H = chartHeight(W);
 ---
 
-<Fig title={title} data-widget="lines">
+<Fig title={title} caption={caption} data-widget="lines">
   <div class="chart chart--fluid">
     <svg
       viewBox={`0 0 ${W} ${H}`}

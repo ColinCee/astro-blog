@@ -430,7 +430,29 @@ function flow(root: HTMLElement) {
   draw();
 }
 
-const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, pick, ladder, flow, lines };
+// Cards (Flashcards): the play buttons are links to the recording, so they
+// work without this; here a click plays it in place instead.
+function cards(root: HTMLElement) {
+  root.querySelectorAll<HTMLAnchorElement>("a[data-play]").forEach((a) => {
+    const audio = new Audio();
+    audio.preload = "none";
+    audio.src = a.href;
+    a.setAttribute("role", "button");
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    });
+    a.addEventListener("keydown", (e) => {
+      if (e.key === " ") {
+        e.preventDefault();
+        a.click();
+      }
+    });
+  });
+}
+
+const widgets: Record<string, (el: HTMLElement) => void> = { chain, reveal, qview, pick, ladder, flow, lines, cards };
 document.querySelectorAll<HTMLElement>("[data-widget]").forEach((el) => {
   widgets[el.dataset.widget!]?.(el);
 });

@@ -4,9 +4,11 @@
 // Data: x and y axes with a max, ticks and a title; an optional band of
 // [x, low, high]; a line of [x, y]; optional dots of [x, y] (a run known only
 // at a few points, joined dashed); labels placed at data points with pixel
-// offsets; and a legend drawn in the plot's empty top-left corner. The band
-// is what the chart is about and takes the accent; the line and dots it is
-// read against stay neutral.
+// offsets; an optional dashed vertical line at an x with its name beside it
+// (when something changed); and a legend drawn in the plot's empty top-left
+// corner. One series is what the chart is about and takes the accent: the
+// band unless `accent` says the dots. Everything it is read against stays
+// neutral.
 export type Axis = { max: number; ticks: number[]; title: string };
 export type Label = {
   x: number;
@@ -24,6 +26,8 @@ export type LineData = {
   band?: number[][];
   line: number[][];
   dots?: number[][];
+  accent?: "band" | "dots";
+  ref?: { x: number; text: string };
   labels?: Label[];
   legend?: Key[];
 };
@@ -92,13 +96,22 @@ export function lineChart(d: LineData, W: number, H: number): string {
     },
     d.y.title,
   );
+  const accent = d.accent ?? "band";
+  const bandCls = accent === "band" ? "band band--runs" : "band";
+  const dotCls = accent === "dots" ? "mk hi" : "mk";
   if (d.band) {
     const up = d.band.map(([x, , h]) => `${X(x)},${Y(h)}`);
     const down = d.band.map(([x, l]) => `${X(x)},${Y(l)}`).reverse();
-    el("polygon", {
-      class: "band band--runs",
-      points: [...up, ...down].join(" "),
-    });
+    el("polygon", { class: bandCls, points: [...up, ...down].join(" ") });
+  }
+  if (d.ref) {
+    const rx = X(d.ref.x);
+    el("line", { class: "ref", x1: rx, x2: rx, y1: T, y2: H - B });
+    el(
+      "text",
+      { class: "ink", x: rx - 5, y: H - B - 8, "text-anchor": "end" },
+      d.ref.text,
+    );
   }
   // pathLength 1 makes one dash the whole line, for its draw-in (draw.css);
   // set here so a redraw keeps it
@@ -113,14 +126,14 @@ export function lineChart(d: LineData, W: number, H: number): string {
       points: d.dots.map(([x, v]) => `${X(x)},${Y(v)}`).join(" "),
     });
     for (const [x, v] of d.dots)
-      el("circle", { class: "mk", cx: X(x), cy: Y(v), r: 4 });
+      el("circle", { class: dotCls, cx: X(x), cy: Y(v), r: 4 });
   }
   (d.legend ?? []).forEach((k, i) => {
     const ky = T + 10 + i * 18,
       kx = L + 10;
     if (k.kind === "band")
       el("rect", {
-        class: "band band--runs",
+        class: bandCls,
         x: kx,
         y: ky - 5,
         width: 22,
@@ -135,7 +148,7 @@ export function lineChart(d: LineData, W: number, H: number): string {
         y2: ky,
       });
     if (k.kind === "dots")
-      el("circle", { class: "mk", cx: kx + 11, cy: ky, r: 3.5 });
+      el("circle", { class: dotCls, cx: kx + 11, cy: ky, r: 3.5 });
     el("text", { x: kx + 30, y: ky + 4, class: "ink" }, k.text);
   });
   for (const l of d.labels ?? []) {

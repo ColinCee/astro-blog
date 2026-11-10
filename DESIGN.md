@@ -483,8 +483,8 @@ curve in a component is a bug unless it is a content timing.
   the order they apply. `<Fig title caption>` is the frame: one panel on
   `--pane`, 8px, no border, a short title above, a caption below. Every figure
   draws itself in once when seen (`draw.css`), so there is no prop for it.
-  Inside it: `<Cmp>` (before/after bars to scale; `from` makes a step of a
-  waterfall, drawn hollow, `ref` a dashed reference line, `cols` the column widths), `<Dots>` (a
+  Inside it: `<Cmp>` (before/after bars to scale; `base` stripes the baseline row, `from` makes a step of a
+  waterfall, drawn hollow, `ref` a dashed reference line, `cols` the column widths; the value column grows to the longest value, so none spills out of the figure), `<Dots>` (a
   dot plot on one axis, in titled groups), `<Stack>` (one bar split into shares,
   with a legend), `<Split>` + `<Panel title>` (panels side by side),
   `<Morph>` (JSONL text rearranging into columns and back, built on `Frames`, text that moves between stages; on a loop while seen, hover pauses it, a tab stops it), `<Lookup>` (dictionary encoding: values pointing at numbers and the dictionary they look up, each entry's number in its own neutral style on both sides), `<Repeats>` (how Zstandard finds repeats on one column: before with the repeated stretch marked, after with it as one "repeat" chip), `<Boxes>` (a row of
@@ -514,14 +514,17 @@ curve in a component is a bug unless it is a content timing.
   script), so their text never scales with the drawing.
 - **Interactive figures** are components too, and load `src/scripts/widgets.ts`
   only on posts that use one: `<LineChart>` (a line chart from data: axes, an
-  optional band, a line, dots and a legend; one function in
+  optional band, a line, dots, a dashed `ref` line where something changed and a legend; the band takes the accent unless `accent` gives it to the dots; one function in
   `src/scripts/line-chart.ts` draws it at build time as the no-script fallback and
   in the browser at the figure's real width), `<Ladder>` (a step chart of a
   sequence of speed changes, x axis the change number; tap or drag across a step
   for its detail) and `<QView>` (a recording with the network's value for each
   move under it, a `.player` bar to pause and step one decision at a time, and a
   `.peek` block showing the four frames that decision saw, cut from a sprite
-  sheet). Charts drawn in code run full width with text at true size.
+  sheet), and `<Flashcards>` (the two Anki cards for one character side by side,
+  each a well with its front, a "Show answer" bar that opens the back under it
+  as a `<details>`, and play buttons that are links to the recording, so it all
+  works without JS). Charts drawn in code run full width with text at true size.
 - **Deep detail** goes in `<details class="more">`, linked from the sentence that
   needs it; the layout opens it on the jump.
 - **Older figure types no post uses now**, written as HTML: `.ctl` (buttons and

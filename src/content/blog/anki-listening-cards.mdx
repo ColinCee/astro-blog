@@ -1,0 +1,89 @@
+---
+title: "Half my Anki cards took 73% of my time"
+stat: "32 → 9 min"
+statLabel: "Anki a day"
+pubDate: "Nov 10 2026"
+---
+I learn Mandarin with a teacher, and I keep an [Anki](https://apps.ankiweb.net/) deck of the characters we cover so they stick between lessons. Anki shows you a card just before you'd forget it, so the gap between reviews grows from a day to weeks to months for as long as you keep getting it right.
+
+Each character has two cards. The Recognition card shows the character and asks what it means and how it sounds, so that's reading. The Listening card hides the written Chinese until you flip it, so you have to recall the character from memory, which is really practice for writing it.
+
+<Fig title="The two cards for one character, 茶" caption="Simplified from my real cards, which also have an example sentence under the character.">
+  <Flashcards hanzi="茶" pinyin="chá" meaning="tea" audio="/blog/anki-listening-cards/listen.mp3" />
+</Fig>
+
+I read, listen and speak Chinese with books, TV and my teacher, and I never need to handwrite it, so on 4 October I suspended every Listening card. Five weeks later I pulled the review log to see what that did.
+
+<Fig title="Minutes a day on Anki, 5 weeks before vs 5 weeks after" caption="31 Aug to 4 Oct vs 5 Oct to 8 Nov, 35 days each. Striped is before, the outline the Listening time that went, purple what's left.">
+  <Cmp
+    rows={[
+      { label: "before", value: 31.7, text: "32 min", base: true },
+      { label: "Listening off", from: 31.7, value: 8.6, text: "−23 min" },
+      { label: "after", value: 8.6, text: "9 min · −73%", after: true },
+    ]}
+  />
+</Fig>
+
+Listening was half the deck and nearly three quarters of the time, and the share had crept up from 50% in February to 73% in September. Recognition didn't move, 8.2 to 8.6 minutes a day, so all 23 minutes a day is the saving.
+
+## Why did Listening take so long?
+
+It's a harder card. A Listening review took 17.5 seconds vs 8.8 for Recognition, and I got it wrong 17% of the time vs 11%. A wrong answer is the expensive part, because Anki drops the card back to short gaps and you see it again and again until it recovers. Over the next 90 days a wrong Listening answer cost me about 105 seconds of extra reviews, and a wrong Recognition answer about a minute.[^cost]
+
+## Did my reading get worse?
+
+Yes, a bit, and since the Listening card was a second look at every character it's not a surprise. Before I suspended it I got about 8% of my reading reviews wrong, and in the five weeks since it's been about 15%.
+
+<LineChart
+  title="Reading reviews I got wrong each week, 22 weeks with Listening and 5 without"
+  caption="Weeks start on a Monday. The grey band is the range of the 22 weeks with Listening, the dashed line is when it went off, and purple is the weeks since."
+  label="Share of Recognition reviews answered Again each week from 4 May to 8 November. The 22 weeks with Listening stay between 3.7% and 14.3%, shown as a grey band. Listening is switched off after week 21, and the weeks since run 7.4%, 13.3%, 16.5%, 15.0% and 20.3%, so three of the five sit above the band."
+  data={{
+    x: { max: 26, ticks: [0, 5, 10, 15, 20, 26], title: "weeks from 4 May →" },
+    y: { max: 25, ticks: [0, 5, 10, 15, 20, 25], title: "answered Again (%)" },
+    band: [[0, 3.7, 14.3], [26, 3.7, 14.3]],
+    line: [[0, 11.4], [1, 8.6], [2, 9.7], [3, 10.0], [4, 9.2], [5, 13.1], [6, 6.5], [7, 13.9], [8, 13.6], [9, 12.0], [10, 12.6], [11, 8.3], [12, 12.6], [13, 4.4], [14, 7.6], [15, 8.9], [16, 14.3], [17, 8.5], [18, 3.7], [19, 7.6], [20, 10.8], [21, 8.6]],
+    dots: [[22, 7.4], [23, 13.3], [24, 16.5], [25, 15.0], [26, 20.3]],
+    accent: "dots",
+    ref: { x: 21.5, text: "Listening off" },
+    labels: [{ x: 26, y: 20.3, text: "20%", cls: "hi", anchor: "end", dx: -8, dy: 4 }],
+    legend: [
+      { kind: "band", text: "range before" },
+      { kind: "line", text: "with Listening" },
+      { kind: "dots", text: "without it" },
+    ],
+  }}
+/>
+
+The first week without Listening was still fine, and it was only after that it started sliding, with three of the five weeks since above anything in the 22 weeks before. I can't say why it took a week. Comparing the two equal 35-day windows, wrong answers went from 7.8% to 14.6%, which is 6.8 points more (95% CI 4.5 to 9.0), so it isn't noise.
+
+It also isn't just the new characters I've been adding, which have never had a Listening card. On the 856 cards I'd started before 31 August it went from 4 wrong in 100 reviews to 9, and it's higher at every interval length I checked.[^cohort]
+
+## Was it worth it?
+
+The drop is real, but that only tells me it's there, not whether it matters. What matters is what I got for the time, so I priced both sides from my own review log.
+
+A wrong reading answer costs me about a minute of extra reviewing over the next 90 days. The 6.8 points are about 2.7 extra wrong answers a day (I do about 40 reading reviews a day), and Listening took 23 minutes a day, so it was spending about 9 minutes to stop each one.
+
+<Fig title="Minutes per wrong reading answer" caption="Listening: 23 min a day for about 2.7 fewer wrong answers. Striped is what one costs me, purple what Listening paid to stop one, and the dashed line is the cost tripled.">
+  <Cmp
+    ref={3}
+    rows={[
+      { label: "what one costs", value: 1, text: "1 min", base: true },
+      { label: "Listening paid", value: 8.6, text: "9 min", after: true },
+    ]}
+  />
+</Fig>
+
+That's about 9 times what a wrong answer costs. Even taking the low end of the confidence interval (6.4 min) and tripling the cost of a wrong answer to 3 min it's still 2.1 times as much, so Listening would only have been worth it if a wrong answer cost me about 9 minutes.
+
+## What could I be getting wrong?
+
+I didn't randomise this, so it's a before and after and something else could have changed in October. September was also my best month in the log, so part of the gap is comparing against a peak, and I can't tell from the data whether I'm forgetting more or just pressing Again more readily, because Hard answers also went from 7% to 10% on those same cards. The last full week was the worst yet at 20% wrong, so five weeks isn't long enough to know where it settles.
+
+I've also only counted what Listening did for my reading. If those cards were helping my listening, that isn't in any of these numbers, but I get that from TV and my teacher.
+
+I'm keeping Listening off. Every number here comes from [this script](/blog/anki-listening-cards/measure.py), which reads the review log from Anki.
+
+[^cost]: Review answers with 90 days of log after them, each compared with a right answer on a card at the same interval, then averaged over the wrong answers: 105 seconds for Listening and 61 for Recognition. Anki caps a review at 60 seconds and Listening hit the cap twice as often, so its time is if anything an undercount.
+[^cohort]: 4.0 to 9.1 wrong per 100 reviews on cards due in any number of days, 4.6 to 11.0 on cards due in 7 to 29 days and 2.6 to 8.9 on cards due in 30 to 89 days, p < 0.003 at each (two-proportion z-test).
