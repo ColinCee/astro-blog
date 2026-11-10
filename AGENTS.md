@@ -1,6 +1,6 @@
 # Agent notes for this blog
 
-Checks: `pnpm install --frozen-lockfile && pnpm exec playwright install chromium && pnpm check` (works from a fresh clone with no sudo or Cloudflare login; `pnpm check` runs everything CI runs: typecheck, Biome, build, Wrangler dry run, Playwright tests and speed budgets)
+Checks: `pnpm install --frozen-lockfile && pnpm exec playwright install chromium && pnpm check` (works from a fresh clone with no sudo or Cloudflare login; `pnpm check` runs everything CI runs: typecheck, Biome, post prose wrapped at 100 columns (`pnpm format` wraps it; figures stay as written), build, Wrangler dry run, Playwright tests and speed budgets)
 
 - **Everything about a post lives in its frontmatter.** The home page, the blog index and the post page all read the same four fields: `title` (one short title, used everywhere), `stat` (the one headline result), `statLabel` (what the stat measures) and `pubDate`. One field per fact: no subtitle or extra figures restating the stat (dropped Oct 2026 as noise). Never add a per-post table to a page; a new post must show up everywhere with no other file changed.
 - **Tooling is the latest stable, modern and fast:** pnpm, Biome, the latest TypeScript and Astro, current Node LTS. Scripts are TypeScript, which Node runs directly; no new `.js` or `.mjs`. When something can be replaced by a faster or newer standard tool, do it.

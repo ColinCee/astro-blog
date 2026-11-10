@@ -1,15 +1,17 @@
 ---
 // Bars drawn to scale, one row each: a label, the bar and its value. Each bar
-// is its value as a fraction of the largest (or of `max`); the `after` row is
-// the result and takes the accent. A row with `from` is a step that runs from
-// `from` to `value`, drawn hollow (a waterfall: what
-// it takes away), never a second grey. `ref` draws a dashed line at
-// that value across every bar. `cols` sets the label and value column widths.
-// Styles: cmp.css.
+// is its value as a fraction of the largest (or of `max`). The `base` row is
+// the baseline and is striped; the `after` row is the result and takes the
+// accent. A row with `from` is a step that runs from `from` to `value`, drawn
+// hollow (a waterfall: what it takes away), never a second grey. `ref` draws
+// a dashed line at that value across every bar. The value column is as wide
+// as the longest value, so none spills out of the figure; `cols` sets the
+// label column's width and a minimum for the value column. Styles: cmp.css.
 interface Row {
   label: string;
   value: number;
   text: string;
+  base?: boolean;
   after?: boolean;
   from?: number;
 }
@@ -23,11 +25,20 @@ const { rows, ref, cols } = Astro.props;
 const max =
   Astro.props.max ?? Math.max(...rows.flatMap((r) => [r.value, r.from ?? 0]));
 const frac = (v: number) => (v / max).toFixed(3);
-// A variable, not grid-template-columns itself, so the phone layout in
-// cmp.css still wins on a narrow screen.
-const grid = cols
-  ? `--cmp-cols:${cols[0]} minmax(0,1fr) ${cols[1]}`
-  : undefined;
+// Figure text is monospace, so the longest value's width is its length in ch.
+const chars = Math.max(...rows.map((r) => [...r.text].length));
+// Variables, not grid-template-columns itself, so the phone layout in cmp.css
+// still wins on a narrow screen and the reference line can follow them. On a
+// phone the value column is just the longest value (--cmp-fit), the same for
+// every row, so the bars stay on one scale.
+const grid = [
+  cols && `--cmp-label:${cols[0]}`,
+  `--cmp-value:max(${cols?.[1] ?? "4.2rem"},${chars}ch)`,
+  `--cmp-fit:${chars}ch`,
+]
+  .filter(Boolean)
+  .join(";");
+const row = (r: Row) => ["cmp", { "cmp--base": r.base, "cmp--after": r.after }];
 const bar = (r: Row) =>
   r.from === undefined
     ? `--w:${frac(r.value)}`
@@ -36,16 +47,16 @@ const bar = (r: Row) =>
 
 {ref === undefined ? (
   rows.map((r) => (
-    <div class:list={["cmp", { "cmp--after": r.after }]} style={grid}>
+    <div class:list={row(r)} style={grid}>
       <span>{r.label}</span>
       <i class:list={{ step: r.from !== undefined }} style={bar(r)} />
       <b>{r.text}</b>
     </div>
   ))
 ) : (
-  <div class="cmp-ref" style={`--ref:${frac(ref)}`}>
+  <div class="cmp-ref" style={`--ref:${frac(ref)};${grid}`}>
     {rows.map((r) => (
-      <div class:list={["cmp", { "cmp--after": r.after }]} style={grid}>
+      <div class:list={row(r)}>
         <span>{r.label}</span>
         <em class="track">
           <i class:list={{ step: r.from !== undefined }} style={bar(r)} />

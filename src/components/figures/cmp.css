@@ -2,7 +2,9 @@
 /* Before/after bars, drawn to scale: --w is the value as a fraction of the larger. */
 .prose .cmp {
   display: grid;
-  grid-template-columns: var(--cmp-cols, 10.5rem minmax(0, 1fr) 4.2rem);
+  grid-template-columns:
+    var(--cmp-label, 10.5rem) minmax(0, 1fr)
+    var(--cmp-value, 4.2rem);
   align-items: center;
   gap: 0.3rem 0.8rem;
 }
@@ -20,6 +22,14 @@
   background: none;
   box-shadow: inset 0 0 0 1.5px var(--faint);
 }
+/* The baseline is striped, the same as in every other chart. */
+.prose .cmp--base i {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--muted) 0 2px,
+    var(--bar) 2px 5px
+  );
+}
 .prose .cmp b {
   font-weight: 500;
   color: var(--ink);
@@ -33,8 +43,9 @@
   color: var(--accent-text);
   font-weight: 500;
 }
-/* A reference line across .cmp bars: wrap the rows in <div class="cmp-ref"> with
-   --ref (the reference value as a fraction of the largest). On wide screens it is one
+/* A reference line across .cmp bars: the rows sit in <div class="cmp-ref"> with
+   --ref (the reference value as a fraction of the largest) and the column
+   widths, which the line's position follows. On wide screens it is one
    line through the bar column; on phones, where labels sit above the bars, each row
    carries its own short segment (the bars are wrapped in <em class="track">). */
 .prose .cmp-ref {
@@ -48,9 +59,9 @@
   top: -0.2rem;
   bottom: -0.2rem;
   left: calc(
-    10.5rem +
+    var(--cmp-label, 10.5rem) +
     0.8rem +
-    (100% - 10.5rem - 4.2rem - 1.6rem) *
+    (100% - var(--cmp-label, 10.5rem) - var(--cmp-value, 4.2rem) - 1.6rem) *
     var(--ref)
   );
   border-left: 1.5px dashed var(--faint);
@@ -76,7 +87,10 @@
     border-left: 1.5px dashed var(--faint);
   }
   .prose .cmp {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) var(--cmp-fit, auto);
+  }
+  .prose .cmp b {
+    text-align: right;
   }
   .prose .cmp span {
     grid-column: 1 / -1;

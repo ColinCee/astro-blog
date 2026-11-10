@@ -1,0 +1,265 @@
+---
+title: "Why you might not need to handwrite Chinese"
+stat: "32 → 9 min"
+statLabel: "flashcards a day"
+pubDate: "Nov 10 2026"
+---
+
+<Fig title="Daily time spent reviewing Anki flashcards" caption="35 days before vs after">
+  <Cmp
+    rows={[
+      { label: "before", value: 31.6, text: "32 min", base: true },
+      { label: "Writing off", from: 31.6, value: 8.6, text: "−23 min" },
+      { label: "after", value: 8.6, text: "9 min · −73%", after: true },
+    ]}
+  />
+</Fig>
+
+I learn Chinese with flashcards, and half of them were for handwriting. I turned those off and my
+daily reviews went from 32 minutes to 9.
+
+My reading did get a bit worse, but only enough to cost me about 2 minutes a day.
+
+---
+
+For the past 9 months, I have been learning Mandarin from the basics. Every week I have a 2-hour
+in-class session with my teacher to practice speaking and reading. On top of that, I built a custom
+Anki deck that was originally based off [Remembering Simplified
+Hanzi](https://www.goodreads.com/book/show/5862954-remembering-simplified-hanzi-1). However, I found
+out that it wasn't very good for what I wanted to learn which was how to speak, read, and write
+which is why I built my own.
+
+If you don't know what [Anki](https://apps.ankiweb.net/) is, it's a tool to help with studying.
+Basically flashcards, see [spaced repetition](https://en.wikipedia.org/wiki/Spaced_repetition). Now,
+my deck had two different types:
+
+<Flashcards hanzi="茶" pinyin="chá" meaning="tea" audio="/blog/anki-listening-cards/listen.mp3" />
+
+- Reading -> practice the sound + meaning
+- Writing -> practice handwriting + meaning
+
+## Why did Writing take so long?
+
+Writing was half the deck but 74% of my review time in the five weeks before I turned it off. An
+average review took:
+
+- 17.5s for Writing
+- 8.8s for Reading
+
+Fundamentally writing takes longer because I listen to the audio then write it down by hand. It's
+much slower than the reading side which when you see the character, you either recognize it or not
+in seconds.
+
+## Danger, Here come the stats
+
+To be scientific I'm giving each result with a confidence interval and a significance test, so each
+figure will have the following.
+
+- The result itself, like 35% of reviews
+- The CI is a [confidence interval](https://en.wikipedia.org/wiki/Confidence_interval), the range
+  the true number plausibly sits in.
+- The [p](https://en.wikipedia.org/wiki/P-value) is the chance I'd see a gap this big if nothing had
+  really changed
+
+Typically in science you want to find the 95% CI, p < 0.05. There's more on [how each test
+works](#tests) at the end.
+
+## Did my reading get worse?
+
+Yes, measurably so. I spent most of September in China reading signs and menus all day, so some of
+the weeks just before were among my best in the log.
+
+<LineChart
+  title="Reading reviews I got wrong each week"
+  label="Share of Reading reviews answered Again each week from 4 May to 8 November. In the 22 weeks with Writing I got between 3.7% and 14.3% wrong, and the last four of those include the weeks I was in China. Writing is switched off after week 21, and the weeks since run 7.4%, 13.3%, 16.5%, 15.0% and 20.3%."
+  data={{
+    x: { max: 26, ticks: [0, 5, 10, 15, 20, 26], title: "weeks from 4 May →" },
+    y: { max: 30, ticks: [0, 10, 20, 30], title: "got wrong (%)", unit: "%" },
+    band: [[18.1, 0, 30], [20.9, 0, 30]],
+    line: [[0, 11.4], [1, 8.6], [2, 9.7], [3, 10.0], [4, 9.2], [5, 13.1], [6, 6.5], [7, 13.9], [8, 13.6], [9, 12.0], [10, 12.6], [11, 8.3], [12, 12.6], [13, 4.4], [14, 7.6], [15, 8.9], [16, 14.3], [17, 8.5], [18, 3.7], [19, 7.6], [20, 10.7], [21, 9.1]],
+    dots: [[22, 7.4], [23, 13.3], [24, 16.5], [25, 15.0], [26, 20.3]],
+    accent: "dots",
+    ref: { x: 21.5, text: "Writing off" },
+    labels: [{ x: 26, y: 20.3, text: "20%", cls: "hi", anchor: "end", dx: -8, dy: 4 }],
+    legend: [
+      { kind: "line", text: "with Writing" },
+      { kind: "dots", text: "without it" },
+      { kind: "band", text: "in China" },
+    ],
+  }}
+/>
+
+In Anki there are [four options](https://docs.ankiweb.net/studying.html#answer-buttons) for each
+card:
+
+- Again
+- Hard
+- Good
+- Easy
+
+<Fig title="Reading reviews I forgot or struggled on (Again or Hard)">
+  <Dots
+    max={40}
+    ticks={[0, 10, 20, 30, 40]}
+    axis="% of reading reviews, with the 95% CI"
+    groups={[
+      {
+        rows: [
+          { label: "with Writing", value: 20.3, lo: 19.1, hi: 21.5, text: "20% (19 to 22)" },
+          { label: "without it", value: 34.6, lo: 30.1, hi: 38.9, text: "35% (30 to 39)", after: true },
+        ],
+      },
+    ]}
+  />
+</Fig>
+
+So 35% of my reviews in those five weeks I forgot or struggled on. The range is there because every
+review has some luck in it. For example a coin flip: get 55 heads in 100 flips and that still
+doesn’t make it a 55% coin.
+
+Each line shows how far luck alone could have pushed that number up or down. With Writing it could
+have been anywhere from 19% to 22%, and without it anywhere from 30% to 39%. Even my luckiest run
+without Writing (30%) would still be worse than my unluckiest with it (22%), so luck can’t explain
+the gap.
+
+## How sure am I?
+
+Sure that it isn't luck. If the Writing cards made no difference, luck alone would produce a gap
+this big less than 1 time in 1,000. That rules out luck, not something else changing in October.
+
+## Where did it get worse?
+
+Two places:
+
+- I forget characters I already knew a bit more
+- New characters are harder to learn
+
+<Fig title="Reading reviews I got wrong (Again), with the Writing cards vs without">
+  <Dots
+    max={30}
+    ticks={[0, 10, 20, 30]}
+    axis="% of reading reviews, with the 95% CI"
+    groups={[
+      {
+        title: "Characters I already knew",
+        rows: [
+          { label: "with Writing", value: 6.6, lo: 5.5, hi: 7.8, text: "7% (6 to 8)" },
+          { label: "without it", value: 11.1, lo: 8.0, hi: 14.0, text: "11% (8 to 14)", after: true },
+        ],
+      },
+      {
+        title: "New characters, in their first five weeks",
+        rows: [
+          { label: "with Writing", value: 12.6, lo: 11.3, hi: 13.9, text: "13% (11 to 14)" },
+          { label: "without it", value: 20.5, lo: 16.9, hi: 23.9, text: "21% (17 to 24)", after: true },
+        ],
+      },
+    ]}
+  />
+</Fig>
+
+- So on characters I already knew I went from 7% wrong to 11%.
+- On new ones I went from 13% to 21%, and the ones I struggled on (Hard) tripled, from 10% to 31%.
+
+The new ones do come later in the deck though, so some of that is them being harder characters.
+
+These findings kinda match how it feels when learning, everything feels a bit fuzzier in my memory.
+I no longer have the slow, methodical handwriting to solidify not just old characters but new ones
+too.[^write]
+
+## Was it worth it?
+
+Hell no. Writing took 23 minutes a day but would only save about 2 minutes of reading reviews.
+
+<Fig title="What Writing took vs what it saved me in reading reviews">
+  <Dots
+    max={30}
+    ticks={[0, 10, 20, 30]}
+    axis="minutes a day, with the 95% CI"
+    groups={[
+      {
+        rows: [
+          { label: "Writing took", value: 23.4, lo: 18.8, hi: 28.3, text: "23 (19 to 28)" },
+          { label: "Writing saved", value: 1.8, lo: 0.8, hi: 2.9, text: "1.8 (0.8 to 2.9)", after: true },
+        ],
+      },
+    ]}
+  />
+</Fig>
+
+- I get about 2 extra reading cards wrong per day
+- Each wrong reading card adds about a minute in extra review time over 90 days[^cost]
+
+So dropping the Writing cards costs me an extra 2 minutes of reviews and saves 23, which leaves me
+about 21 minutes a day better off.
+
+<Fig title="What dropping the Writing cards does to my day">
+  <Cmp
+    rows={[
+      { label: "Writing took", value: 23, text: "23 min", base: true },
+      { label: "extra reviews", from: 23, value: 21, text: "−2 min" },
+      { label: "better off", value: 21, text: "21 min", after: true },
+    ]}
+  />
+</Fig>
+
+That 2 could grow, to 4 at most, as more characters go without their Writing review.[^best]
+
+## What's still open?
+
+- **How big it ends up.** Five weeks is a short time. Anki also brings a card back sooner after a
+  wrong answer, so some of the cost should turn up as extra reviews, though so far reading takes
+  about the same, 8.6 minutes a day vs 8.2.
+- **My handwriting.** That will fade, and I've decided I don't need it.
+- **What the Writing cards did for my listening.** I've only counted reading inside Anki, and I get
+  listening from videos and my teacher anyway.
+
+## Closing remarks
+
+I started with reading, writing and a bit of speaking because that's how Chinese school teaches it,
+it's just the traditional way. But the reviews were taking longer and longer out of my day, and I
+was dreading them and losing the motivation to do them at all.
+
+That's why I even looked into it and it turns out the handwriting was costing me 23 minutes a day to
+save 2 lmao.
+
+For now I'm keeping the Writing cards off and I'll revisit the numbers here in a few months. Every
+number here comes from [this script](/blog/anki-listening-cards/measure.py), which reads the review
+log from Anki.
+
+<details class="more" id="tests">
+<summary>How each test works</summary>
+
+- **Confidence intervals** are
+  [bootstraps](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)). I redraw the data with
+  replacement thousands of times, work out the answer each time and take the middle 95%. Whole days
+  or whole cards are redrawn together, because reviews on one day or of one card aren't independent.
+- **Before vs after** uses a [permutation test](https://en.wikipedia.org/wiki/Permutation_test). I
+  shuffle which days count as after 10,000 times and count how often the shuffled gap is as big as
+  the real one. It almost never is, so p < 0.001. That's also where the saving at the top comes
+  from: my total daily time fell 23 minutes (95% CI 17 to 29), with Reading flat at 8.2 → 8.6
+  minutes.
+- **The 22 earlier dates.** Reading bounces around from week to week anyway, so I ran the same 35
+  days before vs after on every Sunday from 5 April to 30 August, when nothing had changed. The
+  biggest jump at any of them was 2.3 percentage points. At the real date it was 7.5, or 5.8 if I
+  leave the China weeks out of the before. The real date beat all of them, and 1 in 23 is p = 0.043.
+- **Anki's own prediction.** In plain percentages my reading is 4.4 percentage points worse (95% CI
+  1.9 to 6.9). Anki's scheduler also has a prediction of the chance I've forgotten each card, which
+  I worked out by replaying it over my log. Against that it's 5.1 worse (95% CI 2.6 to 7.6).
+- **Known and new characters.** A character is new for the 35 days after I first see it and known
+  after that. New with Writing means first seen from 4 May to 6 August, and new without means first
+  seen from 5 October.
+
+</details>
+
+[^cost]: Review answers with 90 days of log after them, each compared with a right answer on a card
+    at a similar interval, then averaged over the wrong answers: 61 seconds for a Reading card and
+    105 for a Writing card.
+[^best]: The characters that have gone without a Writing review went from 14% wrong to 20%. If every
+    review ends up like that it's about 2.3 wrong a day, so a little over 2 minutes. Against all my
+    reviews from May to early September they're 9 percentage points worse (95% CI 6 to 13), which
+    would be 3.8 minutes (2.4 to 5.2), but those are harder characters to begin with, so 4 is the
+    top end.
+[^write]: There's research on this too. [Reading depends on writing, in
+    Chinese](https://doi.org/10.1073/pnas.0503523102) (Tan and others, 2005) found that how well
+    children read Chinese was closely tied to how well they could write the characters by hand.

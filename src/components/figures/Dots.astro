@@ -1,43 +1,90 @@
 ---
-// A dot plot: one row per item, a dot at its value on one axis from 0 to
-// `max`, in titled groups, with the axis's ticks (0, half, max, in `unit`)
-// under the last group. The `after` row is the result. Styles: dot.css.
+// A dot plot: one row per item, a dot at its value on one axis from `min`
+// (0 unless given) to `max`, in titled groups, with the axis's ticks (`min`,
+// the middle and `max` unless `ticks` lists them, in `unit`) under the last
+// group. A row with `lo` and `hi` also draws that range as a whisker (a
+// confidence interval), and a row with a range but no `value` is a plain band
+// (a spread with no best guess). An axis that starts below 0 gets a line at
+// 0. `axis` names the axis under its ticks. The `after` row is the result. The value column is as wide as the
+// longest value; when values are long (an estimate with its range) a phone
+// puts each beside its label so the axis keeps the full width. Styles: dot.css.
 interface Row {
   label: string;
-  value: number;
+  value?: number;
+  lo?: number;
+  hi?: number;
   text: string;
   after?: boolean;
 }
 interface Props {
   max: number;
+  min?: number;
+  ticks?: number[];
   unit?: string;
+  axis?: string;
   groups: { title?: string; rows: Row[] }[];
 }
-const { max, unit = "", groups } = Astro.props;
-const ticks = [0, max / 2, max];
+const { max, min = 0, unit = "", axis, groups } = Astro.props;
+const ticks = Astro.props.ticks ?? [min, (min + max) / 2, max];
+const x = (v: number) => ((v - min) / (max - min)).toFixed(3);
+// Figure text is monospace, so the longest value's width is its length in ch.
+const chars = Math.max(
+  ...groups.flatMap((g) => g.rows.map((r) => [...r.text].length)),
+);
+const long = chars > 8;
+const grid = `--dot-value:max(4.2rem,${chars}ch)${min < 0 ? `;--zero:${x(0)}` : ""}`;
 ---
 
 {groups.map((g) => (
   <Fragment>
     {g.title && <p class="fig__k">{g.title}</p>}
     {g.rows.map((r) => (
-      <div class:list={["dot", { "dot--after": r.after }]}>
+      <div
+        class:list={[
+          "dot",
+          {
+            "dot--after": r.after,
+            "dot--band": r.value === undefined,
+            "dot--long": long,
+          },
+        ]}
+        style={grid}
+      >
         <span>{r.label}</span>
-        <i style={`--x:${(r.value / max).toFixed(3)}`} />
+        <i style={r.value === undefined ? undefined : `--x:${x(r.value)}`}>
+          {r.lo !== undefined && r.hi !== undefined && (
+            <s style={`--lo:${x(r.lo)};--hi:${x(r.hi)}`} />
+          )}
+        </i>
         <b>{r.text}</b>
       </div>
     ))}
   </Fragment>
 ))}
-<div class="dot dot--axis" aria-hidden="true">
+<div
+  class:list={["dot", "dot--axis", { "dot--long": long }]}
+  style={grid}
+  aria-hidden="true"
+>
   <span></span>
   <i>
     {ticks.map((t) => (
-      <em style={`--x:${t / max}`}>
-        {t}
+      <em style={`--x:${x(t)}`}>
+        {t < 0 ? `−${-t}` : t}
         {t === max && unit ? ` ${unit}` : ""}
       </em>
     ))}
   </i>
   <b></b>
 </div>
+{axis && (
+  <div
+    class:list={["dot", "dot--axis", "dot--name", { "dot--long": long }]}
+    style={grid}
+    aria-hidden="true"
+  >
+    <span></span>
+    <i>{axis}</i>
+    <b></b>
+  </div>
+)}
