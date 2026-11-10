@@ -2,7 +2,7 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
   // Biome does not format Markdown or MDX: docs keep their author's line
-  // breaks, and scripts/wrap.ts wraps the prose in posts at 80 columns.
+  // breaks, and scripts/wrap.ts wraps the prose in posts at 100 columns.
   // .astro support is experimental, so check rendered pages after a format.
   "files": {
     "includes": [

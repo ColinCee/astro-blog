@@ -1,4 +1,4 @@
-// Wraps the prose in posts at 80 columns, so a post reads in an editor
+// Wraps the prose in posts at 100 columns, so a post reads in an editor
 // without side-scrolling. Biome does not format MDX, so this does the one
 // thing wanted from a formatter there.
 //
@@ -13,7 +13,7 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const WIDTH = 80;
+const WIDTH = 100;
 const DIR = "src/content/blog";
 
 // A word that must not start a line, because Markdown or MDX would read the

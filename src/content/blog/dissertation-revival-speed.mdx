@@ -13,11 +13,10 @@ pubDate: "Oct 20 2026"
 Below are how much total future reward it expects from each move. A Deep Q Network is a neural network that estimates the [Q function](https://en.wikipedia.org/wiki/Q-learning): the reward it expects from each move.
 </QView>
 
-In 2018, for my final year project at the University of Strathclyde, inspired by
-the success of Google DeepMind's [DQN on Atari
-games](https://www.nature.com/articles/nature14236) I trained my own
-agent.[^methods] The above video, is playing Aliens, a Space Invaders clone from
-the [GVGAI](https://github.com/GAIGResearch/GVGAI) project.[^replay]
+In 2018, for my final year project at the University of Strathclyde, inspired by the success of
+Google DeepMind's [DQN on Atari games](https://www.nature.com/articles/nature14236) I trained my own
+agent.[^methods] The above video, is playing Aliens, a Space Invaders clone from the
+[GVGAI](https://github.com/GAIGResearch/GVGAI) project.[^replay]
 
 
 ## 2018: the cost of slow feedback loops
@@ -33,25 +32,23 @@ the [GVGAI](https://github.com/GAIGResearch/GVGAI) project.[^replay]
   />
 </Fig>
 
-In 2018 there weren't any easily plug and play versions of these algorithms for
-GVGAI, so I wrote it all from the papers and other people's blog posts,
-totalling [about 850 lines of
+In 2018 there weren't any easily plug and play versions of these algorithms for GVGAI, so I wrote it
+all from the papers and other people's blog posts, totalling [about 850 lines of
 Python](https://github.com/ColinCee/GVGAI-Dissertation/tree/2018-ddqn-per/src/QLearner).
 
 [In my
-report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf)
-I said training "took approximately 12 hours. This is problematic when
-attempting to test different parameters, ideas or network architectures".
+report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf) I
+said training "took approximately 12 hours. This is problematic when attempting to test different
+parameters, ideas or network architectures".
 
-It truly was. Every new idea needed on a full training run to verify, so I'd
-leave the PC running overnight, or whenever I went out. Imagine wanting to
-change one hyperparameter but you need a whole day to validate it, well thats
-what happened and it forced me to choose experiments very carefully.
+It truly was. Every new idea needed on a full training run to verify, so I'd leave the PC running
+overnight, or whenever I went out. Imagine wanting to change one hyperparameter but you need a whole
+day to validate it, well thats what happened and it forced me to choose experiments very carefully.
 
 ## The training runs still seem comparable
 
-If a port is correct then the new results should be comparable to my old
-results, and indeed they were.
+If a port is correct then the new results should be comparable to my old results, and indeed they
+were.
 
 <LineChart
   title="Aliens, wins so far: my two 2018 runs against three 2026 runs"
@@ -66,13 +63,11 @@ results, and indeed they were.
   }}
 />
 
-All the new training runs produced similar performance to my recorded
-values,[^runs] I'm genuinely surprised back in 2018 what I wrote still holds up,
-as an undergrad who had yet to start my SWE career this was quite an
-accomplishment.
+All the new training runs produced similar performance to my recorded values,[^runs] I'm genuinely
+surprised back in 2018 what I wrote still holds up, as an undergrad who had yet to start my SWE
+career this was quite an accomplishment.
 
-Claude did find two real bugs in my code but fixing them barely changed the
-result.[^bugs]
+Claude did find two real bugs in my code but fixing them barely changed the result.[^bugs]
 
 ## So why did it take so long?
 
@@ -99,9 +94,8 @@ result.[^bugs]
   />
 </Fig>
 
-Hardware upgrades, software updates to python, PyTorch in place of Keras, and
-feeding the network in batches instead of one sample at a time dropped training
-time by about 4 hours.[^speed]
+Hardware upgrades, software updates to python, PyTorch in place of Keras, and feeding the network in
+batches instead of one sample at a time dropped training time by about 4 hours.[^speed]
 
 The rest was the GVGAI engine itself being inefficient.
 
@@ -116,21 +110,19 @@ The rest was the GVGAI engine itself being inefficient.
   />
 </Fig>
 
-A faster feedback loop means more experiments and different approaches. This
-project trained 241 times, in 15 hours of training. At 2018 speed, that's about
-280 days. Bear in mind the entire research and write up of the report took 90
-days.
+A faster feedback loop means more experiments and different approaches. This project trained 241
+times, in 15 hours of training. At 2018 speed, that's about 280 days. Bear in mind the entire
+research and write up of the report took 90 days.
 
 ## How did Claude improve this?
 
-Loop engineering is something modern agents are good at and Claude found most of
-the speed-ups in the following loop:[^improvements]
+Loop engineering is something modern agents are good at and Claude found most of the speed-ups in
+the following loop:[^improvements]
 
 1. **Profile** the game to see where the time goes.
 2. **Change one thing.**
 3. **Time it** on the same benchmark game.
-4. **Replay recorded games**, failing if a single pixel differs, so it still
-   plays exactly the same.
+4. **Replay recorded games**, failing if a single pixel differs, so it still plays exactly the same.
 
 Claude cut the overheads out one change at a time. Here are the nine, in order:
 
@@ -155,21 +147,19 @@ With runs this fast, I could finally try to beat my 2018 agent, and that's [part
 2](/blog/dissertation-revival-beating-2018/).
 
 
-[^speed]: RTX 4090, PC otherwise idle; 23 to 34 minutes with other runs sharing
-    it. The old game alone runs at 34 frames a second on today's PC; the agent's
-    time is a full run minus the game alone.
+[^speed]: RTX 4090, PC otherwise idle; 23 to 34 minutes with other runs sharing it. The old game
+    alone runs at 34 frames a second on today's PC; the agent's time is a full run minus the game
+    alone.
     [Benchmarks](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/IMPROVEMENTS.md)
 [^methods]: DQN with Double DQN and prioritised replay. [My
     report](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2018-dissertation/report.pdf)
-[^bugs]: Rewards credited one move late; replay missing its correction weights.
-    48.2 points after fixing (one run), against 50.1 with the bugs kept (three
-    runs).
+[^bugs]: Rewards credited one move late; replay missing its correction weights. 48.2 points after
+    fixing (one run), against 50.1 with the bugs kept (three runs).
     [Results](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/RESULTS.md)
-[^improvements]: Nine of 30 changes sped up a single game. The benchmark changed
-    partway, so the steps don't always join up. [Full
+[^improvements]: Nine of 30 changes sped up a single game. The benchmark changed partway, so the
+    steps don't always join up. [Full
     list](https://github.com/ColinCee/GVGAI-Dissertation/blob/master/2026-revival/IMPROVEMENTS.md)
-[^replay]: My 2018 agent as rebuilt in 2026: its first training run, Aliens
-    level 0.
+[^replay]: My 2018 agent as rebuilt in 2026: its first training run, Aliens level 0.
     [Code](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2026-revival)
 [^runs]: Run 1: my 2018 training log. Run 2: my report's results table.
     [Data](https://github.com/ColinCee/GVGAI-Dissertation/tree/master/2026-revival/results/2018)
