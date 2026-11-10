@@ -485,7 +485,7 @@ curve in a component is a bug unless it is a content timing.
   draws itself in once when seen (`draw.css`), so there is no prop for it.
   Inside it: `<Cmp>` (before/after bars to scale; `base` stripes the baseline row, `from` makes a step of a
   waterfall, drawn hollow, `ref` a dashed reference line, `cols` the column widths; the value column grows to the longest value, so none spills out of the figure), `<Dots>` (a
-  dot plot on one axis, in titled groups), `<Stack>` (one bar split into shares,
+  dot plot on one axis, in titled groups; a row's `lo` and `hi` draw its range as a whisker, for a confidence interval, a range with no `value` is a plain band, `min` below 0 starts the axis there and marks 0), `<Stack>` (one bar split into shares,
   with a legend), `<Split>` + `<Panel title>` (panels side by side),
   `<Morph>` (JSONL text rearranging into columns and back, built on `Frames`, text that moves between stages; on a loop while seen, hover pauses it, a tab stops it), `<Lookup>` (dictionary encoding: values pointing at numbers and the dictionary they look up, each entry's number in its own neutral style on both sides), `<Repeats>` (how Zstandard finds repeats on one column: before with the repeated stretch marked, after with it as one "repeat" chip), `<Boxes>` (a row of
   jobs or steps), `<Runs>` (blocks on a shared time axis: how long each run takes

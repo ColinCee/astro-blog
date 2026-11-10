@@ -284,13 +284,184 @@ for label, lo_d, hi_d in (("5 to 14 Oct", A0, dt.date(2026, 10, 14)), ("15 Oct t
 newc = [r for r in after if r[NOTE] not in due]
 g_new = line("characters that never had a Listening card", newc)
 
-print("\n# Figure 3: minutes of Listening per wrong answer it prevented")
-per_day = len(aft) / W
+print("\n# The tests. CI is a 95% confidence interval; p is the chance of a gap this big if nothing had changed")
+# Bootstrap: redraw the data with replacement many times and see how far the
+# answer moves; the middle 95% of the redraws is the CI. Whole days or whole
+# cards are redrawn together, because reviews on one day or of one card are
+# not independent. Permutation test: shuffle which days count as "after" and
+# count how often the shuffled gap is as big as the real one.
+N = 10000
+
+
+def ci(draws):
+    draws = sorted(draws)
+    return draws[int(0.025 * len(draws))], draws[int(0.975 * len(draws)) - 1]
+
+
+def mean_gap(blocks):
+    return 100 * sum(s for s, n in blocks) / sum(n for s, n in blocks)
+
+
+def blocks(rs, key):
+    """[sum of (wrong - expected), count] for each day or card."""
+    out = collections.defaultdict(lambda: [0.0, 0])
+    for r in rs:
+        k = out[key(r)]
+        k[0] += (r[EASE] == 1) - expected[(r[CARD], r[TS])]
+        k[1] += 1
+    return list(out.values())
+
+
+def by_date(r):
+    return day(r[TS])
+
+
+def by_cardid(r):
+    return r[CARD]
+
+
+print("T1 minutes a day, 35 days before vs 35 after (each day one number)")
+spent = collections.defaultdict(float)
+for r in rows:
+    spent[day(r[TS])] += r[TIME] / 60000
+mb = [spent[B0 + dt.timedelta(days=i)] for i in range(W)]
+ma = [spent[A0 + dt.timedelta(days=i)] for i in range(W)]
+saving = sum(mb) / W - sum(ma) / W
+lo_t, hi_t = ci([sum(random.choices(mb, k=W)) / W - sum(random.choices(ma, k=W)) / W for _ in range(N)])
+both = mb + ma
+hits = 0
+for _ in range(N):
+    random.shuffle(both)
+    hits += abs(sum(both[:W]) - sum(both[W:])) / W >= saving
+print(f"  saving {saving:.1f} min a day (95% CI {lo_t:.1f} to {hi_t:.1f}), p < {max(hits, 1) / N:.4f} (permutation test); "
+      f"median day {sorted(mb)[W // 2]:.1f} -> {sorted(ma)[W // 2]:.1f} min")
 listening = sum(r[TIME] for r in rows if r[ORD] == 1 and between(r, B0, B1)) / 60000 / W
-print(f"Listening took {listening:.1f} min a day; {per_day:.1f} Recognition review answers a day")
-for name, pts in (("so far, low", lo), ("so far", g_after - g_base), ("so far, high", hi),
-                  ("once every Listening review is skipped", g_skip - g_base)):
-    print(f"{name}: {pts:.1f} points = {pts / 100 * per_day:.1f} wrong answers a day -> {listening / (pts / 100 * per_day):.1f} min each")
+lis_days = [sum(r[TIME] for r in rows if r[ORD] == 1 and day(r[TS]) == B0 + dt.timedelta(days=i)) / 60000 for i in range(W)]
+lis_lo, lis_hi = ci([sum(random.choices(lis_days, k=W)) / W for _ in range(N)])
+print(f"  Listening alone: {listening:.1f} min a day (95% CI {lis_lo:.1f} to {lis_hi:.1f})")
+
+print("T2 reading against Anki's forecast, baseline vs the five weeks since")
+bb, ab = blocks(base, by_date), blocks(after, by_date)
+diff = mean_gap(ab) - mean_gap(bb)
+pool = bb + ab
+hits = 0
+for _ in range(N):
+    random.shuffle(pool)
+    hits += abs(mean_gap(pool[len(bb):]) - mean_gap(pool[:len(bb)])) >= diff
+print(f"  {diff:.1f} points worse (95% CI {lo:.1f} to {hi:.1f}), p < {max(hits, 1) / N:.4f} (permutation test over {len(pool)} days)")
+real = versus(after)[2] - versus([r for r in scored if between(r, B0, B1)])[2]
+print(f"  35 v 35 at the real date {real:+.1f} points, bigger than at all {len(swings)} earlier dates (largest {max(swings):+.1f}): p = {1 / (len(swings) + 1):.3f}")
+
+print("T3 from 15 Oct: characters whose Listening review was skipped vs not due yet")
+part = [r for r in late if day(r[TS]) >= dt.date(2026, 10, 15)]
+skip = [r for r in part if day(r[TS]) >= due[r[NOTE]]]
+notdue = [r for r in part if day(r[TS]) < due[r[NOTE]]]
+ks, kn = sum(r[EASE] == 1 for r in skip), sum(r[EASE] == 1 for r in notdue)
+
+
+def fisher(a, b, c, d):
+    """Two-sided Fisher exact test on the table [[a, b], [c, d]]."""
+    def prob(x):
+        return math.comb(a + b, x) * math.comb(c + d, a + c - x) / math.comb(a + b + c + d, a + c)
+    p0 = prob(a)
+    return sum(prob(x) for x in range(max(0, a + c - (c + d)), min(a + b, a + c) + 1) if prob(x) <= p0 * (1 + 1e-9))
+
+
+def card_rate(rs):
+    out = collections.defaultdict(lambda: [0, 0])
+    for r in rs:
+        out[r[CARD]][0] += r[EASE] == 1
+        out[r[CARD]][1] += 1
+    return list(out.values())
+
+
+def redraw_rate(cards):
+    pick = random.choices(cards, k=len(cards))
+    return 100 * sum(k for k, n in pick) / sum(n for k, n in pick)
+
+
+cs, cn = card_rate(skip), card_rate(notdue)
+d_lo, d_hi = ci([redraw_rate(cs) - redraw_rate(cn) for _ in range(N)])
+print(f"  wrong on {ks} of {len(skip)} ({100 * ks / len(skip):.1f}%) vs {kn} of {len(notdue)} ({100 * kn / len(notdue):.1f}%): "
+      f"{100 * ks / len(skip) - 100 * kn / len(notdue):.1f} points (95% CI {d_lo:.1f} to {d_hi:.1f}, redrawing cards), "
+      f"p = {fisher(ks, len(skip) - ks, kn, len(notdue) - kn):.1e} (Fisher's exact test)")
+print(f"  Anki expected {versus(skip)[1]:.1f}% and {versus(notdue)[1]:.1f}%")
+# The size once every Listening review is skipped: these reviews against the
+# with-Listening baseline, both measured from Anki's forecast.
+sb = blocks(skip, by_cardid)
+steady = []
+for _ in range(N):
+    steady.append(mean_gap(random.choices(sb, k=len(sb))) - mean_gap(random.choices(bb, k=len(bb))))
+st_lo, st_hi = ci(steady)
+print(f"  skipped reviews vs the baseline with Listening: {g_skip - g_base:.1f} points worse (95% CI {st_lo:.1f} to {st_hi:.1f})")
+hard = lambda rs: 100 * sum(r[EASE] == 2 for r in rs) / len(rs)
+print(f"  Hard answers in the same weeks: skipped {hard(skip):.1f}%, not due {hard(notdue):.1f}%")
+
+print("T4 the longer a Listening review has been skipped, the worse? (whole after window)")
+steps = (("not due", -9999, 0), ("0 to 7 days", 0, 8), ("8 to 21 days", 8, 22), ("22 days or more", 22, 9999))
+ns, ks_ = [], []
+for label, a_, b_ in steps:
+    pick = [r for r in late if a_ <= (day(r[TS]) - due[r[NOTE]]).days < b_]
+    ns.append(len(pick))
+    ks_.append(sum(r[EASE] == 1 for r in pick))
+    print(f"  {label}: wrong on {ks_[-1]} of {ns[-1]} ({100 * ks_[-1] / ns[-1]:.1f}%)")
+p_all = sum(ks_) / sum(ns)
+t = sum(i * (k - n * p_all) for i, (k, n) in enumerate(zip(ks_, ns)))
+v = p_all * (1 - p_all) * (sum(n * i * i for i, n in enumerate(ns)) - sum(n * i for i, n in enumerate(ns)) ** 2 / sum(ns))
+z = t / math.sqrt(v)
+print(f"  trend z = {z:.1f}, p = {math.erfc(abs(z) / math.sqrt(2)):.1e} (Cochran-Armitage test)")
+print(f"  8 to 21 days vs 22 or more: p = {fisher(ks_[2], ns[2] - ks_[2], ks_[3], ns[3] - ks_[3]):.2f} (Fisher), so no sign it keeps getting worse per review")
+share = collections.defaultdict(lambda: [0, 0])
+for r in late:
+    d = day(r[TS])
+    k = share[d - dt.timedelta(days=d.weekday())]
+    k[0] += (d - due[r[NOTE]]).days >= 8
+    k[1] += 1
+print("  share of reading reviews with Listening skipped 8+ days ago, by week:",
+      ", ".join(f"{100 * a_ / b_:.0f}%" for w_, (a_, b_) in sorted(share.items()) if w_ + dt.timedelta(days=6) <= A1))
+
+print("T5 what one wrong reading answer costs")
+# Extra seconds on the card over the next 90 days vs a right answer at the
+# same interval band, the review itself included; cards redrawn for the CI.
+per_card = collections.defaultdict(lambda: collections.defaultdict(lambda: [0.0, 0, 0.0, 0]))
+for rs in by_card.values():
+    for i, r in enumerate(rs):
+        if r[ORD] != 0 or r[TYPE] != 1 or r[TS] + H > END:
+            continue
+        secs = sum(x[TIME] for x in rs[i:] if x[TS] <= r[TS] + H) / 1000
+        k = per_card[r[CARD]][bucket(r[LASTIVL])]
+        k[0 if r[EASE] == 1 else 2] += secs
+        k[1 if r[EASE] == 1 else 3] += 1
+
+
+def wrong_cost(cards):
+    tot = collections.defaultdict(lambda: [0.0, 0, 0.0, 0])
+    for c in cards:
+        for b_, k in c.items():
+            for i in range(4):
+                tot[b_][i] += k[i]
+    extra = n = 0
+    for sw, nw, so, no in tot.values():
+        if nw and no:
+            extra += (sw / nw - so / no) * nw
+            n += nw
+    return extra / n
+
+
+cards = list(per_card.values())
+cost = wrong_cost(cards)
+c_lo, c_hi = ci([wrong_cost(random.choices(cards, k=len(cards))) for _ in range(1000)])
+print(f"  {cost:.0f} seconds (95% CI {c_lo:.0f} to {c_hi:.0f})")
+
+print("\n# Figure 4: what Listening's minutes bought, in minutes of reading review a day")
+per_day = len(aft) / W
+print(f"{per_day:.1f} Recognition review answers a day; a wrong answer costs {cost / 60:.2f} min")
+for name, pts, p_lo, p_hi in (("so far", g_after - g_base, lo, hi), ("once every Listening review is skipped", g_skip - g_base, st_lo, st_hi)):
+    f = per_day / 100
+    print(f"{name}: {pts:.1f} points = {pts * f:.1f} wrong answers a day (95% CI {p_lo * f:.1f} to {p_hi * f:.1f}) "
+          f"= {pts * f * cost / 60:.1f} min a day saved ({p_lo * f * cost / 60:.1f} to {p_hi * f * cost / 60:.1f}); "
+          f"Listening paid {listening / (pts * f):.1f} min per wrong answer")
+print(f"Listening would have paid for itself only if a wrong answer cost {listening / ((g_skip - g_base) * per_day / 100):.1f} min, or {listening / (st_hi * per_day / 100):.1f} at the top of the range")
 # Over every interval length, weighted by how many wrong answers fell in
 # each, counting the review itself and any Hard answer as a pass.
 for o in (0, 1):

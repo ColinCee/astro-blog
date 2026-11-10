@@ -3,7 +3,7 @@
    fraction of the axis. */
 .prose .dot {
   display: grid;
-  grid-template-columns: 10.5rem minmax(0, 1fr) 4.2rem;
+  grid-template-columns: 10.5rem minmax(0, 1fr) var(--dot-value, 4.2rem);
   align-items: center;
   gap: 0.3rem 0.8rem;
 }
@@ -43,6 +43,44 @@
   color: var(--accent-text);
   font-weight: 500;
 }
+/* A range around the dot (a confidence interval): a whisker with end caps,
+   in the dot's colour. --lo and --hi are fractions of the axis. */
+.prose .dot i s {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--lo) * 100%);
+  width: calc((var(--hi) - var(--lo)) * 100%);
+  min-width: 1px;
+  height: 0.6rem;
+  transform: translateY(-50%);
+  color: var(--muted);
+  border: solid currentColor;
+  border-width: 0 1.5px;
+  background:
+    linear-gradient(currentColor, currentColor) no-repeat 0 50% / 100% 1.5px;
+}
+.prose .dot--after i s {
+  color: var(--accent);
+}
+/* A range with no best guess: a plain band, no dot */
+.prose .dot--band i::after {
+  content: none;
+}
+.prose .dot--band i s {
+  height: 0.7rem;
+  border: 0;
+  border-radius: 1px;
+  background: var(--bar);
+}
+/* An axis that starts below 0 marks 0 on every row */
+.prose .dot[style*="--zero"] i {
+  background:
+    linear-gradient(var(--faint), var(--faint)) no-repeat
+    calc(var(--zero) * 100%) 0 / 1px 100%;
+}
+.prose .dot--axis[style*="--zero"] i {
+  background: none;
+}
 /* The axis under the rows: its ticks, no dot or line */
 .prose .dot--axis i {
   height: 1rem;
@@ -72,9 +110,26 @@
   }
   /* the same value column on every row, so the axis ticks line up with the dots */
   .prose .dot {
-    grid-template-columns: minmax(0, 1fr) 4.2rem;
+    grid-template-columns: minmax(0, 1fr) var(--dot-value, 4.2rem);
   }
   .prose .dot span {
     grid-column: 1 / -1;
+  }
+  /* Long values (an estimate and its range) sit beside the label, so the
+     axis keeps the figure's full width */
+  .prose .dot--long {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .prose .dot--long span {
+    grid-column: 1;
+  }
+  .prose .dot--long b {
+    grid-area: 1 / 2;
+  }
+  .prose .dot--long i {
+    grid-area: 2 / 1 / auto / -1;
+  }
+  .prose .dot--axis.dot--long b {
+    display: none;
   }
 }
