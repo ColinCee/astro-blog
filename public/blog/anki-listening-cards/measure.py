@@ -548,6 +548,8 @@ while c <= dt.date(2026, 8, 30):
     c += dt.timedelta(days=7)
 real_raw = rate([r for r in scored if between(r, A0, A1)]) - rate([r for r in scored if between(r, B0, B1)])
 print(f"  35 days after vs 35 before at {len(raw)} earlier dates: {min(raw):+.1f} to {max(raw):+.1f} percentage points; at the real date {real_raw:+.1f}")
+pre0, pre1 = TRIP0 - dt.timedelta(days=W), TRIP0 - dt.timedelta(days=1)
+print(f"  leaving the China weeks out (after vs {pre0} to {pre1}): {rate([r for r in scored if between(r, A0, A1)]) - rate([r for r in scored if between(r, pre0, pre1)]):+.1f}")
 
 print("\n# The same characters before and after: each group against its own past")
 # A character is in the missed group if any of its reading reviews from 15 Oct
@@ -610,26 +612,27 @@ print(f"  saved so far: {so_far * per_day / 100:.1f} wrong answers a day = {so_f
 print(f"  saved once every Writing review is skipped: {best * per_day / 100:.1f} wrong answers a day = {best * f:.1f} min (95% CI {be_lo * f:.1f} to {be_hi * f:.1f})")
 print(f"  a wrong answer would have to cost {listening / (best * per_day / 100):.1f} min for Writing to pay for itself")
 
-print("\n# Figure 2: Reading review answers each week, wrong % and what Anki expected (weeks start Monday)")
+print("\n# Figure 2: Reading review answers each week, share answered Again (weeks start Monday)")
 # Week 0 starts 4 May, when the deck was three months old and the baseline
-# above begins. Week 21 (28 Sep to 4 Oct) is the last with Writing, week
-# 22 the first without. Earlier weeks are printed with negative numbers.
+# above begins. Week 21 (28 Sep to 4 Oct) is the last with Writing, week 22
+# the first without. Earlier weeks are printed with negative numbers. Every
+# review answer counts, so these are plain shares.
 weeks = collections.defaultdict(list)
-for r in scored:
+for r in allrec:
     d = day(r[TS])
     weeks[d - dt.timedelta(days=d.weekday())].append(r)
-obs_s, exp_s = [], []
+series = []
 for w in sorted(weeks):
     n = (w - BASE0).days // 7
     if w + dt.timedelta(days=6) > A1:
         continue
-    o, e, g = versus(weeks[w])
+    o = 100 * sum(r[EASE] == 1 for r in weeks[w]) / len(weeks[w])
     if n >= 0:
-        obs_s.append([n, round(o, 1)])
-        exp_s.append([n, round(e, 1)])
-    print(f"week {n:>3} from {w}: {len(weeks[w])} answers, wrong {o:.1f}%, expected {e:.1f}%, gap {g:+.1f}")
-print("wrong:", json.dumps(obs_s))
-print("expected:", json.dumps(exp_s))
-for label, pick in (("with Writing", range(0, 22)), ("without", range(22, 27))):
-    over = sum(obs_s[n][1] > exp_s[n][1] + 1 for n in pick)
-    print(f"weeks {label} more than a point over what Anki expected: {over} of {len(pick)}")
+        series.append([n, round(o, 1)])
+    print(f"week {n:>3} from {w}: {len(weeks[w])} answers, wrong {o:.1f}%")
+print("line:", json.dumps(series[:22]))
+print("dots:", json.dumps(series[22:]))
+with_w = [v for n, v in series[:22]]
+print(f"the 22 weeks with Writing ran {min(with_w):.1f}% to {max(with_w):.1f}%")
+# I was in China from Fri 11 Sep to Wed 30 Sep. With each week's point drawn
+# at the middle of its week, that is from 18.1 to 20.9 on the chart.
