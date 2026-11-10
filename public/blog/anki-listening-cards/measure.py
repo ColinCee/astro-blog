@@ -368,6 +368,9 @@ def struggled(rs):
 
 
 hb_, ha_ = struggled(base), struggled(after)
+for label, blk in (("with Listening", hb_), ("without", ha_)):
+    l_lo, l_hi = ci([mean_gap(random.choices(blk, k=len(blk))) for _ in range(N)])
+    print(f"  Again or Hard {label}: {mean_gap(blk):.1f}% (95% CI {l_lo:.1f} to {l_hi:.1f}, redrawing days)")
 ah = mean_gap(ha_) - mean_gap(hb_)
 ah_lo, ah_hi = ci([mean_gap(random.choices(ha_, k=len(ha_))) - mean_gap(random.choices(hb_, k=len(hb_))) for _ in range(N)])
 print(f"  Again or Hard: {ah:.1f} points more (95% CI {ah_lo:.1f} to {ah_hi:.1f}, redrawing days)")
