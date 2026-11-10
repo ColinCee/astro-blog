@@ -31,11 +31,11 @@ Write how he talks in chat and writes himself: casual, conversational British En
 - **Sentences run on the way he talks,** joined by commas, "but", "so" and "and". Openers he uses: "However", "So", "Fundamentally", "What it does is", "I remember". No semicolons, no em dashes, active voice.
 - **Everyday words:** "vs" not "against", "pretty decent", "kinda mid", "cool". His verdict goes in the way he'd say it to a friend.
 - **No term he'd have to ask about.** "The estimate", "what I measured", "points" and "the forecast" all stopped him. Say "the result, like 35%", "what I actually got", "20% → 35%".
+- **Reach for a short list before a dense sentence.** He rewrote paragraph after paragraph of the handwriting post as bullets, because they explain things more simply. Two or more parallel facts, numbers, steps or options go in a list under a short lead-in ("Two places:", "An average review took:"), each bullet one plain line. Prose is for the connecting thought and how it felt. No bold lead-in on every bullet, and no detail a link can carry.
 - **One finding per sentence, about three sentences a paragraph.** Two or more numbers go in the figure or a short list, never stacked in a sentence. He can't follow "it went from 20% to 35%, which is 14.2 points worse (95% CI 9.6 to 18.8)". Cut what a figure or the last sentence already says, don't explain what a later section covers, and end on a nudge to the next part.
 - **He explains through story and scale:** a short history to set the scene, a comparison that makes a number land (a coin flip, atoms in the universe), a memory, a question that sets up the next part.
 - **Only what he knows.** No "because" he didn't measure, no stacked parenthetical asides. A detail that matters gets its own sentence or a footnote.
 - **Open with the thing and why he tried it,** not a recap of the last part.
-- **Lists and tables are for real structure,** not decoration: no bold lead-in on every bullet, no detail a link can carry.
 
 ## 3. Numbers and claims
 
