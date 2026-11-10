@@ -2,10 +2,11 @@
 
 Input: a JSON list of review rows from Anki's revlog table joined to cards:
 [card_id, ord, review_ms, ease, type, new_interval_days, last_interval_days, time_ms, note_id]
-ord 0 is the Recognition card, 1 the Listening card; the two cards of one
-character share a note_id. ease 1 is Again, 2 Hard, 3 Good, 4 Easy. type 0 is
-learning, 1 review, 2 relearning. Anki caps time_ms at 60 s. Days are Anki
-days: they roll over at 4am, UK time. Plain Python, no packages.
+ord 0 is the Reading card, 1 the Writing card (my deck calls them Recognition
+and Listening); the two cards of one character share a note_id. ease 1 is
+Again, 2 Hard, 3 Good, 4 Easy. type 0 is learning, 1 review, 2 relearning.
+Anki caps time_ms at 60 s. Days are Anki days: they roll over at 4am, UK
+time. Plain Python, no packages.
 
     python measure.py revs.json
 """
@@ -19,7 +20,7 @@ import zoneinfo
 
 CARD, ORD, TS, EASE, TYPE, NEWIVL, LASTIVL, TIME, NOTE = range(9)
 UK = zoneinfo.ZoneInfo("Europe/London")
-NAME = {0: "Recognition", 1: "Listening"}
+NAME = {0: "Reading", 1: "Writing"}
 rows = json.load(open(sys.argv[1], encoding="utf-8"))
 rows.sort(key=lambda r: r[TS])
 
@@ -45,13 +46,13 @@ def ztest(k1, n1, k2, n2):
     return math.erfc(abs(k1 / n1 - k2 / n2) / se / math.sqrt(2))
 
 
-# The last Listening review was on 4 Oct 2026. Two equal 35-day windows
+# The last Writing review was on 4 Oct 2026. Two equal 35-day windows
 # either side of it: 31 Aug to 4 Oct, and 5 Oct to 8 Nov.
 SUSP = max(day(r[TS]) for r in rows if r[ORD] == 1)
 W = 35
 B0, B1 = SUSP - dt.timedelta(days=W - 1), SUSP
 A0, A1 = SUSP + dt.timedelta(days=1), SUSP + dt.timedelta(days=W)
-print(f"last Listening review {SUSP}; before {B0}..{B1}, after {A0}..{A1}")
+print(f"last Writing review {SUSP}; before {B0}..{B1}, after {A0}..{A1}")
 
 
 def between(r, lo, hi):
@@ -61,16 +62,16 @@ def between(r, lo, hi):
 print("\n# Figure 1: minutes a day, 5 weeks before vs after")
 for label, lo, hi in (("before", B0, B1), ("after", A0, A1)):
     mins = {o: sum(r[TIME] for r in rows if r[ORD] == o and between(r, lo, hi)) / 60000 / W for o in (0, 1)}
-    print(f"{label}: Recognition {mins[0]:.1f} min/day, Listening {mins[1]:.1f} min/day, total {mins[0] + mins[1]:.1f}")
+    print(f"{label}: Reading {mins[0]:.1f} min/day, Writing {mins[1]:.1f} min/day, total {mins[0] + mins[1]:.1f}")
 
 print("\n# Deck and log size")
 print("reviews", len(rows), "cards", {NAME[o]: len({r[CARD] for r in rows if r[ORD] == o}) for o in (0, 1)})
 print("first review", day(rows[0][TS]), "last", day(rows[-1][TS]))
 hours = {o: sum(r[TIME] for r in rows if r[ORD] == o) / 3600000 for o in (0, 1)}
-print(f"hours: Recognition {hours[0]:.1f}, Listening {hours[1]:.1f}, total {hours[0] + hours[1]:.1f}")
+print(f"hours: Reading {hours[0]:.1f}, Writing {hours[1]:.1f}, total {hours[0] + hours[1]:.1f}")
 print("reviews that hit the 60 s cap:", {NAME[o]: sum(1 for r in rows if r[ORD] == o and r[TIME] >= 60000) for o in (0, 1)})
 
-print("\n# Listening's share of the month's time")
+print("\n# Writing's share of the month's time")
 month = collections.defaultdict(float)
 for r in rows:
     month[(day(r[TS]).strftime("%Y-%m"), r[ORD])] += r[TIME]
@@ -107,15 +108,15 @@ for o in (0, 1):
         mw, mr = sum(wrong) / len(wrong), sum(right) / len(right)
         print(f"{NAME[o]} due in {b}: right {mr:.0f} s (n={len(right)}), wrong {mw:.0f} s (n={len(wrong)}), extra {mw - mr:.0f} s")
 
-print("\n# Footnote: wrong answers per 100 Recognition reviews, same cards, before vs after")
+print("\n# Footnote: wrong answers per 100 Reading reviews, same cards, before vs after")
 # Only cards first seen before the before-window, so new cards added after the
-# suspension (which have no Listening card at all) don't drag the after side down.
+# suspension (which have no Writing card at all) don't drag the after side down.
 first_seen = {}
 for r in rows:
     first_seen.setdefault(r[CARD], day(r[TS]))
 mature = {c for c, d in first_seen.items() if d < B0}
 rec = [r for r in rows if r[ORD] == 0 and r[TYPE] == 1 and r[CARD] in mature]
-print("Recognition cards first seen before the before-window:", len({r[CARD] for r in rec}))
+print("Reading cards first seen before the before-window:", len({r[CARD] for r in rec}))
 for b in ("7-29 d", "30-89 d", "all"):
     pick = [r for r in rec if b == "all" or bucket(r[LASTIVL]) == b]
     bef = [r for r in pick if between(r, B0, B1)]
@@ -128,7 +129,7 @@ for b in ("7-29 d", "30-89 d", "all"):
         print(f"  extra wrong answers in the after window vs the before rate: {ka - len(aft) * kb / len(bef):.0f}")
         print(f"  seconds a review: {sum(r[TIME] for r in bef) / len(bef) / 1000:.1f} -> {sum(r[TIME] for r in aft) / len(aft) / 1000:.1f}")
 
-print("\n# Was the before window just a good month? Wrong % by month, all Recognition review-type answers")
+print("\n# Was the before window just a good month? Wrong % by month, all Reading review-type answers")
 allrec = [r for r in rows if r[ORD] == 0 and r[TYPE] == 1]
 for b in ("7-29 d", "30-89 d"):
     out = []
@@ -137,26 +138,26 @@ for b in ("7-29 d", "30-89 d"):
         out.append(f"{m[5:]}: {100 * sum(r[EASE] == 1 for r in pick) / len(pick):.0f}% ({len(pick)})")
     print(f"due in {b}:", ", ".join(out))
 
-print("\n# Cards added after the suspension (no Listening card ever shown)")
+print("\n# Cards added after the suspension (no Writing card ever shown)")
 new = {r[CARD] for r in rows if r[ORD] == 0 and first_seen[r[CARD]] >= A0}
 pick = [r for r in rows if r[ORD] == 0 and r[TYPE] == 1 and r[CARD] in new]
 print(f"{len(new)} cards, wrong on {100 * sum(r[EASE] == 1 for r in pick) / len(pick):.1f}% of {len(pick)} reviews")
 
 
-print("\n# Wrong answers, all Recognition review answers, equal windows")
+print("\n# Wrong answers, all Reading review answers, equal windows")
 bef = [r for r in allrec if between(r, B0, B1)]
 aft = [r for r in allrec if between(r, A0, A1)]
 kb, ka = sum(r[EASE] == 1 for r in bef), sum(r[EASE] == 1 for r in aft)
 print(f"all cards: wrong {100 * kb / len(bef):.1f}% of {len(bef)} -> {100 * ka / len(aft):.1f}% of {len(aft)}")
-had = {r[NOTE] for r in rows if r[ORD] == 1}  # characters whose Listening card I ever reviewed
+had = {r[NOTE] for r in rows if r[ORD] == 1}  # characters whose Writing card I ever reviewed
 hb = [r for r in bef if r[NOTE] in had]
 ha = [r for r in aft if r[NOTE] in had]
 na = [r for r in aft if r[NOTE] not in had]
-print(f"characters that had a Listening card: {100 * sum(r[EASE] == 1 for r in hb) / len(hb):.1f}% of {len(hb)} -> "
+print(f"characters that had a Writing card: {100 * sum(r[EASE] == 1 for r in hb) / len(hb):.1f}% of {len(hb)} -> "
       f"{100 * sum(r[EASE] == 1 for r in ha) / len(ha):.1f}% of {len(ha)}")
 print(f"characters added since, never had one: {100 * sum(r[EASE] == 1 for r in na) / len(na):.1f}% of {len(na)} "
       f"({len({r[CARD] for r in na})} cards)")
-print(f"Recognition review answers a day in the after window: {len(aft) / W:.1f}")
+print(f"Reading review answers a day in the after window: {len(aft) / W:.1f}")
 
 print("\n# What Anki expected: replaying its scheduler (FSRS-6) over the log")
 # Anki's scheduler keeps a memory model of every card and, at each review,
@@ -222,15 +223,15 @@ def line(label, rs):
 
 
 # I was in China from 11 to 30 Sep, reading Chinese all day, so the baseline
-# with Listening stops the day before.
+# with Writing stops the day before.
 TRIP0, TRIP1 = dt.date(2026, 9, 11), dt.date(2026, 9, 30)
 BASE0 = dt.date(2026, 5, 4)
 base = [r for r in scored if BASE0 <= day(r[TS]) < TRIP0]
 trip = [r for r in scored if TRIP0 <= day(r[TS]) <= TRIP1]
 after = [r for r in scored if between(r, A0, A1)]
-g_base = line(f"with Listening, {BASE0} to {TRIP0 - dt.timedelta(days=1)}", base)
+g_base = line(f"with Writing, {BASE0} to {TRIP0 - dt.timedelta(days=1)}", base)
 line("in China, 11 to 30 Sep", trip)
-g_after = line(f"without Listening, {A0} to {A1}", after)
+g_after = line(f"without Writing, {A0} to {A1}", after)
 print(f"so reading is {g_after - g_base:.1f} points worse against Anki's own expectation")
 random.seed(1)
 
@@ -263,9 +264,9 @@ while c <= dt.date(2026, 8, 30):
 print(f"  the same 35 v 35 gap change at {len(swings)} earlier dates: {min(swings):+.1f} to {max(swings):+.1f}; "
       f"at the real date {versus(after)[2] - versus([r for r in scored if between(r, B0, B1)])[2]:+.1f}")
 
-print("\n# The check inside the after window: was a Listening review actually skipped?")
-# For each character, the day its Listening card would next have come up:
-# its last Listening review plus the interval Anki gave it then. A reading
+print("\n# The check inside the after window: was a Writing review actually skipped?")
+# For each character, the day its Writing card would next have come up:
+# its last Writing review plus the interval Anki gave it then. A reading
 # review before that day lost nothing yet; one after it has missed a look.
 due = {}
 for r in rows:
@@ -275,14 +276,14 @@ late = [r for r in after if r[NOTE] in due]
 for label, lo_d, hi_d in (("5 to 14 Oct", A0, dt.date(2026, 10, 14)), ("15 Oct to 8 Nov", dt.date(2026, 10, 15), A1)):
     part = [r for r in late if lo_d <= day(r[TS]) <= hi_d]
     print(label)
-    line("  Listening not due yet", [r for r in part if day(r[TS]) < due[r[NOTE]]])
-    g_skip = line("  Listening skipped", [r for r in part if day(r[TS]) >= due[r[NOTE]]])
+    line("  Writing not due yet", [r for r in part if day(r[TS]) < due[r[NOTE]]])
+    g_skip = line("  Writing skipped", [r for r in part if day(r[TS]) >= due[r[NOTE]]])
     for a, b in ((0, 7), (7, 21), (21, 99)):
         pick = [r for r in part if a <= (day(r[TS]) - due[r[NOTE]]).days < b]
         if len(pick) >= 50:
             line(f"    skipped {a} to {b} days ago", pick)
 newc = [r for r in after if r[NOTE] not in due]
-g_new = line("characters that never had a Listening card", newc)
+g_new = line("characters that never had a Writing card", newc)
 
 print("\n# The tests. CI is a 95% confidence interval; p is the chance of a gap this big if nothing had changed")
 # Bootstrap: redraw the data with replacement many times and see how far the
@@ -338,7 +339,7 @@ print(f"  saving {saving:.1f} min a day (95% CI {lo_t:.1f} to {hi_t:.1f}), p < {
 listening = sum(r[TIME] for r in rows if r[ORD] == 1 and between(r, B0, B1)) / 60000 / W
 lis_days = [sum(r[TIME] for r in rows if r[ORD] == 1 and day(r[TS]) == B0 + dt.timedelta(days=i)) / 60000 for i in range(W)]
 lis_lo, lis_hi = ci([sum(random.choices(lis_days, k=W)) / W for _ in range(N)])
-print(f"  Listening alone: {listening:.1f} min a day (95% CI {lis_lo:.1f} to {lis_hi:.1f})")
+print(f"  Writing alone: {listening:.1f} min a day (95% CI {lis_lo:.1f} to {lis_hi:.1f})")
 
 print("T2 reading against Anki's forecast, baseline vs the five weeks since")
 bb, ab = blocks(base, by_date), blocks(after, by_date)
@@ -353,7 +354,7 @@ real = versus(after)[2] - versus([r for r in scored if between(r, B0, B1)])[2]
 print(f"  35 v 35 at the real date {real:+.1f} points, bigger than at all {len(swings)} earlier dates (largest {max(swings):+.1f}): p = {1 / (len(swings) + 1):.3f}")
 
 print("T2b the same two periods by button: Again is forgot, Hard is got it but struggled")
-for label, rs in (("with Listening", base), ("without", after)):
+for label, rs in (("with Writing", base), ("without", after)):
     share = [100 * sum(r[EASE] == e for r in rs) / len(rs) for e in (1, 2, 3, 4)]
     print(f"  {label}: Again {share[0]:.1f}%, Hard {share[1]:.1f}%, Good {share[2]:.1f}%, Easy {share[3]:.1f}%; "
           f"Again or Hard {share[0] + share[1]:.1f}%, Good or Easy {share[2] + share[3]:.1f}%")
@@ -368,13 +369,13 @@ def struggled(rs):
 
 
 hb_, ha_ = struggled(base), struggled(after)
-for label, blk in (("with Listening", hb_), ("without", ha_)):
+for label, blk in (("with Writing", hb_), ("without", ha_)):
     l_lo, l_hi = ci([mean_gap(random.choices(blk, k=len(blk))) for _ in range(N)])
     print(f"  Again or Hard {label}: {mean_gap(blk):.1f}% (95% CI {l_lo:.1f} to {l_hi:.1f}, redrawing days)")
 ah = mean_gap(ha_) - mean_gap(hb_)
 ah_lo, ah_hi = ci([mean_gap(random.choices(ha_, k=len(ha_))) - mean_gap(random.choices(hb_, k=len(hb_))) for _ in range(N)])
 print(f"  Again or Hard: {ah:.1f} points more (95% CI {ah_lo:.1f} to {ah_hi:.1f}, redrawing days)")
-print("T3 from 15 Oct: characters whose Listening review was skipped vs not due yet")
+print("T3 from 15 Oct: characters whose Writing review was skipped vs not due yet")
 part = [r for r in late if day(r[TS]) >= dt.date(2026, 10, 15)]
 skip = [r for r in part if day(r[TS]) >= due[r[NOTE]]]
 notdue = [r for r in part if day(r[TS]) < due[r[NOTE]]]
@@ -408,18 +409,18 @@ print(f"  wrong on {ks} of {len(skip)} ({100 * ks / len(skip):.1f}%) vs {kn} of 
       f"{100 * ks / len(skip) - 100 * kn / len(notdue):.1f} points (95% CI {d_lo:.1f} to {d_hi:.1f}, redrawing cards), "
       f"p = {fisher(ks, len(skip) - ks, kn, len(notdue) - kn):.1e} (Fisher's exact test)")
 print(f"  Anki expected {versus(skip)[1]:.1f}% and {versus(notdue)[1]:.1f}%")
-# The size once every Listening review is skipped: these reviews against the
-# with-Listening baseline, both measured from Anki's forecast.
+# The size once every Writing review is skipped: these reviews against the
+# with-Writing baseline, both measured from Anki's forecast.
 sb = blocks(skip, by_cardid)
 steady = []
 for _ in range(N):
     steady.append(mean_gap(random.choices(sb, k=len(sb))) - mean_gap(random.choices(bb, k=len(bb))))
 st_lo, st_hi = ci(steady)
-print(f"  skipped reviews vs the baseline with Listening: {g_skip - g_base:.1f} points worse (95% CI {st_lo:.1f} to {st_hi:.1f})")
+print(f"  skipped reviews vs the baseline with Writing: {g_skip - g_base:.1f} points worse (95% CI {st_lo:.1f} to {st_hi:.1f})")
 hard = lambda rs: 100 * sum(r[EASE] == 2 for r in rs) / len(rs)
 print(f"  Hard answers in the same weeks: skipped {hard(skip):.1f}%, not due {hard(notdue):.1f}%")
 
-print("T4 the longer a Listening review has been skipped, the worse? (whole after window)")
+print("T4 the longer a Writing review has been skipped, the worse? (whole after window)")
 steps = (("not due", -9999, 0), ("0 to 7 days", 0, 8), ("8 to 21 days", 8, 22), ("22 days or more", 22, 9999))
 ns, ks_ = [], []
 for label, a_, b_ in steps:
@@ -439,7 +440,7 @@ for r in late:
     k = share[d - dt.timedelta(days=d.weekday())]
     k[0] += (d - due[r[NOTE]]).days >= 8
     k[1] += 1
-print("  share of reading reviews with Listening skipped 8+ days ago, by week:",
+print("  share of reading reviews with Writing skipped 8+ days ago, by week:",
       ", ".join(f"{100 * a_ / b_:.0f}%" for w_, (a_, b_) in sorted(share.items()) if w_ + dt.timedelta(days=6) <= A1))
 
 print("T5 what one wrong reading answer costs")
@@ -475,15 +476,15 @@ wrong_secs = wrong_cost(cards)
 c_lo, c_hi = ci([wrong_cost(random.choices(cards, k=len(cards))) for _ in range(1000)])
 print(f"  {wrong_secs:.0f} seconds (95% CI {c_lo:.0f} to {c_hi:.0f})")
 
-print("\n# Figure 4: what Listening's minutes bought, in minutes of reading review a day")
+print("\n# Figure 4: what Writing's minutes bought, in minutes of reading review a day")
 per_day = len(aft) / W
-print(f"{per_day:.1f} Recognition review answers a day; a wrong answer costs {wrong_secs / 60:.2f} min")
-for name, pts, p_lo, p_hi in (("so far", g_after - g_base, lo, hi), ("once every Listening review is skipped", g_skip - g_base, st_lo, st_hi)):
+print(f"{per_day:.1f} Reading review answers a day; a wrong answer costs {wrong_secs / 60:.2f} min")
+for name, pts, p_lo, p_hi in (("so far", g_after - g_base, lo, hi), ("once every Writing review is skipped", g_skip - g_base, st_lo, st_hi)):
     f = per_day / 100
     print(f"{name}: {pts:.1f} points = {pts * f:.1f} wrong answers a day (95% CI {p_lo * f:.1f} to {p_hi * f:.1f}) "
           f"= {pts * f * wrong_secs / 60:.1f} min a day saved ({p_lo * f * wrong_secs / 60:.1f} to {p_hi * f * wrong_secs / 60:.1f}); "
-          f"Listening paid {listening / (pts * f):.1f} min per wrong answer")
-print(f"Listening would have paid for itself only if a wrong answer cost {listening / ((g_skip - g_base) * per_day / 100):.1f} min, or {listening / (st_hi * per_day / 100):.1f} at the top of the range")
+          f"Writing paid {listening / (pts * f):.1f} min per wrong answer")
+print(f"Writing would have paid for itself only if a wrong answer cost {listening / ((g_skip - g_base) * per_day / 100):.1f} min, or {listening / (st_hi * per_day / 100):.1f} at the top of the range")
 # Over every interval length, weighted by how many wrong answers fell in
 # each, counting the review itself and any Hard answer as a pass.
 for o in (0, 1):
@@ -521,12 +522,12 @@ def level(blk):
 
 wb, wa = wrong_blocks(base, by_date), wrong_blocks(after, by_date)
 ws, wn = wrong_blocks(skip, by_cardid), wrong_blocks(notdue, by_cardid)
-draws = {"with Listening, 4 May to 10 Sep": (wb, level(wb)), "without, 5 Oct to 8 Nov": (wa, level(wa)),
-         "from 15 Oct, Listening not due yet": (wn, level(wn)), "from 15 Oct, Listening skipped": (ws, level(ws))}
+draws = {"with Writing, 4 May to 10 Sep": (wb, level(wb)), "without, 5 Oct to 8 Nov": (wa, level(wa)),
+         "from 15 Oct, Writing not due yet": (wn, level(wn)), "from 15 Oct, Writing skipped": (ws, level(ws))}
 for label, (blk, dr) in draws.items():
     l_, h_ = ci(dr)
     print(f"  {label}: {mean_gap(blk):.1f}% (95% CI {l_:.1f} to {h_:.1f})")
-d_base, d_after, d_skip = (draws[k][1] for k in ("with Listening, 4 May to 10 Sep", "without, 5 Oct to 8 Nov", "from 15 Oct, Listening skipped"))
+d_base, d_after, d_skip = (draws[k][1] for k in ("with Writing, 4 May to 10 Sep", "without, 5 Oct to 8 Nov", "from 15 Oct, Writing skipped"))
 so_far = mean_gap(wa) - mean_gap(wb)
 sf_lo, sf_hi = ci([a_ - b_ for a_, b_ in zip(d_after, d_base)])
 best = mean_gap(ws) - mean_gap(wb)
@@ -537,7 +538,7 @@ for _ in range(N):
     random.shuffle(pool)
     hits += abs(mean_gap(pool[len(wb):]) - mean_gap(pool[:len(wb)])) >= so_far
 print(f"  without vs with: {so_far:.1f} percentage points more (95% CI {sf_lo:.1f} to {sf_hi:.1f}), p < {max(hits, 1) / N:.4f} (permutation test)")
-print(f"  skipped vs with Listening: {best:.1f} percentage points more (95% CI {be_lo:.1f} to {be_hi:.1f})")
+print(f"  skipped vs with Writing: {best:.1f} percentage points more (95% CI {be_lo:.1f} to {be_hi:.1f})")
 raw = []
 c = dt.date(2026, 4, 5)
 rate = lambda rs: 100 * sum(r[EASE] == 1 for r in rs) / len(rs)
@@ -548,17 +549,17 @@ while c <= dt.date(2026, 8, 30):
 real_raw = rate([r for r in scored if between(r, A0, A1)]) - rate([r for r in scored if between(r, B0, B1)])
 print(f"  35 days after vs 35 before at {len(raw)} earlier dates: {min(raw):+.1f} to {max(raw):+.1f} percentage points; at the real date {real_raw:+.1f}")
 
-print("\n# Figure: what Listening's minutes saved, in minutes of reading review a day")
+print("\n# Figure: what Writing's minutes saved, in minutes of reading review a day")
 f = per_day / 100 * wrong_secs / 60
 print(f"  {per_day:.1f} reading reviews a day, {wrong_secs:.0f} s per wrong answer")
-print(f"  Listening took {listening:.1f} min a day (95% CI {lis_lo:.1f} to {lis_hi:.1f})")
+print(f"  Writing took {listening:.1f} min a day (95% CI {lis_lo:.1f} to {lis_hi:.1f})")
 print(f"  saved so far: {so_far * per_day / 100:.1f} wrong answers a day = {so_far * f:.1f} min (95% CI {sf_lo * f:.1f} to {sf_hi * f:.1f})")
-print(f"  saved once every Listening review is skipped: {best * per_day / 100:.1f} wrong answers a day = {best * f:.1f} min (95% CI {be_lo * f:.1f} to {be_hi * f:.1f})")
-print(f"  a wrong answer would have to cost {listening / (best * per_day / 100):.1f} min for Listening to pay for itself")
+print(f"  saved once every Writing review is skipped: {best * per_day / 100:.1f} wrong answers a day = {best * f:.1f} min (95% CI {be_lo * f:.1f} to {be_hi * f:.1f})")
+print(f"  a wrong answer would have to cost {listening / (best * per_day / 100):.1f} min for Writing to pay for itself")
 
-print("\n# Figure 2: Recognition review answers each week, wrong % and what Anki expected (weeks start Monday)")
+print("\n# Figure 2: Reading review answers each week, wrong % and what Anki expected (weeks start Monday)")
 # Week 0 starts 4 May, when the deck was three months old and the baseline
-# above begins. Week 21 (28 Sep to 4 Oct) is the last with Listening, week
+# above begins. Week 21 (28 Sep to 4 Oct) is the last with Writing, week
 # 22 the first without. Earlier weeks are printed with negative numbers.
 weeks = collections.defaultdict(list)
 for r in scored:
@@ -576,6 +577,6 @@ for w in sorted(weeks):
     print(f"week {n:>3} from {w}: {len(weeks[w])} answers, wrong {o:.1f}%, expected {e:.1f}%, gap {g:+.1f}")
 print("wrong:", json.dumps(obs_s))
 print("expected:", json.dumps(exp_s))
-for label, pick in (("with Listening", range(0, 22)), ("without", range(22, 27))):
+for label, pick in (("with Writing", range(0, 22)), ("without", range(22, 27))):
     over = sum(obs_s[n][1] > exp_s[n][1] + 1 for n in pick)
     print(f"weeks {label} more than a point over what Anki expected: {over} of {len(pick)}")
