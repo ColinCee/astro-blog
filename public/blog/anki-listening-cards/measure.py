@@ -3,10 +3,10 @@
 Input: a JSON list of review rows from Anki's revlog table joined to cards:
 [card_id, ord, review_ms, ease, type, new_interval_days, last_interval_days, time_ms, note_id]
 ord 0 is the Reading card, 1 the Writing card (my deck calls them Recognition
-and Listening); the two cards of one character share a note_id. ease 1 is
-Again, 2 Hard, 3 Good, 4 Easy. type 0 is learning, 1 review, 2 relearning.
-Anki caps time_ms at 60 s. Days are Anki days: they roll over at 4am, UK
-time. Plain Python, no packages.
+and Listening); the two cards of one
+character share a note_id. ease 1 is Again, 2 Hard, 3 Good, 4 Easy. type 0 is
+learning, 1 review, 2 relearning. Anki caps time_ms at 60 s. Days are Anki
+days: they roll over at 4am, UK time. Plain Python, no packages.
 
     python measure.py revs.json
 """
@@ -548,6 +548,21 @@ while c <= dt.date(2026, 8, 30):
     c += dt.timedelta(days=7)
 real_raw = rate([r for r in scored if between(r, A0, A1)]) - rate([r for r in scored if between(r, B0, B1)])
 print(f"  35 days after vs 35 before at {len(raw)} earlier dates: {min(raw):+.1f} to {max(raw):+.1f} percentage points; at the real date {real_raw:+.1f}")
+
+print("\n# The same characters before and after: each group against its own past")
+# A character is in the missed group if any of its reading reviews from 15 Oct
+# came after its Writing review was due, and in the other group if none did.
+# Before is 4 May to 10 Sep, the same baseline as above.
+missed_cards = {r[CARD] for r in skip}
+clear_cards = {r[CARD] for r in notdue} - missed_cards
+late_part = [r for r in after if day(r[TS]) >= dt.date(2026, 10, 15)]
+for label, cards_ in (("missed a Writing review", missed_cards), ("nothing missed yet", clear_cards)):
+    bef_ = wrong_blocks([r for r in base if r[CARD] in cards_], by_cardid)
+    aft_ = wrong_blocks([r for r in late_part if r[CARD] in cards_], by_cardid)
+    db_, da_ = level(bef_), level(aft_)
+    (bl, bh), (al, ah_) = ci(db_), ci(da_)
+    print(f"  {label} ({len(cards_)} characters): before {mean_gap(bef_):.1f}% (95% CI {bl:.1f} to {bh:.1f}, {sum(n for k, n in bef_)} reviews) "
+          f"-> from 15 Oct {mean_gap(aft_):.1f}% (95% CI {al:.1f} to {ah_:.1f}, {sum(n for k, n in aft_)} reviews)")
 
 print("\n# Figure: what Writing's minutes saved, in minutes of reading review a day")
 f = per_day / 100 * wrong_secs / 60
