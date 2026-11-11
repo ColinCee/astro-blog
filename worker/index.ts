@@ -43,8 +43,6 @@ export const parse = (text: string, now: number): HomelabStats | null => {
   }
   if (typeof body !== "object" || body === null || Array.isArray(body))
     return null;
-  // A count the server still sends, always null, until it stops: taken and dropped.
-  if (body.blocked === null) delete body.blocked;
   if (Object.keys(body).sort().join() !== keys) return null;
   const at = body.at;
   // Gathered in the last ten minutes; a minute ahead allows for clock skew.
