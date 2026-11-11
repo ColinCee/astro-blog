@@ -61,8 +61,7 @@ test("the Worker accepts only the known numbers, freshly gathered", () => {
   expect(parse(body({}), now)).not.toBeNull();
   expect(parse(body({ tracking: null }), now)).not.toBeNull();
   expect(parse(body({ host: "x" }), now)).toBeNull();
-  expect(parse(body({ blocked: null }), now)).toEqual(parse(body({}), now));
-  expect(parse(body({ blocked: 1 }), now)).toBeNull();
+  expect(parse(body({ blocked: null }), now)).toBeNull();
   expect(parse(body({ tracking: "<b>hi</b>" }), now)).toBeNull();
   expect(parse(body({ tracking: -1 }), now)).toBeNull();
   expect(parse(body({ allUp: 1 }), now)).toBeNull();
