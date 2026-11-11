@@ -19,7 +19,7 @@ Work in this order: the story in a line, the sections, the figures, then the wor
 - **One baseline, like for like, everywhere.** It is the first row of every chart, and every number agrees across text, charts, card and frontmatter. Change one thing at a time against it, compare the same things before and after (the same characters against their own past, not two groups that differ in other ways), and leave out what both sides share. What can't be separated gets one line at the end, not a section.
 - **Name each thing once, in the reader's words, and use it everywhere:** text, figures, the script. "Reading" and "Writing" cards, not the deck's own "Recognition" and "Listening".
 - **Why he looked is part of the story.** Ask what made him try it and how it felt, and close on that in his words. What he says it feels like is also a lead to measure: he felt new characters were harder, and the log showed 13% → 21% wrong.
-- **Gauge depth.** Ask him (a few options) how much his readers know before deciding the background. Jargon is defined on first use, as a link or a one-line list item.
+- **Gauge depth.** Ask him (a few options) how much his readers know before deciding the background. Jargon the story needs is defined on first use, as a link or a one-line list item, and nothing else gets a link: not a word this post's readers know (pinyin) or one only in the methods panel (FSRS).
 - **In a timeline, each row is one turn of the story and makes sense alone,** in months not exact dates, with no code or number that needs context.
 
 ## 2. His voice
