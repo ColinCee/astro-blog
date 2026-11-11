@@ -2,7 +2,7 @@
   {
     "id": "observability",
     "order": 1,
-    "services": "grafana · prometheus · loki · alloy"
+    "services": "openobserve · alertmanager · alloy"
   },
   {
     "id": "flight-tracker",
@@ -15,9 +15,9 @@
     "services": "homeassistant"
   },
   {
-    "id": "kaizen-control-room",
+    "id": "internal-names",
     "order": 4,
-    "services": "control-room"
+    "services": "dns · proxy"
   },
   {
     "id": "backup",
