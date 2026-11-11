@@ -166,7 +166,11 @@ The new ones do come later in the deck though, so some of that is them being har
 
 These findings kinda match how it feels when learning, everything feels a bit fuzzier in my memory.
 I no longer have the slow, methodical handwriting to solidify not just old characters but new ones
-too.[^write]
+too.
+
+There's even research on this, [Reading depends on writing, in
+Chinese](https://doi.org/10.1073/pnas.0503523102) found that how well children read Chinese was
+closely tied to how well they could write the characters by hand.
 
 ## Was handwriting worth 23 minutes a day?
 
@@ -189,12 +193,13 @@ Hell no. Writing took 23 minutes a day but would only save about 2 minutes of re
 </Fig>
 
 - I get about 2 extra reading cards wrong per day
-- Each wrong reading card adds about a minute in extra review time over 90 days[^cost]
+- Each wrong reading card adds about a minute in extra review time over 90 days ([how I worked that
+  out](#tests))
 
 So dropping the Writing cards costs me an extra 2 minutes of reviews and saves 23, which leaves me
 about 21 minutes a day better off.
 
-That 2 could grow, to 4 at most, as more characters go without their Writing review.[^best]
+That 2 could grow, [to 4 at most](#tests), as more characters go without their Writing review.
 
 ## What am I not sure about?
 
@@ -210,9 +215,10 @@ was dreading them and losing the motivation to do them at all.
 That's why I even looked into it and it turns out the handwriting was costing me 23 minutes a day to
 save 2 lmao.
 
-In my opinion, handwriting is a dead skill anyway, modern technology makes you type with pinyin on
-the keyboard. It's the same in English, when's the last time you handwrote something? I certainly
-stopped most of my writing when I graduated university 8 years ago.
+In my opinion, handwriting is a dead skill anyway, modern technology makes you type with
+[pinyin](https://en.wikipedia.org/wiki/Pinyin) on the keyboard. It's the same in English, when's the
+last time you handwrote something? I certainly stopped most of my writing when I graduated
+university 8 years ago.
 
 For now I'm keeping the Writing cards off and I'll revisit the numbers here in a few months. Every
 number here comes from [this script](/blog/anki-listening-cards/measure.py), which reads the review
@@ -235,22 +241,19 @@ log from Anki.
   biggest jump at any of them was 2.3 percentage points. At the real date it was 7.5, or 5.8 if I
   leave the China weeks out of the before. The real date beat all of them, and 1 in 23 is p = 0.043.
 - **Anki's own prediction.** In plain percentages my reading is 4.4 percentage points worse (95% CI
-  1.9 to 6.9). Anki's scheduler also has a prediction of the chance I've forgotten each card, which
-  I worked out by replaying it over my log. Against that it's 5.1 worse (95% CI 2.6 to 7.6).
+  1.9 to 6.9). Anki's scheduler ([FSRS](https://docs.ankiweb.net/manual/deck-options#fsrs)) also has
+  a prediction of the chance I've forgotten each card, which I worked out by replaying it over my
+  log. Against that it's 5.1 worse (95% CI 2.6 to 7.6).
 - **Known and new characters.** A character is new for the 35 days after I first see it and known
   after that. New with Writing means first seen from 4 May to 6 August, and new without means first
   seen from 5 October.
+- **What a wrong card costs.** Review answers with 90 days of log after them, each compared with a
+  right answer on a card at a similar interval, then averaged over the wrong answers: 61 seconds for
+  a Reading card and 105 for a Writing card.
+- **Why 4 minutes at most.** The characters that have gone without a Writing review went from 14%
+  wrong to 20%. If every review ends up like that it's about 2.3 wrong a day, so a little over 2
+  minutes. Against all my reviews from May to early September they're 9 percentage points worse (95%
+  CI 6 to 13), which would be 3.8 minutes (2.4 to 5.2), but those are harder characters to begin
+  with, so 4 is the top end.
 
 </details>
-
-[^cost]: Review answers with 90 days of log after them, each compared with a right answer on a card
-    at a similar interval, then averaged over the wrong answers: 61 seconds for a Reading card and
-    105 for a Writing card.
-[^best]: The characters that have gone without a Writing review went from 14% wrong to 20%. If every
-    review ends up like that it's about 2.3 wrong a day, so a little over 2 minutes. Against all my
-    reviews from May to early September they're 9 percentage points worse (95% CI 6 to 13), which
-    would be 3.8 minutes (2.4 to 5.2), but those are harder characters to begin with, so 4 is the
-    top end.
-[^write]: There's research on this too. [Reading depends on writing, in
-    Chinese](https://doi.org/10.1073/pnas.0503523102) (Tan and others, 2005) found that how well
-    children read Chinese was closely tied to how well they could write the characters by hand.
