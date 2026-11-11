@@ -1,7 +1,7 @@
 // PreToolUse hook: when a command opens or edits a PR on a branch that changes
-// the site, remind the agent to show the change (the showing-pr-changes skill). It runs
-// on every shell command but prints nothing for the rest, so the agent only
-// reads it when a PR is made.
+// the site, remind the agent to show the change (the showing-pr-changes
+// skill). It runs on every shell command but prints nothing for the rest, so
+// the agent only reads it when a PR is made.
 
 import { execFileSync } from "node:child_process";
 
