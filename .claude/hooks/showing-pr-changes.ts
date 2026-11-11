@@ -1,5 +1,5 @@
 // PreToolUse hook: when a command opens or edits a PR on a branch that changes
-// the site, remind the agent to show the change (the pr-visuals skill). It runs
+// the site, remind the agent to show the change (the showing-pr-changes skill). It runs
 // on every shell command but prints nothing for the rest, so the agent only
 // reads it when a PR is made.
 
@@ -32,7 +32,7 @@ console.log(
     hookSpecificOutput: {
       hookEventName: "PreToolUse",
       additionalContext:
-        'This branch may change the site. If it changes how a page looks or moves, the PR needs a "What it looks like" section: follow the pr-visuals skill (.claude/skills/pr-visuals/SKILL.md) before or right after this command.',
+        'This branch may change the site. If it changes how a page looks or moves, the PR needs a "What it looks like" section: follow the showing-pr-changes skill (.claude/skills/showing-pr-changes/SKILL.md) before or right after this command.',
     },
   }),
 );

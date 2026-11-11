@@ -1,5 +1,5 @@
 ---
-name: pr-visuals
+name: showing-pr-changes
 description: Show a change in its pull request so Colin can scan it, with before/after screenshots, a synced side-by-side video, or a before/after chart of its numbers. Use when opening or updating a PR that changes how a page looks, moves or performs.
 ---
 
