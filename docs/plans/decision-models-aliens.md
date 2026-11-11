@@ -1,6 +1,6 @@
 # Can a cheap decision model play Aliens with no training?
 
-Plan only, nothing run yet. Follows the `deciding` skill.
+Plan only, nothing run yet. Follows the `comparing-options` skill.
 
 ## 1. The question
 

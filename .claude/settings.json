@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && node --experimental-strip-types .claude/hooks/pr-visuals.ts",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && node --experimental-strip-types .claude/hooks/showing-pr-changes.ts",
             "timeout": 10
           }
         ]
