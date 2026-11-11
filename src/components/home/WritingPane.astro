@@ -4,6 +4,7 @@
 // from the blog collection, so a new post shows here; the lines print one
 // after another as the pane scrolls into view.
 import { getCollection } from "astro:content";
+import StatArrow from "../site/StatArrow.astro";
 import Pane from "./Pane.astro";
 
 const all = (await getCollection("blog")).sort(
@@ -37,7 +38,12 @@ const posts = all.slice(0, 5).map((p) => {
           <span class="wr__title">{p.title}</span>
           {p.after && (
             <span class="wr__stat">
-              {p.before && <span class="wr__was">{p.before} →</span>}
+              {p.before && (
+                <span class="wr__was">
+                  {p.before}
+                  <StatArrow />
+                </span>
+              )}
               <b>{p.after}</b>
             </span>
           )}
@@ -107,7 +113,6 @@ const posts = all.slice(0, 5).map((p) => {
     white-space: nowrap;
   }
   .wr__was {
-    margin-right: 0.4rem;
     color: var(--faint);
   }
   .wr__stat b {

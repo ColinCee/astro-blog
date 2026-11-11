@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import StatArrow from "../../components/site/StatArrow.astro";
 import Base from "../../layouts/Base.astro";
 import { readMinutes } from "../../scripts/read-minutes";
 
@@ -60,7 +61,10 @@ const entries = posts.map((post) => {
                 >
                   {e.parts ? (
                     <Fragment>
-                      <span class="log__was">{e.parts[0]}</span> →{" "}
+                      <span class="log__was">
+                        {e.parts[0]}
+                        <StatArrow />
+                      </span>
                       <b>{e.parts[1]}</b>
                     </Fragment>
                   ) : (

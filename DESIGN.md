@@ -461,6 +461,14 @@ curve in a component is a bug unless it is a content timing.
   prose. Wraps the one number in a paragraph that is the point; any other number
   stays bold ink.
 
+### Stat arrow (enforced by `tests/stat-arrow.spec.ts`)
+- The `→` in a frontmatter `stat` ("32 → 9 min") is drawn by
+  `src/components/site/stat-arrow.ts`, never typed, wherever a stat shows: post
+  header, blog index, home page and share cards. The site's fonts are Latin
+  subsets with no `→`, so a typed one lands at the visitor's system font's
+  height. The drawn one sits on the middle of the digits and takes the old
+  value's colour.
+
 ### Blog Post (long-form reading)
 - Posts render on the shared `Base` shell via `layouts/Post.astro`; the prose styles are `styles/prose.css`. Below `64rem` it is a
   single `--w-prose` column. At `64rem` and up the post sits on `--w-page`, inset by

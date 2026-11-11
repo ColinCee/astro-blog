@@ -11,6 +11,7 @@ import type { CollectionEntry } from "astro:content";
 import { existsSync } from "node:fs";
 import type { MarkdownHeading } from "astro";
 import FormattedDate from "../components/site/FormattedDate.astro";
+import StatArrow from "../components/site/StatArrow.astro";
 import Base from "./Base.astro";
 import "../styles/prose.css";
 import "../components/figures/figures.css";
@@ -176,7 +177,9 @@ const statParts = stat?.includes("→")
             {statParts ? (
               <dd>
                 <span class="figs__was">{statParts[0]}</span>
-                <span class="figs__to">→</span>
+                <span class="figs__to">
+                  <StatArrow />
+                </span>
                 <b>{statParts[1]}</b>
               </dd>
             ) : (
@@ -376,13 +379,8 @@ const statParts = stat?.includes("→")
     color: var(--faint);
     font-weight: 400;
   }
-  /* The arrow is drawn at x-height; lift it to the middle of the digits. */
   .figs__to {
-    display: inline-block;
-    margin: 0 0.3em;
-    translate: 0 -0.1em;
     color: var(--faint);
-    font-weight: 300;
   }
   .figs dd b {
     font-weight: 600;
