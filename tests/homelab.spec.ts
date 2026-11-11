@@ -9,7 +9,6 @@ const now = Math.floor(Date.now() / 1000);
 const stats = {
   at: now - 120,
   allUp: true,
-  blocked: 1212,
   tracking: 237,
   londonHour: 107,
 };
@@ -62,8 +61,10 @@ test("the Worker accepts only the known numbers, freshly gathered", () => {
   expect(parse(body({}), now)).not.toBeNull();
   expect(parse(body({ tracking: null }), now)).not.toBeNull();
   expect(parse(body({ host: "x" }), now)).toBeNull();
-  expect(parse(body({ blocked: "<b>hi</b>" }), now)).toBeNull();
-  expect(parse(body({ blocked: -1 }), now)).toBeNull();
+  expect(parse(body({ blocked: null }), now)).toEqual(parse(body({}), now));
+  expect(parse(body({ blocked: 1 }), now)).toBeNull();
+  expect(parse(body({ tracking: "<b>hi</b>" }), now)).toBeNull();
+  expect(parse(body({ tracking: -1 }), now)).toBeNull();
   expect(parse(body({ allUp: 1 }), now)).toBeNull();
   expect(parse(body({ at: now - 601 }), now)).toBeNull();
   expect(parse(body({ at: now + 30 }), now)).not.toBeNull();
@@ -121,7 +122,7 @@ test("the Worker takes a body only when the server's key signed it", async () =>
   expect(await put(body)).toBe(401);
   env.HOMELAB_PUBLIC_KEY = key;
   expect(await put(body)).toBe(204);
-  expect(JSON.parse(kv.get("latest")!).blocked).toBe(1212);
+  expect(JSON.parse(kv.get("latest")!).tracking).toBe(237);
   // the same signed body again, or an older one, is refused
   expect(await put(body)).toBe(409);
   expect(
@@ -129,7 +130,7 @@ test("the Worker takes a body only when the server's key signed it", async () =>
       await worker.fetch(
         new Request("https://x/homelab.json", {
           method: "PUT",
-          body: body.replace("1212", "9999"),
+          body: body.replace('"tracking":237', '"tracking":9999'),
           headers: {
             "Content-Length": String(body.length),
             Signature: "00".repeat(64),

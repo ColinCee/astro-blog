@@ -101,7 +101,6 @@ async function fixLiveCalls(page: Page) {
       json: {
         at: Math.floor(Date.now() / 1000),
         allUp: true,
-        blocked: 1212,
         tracking: 237,
         londonHour: 107,
       },
