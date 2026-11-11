@@ -20,34 +20,39 @@ for (const vp of views)
       page,
     }) => {
       await page.setViewportSize(vp);
-      await page.goto(path, { waitUntil: "networkidle" });
+      await page.goto(path);
       const arrows = page.locator(".stat-arrow");
       await expect(arrows.first()).toBeAttached();
-      const offs = await arrows.evaluateAll(async (svgs) => {
-        await document.fonts.ready;
-        return Promise.all(
-          svgs.map(async (svg) => {
-            const cs = getComputedStyle(svg.parentElement as HTMLElement);
-            const size = parseFloat(cs.fontSize);
-            const font = `${cs.fontWeight} ${size}px ${cs.fontFamily}`;
-            const ctx = document.createElement("canvas").getContext("2d");
-            if (!ctx) throw new Error("no canvas");
-            ctx.font = font;
-            const ink = ctx.measureText("0123456789");
-            const digitsMid =
-              (ink.actualBoundingBoxAscent - ink.actualBoundingBoxDescent) / 2;
-            // A zero-size inline-block's bottom edge is the line's baseline.
-            const probe = document.createElement("span");
-            probe.style.cssText = "display:inline-block;width:0;height:0";
-            svg.after(probe);
-            const baseline = probe.getBoundingClientRect().bottom;
-            probe.remove();
-            const box = svg.getBoundingClientRect();
-            const arrowMid = baseline - (box.top + box.bottom) / 2;
-            return Math.abs(arrowMid - digitsMid) / size;
-          }),
-        );
-      });
+      // Retried: the dev server can reload the page once on a first visit.
+      let offs: number[] = [];
+      await expect(async () => {
+        offs = await arrows.evaluateAll(async (svgs) => {
+          await document.fonts.ready;
+          return Promise.all(
+            svgs.map(async (svg) => {
+              const cs = getComputedStyle(svg.parentElement as HTMLElement);
+              const size = parseFloat(cs.fontSize);
+              const font = `${cs.fontWeight} ${size}px ${cs.fontFamily}`;
+              const ctx = document.createElement("canvas").getContext("2d");
+              if (!ctx) throw new Error("no canvas");
+              ctx.font = font;
+              const ink = ctx.measureText("0123456789");
+              const digitsMid =
+                (ink.actualBoundingBoxAscent - ink.actualBoundingBoxDescent) /
+                2;
+              // A zero-size inline-block's bottom edge is the line's baseline.
+              const probe = document.createElement("span");
+              probe.style.cssText = "display:inline-block;width:0;height:0";
+              svg.after(probe);
+              const baseline = probe.getBoundingClientRect().bottom;
+              probe.remove();
+              const box = svg.getBoundingClientRect();
+              const arrowMid = baseline - (box.top + box.bottom) / 2;
+              return Math.abs(arrowMid - digitsMid) / size;
+            }),
+          );
+        });
+      }).toPass();
       for (const off of offs)
         expect(off, "arrow off the digits' middle, in em").toBeLessThan(
           MAX_OFF_EM,
