@@ -19,6 +19,8 @@ permissions:
 env:
   ASTRO_TELEMETRY_DISABLED: "1"
   WRANGLER_SEND_METRICS: "false"
+  # modern-web-guidance (the legacy pattern scan)
+  DISABLE_TELEMETRY: "1"
 
 jobs:
   deploy:
@@ -46,6 +48,9 @@ jobs:
 
       - name: Lint and format check
         run: pnpm biome ci .
+
+      - name: Legacy web pattern scan
+        run: pnpm legacy-scan
 
       - name: Build
         run: pnpm build
