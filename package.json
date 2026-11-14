@@ -34,7 +34,7 @@
   },
   "type": "module",
   "volta": {
-    "node": "24.22.1"
+    "node": "26.13.1"
   },
   "packageManager": "pnpm@12.15.0"
 }
