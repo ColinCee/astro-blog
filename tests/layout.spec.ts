@@ -138,16 +138,20 @@ const lum = (rgb: string) => {
   return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
 };
 
-// The nav button switches the theme, says so to screen readers, and the
-// choice survives a reload.
+// The nav button switches the theme, says so to screen readers and to the
+// browser (the color-scheme meta), and the choice survives a reload.
 test("the theme button switches to light and it sticks", async ({ page }) => {
   await page.goto("/blog");
   const button = page.locator("[data-theme-toggle]");
+  const scheme = page.locator('meta[name="color-scheme"]');
   await expect(button).toHaveAttribute("aria-pressed", "false");
+  await expect(scheme).toHaveAttribute("content", "dark");
   await button.click();
   await expect(button).toHaveAttribute("aria-pressed", "true");
+  await expect(scheme).toHaveAttribute("content", "light");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(scheme).toHaveAttribute("content", "light");
   await expect(page.locator("[data-theme-toggle]")).toHaveAttribute(
     "aria-pressed",
     "true",

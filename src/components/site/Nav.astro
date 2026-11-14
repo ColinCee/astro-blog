@@ -51,7 +51,8 @@ const active = (href: string) => {
 
 <script>
   // Dark is the default; the choice of light is remembered. Head.astro applies
-  // it before paint; pieces that draw in a canvas listen for "themechange".
+  // it before paint; pieces that draw in a canvas, and Head.astro's
+  // color-scheme meta, listen for "themechange".
   // aria-pressed says whether light is on.
   const r = document.documentElement;
   for (const b of document.querySelectorAll("[data-theme-toggle]")) {

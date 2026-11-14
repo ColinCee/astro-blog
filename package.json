@@ -13,13 +13,14 @@
     "@astrojs/check": "0.9.12",
     "@biomejs/biome": "2.6.2",
     "@playwright/test": "1.64.1",
+    "modern-web-guidance": "1.0.0",
     "wrangler": "4.152.0"
   },
   "scripts": {
     "astro": "astro",
     "dev": "astro dev",
     "build": "astro build",
-    "check": "pnpm typecheck && biome ci . && node scripts/wrap.ts --check && astro build && wrangler deploy --dry-run && playwright test && playwright test -c playwright.speed.config.ts",
+    "check": "pnpm typecheck && biome ci . && node scripts/wrap.ts --check && pnpm legacy-scan && astro build && wrangler deploy --dry-run && playwright test && playwright test -c playwright.speed.config.ts",
     "format": "biome check --write . && node scripts/wrap.ts",
     "test": "playwright test",
     "speed": "astro build && playwright test -c playwright.speed.config.ts",
@@ -30,6 +31,7 @@
     "compare": "node scripts/compare.ts",
     "screenshot": "node scripts/capture.ts --still",
     "chart": "node scripts/chart.ts",
+    "legacy-scan": "modern-web-guidance legacy-scan . --json | node -e \"let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{if(JSON.parse(s).totalFindings!==0){console.error(s);process.exit(1)}})\"",
     "typecheck": "astro sync && astro-check && tsc"
   },
   "type": "module",

@@ -56,18 +56,27 @@ const schema = article
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark light">
+<meta name="color-scheme" content="dark">
 <!-- The theme: dark unless the visitor chose light (the nav button). Set here,
      before any stylesheet, so a light page never flashes dark or the reverse. -->
 <script is:inline>
+  // The meta above tells the browser the scheme before any CSS has loaded, so
+  // it follows the theme (as tokens.css's color-scheme does once loaded).
+  const scheme = document.querySelector('meta[name="color-scheme"]');
+  const syncScheme = () => {
+    scheme.content =
+      document.documentElement.dataset.theme === "light" ? "light" : "dark";
+  };
   const theme = () => {
     try {
       if (localStorage.getItem("theme") === "light")
         document.documentElement.dataset.theme = "light";
       else delete document.documentElement.dataset.theme;
     } catch {}
+    syncScheme();
   };
   theme();
+  addEventListener("themechange", syncScheme);
   // A prerendered page (see the speculation rules below) read the theme when
   // it was made; read it again as it is shown, in case it changed since.
   // The toggle's state and the canvases follow (as the toggle does, Nav.astro).
