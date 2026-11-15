@@ -3,6 +3,8 @@
 // new post, skill, company or project shows in the window with no other file
 // changed.
 import { getCollection } from "astro:content";
+import { isStacks, type Stack } from "../../../../worker/stacks";
+import snapshot from "../../../data/homelab-stacks.snapshot.json";
 import { readMinutes } from "../../../scripts/read-minutes";
 
 export const thisYear = new Date().getFullYear();
@@ -103,6 +105,12 @@ export async function homeProjects(): Promise<HomeProject[]> {
   const written = await homePosts();
   for (const { id, data } of all) {
     const { posts: tie, runsOn } = data;
+    // "{stacks}" is the one count a line can say (Desc.astro); any other
+    // brace would be printed as written.
+    if (/[{}]/.test(data.desc.replace("{stacks}", "")))
+      throw new Error(
+        `src/data/projects.json: "${id}" has desc "${data.desc}". The only count it can say is "{stacks}", the home lab's stacks in words.`,
+      );
     if (
       runsOn !== undefined &&
       (runsOn === id || !all.some((o) => o.id === runsOn))
@@ -141,18 +149,38 @@ export async function homeProjects(): Promise<HomeProject[]> {
   });
 }
 
-// The home lab's Compose stacks in order, each service a name and, where the
-// data says one, when it runs ("restic, nightly").
-export async function homeStacks() {
-  return (await getCollection("homelabStacks"))
-    .sort((a, b) => a.data.order - b.data.order)
-    .map(({ id, data }) => ({
-      id,
-      services: data.services.split(" · ").map((service) => {
-        const [name, when] = service.split(", ");
-        return { name, when };
-      }),
-    }));
+const LIVE = "https://colincheung.dev/homelab.json";
+let stacks: Promise<Stack[]> | undefined;
+
+// The home lab's Compose stacks in order, each with its services, as the home
+// server last said it has them deployed (/homelab.json, worker/index.ts). The
+// page asks for that list again and redraws the rows if it has changed
+// (window/stats.ts); this is what it shows until then, and without the
+// script. A build reads the live list; the dev server, and a build that
+// cannot reach it or finds no list there, use the snapshot in
+// src/data/homelab-stacks.snapshot.json, so tests see the same rows each run.
+export function homeStacks(): Promise<Stack[]> {
+  if (!isStacks(snapshot.stacks))
+    throw new Error(
+      "src/data/homelab-stacks.snapshot.json: its stacks break the rules in worker/stacks.ts.",
+    );
+  const fallback = (why: string) => {
+    console.warn(
+      `[home lab] ${why}: using src/data/homelab-stacks.snapshot.json, taken ${snapshot.taken}.`,
+    );
+    return snapshot.stacks;
+  };
+  stacks ??= import.meta.env.PROD
+    ? fetch(LIVE, { signal: AbortSignal.timeout(5000) })
+        .then((r) => (r.ok ? r.json() : Promise.reject(`HTTP ${r.status}`)))
+        .then((body: { stacks?: unknown }) =>
+          isStacks(body?.stacks)
+            ? body.stacks
+            : fallback(`${LIVE} has no list of stacks`),
+        )
+        .catch((error) => fallback(`could not read ${LIVE} (${error})`))
+    : Promise.resolve(snapshot.stacks);
+  return stacks;
 }
 
 // The two numbers the home server reports for flight-tracker (the keys are

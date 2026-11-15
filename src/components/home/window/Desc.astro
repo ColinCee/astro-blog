@@ -1,0 +1,14 @@
+---
+// A project's few words from src/data/projects.json, where "{stacks}" is the
+// home lab's stack count in words ("seven stacks"). The count is the build's
+// and is said again when the home server's list arrives (window/lab.ts).
+import { homeStacks } from "./data";
+import { stackWords } from "./lab";
+
+const { text } = Astro.props as { text: string };
+const [before, after] = text.split("{stacks}");
+const n =
+  after === undefined ? undefined : stackWords((await homeStacks()).length);
+---
+
+{before}{n && <span data-stacks-words>{n}</span>}{after}

@@ -1,14 +1,20 @@
 // The home server's numbers (worker/index.ts serves them at /homelab.json):
 // how many planes the flight tracker is following, how many were bound for
-// London in the past hour, and whether every stack is up. The server gathers
-// them every five minutes, and this fetches them as often while the tab is
-// showing, and again when it is shown after being hidden.
+// London in the past hour, whether every stack is up and which stacks it has
+// deployed. The server gathers them every five minutes, and this fetches them
+// as often while the tab is showing, and again when it is shown after being
+// hidden. The Worker adds the city of Cloudflare's that answered.
 //
 // A number is real or it is a dash. Its age is always said beside it: "live,
 // 2 min ago" while it is fresh, "last seen 3 h ago" once it is older than 20
-// minutes, "offline" if the server never answered.
+// minutes, "offline" if the server never answered. The stacks and the city
+// are not news, so they have no age: a list the server sent, however old,
+// is still what it has deployed.
 
-type Stats = Record<string, number | boolean | null>;
+import { isStacks } from "../../../../worker/stacks";
+import { drawStacks } from "./lab";
+
+type Stats = Record<string, unknown>;
 
 const FRESH_MIN = 20;
 const REFETCH_MS = 300_000;
@@ -56,6 +62,15 @@ export function initStats(root: HTMLElement) {
         if (typeof s?.at !== "number") throw new Error("no age");
         stats = s;
         say();
+        // Before the numbers: the rows it draws hold one of them.
+        if (isStacks(s.stacks)) drawStacks(root, s.stacks);
+        // A city's name, from the Worker's own list; a dash until it is.
+        const edge =
+          typeof s.edge === "string" && s.edge.length <= 60 ? s.edge : "";
+        for (const el of all("data-edge")) {
+          el.textContent = edge || "–";
+          el.classList.toggle("is-set", !!edge);
+        }
         for (const el of all("data-stat")) {
           const v = s[el.dataset.stat ?? ""];
           // Not reported this time: back to a dash, not the old number.

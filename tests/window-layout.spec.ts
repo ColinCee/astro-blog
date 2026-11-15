@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { projects } from "./home.ts";
+import { longestCity, projects, snapshotStacks } from "./home.ts";
 import { fixWeather } from "./weather.ts";
 
 // The home window holds still, and its text keeps inside its lines: what
@@ -15,12 +15,15 @@ test.beforeEach(({ page }) => fixWeather(page));
 
 // The home server's answer. The dev server has no Worker, so each test
 // answers /homelab.json itself: with these numbers, or as a server that is
-// not there.
+// not there. The stacks are the ones the page was built with, so the rows
+// are drawn again the same, and the city is the longest Cloudflare has.
 const stats = (minutesOld = 2) => ({
   at: Math.floor(Date.now() / 1000) - minutesOld * 60,
   allUp: true,
   tracking: 237,
   londonHour: 107,
+  stacks: snapshotStacks,
+  edge: longestCity,
 });
 const lab = (page: Page, live: boolean, minutesOld?: number) =>
   page.route("**/homelab.json", (route) =>
@@ -98,6 +101,67 @@ test.describe("beside the picker", () => {
       });
 });
 
+// The home lab's rows are drawn again from the server's list when it lands,
+// and the colincheung.dev figure's city is filled in: with the same stacks as
+// the build's and the longest city there is, nothing in the window moves.
+test.describe("when the stacks and the city land", () => {
+  for (const width of [960, 1100, 1280, 1440])
+    for (const id of ["home-lab", "colincheung.dev"])
+      test(`${width}, ${id} open: nothing in the window moves`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 900 });
+        let answer = () => {};
+        const asked = new Promise<void>((seen) =>
+          page.route("**/homelab.json", (route) => {
+            answer = () => void route.fulfill({ json: stats() });
+            seen();
+          }),
+        );
+        await page.goto("/");
+        await pickerReady(page);
+        await page.locator(`[role="tab"][data-pick="${id}"]`).focus();
+        await expect(page.locator(".pn--fig.is-open")).toHaveAttribute(
+          "data-f",
+          id,
+        );
+        await asked;
+        const places = () =>
+          page.locator(".win").evaluate(async (win) => {
+            await document.fonts.ready;
+            const out: Record<string, number> = {};
+            const put = (name: string, el: Element) => {
+              const r = el.getBoundingClientRect();
+              out[`${name}'s top`] = r.top;
+              out[`${name}'s left`] = r.left;
+              out[`${name}'s height`] = r.height;
+              out[`${name}'s width`] = r.width;
+            };
+            put("the window", win);
+            win
+              .querySelectorAll(
+                ".pn--fig.is-open :is(.lab__host__kv > div, .rt__stop)",
+              )
+              .forEach((el, i) => put(`part ${i + 1}`, el));
+            return out;
+          });
+        const before = await places();
+        answer();
+        await expect(page.locator(".lab__live [data-stats-age]")).toHaveText(
+          "live, 2 min ago",
+        );
+        await expect(page.locator("[data-edge]")).toHaveText(longestCity);
+        const after = await places();
+        const moved = Object.entries(after)
+          .filter(([what, px]) => Math.abs(px - before[what]) > 0.5)
+          .map(
+            ([what, px]) => `${what} by ${(px - before[what]).toFixed(1)}px`,
+          );
+        expect(Object.keys(before).length).toBeGreaterThan(4 * 4);
+        expect(moved).toEqual([]);
+      });
+});
+
 // On a phone the flight tracker's panel says how old its counts are on a
 // line of its own. That line is there before the answer is, or every panel
 // under it would jump down when the answer came.
@@ -166,6 +230,45 @@ test.describe("when the home server answers late", () => {
         );
         expect(moved).toEqual([]);
       });
+});
+
+// The same in the home lab's box, at every phone width and whatever the
+// font's widths: the flight tracker's row keeps its shape from a dash to
+// seven digits. The test above sees two widths in one font; a row whose
+// shape turned on the number's width passed there in one browser and
+// failed in the next.
+test("on a phone the flight tracker's row keeps its shape for any count", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.route("**/homelab.json", (route) =>
+    route.fulfill({ status: 404, body: "" }),
+  );
+  await page.goto("/");
+  const row = fig(page, "home-lab")
+    .locator(".lab__host__kv > div")
+    .filter({ has: page.locator(".lab__now") });
+  const changed: string[] = [];
+  for (let width = 320; width <= 700; width += 6) {
+    await page.setViewportSize({ width, height: 844 });
+    const [dash, wide] = await row.evaluate(async (el) => {
+      const n = el.querySelector("[data-stat='tracking']")!;
+      const shape = () => {
+        const dt = el.querySelector("dt")!.getBoundingClientRect();
+        const dd = el.querySelector("dd")!.getBoundingClientRect();
+        return `${el.getBoundingClientRect().height.toFixed(1)} ${dd.top >= dt.bottom ? "under" : "beside"}`;
+      };
+      await document.fonts.ready;
+      n.textContent = "–";
+      const a = shape();
+      n.textContent = "9999999";
+      const b = shape();
+      n.textContent = "–";
+      return [a, b];
+    });
+    if (dash !== wide) changed.push(`${width}: ${dash} -> ${wide}`);
+  }
+  expect(changed).toEqual([]);
 });
 
 // The home lab's figure: a cloud, a tunnel, and the box at home. The

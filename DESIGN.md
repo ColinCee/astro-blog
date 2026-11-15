@@ -584,7 +584,16 @@ section, How the home page grows; read that before changing the page.
   behind its tunnel, an Anki card with its two tones as pitch lines, and how
   this page reached you. Beside the picker a figure's title says what it
   draws and its border holds the figure's own control or note; the bottom
-  border links the repo.
+  border links the repo. The figure's place is as tall as the tallest figure, the home lab
+  with its stacks (`min-height` in `Figures.astro`, raised for seven stacks
+  in Nov 2026, the rows' gap cut from 0.95rem to 0.7rem in the same change),
+  so the window keeps its height whichever project is open. The rows come
+  from the home server, so more stacks than that make the home lab taller
+  than the others again, on the next build and live in the browser, and no
+  test here sees it: the tests here draw the snapshot's seven. The homelab
+  repo's public-stats tests stop an eighth stack until this `min-height` is
+  raised and their bound with it. A stack's chips are kept to four and a
+  count, so its row stays one line while its names are short.
 - **True, or labelled.** Everything the window draws is true, or labelled as
   a sketch or a simulation. Two figures are labelled:
   - the radar's traffic is simulated. Its title beside the picker, and the
@@ -596,11 +605,15 @@ section, How the home page grows; read that before changing the page.
     the project's name, so there the chart's own axis label says
     `reward, sketched`.
 
-  One number is a typed constant: the Cloudflare city count in
-  `figures/Route.astro` (330), carried over from the old page, not read live
-  and with no dated source. The other numbers are computed at build (posts,
-  years, stacks, the commit) or read live (below). Nothing is drawn to fill a
-  space.
+  No number is typed. The Cloudflare city count in `figures/Route.astro` is
+  counted at build from the data centres Cloudflare's status page lists
+  (`scripts/edge-cities.ts`; a dated snapshot, with a warning, when the build
+  cannot read it). It was a typed 330 until Nov 2026. The other numbers are
+  computed at build (posts, years, the commit) or come from the home server
+  (stacks) or read live (below). The home lab's stacks and their services
+  are the home server's own list of what it has deployed, never typed here:
+  a row shows four services as chips and then `+N`. Nothing is drawn to fill
+  a space.
 - **The stack:** below 60rem there is no picker. The five projects follow
   writing as panels of the same window, each titled with its project, each
   figure playing once as it scrolls into view: a phone scrolls through them.
@@ -646,9 +659,10 @@ section, How the home page grows; read that before changing the page.
   repeated: it is in the writing panel only, never in a project's readout or
   figure (the picker counts a project's posts and says which; the
   dissertation's 12 h → 11 min is in the writing panel and nowhere else).
-  One repeat needs a hand: the home lab's line in `projects.json` says its
-  stack count in words (Colin's wording) while the readout counts the
-  stacks, so the line is edited when a stack is added or removed.
+  The home lab's line in `projects.json` says its stack count in words
+  (Colin's wording, "one mini-PC, seven stacks"), written there as
+  `{stacks}` and filled from the same list as the readout and the rows, so
+  no line is edited when a stack is added or removed.
 - **Small print** takes four syntax hues by kind: keys, dates and time axes,
   quantities, paths. Titles and results stay ink. The limits are the Window
   Hues Exception (section 2).
@@ -661,6 +675,18 @@ section, How the home page grows; read that before changing the page.
     5 minutes while the tab is showing, and again as soon as a hidden tab is
     shown. A failed fetch keeps the earlier numbers, with their age. The home
     lab's box says `all up` only while the answer is fresh.
+  - The home lab's stacks (the same answer's `stacks`): the build draws the
+    list the server last sent (a snapshot,
+    `src/data/homelab-stacks.snapshot.json`, when it cannot get one, and on
+    the dev server), and the page draws the server's list again when it
+    lands, along with every count of them. A list is what is deployed, not
+    what is up this minute, so it has no age; it is not news. With the same
+    list nothing moves; a stack added or taken down changes the box's height
+    once.
+  - The city that served this visit (the same answer's `edge`, named by the
+    Worker from the data centre that answered): `served from London` under
+    the city count, a dash until then. One line, cut with an ellipsis if a
+    name is longer than its column ("Santiago de los Caballeros").
   - The weather (open-meteo, read by `window/weather.ts`): `live` in the
     border after an answer. Asked for every 30 minutes while the tab is
     showing, and on return to a tab whose reading is 30 minutes old or more.

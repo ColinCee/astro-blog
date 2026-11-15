@@ -33,3 +33,6 @@ playwright-report/
 
 # Local review screenshots
 shots/
+
+# the build writes Cloudflare's data centres here (scripts/edge-cities.ts)
+worker/edge-cities.json

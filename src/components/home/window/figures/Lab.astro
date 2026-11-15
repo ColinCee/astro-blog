@@ -1,12 +1,16 @@
 ---
 // The home lab's figure: the internet, a tunnel, and the one box at home with
-// its Compose stacks as key/value rows. The stacks are
-// src/data/homelab-stacks.json. Two things are live, from the home server by
-// way of /homelab.json (window/stats.ts): the number of planes the
-// flight-tracker stack is following, and in the box's top border whether
-// every stack is up and how old that news is. Until it arrives the number is
-// a dash and the label is not there.
+// its Compose stacks as key/value rows, each stack's first few services as
+// chips and then how many more. The stacks are what the home server says it
+// has deployed (window/data.ts has where the build gets them); when the
+// page hears from the server it draws them again from the server's list
+// (window/lab.ts), so a stack deployed or taken down shows here with no
+// change to this site. Also live, from /homelab.json (window/stats.ts): the
+// number of planes the flight-tracker stack is following, and in the box's
+// top border whether every stack is up and how old that news is. Until it
+// arrives the number is a dash and the label is not there.
 import { homeStacks } from "../data";
+import { chips } from "../lab";
 import Cloud from "./Cloud.astro";
 
 const stacks = await homeStacks();
@@ -27,25 +31,34 @@ const stacks = await homeStacks();
       ><span data-stats-up></span><span data-stats-age></span></span
     >
     <dl class="lab__host__kv">
-      {stacks.map((s, i) => (
-        <div style={`--i:${i}`}>
-          <dt>{s.id}</dt>
-          <dd>
-            {s.services.map((service) => (
-              <>
-                <span class="lab__chip">{service.name}</span>
-                {service.when && <span class="lab__when">{service.when}</span>}
-              </>
-            ))}
-            {s.id === "flight-tracker" && (
-              <span class="lab__when lab__now">
-                tracking <b data-stat="tracking">–</b> now
-              </span>
-            )}
-          </dd>
-        </div>
-      ))}
+      {stacks.map((s, i) => {
+        const { shown, more } = chips(s.services);
+        return (
+          <div style={`--i:${i}`}>
+            <dt>{s.id}</dt>
+            <dd>
+              {shown.map((service) => (
+                <span class="lab__chip">{service}</span>
+              ))}
+              {more > 0 && <span class="lab__chip lab__more">+{more}</span>}
+              {s.id === "flight-tracker" && (
+                <span class="lab__now">
+                  tracking <b data-stat="tracking">–</b> now
+                </span>
+              )}
+            </dd>
+          </div>
+        );
+      })}
     </dl>
+    {/* One row and one chip, for the browser to draw the server's list
+         with. */}
+    <template data-lab-row>
+      <div>
+        <dt></dt>
+        <dd><span class="lab__chip"></span></dd>
+      </div>
+    </template>
   </div>
 </div>
 
@@ -159,7 +172,7 @@ const stacks = await homeStacks();
   .lab__host__kv {
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
-    gap: 0.95rem 1.1rem;
+    gap: 0.7rem 1.1rem;
   }
   .lab__host__kv > div {
     display: grid;
@@ -196,18 +209,18 @@ const stacks = await homeStacks();
     line-height: 1.3;
     white-space: nowrap;
   }
-  /* When a service runs, or what it is doing now: a time, so the dates' hue. */
-  .lab__when {
-    margin-left: 0.2rem;
+  /* How many more services than the row shows: a count, not a name. */
+  .lab__more {
+    color: var(--muted);
+  }
+  /* What the stack is doing now: a time, so the dates' hue. It has a line
+     to itself under its stack's services, so the row is the same shape
+     whether it holds a dash or three digits. */
+  .lab__now {
+    flex-basis: 100%;
     font-size: 0.6875rem;
     white-space: nowrap;
     color: var(--win-date);
-  }
-  /* The live count has a line to itself under its stack's services, so the
-     row is the same shape whether it holds a dash or three digits. */
-  .lab__now {
-    flex-basis: 100%;
-    margin-left: 0;
   }
   .lab__now b {
     font-weight: 500;
@@ -308,6 +321,14 @@ const stacks = await homeStacks();
     }
     .lab__host__kv dd {
       margin-right: 0;
+    }
+    /* The flight tracker's services always go under its name. Its live line
+       counts in the services' width, so beside the name the row's shape
+       would turn on how wide the number is, and on the font: at some widths
+       a dash keeps name and services on one line and three digits drop the
+       services under it. */
+    .lab__host__kv > div:has(.lab__now) dd {
+      flex-basis: 100%;
     }
     .lab__chip {
       padding-inline: 0.32rem;

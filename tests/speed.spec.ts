@@ -1,4 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
+import { snapshotStacks } from "./home.ts";
 import { fixWeather } from "./weather.ts";
 
 // Page speed budgets: each page type's bytes by type (KB), request count, LCP
@@ -103,6 +104,8 @@ async function fixLiveCalls(page: Page) {
         allUp: true,
         tracking: 237,
         londonHour: 107,
+        stacks: snapshotStacks,
+        edge: "London",
       },
     }),
   );

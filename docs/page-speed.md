@@ -113,7 +113,7 @@ was allowed before; scripts are 3.6 KB under their 12 KB.
 
 What keeps the first load light:
 
-- The lower half's script (`window/projects.ts`, 3.5 KB gzipped, with the
+- The lower half's script (`window/projects.ts`, 4.1 KB gzipped, with the
   Anki deck in it) is fetched when the picker or a figure comes within half a
   screen, or takes the keyboard. On a desktop that is at once. On a phone it
   waits for the reader to scroll (about 320 px on a 390 by 844 screen with

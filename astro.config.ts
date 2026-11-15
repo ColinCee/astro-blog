@@ -4,6 +4,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
 import expressiveCode from "astro-expressive-code";
+import { writeEdgeCities } from "./scripts/edge-cities.ts";
 import { codeThemes } from "./src/styles/code-theme";
 
 // The commit the site is built from, for the homepage status bar, footer and
@@ -101,6 +102,16 @@ export default defineConfig({
     define: { __BUILD__: JSON.stringify(buildInfo()) },
   },
   integrations: [
+    // Cloudflare's data centres, for the Worker and the colincheung.dev
+    // figure: read afresh for a build, kept as they are for the dev server
+    // and `astro sync` (scripts/edge-cities.ts).
+    {
+      name: "edge-cities",
+      hooks: {
+        "astro:config:setup": ({ command }) =>
+          writeEdgeCities({ refetch: command === "build" }),
+      },
+    },
     expressiveCode({
       // The site's own code theme (its greys, no accent), dark and
       // light, switched with the site's theme (data-theme on <html>, dark unless

@@ -15,6 +15,26 @@ export const projects = (
   .sort((a, b) => a.order - b.order)
   .map((p) => p.id);
 
+// The home lab's stacks as the page has them before the server answers: the
+// dev server's rows (src/components/home/window/data.ts).
+export const snapshotStacks = (
+  JSON.parse(readFileSync("src/data/homelab-stacks.snapshot.json", "utf8")) as {
+    stacks: { id: string; services: string[] }[];
+  }
+).stacks;
+
+// The longest name of a city Cloudflare serves from, the most room the
+// colincheung.dev figure's "served from" line can be asked for.
+export const longestCity = Object.values(
+  (
+    JSON.parse(readFileSync("worker/edge-cities.snapshot.json", "utf8")) as {
+      places: Record<string, string>;
+    }
+  ).places,
+)
+  .map((place) => place.split(", ")[0])
+  .reduce((a, b) => (b.length > a.length ? b : a));
+
 // Hides the tab or shows it again, as the page sees it: a test's own tab is
 // always the one in front, so what the page reads is changed and the event
 // sent by hand.

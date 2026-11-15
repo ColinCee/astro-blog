@@ -1,27 +1,35 @@
 ---
 // colincheung.dev's figure: how this page reached you, as one line with four
-// stops. Three of the numbers are computed: the commit this page was built
-// from and the post count at build time, and at the end this visit's own
-// time to first byte, measured in the browser (projects.ts). Until it is
-// measured, or where it cannot be, that last number is a dash. The fourth,
-// the cities Cloudflare serves from, is a constant typed here and carried
-// over from the old page: it is not read live and has no dated source.
+// stops. None of the numbers is typed: the commit this page was built from
+// and the post count at build time; the cities Cloudflare serves from,
+// counted from the list the build fetched from Cloudflare's status page
+// (scripts/edge-cities.ts); and at the end this visit's own time to first
+// byte, measured in the browser (projects.ts). Under the cities, the one
+// that served this visit, which the Worker names in /homelab.json
+// (window/stats.ts). Until each is known, or where it cannot be, the last
+// number and the city are a dash.
+import edge from "../../../../../worker/edge-cities.json";
 import { homePosts } from "../data";
 import Cloud from "./Cloud.astro";
 
 const build = __BUILD__;
 const posts = (await homePosts()).length;
+// Places, not codes: a city with two data centres counts once.
+const cities = new Set(Object.values(edge.places)).size;
 const stops = [
   { k: "git push", v: build.hash || "main", s: "github" },
   { k: "astro build", v: posts, unit: "posts", s: "cloudflare workers" },
-  { k: "cloudflare edge", v: 330, unit: "cities", kind: "cloud" },
+  { k: "cloudflare edge", v: cities, unit: "cities", kind: "cloud" },
   { k: "you", unit: "ms", s: "your first byte", kind: "you" },
 ];
 ---
 
 <ol class="rt">
   {stops.map((stop, i) => (
-    <li class="rt__stop" style={`--i:${i}`}>
+    <li
+      class:list={["rt__stop", stop.kind === "cloud" && "rt__stop--edge"]}
+      style={`--i:${i}`}
+    >
       <span class="rt__k">{stop.k}</span>
       <span class="rt__rail" aria-hidden="true">
         <i class:list={["rt__node", stop.kind && `is-${stop.kind}`]}>
@@ -31,7 +39,8 @@ const stops = [
       </span>
       {/* biome-ignore format: a line break would show as a space */}
       <span class="rt__v">{stop.kind === "you" ? <span data-ttfb>–</span> : stop.v}{stop.unit && <small>{stop.unit}</small>}</span>
-      <span class="rt__s">{stop.s}</span>
+      {/* biome-ignore format: a line break would show as a space */}
+      <span class:list={["rt__s", stop.kind === "cloud" && "rt__s--edge"]}>{stop.kind === "cloud" ? <>served from <span data-edge>–</span></> : stop.s}</span>
     </li>
   ))}
 </ol>
@@ -128,6 +137,18 @@ const stops = [
     font-size: 0.75rem;
     color: var(--faint);
   }
+  /* The city that served this visit stays on one line however long its
+     name ("Santiago de los Caballeros"), so the figure is the same height
+     before it is known and after; one too long for its column ends in an
+     ellipsis. */
+  .rt__s--edge {
+    min-width: 0;
+    /* Clear of the next stop's words when it is cut short. */
+    padding-right: 1rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
   :global(.win__app.is-armed)
     :global(.fg:not(.is-drawn))
     :is(.rt__k, .rt__v, .rt__s, .rt__node) {
@@ -164,6 +185,17 @@ const stops = [
     .rt__s {
       grid-area: s;
       margin-top: 0;
+    }
+    /* The edge's line is its own, under its count: beside it there is room
+       for little more than "served from". */
+    .rt__stop--edge {
+      /* biome-ignore lint/correctness/noInvalidGridAreas: as above */
+      grid-template-areas: "rail k k" "rail v v" "rail e e";
+    }
+    .rt__s--edge {
+      grid-area: e;
+      margin-top: 0.2rem;
+      padding-right: 0;
     }
     .rt__rail {
       grid-area: rail;

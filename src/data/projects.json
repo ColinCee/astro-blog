@@ -22,7 +22,7 @@
     "order": 3,
     "repo": "github.com/ColinCee/homelab",
     "href": "https://github.com/ColinCee/homelab",
-    "desc": "one mini-PC, five stacks",
+    "desc": "one mini-PC, {stacks}",
     "caption": "what runs on it"
   },
   {

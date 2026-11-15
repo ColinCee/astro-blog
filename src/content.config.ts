@@ -53,16 +53,9 @@ const skills = defineCollection({
   schema: z.object({ since: z.number().int() }),
 });
 
-// The home lab's figure: the Compose stacks, as in the homelab repo.
-const homelabStacks = defineCollection({
-  loader: file("src/data/homelab-stacks.json"),
-  schema: z.object({ order, services: z.string() }),
-});
-
 export const collections = {
   blog,
   projects,
   companies,
   skills,
-  homelabStacks,
 };

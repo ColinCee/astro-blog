@@ -9,6 +9,7 @@
 // displayed. All five readouts are in the page and the script shows one, so
 // it never builds markup; the live numbers are dashes until they are real.
 import cards from "../../../data/anki-cards.json";
+import Desc from "./Desc.astro";
 import {
   flightCounts,
   type HomeProject,
@@ -27,8 +28,10 @@ interface Cell {
   unit?: string;
   /** A number from /homelab.json, by its key. */
   stat?: string;
-  /** "ttfb": this visit's first byte. "card": which Anki card is showing. */
-  hook?: "ttfb" | "card";
+  /** "ttfb": this visit's first byte. "card": which Anki card is showing.
+   * "stacks": the home lab's stack count, said again when the server's list
+   * arrives. */
+  hook?: "ttfb" | "card" | "stacks";
   l: string;
   s?: string;
   /** The small line is dates, so it takes their hue. */
@@ -82,6 +85,7 @@ const cells = (p: HomeProject): Cell[] => {
       return [
         {
           v: stacks.length,
+          hook: "stacks",
           unit: stacks.length === 1 ? "stack" : "stacks",
           l: "on one mini-PC",
           s: one && `${one} is one`,
@@ -143,7 +147,9 @@ const cells = (p: HomeProject): Cell[] => {
           {i + 1}
         </span>
         <span class="pk__name">{p.id}</span>
-        <span class="pk__sub">{p.desc}</span>
+        <span class="pk__sub">
+          <Desc text={p.desc} />
+        </span>
       </button>
     ))}
   </div>
@@ -161,7 +167,7 @@ const cells = (p: HomeProject): Cell[] => {
           {cells(p).map((c) => (
             <p class="rv__cell">
               {/* biome-ignore format: a line break would show as a space before the unit */}
-              <span class="rv__v">{c.stat ? <span class="rv__live" data-stat={c.stat}>–</span> : c.hook === "ttfb" ? <span class="rv__live" data-ttfb>–</span> : c.hook === "card" ? <span data-card-at>1</span> : c.v}{c.unit && <small>{c.unit}</small>}</span>
+              <span class="rv__v">{c.stat ? <span class="rv__live" data-stat={c.stat}>–</span> : c.hook === "ttfb" ? <span class="rv__live" data-ttfb>–</span> : c.hook === "card" ? <span data-card-at>1</span> : c.hook === "stacks" ? <span data-stacks-n>{c.v}</span> : c.v}{c.unit && <small data-stacks-unit={c.hook === "stacks" ? "" : undefined}>{c.unit}</small>}</span>
               {/* biome-ignore format: the same */}
               <span class="rv__l">{c.l}<i class:list={{ "is-dates": c.dates }}>{c.s}</i></span>
             </p>

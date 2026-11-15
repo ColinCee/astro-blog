@@ -12,6 +12,7 @@
 // shows, titled by what it draws. The script moves is-open; the layout is
 // all here, so nothing jumps when it arrives.
 import Arrow from "./Arrow.astro";
+import Desc from "./Desc.astro";
 import { homeProjects } from "./data";
 import Anki from "./figures/Anki.astro";
 import Chart from "./figures/Chart.astro";
@@ -48,7 +49,9 @@ const hosted = (repo: string) => /^(github\.com\/)?(.*)$/.exec(repo)!;
         <span class="pn__cap">{p.caption}</span>
       </Fragment>
       <Fragment slot="tr">
-        <span class="lbl lbl--tr pn__desc">{p.desc}</span>
+        <span class="lbl lbl--tr pn__desc">
+          <Desc text={p.desc} />
+        </span>
         {/* What the pointer is reading on the chart. */}
         {kind === "ch" && (
           <span class="lbl lbl--tr pn__note" data-ch-note aria-hidden="true" />
@@ -216,9 +219,13 @@ const hosted = (repo: string) => /^(github\.com\/)?(.*)$/.exec(repo)!;
     }
   }
   @media (min-width: 60rem) {
+    /* 22.5rem until Nov 2026, when the home lab went from five stacks to
+       seven. Seven is all this and the height below fit, and the homelab
+       repo's public-stats tests hold its stacks to that: raising these
+       for more, raise that bound too. */
     :global(.win__app[data-live]) .pn.pn--fig {
       grid-area: fig;
-      min-height: 22.5rem;
+      min-height: 24.5rem;
     }
     :global(.win__app[data-live]) .pn--fig:not(.is-open) {
       display: none;
@@ -256,8 +263,9 @@ const hosted = (repo: string) => /^(github\.com\/)?(.*)$/.exec(repo)!;
   }
   /* Narrower, the home lab stands upright and is the tallest of the five. */
   @media (min-width: 60rem) and (max-width: 79.99rem) {
+    /* 26rem with five stacks. */
     :global(.win__app[data-live]) .pn.pn--fig {
-      min-height: 26rem;
+      min-height: 29rem;
     }
   }
 </style>

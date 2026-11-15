@@ -1,0 +1,32 @@
+{
+  "note": "The home lab's Compose stacks and their services as github.com/ColinCee/homelab had them on main at 58deb91 (15 Nov 2026), stacks/*/compose.yaml. The home lab's figure shows these only when the build cannot get the server's own list from https://colincheung.dev/homelab.json (src/components/home/window/data.ts).",
+  "taken": "2026-11-15",
+  "stacks": [
+    { "id": "backup", "services": ["backup"] },
+    { "id": "deploy", "services": ["doorbell"] },
+    { "id": "flight-tracker", "services": ["backend"] },
+    { "id": "home-assistant", "services": ["homeassistant"] },
+    { "id": "internal-names", "services": ["dns", "proxy"] },
+    {
+      "id": "observability",
+      "services": [
+        "prometheus",
+        "logs",
+        "traces",
+        "grafana",
+        "grafana-users",
+        "alertmanager",
+        "incidents",
+        "gateway",
+        "alloy",
+        "blackbox",
+        "obi",
+        "docker-socket-proxy",
+        "probes",
+        "host-metrics",
+        "public-stats"
+      ]
+    },
+    { "id": "tunnel", "services": ["cloudflared"] }
+  ]
+}

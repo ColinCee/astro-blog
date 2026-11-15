@@ -1,6 +1,8 @@
-import { expect, type Page, test } from "@playwright/test";
-import worker, { type Env, parse } from "../worker/index.ts";
-import { hide, projects } from "./home.ts";
+import { expect, type Locator, type Page, test } from "@playwright/test";
+import * as entry from "../worker/index.ts";
+import worker, { type Env, edgeCity, parse } from "../worker/index.ts";
+import { MAX_BYTES } from "../worker/stacks.ts";
+import { hide, projects, snapshotStacks } from "./home.ts";
 import { fixWeather } from "./weather.ts";
 
 // The home server's numbers (worker/index.ts) in the home window's home-lab
@@ -218,6 +220,154 @@ test.describe("the picker", () => {
   });
 });
 
+// The stacks the server says it has deployed, and the city that served the
+// visit. The page is built with the snapshot's rows (the dev server's), and
+// draws the server's list over them when it comes.
+test.describe("the stacks and the edge", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+  test.beforeEach(({ page }) => fixWeather(page));
+
+  const rows = (lab: Locator) => lab.locator(".lab__host__kv > div");
+  // Each row as its stack's name and the words on its chips.
+  const said = (lab: Locator) =>
+    rows(lab).evaluateAll((all) =>
+      all.map((row) => [
+        row.querySelector("dt")!.textContent,
+        [...row.querySelectorAll(".lab__chip")].map((c) => c.textContent),
+      ]),
+    );
+  const chipsOf = (services: string[]) =>
+    services.length > 4
+      ? [...services.slice(0, 4), `+${services.length - 4}`]
+      : services;
+
+  test("before an answer the rows are the build's, four chips and then how many more", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const lab = await open(page, "home-lab");
+    await expect(lab.locator(".lab__live")).toHaveText("offline");
+    expect(await said(lab)).toEqual(
+      snapshotStacks.map((s) => [s.id, chipsOf(s.services)]),
+    );
+    // observability has fifteen services: four, then "+11".
+    await expect(
+      lab.locator(".lab__host__kv > div", { hasText: "observability" }),
+    ).toContainText("+11");
+    await expect(lab.locator(".lab__now")).toHaveText("tracking – now");
+  });
+
+  test("the server's list replaces the rows, and every count of them changes with it", async ({
+    page,
+  }) => {
+    const stacks = [
+      { id: "flight-tracker", services: ["backend", "worker"] },
+      { id: "media", services: ["a", "b", "c", "d", "e", "f"] },
+    ];
+    await page.route("**/homelab.json", (r) =>
+      r.fulfill({ json: { ...stats, stacks } }),
+    );
+    await page.goto("/");
+    const lab = await open(page, "home-lab");
+    await expect(rows(lab)).toHaveCount(2);
+    expect(await said(lab)).toEqual([
+      ["flight-tracker", ["backend", "worker"]],
+      ["media", ["a", "b", "c", "d", "+2"]],
+    ]);
+    // The live count moved with its stack, and kept its number.
+    await expect(rows(lab).first().locator(".lab__now")).toHaveText(
+      "tracking 237 now",
+    );
+    await expect(page.locator('[data-pick="home-lab"] .pk__sub')).toHaveText(
+      "one mini-PC, two stacks",
+    );
+    await expect(readout(page).locator(".rv__v").first()).toHaveText("2stacks");
+    // The stacked panel's line says it too.
+    await expect(
+      page.locator('.pn--fig[data-f="home-lab"] [data-stacks-words]'),
+    ).toHaveText("two stacks");
+  });
+
+  test("one stack is said as one", async ({ page }) => {
+    await page.route("**/homelab.json", (r) =>
+      r.fulfill({
+        json: {
+          ...stats,
+          stacks: [{ id: "tunnel", services: ["cloudflared"] }],
+        },
+      }),
+    );
+    await page.goto("/");
+    await open(page, "home-lab");
+    await expect(page.locator('[data-pick="home-lab"] .pk__sub')).toHaveText(
+      "one mini-PC, one stack",
+    );
+    await expect(readout(page).locator(".rv__v").first()).toHaveText("1stack");
+  });
+
+  // The Worker checks the list; the page checks it again, so a list that
+  // breaks the rules (here a name that is markup) changes nothing.
+  for (const [name, stacks] of [
+    ["a name that is not a name", [{ id: "<b>hi</b>", services: ["x"] }]],
+    ["no stacks at all", []],
+    ["a list in words", "backup"],
+  ] as const)
+    test(`an answer with ${name} keeps the build's rows`, async ({ page }) => {
+      await page.route("**/homelab.json", (r) =>
+        r.fulfill({ json: { ...stats, stacks } }),
+      );
+      await page.goto("/");
+      const lab = await open(page, "home-lab");
+      await expect(lab.locator(".lab__now")).toHaveText("tracking 237 now");
+      expect(await said(lab)).toEqual(
+        snapshotStacks.map((s) => [s.id, chipsOf(s.services)]),
+      );
+      await expect(page.locator('[data-pick="home-lab"] .pk__sub')).toHaveText(
+        "one mini-PC, seven stacks",
+      );
+    });
+
+  test("the city that served the visit is a dash until the Worker names it", async ({
+    page,
+  }) => {
+    // Held until the dash has been seen.
+    let answer = () => {};
+    const asked = new Promise<void>((seen) =>
+      page.route("**/homelab.json", (r) => {
+        answer = () => void r.fulfill({ json: { ...stats, edge: "London" } });
+        seen();
+      }),
+    );
+    await page.goto("/");
+    const fig = await open(page, "colincheung.dev");
+    const edge = fig.locator(".rt__s--edge");
+    await asked;
+    await expect(edge).toHaveText("served from –");
+    await expect(fig.locator(".rt__stop--edge .rt__v")).toHaveText(
+      /^\d{3}cities$/,
+    );
+    answer();
+    await expect(edge).toHaveText("served from London");
+  });
+
+  test("an answer with no city, or one that is not a name, leaves the dash", async ({
+    page,
+  }) => {
+    for (const edge of [null, 42]) {
+      await page.unrouteAll();
+      await page.route("**/homelab.json", (r) =>
+        r.fulfill({ json: { ...stats, edge } }),
+      );
+      await page.goto("/");
+      const fig = await open(page, "colincheung.dev");
+      await expect(page.locator(".lab__live").first()).toHaveText(
+        /live, 2 min ago/,
+      );
+      await expect(fig.locator(".rt__s--edge")).toHaveText("served from –");
+    }
+  });
+});
+
 // Under 60rem there is no picker: flight-tracker is a panel in the stack, with
 // its two counts under the scope and their age said beside the note.
 for (const vp of [
@@ -356,4 +506,157 @@ test("the Worker takes a body only when the server's key signed it", async () =>
         )
       ).status,
     ).toBe(413);
+});
+
+test("the Worker takes the stacks only as names, within their limits", () => {
+  const body = (stacks: unknown) =>
+    JSON.stringify({ ...stats, at: now, stacks });
+  const ok = (stacks: unknown) => parse(body(stacks), now) !== null;
+  const stack = (id: string, services = ["web"]) => ({ id, services });
+  // A server from before the stacks, and one with today's.
+  expect(parse(JSON.stringify({ ...stats, at: now }), now)).not.toBeNull();
+  expect(ok(snapshotStacks)).toBe(true);
+  expect(ok([stack("a")])).toBe(true);
+  expect(ok([stack("a", [])])).toBe(true);
+  expect(ok([stack("a".repeat(40))])).toBe(true);
+  // Names: lower case, digits and hyphens, not starting with a hyphen, 40 at most.
+  for (const id of [
+    "Backup",
+    "-x",
+    "a_b",
+    "a b",
+    "a.b",
+    "",
+    "a".repeat(41),
+    "<b>hi</b>",
+    "café",
+    "a\n",
+  ]) {
+    expect(ok([stack(id)]), `stack ${JSON.stringify(id)}`).toBe(false);
+    expect(ok([stack("a", [id])]), `service ${JSON.stringify(id)}`).toBe(false);
+  }
+  for (const v of [null, 1, true, {}]) {
+    expect(ok([stack("a", [v as never])])).toBe(false);
+    expect(ok([{ id: v, services: [] }])).toBe(false);
+  }
+  // The shape: a list of {id, services} and nothing else.
+  for (const stacks of [
+    null,
+    "backup",
+    {},
+    [],
+    [[]],
+    ["backup"],
+    [{ id: "a" }],
+    [{ services: [] }],
+    [{ ...stack("a"), status: "up" }],
+    [{ id: "a", services: "web" }],
+  ])
+    expect(ok(stacks), JSON.stringify(stacks)).toBe(false);
+  // None twice.
+  expect(ok([stack("a"), stack("a")])).toBe(false);
+  expect(ok([stack("a", ["web", "web"])])).toBe(false);
+  // At most 16 stacks of at most 32 services.
+  const many = (n: number, f: (i: number) => string) =>
+    Array.from({ length: n }, (_, i) => f(i));
+  expect(ok(many(16, (i) => `s${i}`).map((id) => stack(id)))).toBe(true);
+  expect(ok(many(17, (i) => `s${i}`).map((id) => stack(id)))).toBe(false);
+  expect(
+    ok([
+      stack(
+        "a",
+        many(32, (i) => `v${i}`),
+      ),
+    ]),
+  ).toBe(true);
+  expect(
+    ok([
+      stack(
+        "a",
+        many(33, (i) => `v${i}`),
+      ),
+    ]),
+  ).toBe(false);
+});
+
+test("the Worker's size limit takes today's body with room to spare, and no more", async () => {
+  // As the server sends it, compact, with every number at its widest.
+  const today = JSON.stringify({
+    ...stats,
+    at: 9_999_999_999,
+    tracking: 9_999_999,
+    londonHour: 9_999_999,
+    stacks: snapshotStacks,
+  });
+  expect(MAX_BYTES - today.length).toBeGreaterThan(400);
+  const kv = new Map<string, string>();
+  const env: Env = {
+    STATS: {
+      get: async (k) => kv.get(k) ?? null,
+      put: async (k, v) => void kv.set(k, v),
+    },
+    HOMELAB_PUBLIC_KEY: "00".repeat(32),
+  };
+  const status = async (length: number) =>
+    (
+      await worker.fetch(
+        new Request("https://x/homelab.json", {
+          method: "PUT",
+          body: "x".repeat(length),
+          headers: { "Content-Length": String(length), Signature: "" },
+        }),
+        env,
+      )
+    ).status;
+  // Past the limit, refused for its size; within it, read and refused for
+  // its signature.
+  expect(await status(MAX_BYTES + 1)).toBe(413);
+  expect(await status(MAX_BYTES)).toBe(401);
+});
+
+test("a GET says which city served it", async () => {
+  const kv = new Map<string, string>([
+    // A body stored by a server from before the stacks.
+    ["latest", JSON.stringify({ ...stats, at: now })],
+  ]);
+  const env: Env = {
+    STATS: {
+      get: async (k) => kv.get(k) ?? null,
+      put: async (k, v) => void kv.set(k, v),
+    },
+    HOMELAB_PUBLIC_KEY: "",
+  };
+  const get = async (cf?: object) => {
+    const request = new Request("https://x/homelab.json");
+    // Cloudflare's own property on a request; Node's has none.
+    if (cf) Object.defineProperty(request, "cf", { value: cf });
+    return (await worker.fetch(request, env)).json();
+  };
+  expect(await get({ colo: "LHR" })).toEqual({
+    ...stats,
+    at: now,
+    edge: "London",
+  });
+  expect((await get({ colo: "ZZZ" })).edge).toBe("ZZZ");
+  expect((await get({})).edge).toBeNull();
+  expect((await get()).edge).toBeNull();
+  expect(edgeCity("EWR")).toBe("Newark");
+  expect(edgeCity(42)).toBeNull();
+  // With the stacks, they come back as they were stored.
+  kv.set(
+    "latest",
+    JSON.stringify({ ...stats, at: now, stacks: snapshotStacks }),
+  );
+  expect((await get({ colo: "LHR" })).stacks).toEqual(snapshotStacks);
+});
+
+// The Workers runtime takes each of the script's exports as an entry point
+// and will not start with any other kind: an exported number stopped
+// `wrangler dev` (the dry run in pnpm check does not run the script).
+test("the Worker exports only its handler and functions", () => {
+  for (const [name, value] of Object.entries(entry))
+    expect(
+      name === "default" || typeof value === "function",
+      `export ${name}`,
+    ).toBe(true);
 });
