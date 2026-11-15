@@ -1,4 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
+import { fixWeather } from "./weather.ts";
 
 // Page speed budgets: each page type's bytes by type (KB), request count, LCP
 // (ms) and layout shift (CLS) on a slow phone connection, against the built site (run by
@@ -19,7 +20,9 @@ type Budget = {
 
 const budgets: Record<string, Budget> = {
   "/": {
-    html: 20,
+    // 20 until Nov 2026: the home window put the projects' markup and CSS in
+    // the page, 22.4 KB measured (docs/page-speed.md has the numbers).
+    html: 26,
     css: 3,
     js: 12,
     font: 95,
@@ -87,12 +90,9 @@ async function slow(page: Page) {
 
 // Fixed answers for the live calls, so the page is the same each run.
 async function fixLiveCalls(page: Page) {
-  // The homepage's live weather: a fixed answer, so the page is the same each run.
-  await page.route("https://api.open-meteo.com/**", (route) =>
-    route.fulfill({
-      json: { current: { temperature_2m: 10, weather_code: 3 } },
-    }),
-  );
+  // The homepage's live weather: the reading and the day's 24 hours, so the
+  // temperature line is drawn as it is for a visitor.
+  await fixWeather(page);
 
   // The home server's numbers come from the Worker (worker/index.ts), which
   // the preview server doesn't run: a production-sized answer instead.
@@ -144,6 +144,14 @@ async function load(page: Page, path: string) {
   // look lighter, so it fails the test.
   const failed: string[] = [];
   page.on("requestfailed", (req) => failed.push(req.url()));
+  // The home window's lower half (the project picker and figures, then the
+  // radar) is fetched when it is near, which on a phone is not the first
+  // screen. If either file rides along with the first load, that is weight
+  // the budget was never meant to cover.
+  const early: string[] = [];
+  page.on("request", (req) => {
+    if (/\/_astro\/(projects|radar)\./.test(req.url())) early.push(req.url());
+  });
   page.on("requestfinished", (req) =>
     sized.push(
       req.sizes().then(async (s) => {
@@ -220,6 +228,9 @@ async function load(page: Page, path: string) {
   const why = { lcp: lcp[1], cls: shift.moved };
   await Promise.all(sized);
   expect(failed, `${path}: requests that failed`).toEqual([]);
+  expect(early, `${path}: the lower half loaded with the first screen`).toEqual(
+    [],
+  );
   return { got, why };
 }
 

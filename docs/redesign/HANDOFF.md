@@ -1,5 +1,7 @@
 # Redesign handoff
 
+> Superseded in Nov 2026 by the home window: the two-pane terminal and the separate Projects section described below are gone, and some paths here no longer exist. The home page as it is now is in `DESIGN.md` (Home window, How the home page grows). This file is kept as the record of the Oct 2026 rounds.
+
 State of the home-page redesign on 30 Oct 2026, for a fresh session to carry on. Nothing here is built into the site yet; it is comps, a token sheet, research and a list of what was rejected.
 
 ## Where things are

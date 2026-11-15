@@ -1,0 +1,52 @@
+---
+// One panel of the home window: a hairline frame with its title set into the
+// top border. `name` is how the scripts know it (data-pn) and where the focus
+// goes. Labels for the other three corners come in as slots (`tr`, `bl`,
+// `br`), each an element with the window's `.lbl` classes.
+//
+// `class` and anything else given (an id, data attributes) land on the frame
+// itself, so the panel that uses this places and pads it from its own styles.
+interface Props {
+  name: string;
+  /** The title in the border. For more than text, fill the `title` slot. */
+  title?: string;
+  /** Names the panel aloud instead of its title, where the title says less. */
+  label?: string;
+  class?: string;
+  [attr: string]: unknown;
+}
+const { name, title, label, class: className, ...rest } = Astro.props;
+// Several panels can share a name once it has a label of its own (the five
+// figures), so only a panel named by its title carries the id.
+const id = label ? undefined : `win-${name}`;
+---
+
+<section
+  class:list={["pn", className]}
+  data-pn={name}
+  aria-labelledby={id}
+  aria-label={label}
+  {...rest}
+>
+  <h2 class="lbl lbl--t pn__t" id={id}><slot name="title">{title}</slot></h2>
+  <slot name="tr" />
+  <slot />
+  <slot name="bl" />
+  <slot name="br" />
+</section>
+
+<style>
+  .pn {
+    position: relative;
+    min-width: 0;
+    padding: 0.95rem var(--win-pad) 0.8rem;
+    border: 1px solid var(--win-line);
+    border-radius: var(--r-ctl);
+    transition: border-color var(--dur-base) var(--ease);
+  }
+  .pn__t {
+    font-size: 0.75rem;
+    color: var(--muted);
+    transition: color var(--dur-base) var(--ease);
+  }
+</style>

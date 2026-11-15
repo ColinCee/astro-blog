@@ -1,0 +1,200 @@
+---
+// anki-chinese's figure: one real card from the deck (src/data/anki-cards.json)
+// and how it sounds in each language, as a pitch line. The first card is
+// drawn here, tone lines and all (window/tones.ts); "next card" in the
+// panel's border steps through the rest. Those are not in the page: they
+// come with the lower half's script (projects.ts), which is what needs them.
+import cards from "../../../../data/anki-cards.json";
+import Plot from "../Plot.astro";
+import { tones } from "../tones";
+
+const first = cards[0];
+const tone = tones(first);
+const voices = [
+  { key: "mandarin", say: first.pinyin, ...tone.mandarin },
+  { key: "cantonese", say: first.jyutping, ...tone.cantonese },
+];
+---
+
+<div class="ak" aria-live="polite" data-anki>
+  <p class="ak__card" data-anki-card>
+    <span class="ak__hz" lang="zh-Hans" data-anki-hanzi>{first.hanzi}</span>
+    <span class="ak__mn" data-anki-mean>{first.meaning}</span>
+  </p>
+  <div class="ak__tones">
+    {voices.map((v) => (
+      <div class="tone" data-tone={v.key}>
+        <span class="lbl lbl--t tone__t">{v.key}</span>
+        {/* biome-ignore format: a line break would show as a space */}
+        <p class="tone__say"><b data-tone-say>{v.say}</b><span>tone <i data-tone-n>{v.n || "–"}</i></span></p>
+        <div class="tone__chart" aria-hidden="true">
+          <div class="tone__yax">
+            <span>5</span>
+            <span>1</span>
+          </div>
+          <Plot viewBox="0 0 100 100" class="tone__plot">
+            <polyline class="plot__line" points={v.points} />
+            <i
+              slot="marks"
+              class="plot__end"
+              style={`left:100%;top:${v.end}%`}
+              hidden={!v.points}
+            />
+          </Plot>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .ak {
+    display: grid;
+    grid-template-columns: minmax(11rem, max-content) minmax(0, 19rem);
+    justify-content: center;
+    gap: 1.5rem 4.5rem;
+    align-items: center;
+    align-self: center;
+  }
+  .ak__card {
+    display: grid;
+    justify-items: center;
+    gap: 1.1rem;
+    text-align: center;
+  }
+  .ak__hz {
+    font-family: var(--cjk);
+    font-size: 8.5rem;
+    font-weight: 400;
+    line-height: 1;
+  }
+  .ak__mn {
+    font-family: var(--grotesk);
+    font-size: 1rem;
+    line-height: 1.35;
+    text-wrap: balance;
+    color: var(--muted);
+  }
+  /* A new card comes up from just below. */
+  .ak__card.is-swap {
+    animation: win-card var(--dur-base) var(--ease-out) both;
+  }
+  @keyframes win-card {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  .ak__tones {
+    display: grid;
+    gap: 1.15rem;
+  }
+  /* One language: its reading and tone number, then the pitch line, in a
+     small panel of its own with the language in the border. A short line, so
+     it draws quicker than a chart's and its end dot follows sooner. */
+  .tone {
+    --plot-dur: var(--dur-slow);
+    --plot-end: 0.35s;
+    position: relative;
+    display: grid;
+    grid-template-columns: 5.6rem minmax(0, 1fr);
+    gap: 0.8rem 1rem;
+    align-items: center;
+    padding: 1.25rem 1rem 1rem 0.95rem;
+    border: 1px solid var(--win-line);
+    border-radius: var(--r-ctl);
+  }
+  .tone__t {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .tone__say {
+    display: grid;
+    gap: 0.2rem;
+  }
+  .tone__say b {
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .tone__say span {
+    font-size: 0.6875rem;
+    white-space: nowrap;
+    color: var(--faint);
+  }
+  .tone__say i {
+    font-style: normal;
+    color: var(--win-num);
+  }
+  .tone__chart {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 0.5rem;
+    height: 3.3rem;
+    padding-right: 5px; /* the end dot's half, so it stays inside the box */
+    font-size: 0.6875rem;
+  }
+  .tone__yax {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-block: -0.35rem;
+    line-height: 1;
+    text-align: right;
+    color: var(--win-num);
+  }
+
+  /* A narrow panel: the card keeps to the left and its two tones stack
+     beside it. */
+  @container win-fig (max-width: 38rem) {
+    .ak {
+      grid-template-columns: minmax(0, max-content) minmax(0, 14rem);
+      gap: 1rem clamp(1rem, 7cqi, 3rem);
+    }
+    .ak__card {
+      gap: 0.55rem;
+      max-width: 7.6rem;
+    }
+    .ak__hz {
+      font-size: clamp(4.5rem, 21cqi, 6.5rem);
+    }
+    .ak__mn {
+      font-size: 0.875rem;
+    }
+    .ak__tones {
+      gap: 0.95rem;
+    }
+    .tone {
+      grid-template-columns: 4rem minmax(0, 1fr);
+      gap: 0.6rem;
+      padding: 0.95rem 0.7rem 0.75rem;
+    }
+    .tone__say b {
+      font-size: 1.0625rem;
+    }
+    .tone__chart {
+      height: 2.4rem;
+    }
+  }
+  /* A small phone: no room for the pitch line beside its reading, so the
+     reading sits over it. */
+  @container win-fig (max-width: 20.5rem) {
+    .tone {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.5rem;
+      padding-bottom: 0.8rem;
+    }
+    .tone__say {
+      grid-auto-flow: column;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+  }
+  /* The narrowest: nor for the reading and its tone on one line. */
+  @container win-fig (max-width: 18.4rem) {
+    .tone__say {
+      grid-auto-flow: row;
+    }
+  }
+</style>

@@ -1,0 +1,136 @@
+---
+// flight-tracker's figure: a simulated radar around Heathrow on a canvas
+// (window/radar.ts draws it, and loads only when this panel is near), and
+// the two real counts from the home server. Beside the picker the scope
+// fills the panel and the counts are in the picker's readout; stacked, the
+// scope sits over the counts.
+//
+// The canvas is only shown where the script runs: without it there is
+// nothing to draw, and the counts and the link are the panel.
+import { flightCounts } from "../data";
+
+interface Props {
+  /** What to say under the stacked scope: that the radar is a simulation. */
+  note?: string;
+}
+const { note } = Astro.props;
+---
+
+<canvas
+  class="rd__scope"
+  data-radar
+  role="img"
+  aria-label="A simulated radar around Heathrow: planes circling the four holding stacks, landing and taking off"
+></canvas>
+<dl class="rd__cnt">
+  {flightCounts.map((c) => (
+    <div>
+      {/* biome-ignore format: a line break would show as a space */}
+      <dt>{c.label}<i>{c.where}</i></dt>
+      <dd data-stat={c.stat}>–</dd>
+    </div>
+  ))}
+</dl>
+{/* biome-ignore format: no space before the age: its separator is drawn */}
+<p class="rd__note">{note}<span data-stats-age></span></p>
+
+<style>
+  .rd__scope {
+    display: block;
+    width: 100%;
+    height: 17rem;
+    /* The panel's corners, inside its hairline. */
+    border-radius: calc(var(--r-ctl) - 1px) calc(var(--r-ctl) - 1px) 0 0;
+  }
+  /* Side by side while both fit, one under the other when they do not. */
+  .rd__cnt {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.5rem;
+    padding: 0.85rem var(--win-pad) 0;
+    border-top: 1px solid var(--win-line);
+    font-size: 0.75rem;
+    line-height: 1.45;
+  }
+  /* The number first, in a column wide enough for three digits, so the words
+     do not move when it replaces the dash. */
+  .rd__cnt > div {
+    display: grid;
+    grid-template-columns: 2.4rem minmax(0, 1fr);
+    align-items: baseline;
+  }
+  .rd__cnt dd {
+    order: -1;
+    font-family: var(--head);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  /* Still a dash: nothing has been reported. */
+  .rd__cnt dd:not(.is-set) {
+    font-weight: 300;
+    color: var(--faint);
+  }
+  .rd__cnt dt {
+    color: var(--muted);
+  }
+  .rd__cnt i {
+    font-style: normal;
+    color: var(--faint);
+  }
+  .rd__cnt i::before {
+    content: " · ";
+  }
+  .rd__note {
+    margin-top: 0.55rem;
+    padding: 0 var(--win-pad) 0 calc(var(--win-pad) + 2.4rem);
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .rd__note [data-stats-age]:not(:empty)::before {
+    content: " · ";
+  }
+  :global(.win__app:not([data-live])) :is(.rd__scope, .rd__note) {
+    display: none;
+  }
+  :global(.win__app:not([data-live])) .rd__cnt {
+    border-top: 0;
+  }
+  @media (max-width: 45.99rem) {
+    .rd__scope {
+      height: 15rem;
+    }
+    .rd__cnt {
+      flex-direction: column;
+      row-gap: 0.5rem;
+      font-size: 0.6875rem;
+    }
+    /* No room for both on one line on a small phone, so always two. */
+    .rd__cnt i,
+    .rd__note [data-stats-age] {
+      display: block;
+    }
+    /* The age has its line before it has its words, so nothing under this
+       panel moves when the server answers. */
+    .rd__note [data-stats-age] {
+      min-height: 1lh;
+    }
+    .rd__cnt i::before,
+    .rd__note [data-stats-age]:not(:empty)::before {
+      content: none;
+    }
+  }
+  /* Beside the picker the scope is the whole panel and the border its bezel. */
+  @media (min-width: 60rem) {
+    :global(.win__app[data-live]) .rd__scope {
+      position: absolute;
+      inset: 0;
+      height: 100%;
+      border-radius: calc(var(--r-ctl) - 1px);
+    }
+    :global(.win__app[data-live]) :is(.rd__cnt, .rd__note) {
+      display: none;
+    }
+  }
+</style>

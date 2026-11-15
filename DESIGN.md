@@ -7,8 +7,10 @@ colors:
   panel: "#1c1d1f"
   pane: "#1c1d1f"
   well: "#222426"
+  window: "#141516"
   line: "color-mix(in oklab, #e8eff9 10%, transparent)"
   line-strong: "color-mix(in oklab, #e8eff9 16%, transparent)"
+  window-line: "color-mix(in oklab, #e8eff9 17%, transparent)"
   ink: "#e8eff9"
   muted: "#b2b8bf"
   faint: "#a0a5ac"
@@ -85,6 +87,11 @@ components:
     rounded: "{rounded.control}"
   metric:
     textColor: "{colors.accent-text}"
+  window-panel:
+    textColor: "{colors.ink}"
+    backgroundColor: "transparent"
+    rounded: "{rounded.control}"
+    padding: "0.95rem 0.9rem 0.8rem"
 ---
 
 # Design System: colincheung.dev
@@ -109,7 +116,14 @@ Dark is the default; light is a soft toggle for daylight reading. The choice is
 `data-theme="light"` on `<html>`, set before paint by an inline script in
 `components/site/Head.astro` (from `localStorage`), and toggled by the button in
 the nav, which also dispatches a `themechange` event so anything drawn in a canvas
-can redraw. The system setting is not followed.
+can redraw. The same script keeps `<meta name="color-scheme">` in step with the
+theme, so the browser's own surfaces match before any CSS has loaded. The system
+setting is not followed.
+
+### Browsers
+Baseline Widely available; a Newly available feature only as an enhancement
+with a fallback. The rule is `AGENTS.md`'s; `pnpm legacy-scan`, part of
+`pnpm check`, fails on legacy web patterns.
 
 ### Typography standards (enforced by `tests/typography.spec.ts`)
 | Rule | Value | Why |
@@ -134,16 +148,26 @@ big.
 **Key Characteristics:**
 
 - Three kinds of colour and nothing else: one cool grey scale, one purple accent spectrum, three status colours.
+  One exception: the home window's small print takes four of the code theme's
+  hues, by the kind of thing it is (the Window Hues Exception, section 2).
 - Dark and light are the same OKLCH scales at other lightnesses, not a second palette. No pure white or black surfaces.
 - Sora for names and the voice, Geist for reading, DM Mono for data.
-- Flat: surfaces separate by tone, never by a shadow or a border.
+- Flat: surfaces separate by tone, never by a shadow or a border. One exception:
+  the home window's panels are hairline frames with their titles set into the
+  border (Home window, section 5). No other panel on the site is framed (code
+  blocks keep a hairline of their own: Blog Post, Code).
 - Small, consistent corners: 8px panels, 6px controls, 4px chips; only dots are round.
 - Controls are ink, never the accent.
-- The literal terminal metaphor is scarce — reserved for the homepage.
+- The literal terminal metaphor is scarce — reserved for the homepage, where it
+  is one window of panels (Home window, section 5).
+- The homepage is the hero, that one window, Worked at and Reach. The working
+  rule is that it grows by adding to the window, not by adding sections; that
+  rule is inferred from what Colin picked, not something he said (How the home
+  page grows, section 5, marks which rules he decided and which are inferred).
 - Widths are one three-tier scale: `--w-prose` (`46rem`, reading), `--w-page`
   (`68rem`, content pages) and `--w-poster` (`90rem`, the homepage). Content
   pages center nav, footer, and content on `--w-page` so their edges line up; the
-  homepage centers its nav, terminal, and sections on `--w-poster`. Same system,
+  homepage centers its nav, window, and sections on `--w-poster`. Same system,
   wider tier, not an exception.
 
 ## 2. Colours
@@ -161,7 +185,9 @@ lightness. Swatches are on the design page.
   a white end, the accent never does (pale tints read pink or white). Each theme
   picks its jobs from it (Roles below); why, against Radix, Tailwind, Material
   and others, is `docs/redesign/research/accent-ramp-research.md`. A four-hue
-  palette (teal, ochre, indigo alongside the accent) read as busy.
+  palette (teal, ochre, indigo alongside the accent) read as busy; that still
+  holds for the site. The home window's four hues are the code theme's, on
+  small print only (the Window Hues Exception below).
 - **Status** (`--ok`, `--warn`, `--danger`): green, amber, red, at steps 3 (wash),
   9 (dot) and 11 (text) only. There is no blue status colour; the accent stands
   for "info".
@@ -169,11 +195,15 @@ lightness. Swatches are on the design page.
 ### Roles (`tokens.css`)
 - **Surfaces:** `--bg` page (dark n1, light n5), `--panel` and `--pane` raised
   surfaces (dark n3; light n3 and n2), `--well` a darker tone inside a panel (n4).
+  The home window has a tone of its own, `--win-bg` (n2 in both themes), under
+  a `--panel` title bar.
 - **Text:** `--ink` (n12) titles and values; `--muted` (n11) the line under a
   title; `--faint` (n10) dates, labels and captions, still 4.5:1;
   `--prose-ink` post body, a notch softer than ink in dark, ink in light.
 - **Edges:** `--line` and `--line-strong`, cut from the ink at 10% and 16%, so
-  every border shares its tint.
+  every border shares its tint. The home window's panel frames are `--win-line`,
+  the same ink at 17%, and its selected row is a band of ink at 6% (`--win-sel`;
+  9% while its panel has the focus).
 - **Accent:** each job is one spectrum step. Dark: `--accent` and
   `--accent-text` are v6, the accent itself (bars, lines, results, links);
   `--accent-solid` v4 for filled marks. Light and print step down one so they
@@ -183,6 +213,16 @@ lightness. Swatches are on the design page.
   glow).
 - **Charts:** `--bar` (n7) the "before" bar; `--gain` (ok11) and `--loss`
   (danger11) a real gain and a real drop.
+- **Syntax hues** (`--syn-fn`, `--syn-str`, `--syn-num`, `--syn-type`,
+  `--syn-kw`): the code theme's five (Blog Post, Code). Four of them have one
+  job outside code, the home window's small print, used as a highlighter
+  would mark a config file: keys in `--syn-type`, dates and time axes in
+  `--syn-fn`, quantities in `--syn-num`, paths in `--syn-str` (named
+  `--win-key`, `--win-date`, `--win-num`, `--win-path` in `Window.astro`).
+  Small print only: never a title, a result or a fill, and never `--syn-kw`,
+  which sits in the accent's hue. Nowhere else on the site: off the home
+  window, colour is still the accent and the status colours. The limits are
+  the Window Hues Exception, below.
 
 ### Print
 The CV re-declares the tokens inside `@media print` to flip to ink-on-white for a
@@ -202,7 +242,7 @@ two themes.
    a count and the planes it counts), the result keeps it and the other goes ink.
    A result bar and its own value are one result, so both stay purple.
    A list of results where something else on the page is already purple (the home
-   terminal) stays ink.
+   window) stays ink.
 2. **Links**, in `--accent-text` (`--accent-text` in prose).
 3. **The one highlight in a hero drawing or one-liner.**
 4. **A hovered control:** a button fills with `--accent-hover` (dark: v3 half
@@ -210,16 +250,66 @@ two themes.
    its label or icon stays bright ink (a purple icon read dimmer than the white one at rest); a
    link's underline goes `--accent`. One at a time, so it
    never crowds a glance.
+5. **The home window's focus:** one panel at a time takes the accent, on its
+   border (at 72%) and its title; on a phone or a touch screen, on its title
+   alone. It moves between panels; it never multiplies. While a row holds the
+   keyboard it also shows a 1px accent outline. No result, figure or control
+   inside the window takes the accent, so adding a panel never adds one.
+
 Chrome never takes it: prompts, carets, window dots, the nav, separators (the
 worked-at slashes keep a 40% hint, `--accent-line`). Never a surface, a large
 area, a heading or a button. If two things are purple in one glance, one is
-wrong. A metric inside a sentence or a bullet is bold `--ink`. (Set 31 Oct 2026:
-the accent on every prompt and slash made the homepage loud while the post results
-read pale.)
+wrong, outside the one exception below. A metric inside a sentence or a bullet
+is bold `--ink`. (Set 31 Oct 2026: the accent on every prompt and slash made
+the homepage loud while the post results read pale.)
+
+**The exception: the home page's first screen.** Three purple things share
+that glance: the hero's one highlight (job 3), the window's focus (job 5), and
+the favicon in the fastfetch panel, whose short bar is `--accent-text` as it is
+in the browser tab. That is more than one accent per glance, and this
+paragraph is the one place it is allowed. Nothing else may join the three on
+that screen. (A hovered control, job 4, and the outline on a row that holds
+the keyboard are passing states, one at a time.) Status: inferred. Colin
+picked the page with all three on it ("I actually like the one window stacked
+original. That looks the best"), but nobody asked him about the count of
+purple things, so ask before leaning on this exception or widening it.
+
+**The Window Hues Exception.** The rule everywhere is grey, one accent and the
+status colours. The home window alone may colour its small print, with four hues
+and one job each: a key (`--win-key`), a date or a time axis (`--win-date`), a
+quantity (`--win-num`), a path (`--win-path`). A hue says what kind of thing a
+small datum is, as a highlighter marks a config file. It is an exception, and
+these are its limits:
+1. **Only inside `.win`.** No other page, section or post figure takes a hue.
+2. **Only small print:** mono at `0.6875rem` to `0.8125rem` (a row's date and
+   read time, a key, an axis tick, a count, a file name or repo in a border).
+   A panel's title, a post's title, a result and a readout stay ink; the old
+   value of a result stays `--faint`.
+3. **Never a fill or a mark.** The hues colour text only. Lines, blocks, bars,
+   dots and frames in the window are ink and grey; the two that are purple,
+   the focus and the favicon's short bar, are the accent's (the Accent Points
+   Rule and its exception).
+4. **Never a meaning.** A hue does not say better or worse, up or down, live or
+   stale. Those are said in words (`live, 2 min ago`, `offline`). Three
+   semantic hues on one page stays rejected.
+5. **Four, by kind.** Something that is none of the four is grey, not a fifth
+   hue. `--syn-kw` is never used: it sits in the accent's hue.
+
+Status (Nov 2026). Decided: the window with four hues. Two calmer windows
+were made after Colin asked "do you think it's a bit busy?", one with fewer
+labels and two hues and one with open panels and one hue; seeing all three, he
+kept the original, with its four: "I actually like the one window stacked
+original. That looks the best". Inferred: the five limits. He never spoke
+about the hues themselves; the limits describe how the window he picked uses
+them and how the older rules (one accent, no semantic hues) still hold around
+it. Ask him before loosening one or treating one as his.
 
 **The Status Is Small Rule.** Green, amber and red appear only as dots and small
-badges, always with a word, never colour alone. Red in the chrome means a real
-failure (a homelab service down); a result that got worse stays ink. In charts,
+badges, always with a word, never colour alone. Red in the chrome would mean a
+real failure; a result that got worse stays ink. No status dot or badge is in
+the chrome today: the home-lab figure had a green dot per stack until Nov
+2026, and the home window says status in words instead (`all up · live, 2 min
+ago`, `offline`). The status colours now show only in post figures. In charts,
 `--gain` and `--loss` appear only on charts that compare runs, with a key.
 
 **The No Grey Pairs Rule.** Two things a chart tells apart never differ by a
@@ -249,7 +339,9 @@ Sora and DM Mono 400 are preloaded. Geist Mono was tried and clashed with Sora.
 - **Display** (Sora 600, `clamp(2.6rem, 5.5vw, 4.25rem)`, −0.05em): the hero
   name. One per view, sentence case.
 - **Headline** (Sora 600): post titles (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em),
-  the reach-out line, section headings (`1–1.35rem`, −0.02 to −0.03em).
+  the reach-out line, section headings (`1–1.35rem`, −0.02 to −0.03em), and
+  the home window's readouts (`1.6rem`, −0.04em; a number still waiting is a
+  300 dash in `--faint`) and its temperature (`1.75rem`).
 - **Voice** (Sora 200, the punchline 300 in the accent, −0.03em): the one-liners and the worked-at
   names. Heavier weights read as thick.
 - **Title** (Geist 400, −0.01em): post and list titles. Never 500 or heavier in
@@ -257,7 +349,9 @@ Sora and DM Mono 400 are preloaded. Geist Mono was tried and clashed with Sora.
 - **Body** (Geist 400, 16–17px, lh 1.55; posts 1.65): prose, ledes, the line
   under a title in `--muted`. Bold is 600.
 - **Label** (DM Mono 300–500, `0.6875–0.8125rem`, no added tracking): the
-  terminal, dates, stats, captions, kickers, tags, figure text.
+  home window, dates, stats, captions, kickers, tags, figure text. Each DM
+  Mono weight is a file of its own (about 9 KB); the homepage uses 400 and 500
+  only, so a 300 there is one more download.
 
 ### Named Rules
 **The `//` Kicker System.** Sections are marked with a lowercase mono comment —
@@ -275,13 +369,31 @@ none on mono. Letters never touch.
 
 Flat. Depth comes from tone, not shadows or borders: page (`--bg`), a raised
 panel (`--panel` / `--pane`), a darker well inside it (`--well`): no drop
-shadows, no glow behind the page, no gradients.
+shadows, no glow behind the page, and no gradient as a surface or a
+decoration (the few uses that stand are named in the rule below).
 
 ### Named Rules
 **The Flat-By-Tone Rule.** No shadows on cards, panels, inputs or figures, and no
-borders on panels. The one sanctioned glow is **`--ring`**
+borders on panels, except the home window's (section 5): a terminal app is
+drawn with lines, so its panels are 1px frames on one flat tone. The limits of
+that exception: one line (`--win-line`, 1px, 6px corners), one tone under all
+of it (`--win-bg`), no fill inside a frame, no shadow, no panel raised on a
+second surface. Inside a figure the same line may draw a thing that is a box
+(the home lab's mini-PC and its services' chips, the two tone plots beside an
+Anki card) or a rule over a readout, and nothing heavier. No other page gets
+a frame; figures in posts stay borderless on `--pane`. The one sanctioned glow
+is **`--ring`**
 (`0 0 0 4px` accent at 20%), a response to state: the current or hovered node on
 the blog index, the CV ledger and a post's timeline. Never ambient.
+
+A gradient is never a surface or a decoration; the uses that stand are a fade
+where content runs under an edge (the writing rows under the phone's pinned
+readout, the ends of the worked-at marquee), the radar's sweep, and hard-stop
+or single-colour layers that draw a thing (the home lab's tunnel dashes,
+hatching and a part-filled day in post figures, the patch a border label sits
+on). The only thing Colin said about gradients in the Nov 2026 round was a
+request to take one out, the swatch row in fastfetch: "Can we remove the black
+to purple gradients in TUI fetch ?".
 
 ## 5. Components
 
@@ -306,6 +418,18 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   the browser chrome is light. Solid shapes so it holds at 16px. `pnpm og`
   renders `favicon.ico` and `apple-touch-icon.png` from it; bump the `?v=` on
   the links in `Head.astro` when it changes.
+- **In the home window it is drawn as itself, as tall as its rows.** The
+  fastfetch panel shows it where fastfetch prints a logo: the same three
+  rectangles as the file, drawn inline in the page's tokens (tile n1, light
+  n3; bars n8 and `--accent-text`), and as tall as the rows of text beside
+  it. Both are decided (Nov 2026). Its real geometry: a pixel-grid redrawing
+  was dropped ("if it's supposed to be my favicon it doesn't really look like
+  it"). Its size: a mark taller than its rows was dropped ("The fast fetch
+  icon used to be the same size as the rest of the content though. So it
+  doesn't look like the icon's bigger than the 4 rows.").
+- **Inferred from those two:** wherever else the site needs a mark, use the
+  favicon's real geometry at the size of the text it sits with. He has only
+  spoken about the fastfetch panel, so ask before treating this as settled.
 
 ### Footer
 - One `components/site/Footer.astro`: `Colin Cheung` (mono, `--muted`) and
@@ -322,6 +446,10 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
 - Ink on the panel tone (`--panel`, `--line` or `--line-strong` border), 6px
   corners: the theme button, the hero's GitHub and LinkedIn icons, the worked-at
   pause button. Never the accent, never a pill.
+- In the home window a control is a label in a panel's border (`button.lbl`,
+  `a.lbl`: `pause`, `next card`, `all N posts`): `--muted` mono text that
+  turns ink on hover, no fill and no box, padded so the target is full size.
+  A link in a bottom border is a path, so it takes `--win-path`. Only there.
 
 ### Links (inline)
 - `--accent-text` text with a `1px` **`--accent-line`** `border-bottom` that goes
@@ -383,23 +511,342 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   has one, else its punchline word (`<b>`) in `--accent-text` at weight 300.
   Never bold: heavier Sora reads thick next to the 200 voice. Below 56rem the
   reel stacks under the name.
+- The hero has no minimum height. It sits close under the nav and close over
+  the window, so a laptop's first screen is the name, the reel and the
+  window's upper panels. (Inferred: the spacing was tightened in the build;
+  Colin has not been asked about it.)
+- The role is said here; the fastfetch panel repeats it as a row and drops
+  that row first when it narrows. Contact is here and in Reach, not in the
+  window.
 
-### Terminal Session (homepage only)
-- `components/home/Terminal.astro`: a `--panel` window titled `~/ColinOS` with
-  three grey dots and no status bar. Two panes on `--pane`,
-  split by a 1px `--line` gap, stacked below 900px. This is the scarce set-piece
-  — do not reproduce it on other pages.
-- **Left, `WhoamiPane`:** `whoami` (Colin Cheung 張志權), `top -u colin` (skills
-  from the `skills` collection with years of experience, one time column in ink),
-  `weather` (Glasgow, live from open-meteo) and a waiting prompt. The prompt `$`
-  is `--faint` and the caret `--muted`. It types itself out on load (on phones, when it
-  scrolls in); without JS or with reduced motion the finished session shows.
-- **Right, `WritingPane`:** `ls -t ~/writing`, the newest five posts from the blog
-  collection (date, title in Geist 400, stat with the old value in grey and the
-  new one in ink, not purple: the home page already has its purple, and a purple
-  number on every row made the terminal the loudest thing on it), then
-  `all N posts →`.
-  Publishing a post updates it on its own; never hard-code the list.
+### Home window (homepage only)
+This describes the window as it is built. Which of it Colin decided and
+which is only inferred from the version he picked is set out in the next
+section, How the home page grows; read that before changing the page.
+- `components/home/Window.astro` and `components/home/window/`: one window on
+  `--win-bg` (`--n2`), titled `~/ColinOS`, with a `--panel` title bar, three
+  grey dots and no status bar, holding a grid of six panels: fastfetch,
+  skills and glasgow down the left, writing on the right, and under both the
+  projects and the open project's figure. This is the scarce set-piece: do
+  not reproduce it, its frames or its hues on other pages.
+- **Why it is this** (Nov 2026). The terminal before it typed `whoami`,
+  `top`, `weather` and `ls` into two panes, with a separate Projects section
+  further down. Colin: "I tried to clean it up recently with a simplification,
+  but now I feel that the terminal looks a bit lacking." He asked to be shown
+  variations, picked the one named One window, stacked, and kept it over
+  calmer versions of itself: "I actually like the one window stacked
+  original. That looks the best". The Projects section is gone: the projects
+  are panels of the window.
+- **Its vocabulary** is six things, and every panel is made of them:
+  1. the **window tone**, one flat `--win-bg` under everything;
+  2. the **hairline panel**, a 1px `--win-line` frame (ink at 17%) with 6px
+     corners and no fill;
+  3. the **title in the border**, and a label in any other corner (`.lbl`);
+  4. the **selected band**, the chosen row of a list on ink at 6%
+     (`--win-sel`), 9% while its panel has the focus, running edge to edge
+     of the frame;
+  5. the **readout**, under a list and ruled off by the same hairline: a
+     result large in Sora 600 (`1.6rem`) beside its label in small mono,
+     with a path set into the rule (`.pv` under writing, `.rv` under the
+     picker);
+  6. the **one focus**, the accent on one panel's border and title.
+- **Panel** (`window/Panel.astro`): the frame. Its title is set into the top
+  border (`--muted`, `0.75rem`), and the other three corners take a label the
+  same way (`.lbl`, `--faint`, `0.6875rem`): top right a readout or a
+  control, bottom left the key hints, bottom right a position or a link.
+  A label that is a control keeps a full-size target; only its line of text
+  cuts the border.
+- **fastfetch:** the favicon where fastfetch prints a logo, beside four
+  key/value rows (both names, role, work since, post count and newest date).
+  The favicon is the real one (Favicon, above) and as tall as its rows: its
+  side is the row count times one line (`--rows` × `--lh` in `Fetch.astro`),
+  so nothing is left empty under the rows. As the panel narrows the role row
+  goes first (the hero has it). No row of colour blocks under it: fastfetch's
+  swatches were removed ("Can we remove the black to purple gradients in TUI
+  fetch ?").
+- **skills:** one block for each year a skill has been in use, every row on
+  one axis from the earliest start to this year, with its years at the row's
+  end in ink (`9y`). Real years, not scores.
+- **glasgow:** the temperature now, the sky in words, and today's 24 hours as
+  one line with `now` marked on it; the pointer reads any hour.
+- **writing:** every post, newest first, one line each: date, read time,
+  title (Geist 400), result (old value grey, new value ink). Never purple: a
+  purple number on every row made the old terminal the loudest thing on the
+  page (31 Oct 2026). Under the list a readout restates the selected post's
+  result large in Sora, with the post's file name in the rule above it. On a
+  phone each post is two lines and the readout rides the bottom of the
+  screen, the rows fading out under it. All from frontmatter: publishing a
+  post adds its row; never hard-code the list.
+- **projects:** on the same column split, a picker under the left column (one
+  line a project, then a readout of what else in the window belongs to the
+  open one) and the open project's figure under writing. Five figures: the
+  dissertation's reward curves, a Heathrow radar, the home lab's stacks
+  behind its tunnel, an Anki card with its two tones as pitch lines, and how
+  this page reached you. Beside the picker a figure's title says what it
+  draws and its border holds the figure's own control or note; the bottom
+  border links the repo.
+- **True, or labelled.** Everything the window draws is true, or labelled as
+  a sketch or a simulation. Two figures are labelled:
+  - the radar's traffic is simulated. Its title beside the picker, and the
+    line under the scope in the stack, say `radar simulated here`; the two
+    counts with it are real;
+  - the dissertation's two curves are sketched, typed by hand in
+    `figures/Chart.astro` and not drawn from the runs' logs. Its title beside
+    the picker says `reward over time, sketched`. In the stack the title is
+    the project's name, so there the chart's own axis label says
+    `reward, sketched`.
+
+  One number is a typed constant: the Cloudflare city count in
+  `figures/Route.astro` (330), carried over from the old page, not read live
+  and with no dated source. The other numbers are computed at build (posts,
+  years, stacks, the commit) or read live (below). Nothing is drawn to fill a
+  space.
+- **The stack:** below 60rem there is no picker. The five projects follow
+  writing as panels of the same window, each titled with its project, each
+  figure playing once as it scrolls into view: a phone scrolls through them.
+  The same five panels serve both layouts. At 60rem and wider, with the
+  script running, there is no scroll-through ("scroll through is great for
+  mobile but I don't know if we have that much content on desktop"): the
+  picker shows one figure at a time. The stack is also what every width gets
+  without the script, or when the script fails (Start-up, below).
+- **Focus:** one panel at a time has the focus (Accent Points Rule, job 5).
+  It follows the pointer and the keyboard; on a phone or a touch screen, the
+  panel at the middle of the screen.
+- **Keys** are the window's, not the page's:
+  - `j` / `k` move through the posts. They act when nothing has the keyboard
+    and at least half of the writing panel is on screen, or when the keyboard
+    is inside the window. With the keyboard on a control outside the window
+    (the nav, the hero, the footer) they do nothing.
+  - `enter` opens the selected post only when nothing has the keyboard;
+    otherwise it belongs to whatever is focused.
+  - Neither acts with a modifier held (Shift included) or in a form field.
+  - In the picker, while it holds the keyboard, the arrow keys, Home and End
+    choose a project and `enter` opens its link. The tablist's description
+    says so to a screen reader.
+  - `pause`, `play` and `next card` keep the keyboard after a click, so
+    `enter` presses the same button again in every browser.
+  - On the phone layout the selected post is the row at the reading line,
+    or the row the keyboard is on while that row is on screen.
+  - A row that holds the keyboard shows a 1px accent outline. The key hints
+    in the bottom borders are hidden on a phone, on a touch screen and where
+    the script is not running.
+- **Ties:** projects and posts are tied by data (`posts` and `runsOn` in
+  `src/data/projects.json`). Picking a project marks what it is tied to (its
+  posts in the writing list; in the picker, the project it runs on or the
+  ones that run on it) with a short grey length at the row's left
+  (`.is-rel`), beside the picker and while the projects have the focus. The
+  build stops on a tie that leads nowhere: a `runsOn` that is not another
+  project's id, or a `posts` prefix that matches no post (`homeProjects()` in
+  `window/data.ts`).
+- **What repeats, and what does not.** The readouts restate on purpose: the
+  one under writing says the selected row's result again, large, and the one
+  under the picker says the open project's counts, some of which its figure
+  or its one-line description also shows (the home lab's stacks, this visit's
+  first byte, the post count). A post's result is the thing that is not
+  repeated: it is in the writing panel only, never in a project's readout or
+  figure (the picker counts a project's posts and says which; the
+  dissertation's 12 h → 11 min is in the writing panel and nowhere else).
+  One repeat needs a hand: the home lab's line in `projects.json` says its
+  stack count in words (Colin's wording) while the readout counts the
+  stacks, so the line is edited when a stack is added or removed.
+- **Small print** takes four syntax hues by kind: keys, dates and time axes,
+  quantities, paths. Titles and results stay ink. The limits are the Window
+  Hues Exception (section 2).
+- **Live numbers** are real or they are a dash; no stand-in number ships.
+  Each says how fresh it is in words, not with a dot:
+  - The home lab's and flight tracker's counts (`/homelab.json`, read by
+    `window/stats.ts`): `live, 2 min ago` while the answer is 20 minutes old
+    or less, `last seen 3 h ago` after that, `offline` when there has been no
+    usable answer (one with no numeric `at` counts as none). Asked for every
+    5 minutes while the tab is showing, and again as soon as a hidden tab is
+    shown. A failed fetch keeps the earlier numbers, with their age. The home
+    lab's box says `all up` only while the answer is fresh.
+  - The weather (open-meteo, read by `window/weather.ts`): `live` in the
+    border after an answer. Asked for every 30 minutes while the tab is
+    showing, and on return to a tab whose reading is 30 minutes old or more.
+    If a later fetch fails the reading stays and the border says
+    `last seen 13:15`, the reading's own time. With no reading at all it says
+    `offline` and tries again on those same occasions.
+  - This visit's time to first byte: measured in the browser, and its border
+    says `measured in your browser` once it has been.
+- **Without JS** the window is whole and at rest: every post listed and
+  linked, the newest in the readout, and the five projects as the stack at
+  every width, with no picker, no canvas, no key hints and no controls that
+  would do nothing. The Glasgow panel, which only the script can fill, keeps
+  its dashes and says `needs javascript` in its border.
+- **Start-up, and a script that is late or fails.** An inline script in
+  `Window.astro` sets the starting state before the first paint, so nothing
+  is seen to change when the module (`window/main.ts`) arrives: `data-live`
+  (the picker's layout at 60rem and wider) and, where motion is allowed,
+  `is-boot` (panels dimmed for the opening round) and `is-armed` (figures
+  blank until seen). The module sets `data-ready` as the last step of a
+  start that worked. From there:
+  - Not started after 4 s: `is-boot` and `is-armed` come off, so nothing is
+    left dim or blank. The layout stays as it is, and there is no opening
+    round when the module does arrive. Late is not failed.
+  - Failed to load (the module or one of its imports), or threw while
+    starting: `data-live` comes off at once and the projects become the
+    stack, as without JS.
+  - Still not started after 20 s: the same. If the module arrives after
+    that, the top half starts (focus, writing, weather) over the stack.
+    `data-live` is never put back, so the layout changes once at most.
+  - The lower half (`window/projects.ts`) has 8 s from when it is asked for.
+    If it fails, or is not there by then, the picker gives way to the drawn
+    stack and stays that way; code that turns up later is not started.
+
+  A wait is not a failure. While the module is on its way (up to 20 s),
+  and then while the lower half is (up to 8 s), the picker can be on screen
+  and not yet working. That is the price of not dropping a slow connection to
+  the stack; shorten a wait only with a measurement.
+- **Layouts:** 80rem and wider, two columns (0.58 : 1) with the picker and
+  its figure on the same split; 60 to 80rem, fastfetch beside glasgow, skills
+  across, writing, then picker and figure; 46 to 60rem, the same without the
+  picker; under 46rem, one column.
+
+### How the home page grows
+The home page is the hero, one window, Worked at and Reach. This is the
+record of the Nov 2026 round that made it so: what Colin decided, what is
+only inferred from the version he picked, and what each means for the next
+change.
+
+**How to read it.** *Decided* means Colin said it, and his words are quoted
+exactly. *Inferred* means it came with the prototype he picked, or was added
+while that prototype was built into the site, and he has not been asked
+about it on its own. Follow an inferred rule by default, since it describes
+the page he chose. But ask him before treating it as settled: before calling
+it his rule, before refusing something he asks for because of it, and before
+building anything large on it. Rules elsewhere in this file dated Oct 2026
+are older decisions and are not re-marked here.
+
+**Decided** (Colin's words, Nov 2026):
+- **The typed terminal was not enough.** "I tried to clean it up recently
+  with a simplification, but now I feel that the terminal looks a bit
+  lacking." So the window replaced it.
+- **This window, as first shown, over calmer versions of it.** He liked it
+  and asked "do you think it's a bit busy?"; shown one with fewer labels and
+  two hues and one with open panels and one hue, he answered "I actually
+  like the one window stacked original. That looks the best". So its
+  density, its border labels and its four hues stay; a calmer window has been
+  tried and turned down.
+- **One window, not two.** "what about the docked window just being part of
+  the tmux or TUI the same one not two?" So the projects are panels of the
+  window, and nothing is docked under it as a second one.
+- **Scroll-through on a phone; doubted on a desktop.** "scroll through is
+  great for mobile but I don't know if we have that much content on desktop"
+  So a phone scrolls through the five, and a wide screen shows one figure at
+  a time with no pinned or scroll-driven stage. His words are a doubt about
+  the desktop, not a ban; the stage was dropped there on the strength of
+  them.
+- **No swatch row in fastfetch.** "Can we remove the black to purple
+  gradients in TUI fetch ?"
+- **The favicon looks like the favicon.** "if it's supposed to be my favicon
+  it doesn't really look like it" So it is drawn with its real geometry.
+- **The favicon is as tall as its rows.** "The fast fetch icon used to be
+  the same size as the rest of the content though. So it doesn't look like
+  the icon's bigger than the 4 rows." If a row is added or dropped, the mark
+  changes size with it.
+- **A new border was not enough for the rest of the page.** Shown the rest
+  of the page under the new terminal as it was, and again with only the
+  Projects figure given the hairline frame, he asked for more: "I think it
+  needs further variations, similar sort of creativity as the terminal".
+  That is all it says. It does not say that nothing may follow the window as
+  a section.
+- **Write this down.** "Would be worth documenting the design choices that
+  we've made here and how it affects future design."
+
+**Inferred** (not his words; ask before treating any of these as settled):
+- **New content becomes part of the window:** a panel, or a figure in the
+  picker, and not a new section under it. Where it comes from: he picked the
+  version that folded Projects into the window, after asking for one window
+  and not two. He has not said a section could never be added, and Worked at
+  and Reach still follow the window.
+- **The panel grammar is fixed:** a title in the border, a hairline, one
+  focus, no new kind of frame. Every panel of the window he picked is made
+  this way. (No status bar is older and decided, Oct 2026:
+  `docs/design-rejected.md`, Terminal.)
+- **One focus, and three purple things on the first screen.** The moving
+  focus, the title-only focus on a phone or a touch screen, and the hero's
+  highlight and the favicon's bar sharing a screen with it were all in what
+  he picked; he was not asked about any of them (the Accent Points Rule and
+  its exception, section 2).
+- **Hue is for the kind of a small datum, inside the window only,** and
+  never a title, a result, a fill or a meaning such as good or bad. He kept
+  the four-hue window; the limits are a reading of how it uses them (the
+  Window Hues Exception, section 2).
+- **True, or labelled; a dash where a number is missing.** The older
+  principle on the design page (real over decorative) and the prototype's
+  `radar simulated here`. The `sketched` label, the `last seen` ages and
+  `needs javascript` were added in the build; he has not seen them pointed
+  out.
+- **The 60rem line.** That the picker stops and the stack starts at 60rem,
+  and that the stack is what a failed script falls back to, is the build's.
+  His words cover a phone and a desktop, not the widths between.
+- **The opening round, the grey ties, the readouts, and the phone's pinned
+  readout with the fade above it.** All were in the prototype he picked;
+  none was discussed.
+- **The favicon as the mark wherever one is needed.** Generalised from his
+  two remarks about the fastfetch panel (Favicon, above).
+- **Showing a change of this size as working variations.** He asked for
+  that once, for this round: "just come up with something and show me some
+  variations". Whether he wants every change of this size shown that way was
+  not asked. What is not in doubt is the older rule in `AGENTS.md`: an idea
+  he drops goes in `docs/design-rejected.md` the same turn.
+
+This round's prototypes are outside the repo, on his machine at
+`/home/colin/code/astro-blog/terminal-experiments` (galleries `index.html`
+for the terminal and `rest-index.html` for the rest of the page; the one he
+picked is `rest/onewin.html`).
+
+### Adding to the home window
+The window is the one place outside code blocks where the site is dense,
+framed and coloured beyond the accent. What keeps it readable is that every
+panel follows the same few rules, so a new one should too. These are the
+builder's working rules, inferred from the window Colin picked; the two that
+rest on his words say so.
+- A new panel is a `Panel` in a named grid area of `Window.astro`, with its
+  title in the border. Not a card, not a new surface, and not a second
+  window (decided: "the same one not two").
+- Anything said in a border uses `.lbl`. No floating captions or legends.
+- No new colour. Small print picks from the four hues by what it is (a key,
+  a date, a quantity, a path); a title or a result is ink. The window's
+  purple is the focus and the favicon's bar, plus the thin outline on a row
+  that holds the keyboard; a new panel adds none.
+- Draw only what is true, or label it in the border as a sketch or a
+  simulation, where it shows in both layouts. A live number is a dash until
+  it is real and says how old it is. Never a placeholder that looks like
+  data.
+- A figure draws once when it comes on screen, has a still state for reduced
+  motion, and anything that keeps moving has a `pause` in its border and
+  rests while its panel is closed or off screen.
+- Everything is in the HTML, so the page is whole without the scripts. They
+  change text, attributes and classes, and copy nodes that are already in
+  the page (the writing readout's result is a copy of its row's). They build
+  no markup of their own; the one thing written from a script is the site's
+  drawn arrow (`stat-arrow.ts`) in that readout's label. A scoped style
+  would not reach built markup, and the page would be empty without the
+  script.
+- A panel must come out right in each start-up case (Start-up, above):
+  without JS, with the module late, and after a fallback to the stack.
+  Nothing may be left dim, blank or dead.
+- A figure's code loads when the figure is first needed, not with the page
+  (`window/projects.ts` loads with the lower half, `radar.ts` when its panel
+  is near). The page's speed budget is the reason: `docs/page-speed.md`.
+- A shortcut key belongs to the window: it acts with the keyboard inside the
+  window or nowhere, never from a control elsewhere on the page, and never
+  with a modifier held.
+- A tie between a project and its posts, or between two projects, is data in
+  `src/data/projects.json` (`posts`, `runsOn`). No slug in a component, and
+  only ties that are plainly true. A tie that leads nowhere stops the build.
+- A post's result stays in the writing panel. A readout may restate what its
+  own list or figure shows; it does not repeat a post's result.
+- The fastfetch favicon stays as tall as its rows (decided: "the same size
+  as the rest of the content"). If a row is added or dropped, `--rows` in
+  `Fetch.astro` changes with it.
+- A new project is a row in `src/data/projects.json`, a figure in
+  `window/figures/` and its kind in `Figures.astro`; the picker and the stack
+  pick it up from the data, and its readout counts its posts unless it is
+  given cells of its own in `Picker.astro`.
+- Web features follow the browser rule (Browsers, section 1).
 
 ### Worked at (homepage)
 - `components/home/WorkedAt.astro`: a "Worked at" heading with `<first year> →
@@ -408,16 +855,6 @@ the blog index, the CV ledger and a post's timeline. Never ambient.
   slash between names. No icons, logos or job lengths. 70 s loop, paused on hover
   or focus, with a `pause` / `play` control; under reduced motion it stands still
   and wraps. Data: `src/data/companies.json`.
-
-### Projects (homepage)
-- A **picker**: the project list on the left, one figure on the right. The list is
-  plain, flush with its heading, each name with a few-word subtitle; the open
-  project in ink with an accent slash hanging in the margin, the rest grey.
-- The five figures: the dissertation's training curve, a radar of the London
-  airspace (flight-tracker), the home-lab diagram, a real card from the Anki deck,
-  and this site's delivery diagram. Diagrams share one style: HTML boxes with one
-  padding rule, edges drawn between them, slow traffic on the edges, numbers that
-  count up then tick, and an outlined cloud for "the internet".
 
 ### Reach out (homepage)
 - `components/home/Reach.astro`: a `// reach out` kicker in `--faint`, then the
@@ -447,14 +884,35 @@ curve in a component is a bug unless it is a content timing.
   stops under hover or focus.
 
 ### Homepage motion
-- The name and the terminal rise in on load (the shared `rise` keyframe).
-- One thing moves on the first screen: the reel. The terminal types its commands,
-  then the writing lines print one after another.
-- Worked at, Projects and Reach carry `data-reveal` and rise in on scroll (armed
-  by JS; visible without it). On phones the terminal panes wait until they scroll
-  into view.
+- The name and the window rise in on load (the shared `rise` keyframe).
+- One thing keeps moving on the first screen: the reel. The window opens with
+  a single round and then rests. Every panel is there from the first paint,
+  dimmed; the focus visits each once (fastfetch, skills, glasgow, the picker
+  and its figure where they show, then writing), a little over half a second
+  a panel, and each fills as it is reached: the favicon's bars grow, the
+  skill blocks arrive year by year, the temperature line draws left to right,
+  the rows fade up in order. The focus comes to rest on writing. Under 60rem
+  the round is the four upper panels; the projects play as they are scrolled
+  to. Nothing types: the typed session went with the old terminal.
+- The round needs the script on time. If the module has not started 4 s
+  after the window was parsed, the dimming and the blank figures are lifted
+  where they stand and the round is not played when it does arrive; the
+  layout does not change. Only a script that failed, a module still missing
+  after 20 s or a lower half not there after 8 s turns the projects into the
+  stack (Home window, Start-up).
+- A project's figure draws once when it comes on screen (and again each time
+  it is opened in the picker): lines draw left to right, the route's stops
+  arrive in order, the first byte counts up. A panel too tall for the screen
+  to hold enough of plays once it fills half the screen. The radar and the
+  tunnel's traffic run only while their panel is open and on screen, and
+  `pause` in the border holds both; a mouse resting on the home lab holds
+  its traffic too. Stacked, the traffic runs five passes (8 s) each time the
+  panel comes on screen.
+- Worked at and Reach carry `data-reveal` and rise in on scroll (armed by JS;
+  visible without it).
 - Reduced motion stops everything and shows each at rest (`Base.astro` zeroes
-  every animation and transition).
+  every animation and transition): no opening round, every figure drawn, the
+  radar one still frame, no `pause` buttons.
 
 ### Metric Highlight
 - `.hl` — inline `<b>` in `--accent-text`, weight 600, `tabular-nums`, in post
@@ -570,8 +1028,10 @@ curve in a component is a bug unless it is a content timing.
   theme (`src/styles/code-theme.ts`, read from `scales.css`): five syntax hues at
   one lightness per theme (`--syn-kw` in the accent's hue, `--syn-fn` blue,
   `--syn-str` green, `--syn-num` amber, `--syn-type` teal, each 5:1 or more on the
-  pane), names in ink, comments and punctuation `--faint`. Code is the one place
-  colour is allowed beyond the accent: it reads as code, not as a result. Switched by the site's `data-theme`, not the system
+  pane), names in ink, comments and punctuation `--faint`. Code, and the home
+  window's small print (the Window Hues Exception), are the only places colour
+  goes beyond the accent and the status colours: in both it says what kind of
+  thing a token is, never a result. Switched by the site's `data-theme`, not the system
   setting; DM Mono, 8px corners, `--pane` with `--line` borders, no shadow and no
   coloured tab marker (set in `astro.config`); inline code
   is a mono chip on a faint `--ink` 10% wash, 4px corners. Never hand-restyle
@@ -581,9 +1041,21 @@ curve in a component is a bug unless it is a content timing.
 
 ### Do:
 - **Do** keep to the grey scale, the purple accent and the three status colours.
-  Body text ≥ 4.5:1, large/bold ≥ 3:1 (`tokens.mts` checks the scales).
-- **Do** give the accent only its three jobs: the improved value, links, small
-  marks at the one thing. Leave the sentence around a number `--muted` or ink.
+  Body text ≥ 4.5:1, large/bold ≥ 3:1 (`tokens.mts` checks the scales). The one
+  exception is the home window's small print (the Window Hues Exception).
+- **Do** give the accent only its jobs: the improved value, links, small
+  marks at the one thing, and on the homepage the window's one moving focus.
+  Leave the sentence around a number `--muted` or ink.
+- **Do** read How the home page grows before changing the home page. It says
+  which of the home-page rules in these two lists Colin decided and which are
+  inferred; ask him about an inferred one before treating it as settled.
+- **Do** put new home-page content in the window, as a panel or as a figure in
+  the picker, built from the window's six parts (inferred).
+- **Do** show a live number as real or as a dash, with its age in words, and
+  label anything sketched or simulated (inferred).
+- **Do** keep the fastfetch favicon in its real geometry and as tall as its
+  rows (decided); use it the same way wherever else the site needs a mark
+  (inferred).
 - **Do** mark sections with the lowercase `// kicker` system.
 - **Do** keep type light: Sora 200 for the voice, 600 only for names and
   headings, Geist 400 for titles and reading, DM Mono for data.
@@ -616,8 +1088,26 @@ curve in a component is a bug unless it is a content timing.
 - **Don't** use cards as the default container, nested cards, or `border-left`/
   `border-right` coloured side-stripes on cards, list items, quotes, callouts, or
   alerts. Depth is tonal.
-- **Don't** add drop shadows, glows or borders on panels. The only shadow is the
-  `--ring` state glow.
+- **Don't** add drop shadows, glows or borders on panels, or a gradient as a
+  surface or a decoration. The only shadow is the `--ring` state glow; the
+  only framed panels are the home window's.
+- **Don't** take the home window's hairline panels, border labels or syntax
+  hues to another page, or add a hue, a fill or another purple thing inside
+  it (inferred from the window Colin picked; ask before treating as settled).
+- **Don't** give a hue in the window a meaning (good, bad, live), or put one
+  on a title, a result, a bar or a line (inferred; ask before treating as
+  settled).
+- **Don't** add a second window under the home window (decided: "the same
+  one not two"), a status bar (decided, Oct 2026) or colour swatches in
+  fastfetch (decided: "Can we remove the black to purple gradients in TUI
+  fetch ?").
+- **Don't** add a new section under the home window (inferred, Nov 2026; he
+  has not said so, so ask before treating it as settled), or pin or
+  scroll-drive a stage on a wide screen (from his doubt: "I don't know if we
+  have that much content on desktop").
+- **Don't** redraw the favicon (decided: "if it's supposed to be my favicon
+  it doesn't really look like it") or set it taller than the rows it sits
+  with (decided: "the same size as the rest of the content").
 - **Don't** over-round: 8px panels, 6px controls, 4px chips; only dots are round.
   No pills, no 12px+ corners.
 - **Don't** ship the generic SaaS/Bootstrap/AI-blog-starter default look — if it

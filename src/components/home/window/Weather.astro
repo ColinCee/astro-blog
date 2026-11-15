@@ -1,0 +1,193 @@
+---
+// The window's Glasgow panel: the temperature now, the sky in a word or two,
+// and today hour by hour as one line with "now" marked on it. All of it is
+// live (window/weather.ts asks open-meteo), so the page ships dashes and an
+// empty plot, in boxes already the size of the answer: nothing moves when it
+// lands, and without the script or the network the panel says so and stays
+// as it is.
+import Panel from "./Panel.astro";
+import Plot from "./Plot.astro";
+---
+
+<Panel name="wx" title="glasgow" class="pn--wx">
+  {/* "live" or "offline"; over the plot, the hour under the pointer. */}
+  <span slot="tr" class="lbl lbl--tr" data-wx-note></span>
+  {/* Why the panel is dashes where the script never started. */}
+  <span slot="tr" class="lbl lbl--tr wx__nojs">needs javascript</span>
+  <div class="wx">
+    <div class="wx__now" data-dim>
+      <p class="wx__temp"><span data-wx-temp>–</span><small>°C</small></p>
+      <p class="wx__text" data-wx-text></p>
+    </div>
+    <div class="wx__chart" data-dim aria-hidden="true">
+      <div class="wx__yax">
+        <span data-wx-hi></span>
+        <span data-wx-lo></span>
+      </div>
+      <Plot viewBox="0 0 230 100" wait class="wx__plot" data-wx-plot>
+        <path class="plot__area" data-wx-area d=""></path>
+        <path class="plot__line" data-wx-line d=""></path>
+        <Fragment slot="marks">
+          <i class="plot__end wx__here" data-wx-here hidden><b>now</b></i>
+          <i class="plot__cross" data-wx-cross hidden></i>
+          <i class="plot__dot" data-wx-dot hidden></i>
+        </Fragment>
+      </Plot>
+      {/* 24 readings, so hour h sits at h / 23 of the way across. */}
+      <div class="wx__ticks">
+        <span style="left:0">00</span>
+        <span style="left:26.087%">06</span>
+        <span style="left:52.174%">12</span>
+        <span style="left:78.261%">18</span>
+      </div>
+    </div>
+  </div>
+</Panel>
+
+<style>
+  .pn.pn--wx {
+    grid-area: wx;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Shown only where the window's script never started: data-live is the
+     first thing it sets and data-ready the mark that it is running. */
+  .wx__nojs {
+    display: none;
+  }
+  :global(.win__app:not([data-live], [data-ready])) .wx__nojs {
+    display: block;
+  }
+  .wx {
+    flex: 1;
+    display: flex;
+    gap: 1.4rem;
+    align-items: stretch;
+    min-height: 5.2rem;
+  }
+  /* A set width, wide enough for all but the longest sky ("freezing
+     drizzle" takes two lines): the plot beside it must not move when the
+     words arrive. */
+  .wx__now {
+    flex: none;
+    align-self: center;
+    width: 6.6rem;
+  }
+  .wx__temp {
+    font-family: var(--head);
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+  }
+  .wx__temp small {
+    margin-left: 0.1em;
+    font-size: 0.6em;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--muted);
+  }
+  /* One line kept for the words before they arrive. */
+  .wx__text {
+    min-height: 1.5em;
+    margin-top: 0.15rem;
+    color: var(--muted);
+  }
+  .wx__chart {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: minmax(3rem, 1fr) auto;
+    column-gap: 0.5rem;
+    padding-top: 0.75rem; /* room for "now" over a reading at the day's high */
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  /* Wide enough for "10°" before the scale is known, for the same reason. */
+  .wx__yax {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 3ch;
+    margin-block: -0.35rem;
+    line-height: 1;
+    text-align: right;
+    color: var(--win-num);
+  }
+  .wx__plot {
+    cursor: crosshair;
+    touch-action: pan-y;
+  }
+  .wx__here b {
+    position: absolute;
+    left: 50%;
+    bottom: 0.6rem;
+    transform: translateX(-50%);
+    padding: 1px 0.25em;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--muted);
+  }
+  /* The script steps the label to whichever side the line leaves clear, and
+     where it lands on the dashed top line it breaks the line, as the border
+     labels do. */
+  .wx__here[data-seat="l"] b {
+    transform: translateX(calc(-100% + 3px));
+  }
+  .wx__here[data-seat="r"] b {
+    transform: translateX(-3px);
+  }
+  .wx__here.is-cut b {
+    background: var(--win-bg);
+  }
+  /* While the pointer reads an hour, the readout in the border sits right
+     above this label: step aside so the two never stack. Only for a pointer
+     that hovers: a tap leaves a plot hovered with no hour read. */
+  @media (hover: hover) {
+    .wx__plot:hover .wx__here b {
+      visibility: hidden;
+    }
+  }
+  .wx__ticks {
+    grid-column: 2;
+    position: relative;
+    height: 1.1rem;
+    color: var(--win-date);
+  }
+  .wx__ticks span {
+    position: absolute;
+    top: 0.3rem;
+    line-height: 1;
+    transform: translateX(-50%);
+  }
+  .wx__ticks span:first-child {
+    transform: none;
+  }
+
+  /* Beside fastfetch, fastfetch sets the row's height: this panel's least
+     height has to be under fastfetch's three rows, or it would stretch
+     fastfetch and leave space under them. So the reading gives the row no
+     height of its own: it is centred on the row, and a sky that takes two
+     lines runs evenly into the panel's padding. */
+  @media (min-width: 46rem) and (max-width: 79.99rem) {
+    .wx {
+      min-height: 0;
+    }
+    .wx__now {
+      display: grid;
+      grid-auto-rows: max-content;
+      align-content: center;
+      height: 0;
+    }
+    .wx__chart {
+      grid-template-rows: minmax(2.2rem, 1fr) auto;
+    }
+  }
+  @media (max-width: 45.99rem) {
+    .wx {
+      gap: 1rem;
+    }
+  }
+</style>

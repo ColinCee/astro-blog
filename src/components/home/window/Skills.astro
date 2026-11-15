@@ -1,0 +1,126 @@
+---
+// The window's skills panel: one block for each year a skill has been in
+// use, every row on the same axis from the earliest start to this year, so
+// the rows compare by eye. Years of use are real numbers (now − since), not
+// invented scores. Data: src/data/skills.json.
+
+import { homeSkills, thisYear } from "./data";
+import Panel from "./Panel.astro";
+
+const skills = await homeSkills();
+const from = Math.min(...skills.map((s) => s.since));
+// One column a year, the first year to last year: this year's block would be
+// a year that has not been worked yet.
+const years = Array.from({ length: thisYear - from }, (_, c) => from + c);
+---
+
+<Panel name="skills" title="skills" class="pn--skills">
+  {/* Says what a block is; hovering a row, the script puts that row's start
+       here instead. Screen readers get each start in its row. */}
+  <span slot="tr" class="lbl lbl--tr" data-sk-note aria-hidden="true">
+    one block a year
+  </span>
+  <ul class="sk" style={`--n:${years.length}`}>
+    {skills.map((s) => (
+      <li class="sk__row" data-note={`${s.id} since ${s.since}`}>
+        <span class="sk__name" data-dim>
+          {s.id}
+        </span>
+        <span class="sk__bar" aria-hidden="true">
+          {years.map((y, c) =>
+            y >= s.since ? (
+              <i class="sk__cell" style={`--c:${c}`} />
+            ) : (
+              <i class="sk__gap" />
+            ),
+          )}
+        </span>
+        <span class="sr-only">since {s.since},</span>
+        <span class="sk__y" data-dim>
+          {s.years}y
+        </span>
+      </li>
+    ))}
+  </ul>
+  <div class="sk__axis" data-dim aria-hidden="true">
+    <span class="sk__ticks">
+      <span>{from}</span>
+      <span>{thisYear}</span>
+    </span>
+  </div>
+</Panel>
+
+<style>
+  .pn.pn--skills {
+    grid-area: skills;
+  }
+  .sk {
+    display: grid;
+  }
+  .sk__row,
+  .sk__axis {
+    display: grid;
+    /* rem, not ch: the axis row is set smaller and must share these columns */
+    grid-template-columns: 7.9rem minmax(0, 1fr) 1.5rem;
+    column-gap: 0.8rem;
+    align-items: center;
+    margin-inline: calc(var(--win-pad) * -1);
+    padding: 0.18rem var(--win-pad);
+  }
+  .sk__row:hover {
+    background: var(--win-sel);
+  }
+  .sk__name {
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .sk__row:hover .sk__name {
+    color: var(--ink);
+  }
+  .sk__bar {
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    column-gap: 3px;
+    height: 0.82rem;
+    padding: 1.5px;
+  }
+  .sk__cell {
+    border-radius: 2px;
+    background: var(--n10);
+    transition: opacity var(--dur-base) var(--ease-out)
+      calc(var(--c, 0) * var(--stagger));
+  }
+  /* A year before the skill began: a dot, so the axis still reads across. */
+  .sk__gap {
+    place-self: center;
+    width: 2.6px;
+    height: 2.6px;
+    border-radius: 50%;
+    background: var(--n8);
+  }
+  /* In the opening round the blocks arrive year by year. */
+  :global(.win__app.is-boot) .pn--skills:not(.is-on) .sk__cell {
+    opacity: 0;
+  }
+  .sk__y {
+    text-align: right;
+  }
+  .sk__axis {
+    padding-top: 0.2rem;
+    padding-bottom: 0;
+    font-size: 0.6875rem;
+    color: var(--win-date);
+  }
+  .sk__ticks {
+    grid-column: 2;
+    display: flex;
+    justify-content: space-between;
+    padding-inline: 1.5px;
+  }
+  @media (max-width: 45.99rem) {
+    .sk__row,
+    .sk__axis {
+      column-gap: 0.6rem;
+    }
+  }
+</style>

@@ -1,0 +1,412 @@
+---
+// The window's project picker: one line a project, as the writing list is
+// one line a post, and under the list a readout of what else in the window
+// belongs to the open one (its posts, its live numbers). The open project's
+// figure is the panel beside it (Figures.astro).
+//
+// It only shows where it can work: with the script, at 60rem and wider.
+// Anywhere else the projects are the stack of figure panels and this is not
+// displayed. All five readouts are in the page and the script shows one, so
+// it never builds markup; the live numbers are dashes until they are real.
+import cards from "../../../data/anki-cards.json";
+import {
+  flightCounts,
+  type HomeProject,
+  homeProjects,
+  homeStacks,
+} from "./data";
+import Panel from "./Panel.astro";
+
+const projects = await homeProjects();
+const stacks = await homeStacks();
+
+// One readout cell: a large value, a label and a smaller line under it. A
+// value that only the browser knows names its hook instead.
+interface Cell {
+  v?: string | number;
+  unit?: string;
+  /** A number from /homelab.json, by its key. */
+  stat?: string;
+  /** "ttfb": this visit's first byte. "card": which Anki card is showing. */
+  hook?: "ttfb" | "card";
+  l: string;
+  s?: string;
+  /** The small line is dates, so it takes their hue. */
+  dates?: boolean;
+}
+
+const said = (a: string[]) =>
+  a.length > 1 ? `${a.slice(0, -1).join(", ")} and ${a.at(-1)}` : a.join("");
+// A project's posts: how many, and which rows of the writing list they are.
+const written = (p: HomeProject, which?: string): Cell[] =>
+  p.tied.length
+    ? [
+        {
+          v: p.tied.length,
+          unit: p.tied.length === 1 ? "post" : "posts",
+          l: "in writing",
+          s: which ?? p.tied.map((t) => t.date).join(", "),
+          dates: !which,
+        },
+      ]
+    : [];
+
+const cells = (p: HomeProject): Cell[] => {
+  switch (p.id) {
+    case "dissertation": {
+      if (!p.tied.length) return [];
+      // The write-up is numbered in its titles ("Part 1: …"); if a title
+      // ever is not, the posts go by their dates like any other project's.
+      const parts = p.tied
+        .map((t) => /^Part (\d+)/.exec(t.title)?.[1] ?? "")
+        .sort();
+      return [
+        ...written(p, parts.every(Boolean) ? `part ${said(parts)}` : undefined),
+        {
+          v: p.tied.reduce((n, t) => n + t.minutes, 0),
+          unit: "min",
+          l: "to read",
+          s: p.tied.length === 3 ? "all three" : "all of them",
+        },
+      ];
+    }
+    case "flight-tracker":
+      return flightCounts.map((c) => ({
+        stat: c.stat,
+        l: c.label,
+        s: c.where,
+      }));
+    case "home-lab": {
+      // A project that runs on the lab and is one of its stacks by name.
+      const one = p.related.find((id) => stacks.some((s) => s.id === id));
+      return [
+        {
+          v: stacks.length,
+          unit: stacks.length === 1 ? "stack" : "stacks",
+          l: "on one mini-PC",
+          s: one && `${one} is one`,
+        },
+        ...written(p),
+      ];
+    }
+    case "anki-chinese":
+      return [
+        {
+          hook: "card",
+          unit: `of ${cards.length}`,
+          l: "card shown",
+          s: "from the deck",
+        },
+        ...written(p),
+      ];
+    case "colincheung.dev":
+      return [
+        { hook: "ttfb", unit: "ms", l: "your first byte", s: "this visit" },
+        ...written(p, p.posts === "*" ? "all of them" : undefined),
+      ];
+    default:
+      return written(p);
+  }
+};
+---
+
+<Panel name="pick" title="projects" class="pn--pick">
+  {/* The key hints in the border are drawn for the eye; this says the same
+       aloud. */}
+  <span class="sr-only" id="win-pick-keys">
+    Arrow keys select a project. Enter opens the selected project's link.
+  </span>
+  <div
+    class="pk"
+    role="tablist"
+    aria-labelledby="win-pick"
+    aria-describedby="win-pick-keys"
+    aria-orientation="vertical"
+    data-pk
+  >
+    {projects.map((p, i) => (
+      <button
+        class:list={["pk__row", { "is-sel": i === 0 }]}
+        type="button"
+        role="tab"
+        id={`win-tab-${i}`}
+        aria-controls={`win-fig-${i}`}
+        aria-selected={i === 0 ? "true" : "false"}
+        tabindex={i === 0 ? 0 : -1}
+        data-pick={p.id}
+        data-posts={p.posts}
+        data-with={p.related.join(" ") || undefined}
+        data-dim
+        style={`--i:${i}`}
+      >
+        <span class="pk__n" aria-hidden="true">
+          {i + 1}
+        </span>
+        <span class="pk__name">{p.id}</span>
+        <span class="pk__sub">{p.desc}</span>
+      </button>
+    ))}
+  </div>
+  <div class="rv" data-dim style={`--i:${projects.length}`}>
+    {projects.map((p, i) => (
+      <div data-rv={p.id} hidden={i > 0}>
+        <span class="lbl lbl--t rv__t">{p.id}</span>
+        {/* What it runs on; for the flight tracker, also how fresh its
+             counts are. */}
+        {(p.runsOn || p.id === "flight-tracker") && (
+          // biome-ignore format: the two parts read as one phrase
+          <span class="lbl lbl--tr rv__note">{p.id === "flight-tracker" && <span data-stats-age />}{p.runsOn && <span class="rv__more">runs on {p.runsOn}</span>}</span>
+        )}
+        <div class="rv__cells">
+          {cells(p).map((c) => (
+            <p class="rv__cell">
+              {/* biome-ignore format: a line break would show as a space before the unit */}
+              <span class="rv__v">{c.stat ? <span class="rv__live" data-stat={c.stat}>–</span> : c.hook === "ttfb" ? <span class="rv__live" data-ttfb>–</span> : c.hook === "card" ? <span data-card-at>1</span> : c.v}{c.unit && <small>{c.unit}</small>}</span>
+              {/* biome-ignore format: the same */}
+              <span class="rv__l">{c.l}<i class:list={{ "is-dates": c.dates }}>{c.s}</i></span>
+            </p>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+  {/* biome-ignore format: no spaces but the labels' own margins */}
+  <span slot="bl" class="lbl lbl--bl pk__keys" aria-hidden="true"
+    ><kbd
+      ><svg viewBox="0 0 8 10" aria-hidden="true">
+        <path d="M4 9V1.2M1 4.2l3-3 3 3" />
+      </svg></kbd
+    ><kbd
+      ><svg viewBox="0 0 8 10" aria-hidden="true">
+        <path d="M4 1v7.8M1 5.8l3 3 3-3" />
+      </svg></kbd
+    ><span>select</span><kbd>enter</kbd><span>open</span></span
+  >
+  <span slot="br" class="lbl lbl--br" data-pk-pos aria-hidden="true">
+    1 of {projects.length}
+  </span>
+</Panel>
+
+<style>
+  /* Under the left column, on the same split as the panels above, so the
+     seam runs from the title bar to the bottom of the window. The rows run
+     edge to edge, as the writing list's do. */
+  .pn.pn--pick {
+    display: none;
+    margin-top: 0.65rem;
+    padding: 0.95rem 0 0;
+    container: win-pick / inline-size;
+  }
+  @media (min-width: 60rem) {
+    :global(.win__app[data-live]) .pn.pn--pick {
+      grid-area: pick;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+  .pk {
+    flex: 1;
+    display: grid;
+    grid-auto-rows: 1fr;
+  }
+  .pk__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.4ch max-content minmax(0, 1fr);
+    column-gap: 1.6ch;
+    align-content: center;
+    align-items: baseline;
+    min-height: 2.5rem;
+    padding: 0.45rem var(--win-pad);
+    border: 0;
+    border-radius: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+  }
+  .pk__n {
+    font-size: 0.75rem;
+    color: var(--win-num);
+  }
+  .pk__name {
+    font-size: 0.875rem;
+    color: var(--muted);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .pk__sub {
+    overflow: hidden;
+    font-family: var(--grotesk);
+    font-size: 0.8125rem;
+    letter-spacing: -0.005em;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--faint);
+  }
+  .pk__row:hover .pk__name,
+  .pk__row.is-sel .pk__name {
+    color: var(--ink);
+  }
+  .pk__row.is-sel {
+    background: var(--win-sel);
+  }
+  .pk__row.is-sel .pk__sub {
+    color: var(--muted);
+  }
+  :global(.pn--pick.is-focus) .pk__row.is-sel {
+    background: color-mix(in oklab, var(--n12) 9%, transparent);
+  }
+  /* Keyboard focus is a thin accent line on the row, not a second purple
+     panel. */
+  .pk__row:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: -3px;
+    border-radius: 2px;
+  }
+
+  /* The arrow keys are the list's only while it holds the keyboard, so the
+     hint lights up then and rests with the other small print otherwise. */
+  .pk__keys {
+    display: inline-flex;
+    align-items: center;
+  }
+  @media (hover: none) {
+    .pk__keys {
+      display: none;
+    }
+  }
+  .pk__keys kbd {
+    display: inline-flex;
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .pn--pick:not(:focus-within) .pk__keys kbd {
+    color: inherit;
+  }
+  .pk__keys kbd + kbd {
+    margin-left: 0.7ch;
+  }
+  .pk__keys svg {
+    width: 0.62em;
+    height: 0.8em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    overflow: visible;
+  }
+
+  /* The readout: what else in this window belongs to the open project. Its
+     results are already rows of the writing list, so they are not said
+     again. */
+  .rv {
+    position: relative;
+    margin-top: 0.7rem;
+    padding: 1.05rem var(--win-pad) 1.1rem;
+    border-top: 1px solid var(--win-line);
+  }
+  .rv__t {
+    color: var(--win-path);
+  }
+  /* The project's name on the left is longer than a panel's title. */
+  .rv__note {
+    max-width: calc(100% - 8.2rem);
+  }
+  [data-stats-age]:not(:empty) + .rv__more::before {
+    content: " · ";
+  }
+  .rv__cells {
+    display: flex;
+    gap: 0.5rem 2.4rem;
+    min-height: 4.4rem;
+  }
+  .rv__cell {
+    display: grid;
+    align-content: start;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+  .rv__v {
+    font-family: var(--head);
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+  .rv__v small {
+    margin-left: 0.25em;
+    font-size: 0.6em;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--muted);
+  }
+  /* A live number that is still a dash. */
+  .rv__live:not(.is-set) {
+    font-weight: 300;
+    color: var(--faint);
+  }
+  .rv__l {
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+  .rv__l i {
+    display: block;
+    font-style: normal;
+    color: var(--faint);
+  }
+  .rv__l .is-dates {
+    color: var(--win-date);
+  }
+
+  /* A narrow picker (beside its figure on a small laptop): each name over
+     its line, and the readout as two rows, each number with its label
+     beside it. A project with one row keeps the height of two (each two
+     lines of its label, and the gap), so the list above never moves as the
+     selection does. */
+  @container win-pick (max-width: 26rem) {
+    .rv {
+      padding-block: 1rem 1.05rem;
+    }
+    .rv__cells {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      align-content: start;
+      gap: 0.6rem 1rem;
+      min-height: calc(4 * 1.45 * 0.6875rem + 0.6rem);
+    }
+    .rv__cell {
+      grid-template-columns: subgrid;
+      grid-column: 1 / -1;
+      column-gap: min(1rem, 4.4cqi);
+      align-items: center;
+    }
+    .rv__v {
+      min-width: 2.2rem;
+      font-size: clamp(1.05rem, 6.6cqi, 1.2rem);
+    }
+    .rv__l {
+      font-size: 0.6875rem;
+    }
+  }
+  @container win-pick (max-width: 24.5rem) {
+    .rv__more {
+      display: none;
+    }
+    .rv__note:has([data-stats-age]:empty) {
+      display: none;
+    }
+  }
+  @container win-pick (max-width: 23rem) {
+    .pk__row {
+      grid-template-columns: 1.4ch minmax(0, 1fr);
+    }
+    .pk__sub {
+      grid-column: 2;
+      text-align: left;
+    }
+  }
+</style>

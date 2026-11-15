@@ -1,0 +1,339 @@
+---
+// The homepage's set piece: one terminal window, titled ~/ColinOS, holding a
+// grid of hairline panels with their titles set into the borders. Who I am
+// down the left (fastfetch, skills, Glasgow's weather), what I wrote on the
+// right, and the projects under both. One panel at a time has the focus, the
+// window's one purple. Each panel is a component in window/; this file is the
+// frame, the grid they sit in and the few rules they all share.
+//
+// Everything is in the HTML. The scripts (window/main.ts) only change text,
+// attributes and classes, so without them the window is whole and at rest:
+// every post listed, and the five projects one under another.
+import Fetch from "./window/Fetch.astro";
+import Figures from "./window/Figures.astro";
+import Picker from "./window/Picker.astro";
+import Skills from "./window/Skills.astro";
+import Weather from "./window/Weather.astro";
+import Writing from "./window/Writing.astro";
+---
+
+<section
+  class="win"
+  aria-label="Colin at a glance and his projects, as one terminal app"
+>
+  <div class="win__bar">
+    <span class="win__dots" aria-hidden="true">
+      <i></i>
+      <i></i>
+      <i></i>
+    </span>
+    <span>~/ColinOS</span>
+  </div>
+
+  <div class="win__app">
+    {/* Sets the window's starting state before the first paint, so nothing
+         is seen to change when the module script arrives:
+         - data-live: scripts run here. The projects are a picker (one figure
+           open beside a list) only under .win__app[data-live] at 60rem and
+           wider; without it they are five panels one under another.
+         - is-boot: the opening round is about to play, so the panels wait
+           dimmed for the focus to reach them.
+         - is-armed: figures wait blank and draw when they come on screen.
+         The last two only where motion is allowed.
+
+         Then it watches for the module (data-ready is its mark, set once it
+         has started). Late is not failed: after 4 s without it the last two
+         come off, so nothing is left dim or blank, and the layout stays as it
+         is for when the module does arrive. data-live comes off only when
+         there is no module to wait for: it or one of its imports failed to
+         load, or it is still not here after 20 s. The module never puts
+         data-live back, so the page moves once at most.
+
+         The error listener: a script that fails to load says so on its own
+         element, and the module's is the only one inside the window. */}
+    <script is:inline>
+      {
+        const app = document.currentScript.parentElement;
+        app.dataset.live = "";
+        if (
+          !matchMedia("(prefers-reduced-motion: reduce)").matches &&
+          "IntersectionObserver" in window
+        )
+          app.classList.add("is-boot", "is-armed");
+        const ready = () => "ready" in app.dataset;
+        const show = () => app.classList.remove("is-boot", "is-armed");
+        const off = () => {
+          if (ready()) return;
+          show();
+          delete app.dataset.live;
+        };
+        setTimeout(() => ready() || show(), 4000);
+        setTimeout(off, 20000);
+        app.parentElement.addEventListener(
+          "error",
+          (e) => e.target.tagName === "SCRIPT" && off(),
+          true,
+        );
+      }
+    </script>
+    <Fetch />
+    <Skills />
+    <Weather />
+    <Writing />
+    <Picker />
+    <Figures />
+  </div>
+
+  {/* Inside the window, so the inline script above hears it fail to load. */}
+  <script>
+    import "./window/main";
+  </script>
+</section>
+
+<style>
+  .win {
+    --win-bg: var(--n2);
+    --win-line: color-mix(in oklab, var(--n12) 17%, transparent);
+    --win-sel: color-mix(in oklab, var(--n12) 6%, transparent);
+    --win-pad: 0.9rem;
+    /* The tile behind the favicon's bars: the page colour, as the tab has it. */
+    --win-tile: var(--n1);
+    /* The code theme's hues, used as a highlighter would: keys, dates and
+       time axes, quantities, paths. Small print only; never a title, a
+       result or a fill. */
+    --win-key: var(--syn-type);
+    --win-date: var(--syn-fn);
+    --win-num: var(--syn-num);
+    --win-path: var(--syn-str);
+
+    max-width: var(--w-poster);
+    margin: 0 auto;
+    background: var(--win-bg);
+    border-radius: var(--r);
+    overflow: clip; /* clip, not hidden: the phone readout sticks to the viewport */
+    animation: rise var(--dur-slow) var(--ease-out) var(--stagger) both;
+  }
+  :global(:root[data-theme="light"]) .win {
+    --win-tile: var(--n3);
+  }
+  .win__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 1rem;
+    background: var(--panel);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .win__dots {
+    display: inline-flex;
+    gap: 0.42rem;
+  }
+  .win__dots i {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--n6);
+  }
+
+  /* One grid of panels. Wide: the left column beside writing, then the
+     project picker and its figure on the same split, so the seam runs from
+     the title bar to the bottom of the window. */
+  .win__app {
+    display: grid;
+    grid-template-columns: minmax(0, 0.58fr) minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr auto;
+    /* biome-ignore lint/correctness/noInvalidGridAreas: every row has the same cells; Biome misreads strings in .astro styles */
+    grid-template-areas: "who writing" "skills writing" "wx writing" "pick fig";
+    gap: 0.75rem 0.5rem;
+    padding: 1rem 0.6rem 0.95rem;
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Narrower: fastfetch beside Glasgow, skills across, then writing. Three
+     tracks, so the top row keeps its 1.15 : 1 split and the picker and its
+     figure keep theirs (0.58 : 1) in the last. */
+  @media (max-width: 79.99rem) {
+    .win__app {
+      grid-template-columns:
+        minmax(0, 0.367fr) minmax(0, 0.168fr)
+        minmax(0, 0.465fr);
+      grid-template-rows: auto;
+      /* biome-ignore lint/correctness/noInvalidGridAreas: every row has the same cells; Biome misreads strings in .astro styles */
+      grid-template-areas: "who who wx" "skills skills skills" "writing writing writing" "pick fig fig";
+    }
+  }
+  /* Under 60rem there is no picker: the projects follow writing as panels in
+     rows of their own, so the grid names no place for them. */
+  @media (max-width: 59.99rem) {
+    .win__app {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      /* biome-ignore lint/correctness/noInvalidGridAreas: every row has the same cells; Biome misreads strings in .astro styles */
+      grid-template-areas: "who wx" "skills skills" "writing writing";
+    }
+  }
+  @media (max-width: 45.99rem) {
+    .win {
+      --win-pad: 0.75rem;
+    }
+    .win__app {
+      grid-template-columns: minmax(0, 1fr);
+      /* biome-ignore lint/correctness/noInvalidGridAreas: one cell per row; Biome misreads strings in .astro styles */
+      grid-template-areas: "who" "skills" "wx" "writing";
+      padding-inline: 0.5rem;
+    }
+  }
+</style>
+
+{/* The rules every panel shares, global because their elements are written
+     in other components: the labels set into borders, the focus, the opening
+     round's dimming. Each starts at .win, so none reaches past the window. */}
+<style is:global>
+  /* A label set into a border: it sits on the line and covers it with the
+     window's colour. --t top left (a panel's title), --tr top right (a
+     readout or a control), --bl bottom left (key hints), --br bottom right
+     (a position or a link). :where keeps these light, so a label's own class
+     can restyle it from any component. */
+  :where(.win) .lbl {
+    position: absolute;
+    margin: 0;
+    padding: 0 0.5rem;
+    background: var(--win-bg);
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--faint);
+  }
+  :where(.win) .lbl:empty {
+    display: none;
+  }
+  :where(.win) .lbl--t {
+    top: 0;
+    left: 0.6rem;
+    transform: translateY(-55%);
+  }
+  :where(.win) .lbl--tr {
+    top: 0;
+    right: 0.6rem;
+    max-width: calc(100% - 6.5rem);
+    /* Cut along the line only, which is all the ellipsis needs: hidden also
+       cut the tails off g, p and y on this 11px line. */
+    overflow-x: clip;
+    overflow-y: visible;
+    text-overflow: ellipsis;
+    transform: translateY(-55%);
+  }
+  :where(.win) .lbl--bl {
+    bottom: 0;
+    left: 0.6rem;
+    transform: translateY(50%);
+  }
+  :where(.win) .lbl--br {
+    bottom: 0;
+    right: 0.6rem;
+    transform: translateY(50%);
+  }
+  :where(.win) .lbl--bl kbd {
+    font: inherit;
+    color: var(--ink);
+  }
+  :where(.win) .lbl--bl span {
+    margin: 0 0.9ch 0 0.6ch;
+  }
+  /* A label that is a control: padded so the target and the focus ring are a
+     box, not a sliver, while only its line of text cuts the border. The
+     shift keeps that text level with the other labels. */
+  :where(.win) :is(a, button).lbl {
+    border: 0;
+    padding-block: 0.45rem;
+    background:
+      linear-gradient(var(--win-bg), var(--win-bg)) center / 100% 1.2em
+      no-repeat;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color var(--dur-fast) var(--ease);
+  }
+  :where(.win) :is(a, button).lbl:hover {
+    color: var(--ink);
+  }
+  :where(.win) :is(a, button).lbl:focus-visible {
+    outline-offset: 1px;
+  }
+  :where(.win) :is(a, button).lbl--tr {
+    transform: translateY(-52%);
+  }
+  /* In the bottom border a link is where the thing lives: a path. */
+  :where(.win) a.lbl--br {
+    max-width: calc(100% - 1.2rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--win-path);
+    transform: translateY(52%);
+  }
+
+  /* The focused panel: the window's one accent. */
+  .win .pn.is-focus {
+    border-color: color-mix(in oklch, var(--accent) 72%, transparent);
+  }
+  .win .pn.is-focus > .pn__t {
+    color: var(--accent-text);
+  }
+  /* A phone, or anything without hover: the focus is the title alone (a
+     purple box the height of the writing list is too much there), and there
+     are no keys to hint at. */
+  @media (max-width: 45.99rem), (hover: none) {
+    .win .pn.is-focus {
+      border-color: var(--win-line);
+    }
+    :where(.win) .lbl--bl {
+      display: none;
+    }
+  }
+  /* Nor without the script, which is what listens for them. */
+  :where(.win__app:not([data-live])) .lbl--bl {
+    display: none;
+  }
+  /* On a phone the readout says the position, so the border need not. */
+  @media (max-width: 45.99rem) {
+    :where(.win) span.lbl--br {
+      display: none;
+    }
+  }
+
+  /* A row the open project is tied to (a post it is written up in, a project
+     it runs on): a short grey length at the row's left, switched on by the
+     lower half (is-rel) while the projects have the focus. */
+  .win :is(.wr__row, .pk__row)::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 5px;
+    width: 2px;
+    background: var(--n11);
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease);
+  }
+  .win :is(.wr__row, .pk__row).is-rel::before {
+    opacity: 1;
+  }
+
+  /* The opening round: every panel is there, dimmed, and fills as the focus
+     reaches it (is-on). Anything marked data-dim takes part; --i is its turn
+     within its panel. */
+  .win [data-dim] {
+    transition: opacity var(--dur-slow) var(--ease-out)
+      calc(var(--i, 0) * var(--stagger));
+  }
+  .win .is-boot .pn:not(.is-on) [data-dim] {
+    opacity: 0.28;
+  }
+
+  .win [hidden] {
+    display: none !important;
+  }
+</style>

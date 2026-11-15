@@ -21,7 +21,7 @@ const blog = defineCollection({
 // back sorted by id, so each entry carries its place on the page as `order`.
 const order = z.number().int();
 
-// Side projects, one entry in the homepage's picker each. The id is the
+// Side projects, one entry in the home window's picker each. The id is the
 // project's name; `repo` is where it lives, linked under its figure.
 const projects = defineCollection({
   loader: file("src/data/projects.json"),
@@ -33,6 +33,11 @@ const projects = defineCollection({
     desc: z.string(),
     // The caption over the project's figure
     caption: z.string(),
+    // The posts that write the project up: what their slugs start with, or
+    // "*" for every post. Only ties that are plainly true (see Colin first).
+    posts: z.string().optional(),
+    // The id of the project this one runs on.
+    runsOn: z.string().optional(),
   }),
 });
 
@@ -42,13 +47,13 @@ const companies = defineCollection({
   schema: z.object({ order, name: z.string(), year: z.string() }),
 });
 
-// The whoami pane's `top`: each skill and the year I started using it.
+// The home window's skills panel: each skill and the year I started using it.
 const skills = defineCollection({
   loader: file("src/data/skills.json"),
   schema: z.object({ since: z.number().int() }),
 });
 
-// The home-lab tile: the Compose stacks, as in the homelab repo.
+// The home lab's figure: the Compose stacks, as in the homelab repo.
 const homelabStacks = defineCollection({
   loader: file("src/data/homelab-stacks.json"),
   schema: z.object({ order, services: z.string() }),

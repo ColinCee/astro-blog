@@ -5,7 +5,8 @@
     "repo": "github.com/ColinCee/GVGAI-Dissertation",
     "href": "https://github.com/ColinCee/GVGAI-Dissertation",
     "desc": "game AI, 2018 and 2026",
-    "caption": "reward over time"
+    "caption": "reward over time, sketched",
+    "posts": "dissertation-revival-"
   },
   {
     "id": "flight-tracker",
@@ -13,7 +14,8 @@
     "repo": "flight-tracker-at-home.pages.dev",
     "href": "https://flight-tracker-at-home.pages.dev",
     "desc": "London airspace, live",
-    "caption": "london airspace · radar simulated here"
+    "caption": "london airspace · radar simulated here",
+    "runsOn": "home-lab"
   },
   {
     "id": "home-lab",
@@ -37,6 +39,7 @@
     "repo": "github.com/ColinCee/astro-blog",
     "href": "https://github.com/ColinCee/astro-blog",
     "desc": "this site",
-    "caption": "how this page reached you"
+    "caption": "how this page reached you",
+    "posts": "*"
   }
 ]

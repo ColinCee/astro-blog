@@ -21,7 +21,7 @@ Static, fast, and every post leads with the number it's about.
 
 ## Inside
 
-- **Homepage:** a terminal that types `whoami`, lists the latest posts with their results, and shows live figures from the home lab.
+- **Homepage:** one terminal window of panels: who I am, every post with its result, the weather in Glasgow, and five projects as figures, with live numbers from the home lab.
 - **Writing:** MDX posts with figures that draw themselves in, and code blocks themed to match.
 - **CV:** one page that prints clean on white.
 - **Dark first**, with a light theme a click away.
@@ -47,7 +47,7 @@ Node and pnpm versions are pinned in `package.json`.
 | `pnpm test` | The Playwright tests (layout, type, motion, home lab) on a dev server |
 | `pnpm speed` | Build, then the per-page speed budgets |
 | `pnpm preview` | Build, then serve it through the Worker locally |
-| `pnpm format` | Lint-fix and format with Biome |
+| `pnpm format` | Lint-fix and format with Biome, and wrap post prose at 100 columns |
 | `pnpm og` | Render each post's social card |
 | `pnpm run deploy` | Build and deploy to Cloudflare |
 

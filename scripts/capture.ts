@@ -22,7 +22,7 @@
 // Before and after, as shipped, each on its own port:
 //   git worktree add --detach ../before <ref>     (then in ../before:)
 //   pnpm install --frozen-lockfile && pnpm astro build && pnpm astro preview --port 4401
-//   pnpm record http://localhost:4401 <tmp>/before / --scroll .term   (same for after)
+//   pnpm record http://localhost:4401 <tmp>/before / --scroll .win   (same for after)
 //   pnpm compare <tmp>/before/phone.mp4 <tmp>/after/phone.mp4 <tmp>/phone.mp4
 //   then stop the servers and `git worktree remove` the copies.
 //

@@ -1,0 +1,320 @@
+---
+// The window's writing panel: every post as one line of a long listing
+// (date, read time, title, result), newest first, and under the list a
+// readout that restates the selected post's result large. All of it comes
+// from the posts' frontmatter (window/data.ts), so a new post is a new row.
+//
+// The page ships with the newest post selected and its readout filled, which
+// is what shows without the script; window/writing.ts moves the selection.
+import StatArrow from "../../site/StatArrow.astro";
+import Arrow from "./Arrow.astro";
+import { homePosts } from "./data";
+import Panel from "./Panel.astro";
+
+const posts = await homePosts();
+const first = posts[0];
+// Rows fade up one after another in the opening round; past a dozen they
+// arrive together, so a long list is not still arriving seconds later.
+const turn = (i: number) => `--i:${Math.min(i, 12)}`;
+---
+
+<Panel name="writing" title="writing" class="pn--writing">
+  <a slot="tr" class="lbl lbl--tr" href="/blog/"
+    >all {posts.length} posts<Arrow dir="e" /></a
+  >
+  <ol class="wr">
+    {posts.map((p, i) => (
+      <>
+        {i > 0 && p.year !== posts[i - 1].year && (
+          <li class="wr__year" data-dim style={turn(i)} aria-hidden="true">
+            <span>{p.year}</span>
+            <i />
+          </li>
+        )}
+        <li>
+          {/* biome-ignore format: a line break inside a cell would show as a space beside the value */}
+          <a class:list={["wr__row", { "is-sel": i === 0 }]} href={p.href} data-post data-dim style={turn(i)} data-slug={p.slug} data-label={p.label} data-meta={`${p.date} ${p.year} · ${p.minutes} min read`}>
+            <span class="wr__date">{p.date}</span>
+            <span class="wr__read">{p.minutes}<i> min</i><span class="sr-only"> read</span></span>
+            <span class="wr__title">{p.title}</span>
+            <span class="wr__stat">{p.before && <span class="wr__was">{p.before}<StatArrow /></span>}{p.after && <b>{p.after}</b>}{p.label && <span class="sr-only">, {p.label.replaceAll("→", "to")}</span>}</span>
+          </a>
+        </li>
+      </>
+    ))}
+  </ol>
+  {first && (
+    <div class="pv" aria-hidden="true" data-dim style={turn(posts.length)}>
+      <span class="lbl lbl--t pv__slug" data-pv-slug>
+        {first.slug}
+      </span>
+      <span class="lbl lbl--tr pv__pos" data-pv-pos>
+        1 of {posts.length}
+      </span>
+      {/* biome-ignore format: empty must stay empty, so the dash for a post with no result shows */}
+      <p class="pv__stat" data-pv-stat>{first.before && <span class="wr__was">{first.before}<StatArrow /></span>}{first.after && <b>{first.after}</b>}</p>
+      <p class="pv__cap">
+        {/* biome-ignore format: no space around the arrow but its own margin */}
+        <span class="pv__label" data-pv-label>{first.label.split("→").map((part, k) => (<>{k > 0 && <StatArrow />}{part.trim()}</>))}</span>
+        <span class="pv__meta" data-pv-meta>
+          {first.date} {first.year} · {first.minutes} min read
+        </span>
+      </p>
+    </div>
+  )}
+  <span slot="bl" class="lbl lbl--bl" aria-hidden="true">
+    <kbd>j</kbd> <kbd>k</kbd><span>select</span><kbd>enter</kbd
+    ><span>open</span>
+  </span>
+  <span slot="br" class="lbl lbl--br" data-wr-pos aria-hidden="true">
+    1 of {posts.length}
+  </span>
+</Panel>
+
+<style>
+  /* The rows run edge to edge, so the selected band and the readout's rule
+     meet the frame; each pads itself instead. */
+  .pn.pn--writing {
+    grid-area: writing;
+    display: flex;
+    flex-direction: column;
+    padding-inline: 0;
+    padding-bottom: 0;
+  }
+  /* One grid for the whole list, so every row shares its columns. */
+  .wr {
+    flex: 1;
+    display: grid;
+    grid-template-columns: max-content max-content minmax(0, 1fr) max-content;
+    column-gap: 1.05rem;
+    align-content: start;
+  }
+  .wr li,
+  .wr__row {
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1 / -1;
+  }
+  .wr__row {
+    position: relative; /* for the mark of a tied project, in Window.astro */
+    align-items: baseline;
+    padding: 0.55rem var(--win-pad);
+    color: var(--ink);
+  }
+  .wr__row.is-sel {
+    background: var(--win-sel);
+  }
+  :global(.pn--writing.is-focus) .wr__row.is-sel {
+    background: color-mix(in oklab, var(--n12) 9%, transparent);
+  }
+  /* Keyboard focus is a thin accent line on the row, not a second purple
+     panel. */
+  .wr__row:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: -3px;
+    border-radius: 2px;
+  }
+  .wr__date,
+  .wr__read {
+    font-size: 0.75rem;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .wr__date {
+    color: var(--win-date);
+  }
+  .wr__read {
+    color: var(--win-num);
+  }
+  .wr__read i {
+    font-style: normal;
+    color: color-mix(in oklab, var(--win-num) 50%, var(--faint));
+  }
+  /* Titles read as prose; results stay ink, the old value grey: the window's
+     purple is its focus, and a purple number on every row would be louder. */
+  .wr__title {
+    font-family: var(--grotesk);
+    font-size: 0.875rem;
+    letter-spacing: -0.005em;
+    line-height: 1.35;
+  }
+  .wr__stat {
+    text-align: right;
+    white-space: nowrap;
+  }
+  .wr__was {
+    color: var(--faint);
+  }
+  .wr__stat b {
+    font-weight: 500;
+  }
+  .wr__year {
+    align-items: center;
+    padding: 0.2rem var(--win-pad) 0.1rem;
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .wr__year span {
+    text-align: right;
+  }
+  .wr__year i {
+    grid-column: 2 / -1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* The readout: the selected post's result, with its file name in the rule
+     above as a path. */
+  .pv {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.4rem;
+    margin-top: 0.75rem;
+    padding: 1rem var(--win-pad) 1.05rem;
+    border-top: 1px solid var(--win-line);
+  }
+  .pv__slug {
+    color: var(--win-path);
+  }
+  .pv__pos {
+    display: none;
+  }
+  .pv__stat {
+    font-family: var(--head);
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+  .pv__stat .wr__was {
+    font-weight: 300;
+  }
+  .pv__stat b {
+    font-weight: 600;
+  }
+  /* A post with no result. */
+  .pv__stat:empty::before {
+    content: "–";
+    font-weight: 300;
+    color: var(--faint);
+  }
+  .pv__cap {
+    display: grid;
+    min-width: 0;
+    font-size: 0.75rem;
+    line-height: 1.45;
+  }
+  .pv__label {
+    color: var(--muted);
+  }
+  /* Set as a word among words, so with a space's room either side. */
+  .pv__label :global(.stat-arrow) {
+    margin-inline: 0.7em !important;
+  }
+  .pv__meta {
+    color: var(--faint);
+  }
+
+  @media (max-width: 79.99rem) {
+    .wr__row {
+      padding-block: 0.42rem;
+    }
+  }
+  @keyframes win-pin {
+    from {
+      transform: translateY(100%);
+    }
+  }
+  @media (max-width: 45.99rem) {
+    /* Each post becomes two lines: the title, then its metadata and result. */
+    .wr,
+    .wr li {
+      display: block;
+    }
+    .wr__row {
+      grid-template-columns: max-content max-content minmax(0, 1fr);
+      /* biome-ignore lint/correctness/noInvalidGridAreas: every row has the same cells; Biome misreads strings in .astro styles */
+      grid-template-areas: "title title title" "date read stat";
+      gap: 0.2rem 0.9rem;
+      padding-block: 0.5rem;
+    }
+    /* A row brought into view by the keyboard stops above the pinned
+       readout (its tallest, with a label on two lines) and the fade over it,
+       not under them. */
+    .wr__row {
+      scroll-margin-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+    }
+    .wr__title {
+      grid-area: title;
+      font-size: 0.9375rem;
+    }
+    .wr__date {
+      grid-area: date;
+    }
+    .wr__read {
+      grid-area: read;
+    }
+    /* Kept to the right edge: on the narrowest phones the longest result
+       then runs into the gap on its left, not out through the row's padding. */
+    .wr__stat {
+      grid-area: stat;
+      justify-self: end;
+    }
+    .wr li.wr__year {
+      display: flex;
+      gap: 0.8rem;
+      padding-block: 0.4rem 0.2rem;
+    }
+    .wr__year i {
+      flex: 1;
+    }
+    /* The readout stays: the result of the post at the reading line, with its
+       label. Once the list is on screen it rides the bottom of the viewport
+       (is-pin, set by the script). */
+    .pv {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.1rem;
+      margin-top: 0.9rem;
+      padding: 0.95rem var(--win-pad)
+        calc(0.85rem + env(safe-area-inset-bottom, 0px));
+      background: var(--win-bg);
+      border-radius: 0 0 5px 5px;
+    }
+    /* Never see-through, even in the opening round: it can sit over the list. */
+    :global(.win__app.is-boot) .pn--writing:not(.is-on) .pv {
+      opacity: 1;
+    }
+    .pv__pos {
+      display: block;
+    }
+    .pv__stat {
+      font-size: 1.45rem;
+    }
+    .pv__meta {
+      display: none;
+    }
+    .pv__label {
+      text-wrap: pretty;
+    }
+    .pn--writing.is-pin .pv {
+      position: sticky;
+      bottom: 0;
+      z-index: 1;
+      animation: win-pin var(--dur-base) var(--ease-out) both;
+    }
+    /* Rows fade out under the pinned readout, so its border labels never sit
+       on top of a row's text. */
+    .pn--writing.is-stuck .pv::before {
+      content: "";
+      position: absolute;
+      inset: auto 0 calc(100% + 1px);
+      height: 1.6rem;
+      background: linear-gradient(to top, var(--win-bg) 25%, transparent);
+      pointer-events: none;
+    }
+  }
+</style>

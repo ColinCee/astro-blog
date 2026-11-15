@@ -1,0 +1,118 @@
+---
+// The window's line plot, shared by every panel that draws one (Glasgow's
+// day; the reward chart and the tone lines in the lower half): a box with a
+// baseline and a dashed top line, and an SVG stretched to fill it.
+//
+// The default slot is the SVG's content: paths with class `plot__line` and
+// `plot__area`, in the units of `viewBox`. The `marks` slot is for HTML laid
+// over the plot and placed in percent: `plot__end` (a hollow dot where a line
+// ends), `plot__dot` and `plot__cross` (the pointer's dot and hairline).
+//
+// A plot is drawn unless something makes it wait. Waiting, the line is
+// clipped away from the right and the end dots are hidden; released, the line
+// draws left to right and the dots follow. Two things make one wait:
+// - `wait`: until the plot itself gets `is-drawn` (a line a script fills in);
+// - a figure the script has armed (`.win__app.is-armed`), until that figure
+//   (`.fg`) gets `is-drawn`. Without the script nothing is armed.
+// `--plot-dur` sets how long the line takes and `--plot-end` how long the end
+// dots hold back, on the plot or anything around it.
+interface Props {
+  viewBox: string;
+  wait?: boolean;
+  class?: string;
+  [attr: string]: unknown;
+}
+const { viewBox, wait = false, class: className, ...rest } = Astro.props;
+---
+
+<div class:list={["plot", { "plot--wait": wait }, className]} {...rest}>
+  <svg
+    class="plot__svg"
+    viewBox={viewBox}
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <slot />
+  </svg>
+  <slot name="marks" />
+</div>
+
+<style>
+  .plot {
+    position: relative;
+    border-bottom: 1px solid var(--win-line);
+  }
+  .plot::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    border-top: 1px dashed var(--win-line);
+  }
+  /* Clipped with room above and below, so a line at the very top or bottom
+     keeps its full stroke. */
+  .plot__svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    clip-path: inset(-8px -8px -8px 0);
+    transition: clip-path var(--plot-dur, var(--dur-draw)) var(--ease-out);
+  }
+  .plot--wait:not(.is-drawn) .plot__svg,
+  :global(.win__app.is-armed) :global(.fg:not(.is-drawn)) .plot__svg {
+    clip-path: inset(-8px 100% -8px 0);
+  }
+  .plot :global(.plot__line) {
+    fill: none;
+    stroke: var(--n11);
+    stroke-width: 1.5px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .plot :global(.plot__area) {
+    fill: color-mix(in oklab, var(--n12) 7%, transparent);
+    stroke: none;
+  }
+  .plot :global(.plot__cross) {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--line-strong);
+  }
+  /* The pointer's dot is solid and a line's end is hollow, so one never
+     reads as the other. */
+  .plot :global(.plot__dot) {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    margin: -4.5px 0 0 -4.5px;
+    border: 2px solid var(--win-bg);
+    border-radius: 50%;
+    background: var(--ink);
+    background-clip: padding-box;
+  }
+  .plot :global(.plot__end) {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+    background: var(--win-bg);
+    transition: opacity var(--dur-base) var(--ease)
+      var(--plot-end, var(--dur-slow));
+  }
+  .plot--wait:not(.is-drawn) :global(.plot__end),
+  :global(.win__app.is-armed) :global(.fg:not(.is-drawn)) :global(.plot__end) {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    /* No wait for a line that is not being drawn. */
+    .plot :global(.plot__end) {
+      transition: none;
+    }
+  }
+</style>

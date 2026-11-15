@@ -58,7 +58,7 @@ for (const vp of views)
           MAX_OFF_EM,
         );
       const stats = await page
-        .locator(".figs dd, .log__was, .wr__was")
+        .locator(".figs dd, .log__was, .wr__was, .pv__stat, .pv__label")
         .allTextContents();
       expect(
         stats.filter((s) => s.includes("→")),

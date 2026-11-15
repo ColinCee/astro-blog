@@ -2,10 +2,20 @@
 // The design system, as a page of the site itself: principles, colours (drawn
 // from the real tokens), type, shape, marks and the posts kit. Dev only: it is
 // the reference while the redesign is built, not part of the site.
+import { homePosts, workSince } from "../components/home/window/data";
 import StatArrow from "../components/site/StatArrow.astro";
 import Base from "../layouts/Base.astro";
 
 if (import.meta.env.PROD) return Astro.redirect("/");
+
+// The home window sample below is drawn from the real posts, as the window
+// is, so its rows and counts are never a post behind: the newest post, and
+// the next one whose result went from an old value to a new one.
+const posts = await homePosts();
+const since = await workSince();
+const first = posts[0];
+const second = posts.slice(1).find((p) => p.before) ?? posts[1];
+const rows = [first, second].filter((p) => p !== undefined);
 ---
 
 <Base
@@ -31,8 +41,10 @@ if (import.meta.env.PROD) return Astro.redirect("/");
     <ol class="princ">
       <li>
         <b>One thing per glance.</b>
-        The name leads; one thing moves on the first screen; one accent, used
-        sparingly.
+        The name leads; one thing keeps moving on the first screen; one accent,
+        used sparingly. The home page's first screen is the one place three
+        purple things share a glance: the hero's highlight, the window's focus
+        and the favicon's bar (DESIGN.md, the Accent Points Rule's exception).
       </li>
       <li>
         <b>Real over decorative.</b>
@@ -51,12 +63,15 @@ if (import.meta.env.PROD) return Astro.redirect("/");
       </li>
       <li>
         <b>The terminal shows, it does not ask.</b>
-        Real-looking commands with real output; nothing to type; nothing that
-        repeats the page.
+        One window of panels with real readouts; nothing to type. Hover and a
+        few keys only choose what to look at.
       </li>
       <li>
-        <b>Each fact once.</b>
-        If it is in the hero, the CV or a post, it does not appear again.
+        <b>A post's result is said in one place.</b>
+        On the home page that is the writing panel: its row, and the readout
+        under the list while it is selected. No other panel or section repeats
+        it. The window's readouts do restate what their own list or figure
+        shows, on purpose, and the role is in the hero and in fastfetch.
       </li>
       <li>
         <b>Motion has a cause.</b>
@@ -65,7 +80,9 @@ if (import.meta.env.PROD) return Astro.redirect("/");
       <li>
         <b>Fewer options.</b>
         Once a choice is made the comp loses the switch, and the dropped idea
-        goes in the rejected list.
+        goes in the rejected list. For the home window (Nov 2026) Colin asked to
+        be shown variations and picked from them; that every change of that size
+        should be shown that way is inferred from the one request, so ask him.
       </li>
     </ol>
 
@@ -74,7 +91,8 @@ if (import.meta.env.PROD) return Astro.redirect("/");
       Three kinds of colour and nothing else: one grey scale, one purple
       spectrum, three status colours. Each is one OKLCH value; only lightness
       changes between light and dark, so dark mode is the same palette, not a
-      second one.
+      second one. One bounded exception, the small print of the home window, is
+      drawn further down.
     </p>
     <div class="scale">
       <h3>neutral · hue 255, barely tinted cool · 12 steps</h3>
@@ -142,9 +160,9 @@ if (import.meta.env.PROD) return Astro.redirect("/");
         </div>
         <p class="f" style="margin-top:.6rem">
           dots and small badges only; always with a word, never colour alone
-          (amber fills are under 3:1 on white everywhere). Red appears only for
-          a real failure, such as a homelab service down; a result that got
-          worse stays ink.
+          (amber fills are under 3:1 on white everywhere). Red would appear only
+          for a real failure; a result that got worse stays ink. None is in the
+          site's chrome today: the home window says status in words.
         </p>
       </div>
       <div class="card">
@@ -194,10 +212,11 @@ if (import.meta.env.PROD) return Astro.redirect("/");
       </p>
       <p class="t-mono">Geist 400</p>
       <p class="t-mono" style="margin-top:1rem;color:var(--ink)">
-        $ top -u colin · 4.5 GB → 221 MB · Oct 27
+        fastfetch · 4.5 GB → 221 MB · 27 Oct
       </p>
       <p class="t-mono">
-        DM Mono 300–400 · the terminal, dates, stats, captions
+        DM Mono 300–500 · the home window (400 and 500 only), dates, stats,
+        captions
       </p>
     </div>
 
@@ -227,7 +246,12 @@ if (import.meta.env.PROD) return Astro.redirect("/");
     </div>
     <p class="f" style="margin-top:.8rem">
       Only dots are round. No pills, no 12px+ corners, no drop shadows, no
-      gradients or glows; the one halo is the focus ring on the current dot.
+      glows; the one halo is the focus ring on the current dot. No gradient as a
+      surface or a decoration: the uses that stand are a fade where content runs
+      under an edge (rows under the phone's pinned readout, the ends of the
+      worked-at marquee), the radar's sweep, and hard-stop patterns that draw a
+      thing (the tunnel's dashes, hatching). No borders on panels either, with
+      one exception: the home window, below.
     </p>
 
     <h2>Marks and motion</h2>
@@ -249,14 +273,22 @@ if (import.meta.env.PROD) return Astro.redirect("/");
           <img src="/favicon.svg" width="48" height="48" alt="">
           <img src="/favicon.svg" width="16" height="16" alt="">
         </p>
-        <p class="f">before → after: the long grey bar, the short purple one</p>
+        <p class="f">
+          before → after: the long grey bar, the short purple one. In the home
+          window it is drawn with its real geometry and as tall as the rows
+          beside it (both decided by Colin). Using it the same way wherever else
+          a mark is needed is inferred
+        </p>
       </div>
       <div class="card">
         <h3>status dot</h3>
-        <p>
-          <span class="dot" style="background:var(--ok9)"></span>observability
+        <p><span class="dot" style="background:var(--ok9)"></span>live</p>
+        <p class="f">
+          with its word, never alone. None is in the site's chrome today: the
+          home lab's stacks had one each until Nov 2026, and the home window
+          says it in words (all up · live, 2 min ago). The status colours show
+          only in post figures
         </p>
-        <p class="f">with its word, never alone</p>
       </div>
       <div class="card mo">
         <h3>motion · hover to play</h3>
@@ -275,8 +307,197 @@ if (import.meta.env.PROD) return Astro.redirect("/");
         ))}
         <p class="f">
           curves: --ease for colour, --ease-out into place, --ease-in-out for a
-          swap; rows follow by --stagger (70ms). One moving thing on the first
-          screen; hover pauses; reduced motion stills everything
+          swap; rows follow by --stagger (70ms). One thing keeps moving on the
+          first screen (the window's opening round plays once and rests); hover
+          pauses; reduced motion stills everything
+        </p>
+      </div>
+    </div>
+
+    <h2>Home window</h2>
+    <p>
+      The homepage's set piece: one terminal app, <code>~/ColinOS</code>, made
+      of hairline panels. Outside code blocks it is the one place the site is
+      framed, dense and coloured beyond the accent, and none of it travels to
+      another page. It is made of six things: one tone, the hairline panel, a
+      title in the border, a selected band, a readout and one focus. Which of
+      its rules Colin decided and which are inferred from the version he picked
+      is in DESIGN.md, How the home page grows. The sample is drawn from the
+      real posts.
+    </p>
+    <div class="hw">
+      <div class="hw__pn hw__pn--list is-focus">
+        <span class="hw__lbl hw__lbl--t">writing</span>
+        <span class="hw__lbl hw__lbl--tr">all {posts.length} posts</span>
+        {rows.map((p, i) => (
+          <p class:list={["hw__row", { "is-sel": i === 0 }]}>
+            <span class="hw__date">{p.date}</span>
+            <span class="hw__num">{p.minutes} min</span>
+            <span class="hw__title">{p.title}</span>
+            {/* biome-ignore format: a line break would show as a space beside the value */}
+            <span>{p.before && <span class="f">{p.before} <StatArrow /></span>}{p.after && <b>{p.after}</b>}</span>
+          </p>
+        ))}
+        {first && (
+          <div class="hw__pv">
+            <span class="hw__lbl hw__lbl--t hw__path">{first.slug}</span>
+            {/* biome-ignore format: the same */}
+            <p class="hw__stat">{first.before && <span class="f">{first.before} <StatArrow /></span>}{first.after}</p>
+            <p class="hw__cap">
+              {/* biome-ignore format: no space around the arrow but its own margin */}
+              <span class="m">{first.label.split("→").map((part, k) => (<>{k > 0 && <StatArrow />}{part.trim()}</>))}</span>
+              <span class="f">
+                {first.date} {first.year} · {first.minutes} min read
+              </span>
+            </p>
+          </div>
+        )}
+        <span class="hw__lbl hw__lbl--bl">j k select · enter open</span>
+        <span class="hw__lbl hw__lbl--br">1 of {posts.length}</span>
+      </div>
+      <div class="hw__pn hw__pn--who">
+        <span class="hw__lbl hw__lbl--t">fastfetch</span>
+        <div class="hw__ff">
+          <svg
+            class="hw__mark"
+            viewBox="0 0 128 128"
+            role="img"
+            aria-label="The favicon"
+          >
+            <rect class="is-tile" width="128" height="128" rx="24"></rect>
+            <rect
+              class="is-was"
+              x="26"
+              y="40"
+              width="76"
+              height="18"
+              rx="5"
+            ></rect>
+            <rect
+              class="is-now"
+              x="26"
+              y="70"
+              width="30"
+              height="18"
+              rx="5"
+            ></rect>
+          </svg>
+          <dl class="hw__kv">
+            <div class="is-name">
+              <dt>name</dt>
+              <dd>
+                <span>Colin Cheung</span>
+                <span class="hw__cjk" lang="zh-Hant">張志權</span>
+              </dd>
+            </div>
+            <div class="is-role">
+              <dt>role</dt>
+              <dd>Senior Software Engineer</dd>
+            </div>
+            <div>
+              <dt>work</dt>
+              <dd>since {since}</dd>
+            </div>
+            <div>
+              <dt>posts</dt>
+              <dd>
+                {posts.length}
+                {first && <span class="f hw__dim">· newest {first.date}</span>}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+    <div class="grid hw-notes">
+      <div class="card">
+        <h3>the panel</h3>
+        <p>
+          A 1px frame (ink at 17%), 6px corners, no fill. The title sits in the
+          top border; the other corners take a readout or control, the key
+          hints, a position or a link.
+        </p>
+        <p class="f">
+          the only bordered panels on the site; a new one is a Panel in the
+          window's grid, never a card
+        </p>
+      </div>
+      <div class="card">
+        <h3>the focus</h3>
+        <p>
+          One panel at a time takes the accent on its border and title. It
+          follows the pointer, the keyboard, or the scroll on a phone.
+        </p>
+        <p class="f">
+          it moves, it never multiplies, and results inside stay ink. The
+          window's other purple is the favicon's short bar, as in the browser
+          tab; with the hero's highlight that is three on the first screen, the
+          one exception to one purple per glance
+        </p>
+      </div>
+      <div class="card">
+        <h3>the selected band · the readout</h3>
+        <p>
+          The chosen row of a list sits on ink at 6%, 9% while its panel has the
+          focus. Under the list, ruled off by the hairline, a readout says its
+          result large in Sora beside its label, with a path in the rule.
+        </p>
+        <p class="f">
+          one band and one readout a list. The result is ink, never purple; a
+          number still waiting is a thin faint dash
+        </p>
+      </div>
+      <div class="card">
+        <h3>small print · four hues</h3>
+        <p class="t-mono"><span class="hw__key">name role work</span> · keys</p>
+        <p class="t-mono">
+          <span class="hw__date">10 Nov · 06 12 18</span>
+          · dates, time axes
+        </p>
+        <p class="t-mono">
+          <span class="hw__num">5 min · 237 · 11°</span>
+          · quantities (a read time, a count, an axis tick)
+        </p>
+        <p class="t-mono">
+          <span class="hw__path">anki-listening-cards</span>
+          · paths
+        </p>
+        <p class="f">
+          the code theme's hues, as a highlighter would use them: a hue says
+          what kind of thing a small datum is, never good or bad. Never a title,
+          a result or a fill; nowhere but the window
+        </p>
+      </div>
+      <div class="card">
+        <h3>live numbers</h3>
+        <p class="t-mono">
+          <b>237</b> <span class="f">live, 2 min ago</span>
+        </p>
+        <p class="t-mono">
+          <b>237</b> <span class="f">last seen 3 h ago</span>
+        </p>
+        <p class="t-mono"><span class="f">– offline</span></p>
+        <p class="t-mono"><span class="f">radar simulated here</span></p>
+        <p class="t-mono">
+          <span class="f">reward over time, sketched</span>
+        </p>
+        <p class="f">
+          real or a dash, with its age in words. Anything drawn is true, or
+          labelled as a sketch or a simulation. No stand-in numbers, no dot
+        </p>
+      </div>
+      <div class="card">
+        <h3>how it grows</h3>
+        <p>
+          Decided by Colin: one window, not two; no swatches in fastfetch; the
+          favicon drawn as itself and as tall as its rows; a stack scrolled
+          through on a phone, one figure at a time on a desktop (the picker, Oct
+          2026).
+        </p>
+        <p class="f">
+          inferred from the version he picked, so ask before treating it as
+          settled: new home-page content is a panel of this window or a figure
+          in its picker, not a new section under it
         </p>
       </div>
     </div>
@@ -934,6 +1155,259 @@ if (import.meta.env.PROD) return Astro.redirect("/");
   }
   .ds .badge--danger i {
     background: var(--danger9);
+  }
+  /* The home window sample: Window.astro's tone, frame, labels, band, readout
+     and hues in small, from the same tokens (--win-* there, --hw-* here). */
+  .ds .hw {
+    --hw-bg: var(--n2);
+    --hw-line: color-mix(in oklab, var(--n12) 17%, transparent);
+    --hw-sel: color-mix(in oklab, var(--n12) 6%, transparent);
+    --hw-tile: var(--n1);
+    /* The site's --accent: this page renames --accent to the text accent, so
+       the sample names the step (dark v6, light v5). */
+    --hw-focus: var(--v6);
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 0.5rem;
+    padding: 1.1rem 0.6rem 0.95rem;
+    border-radius: var(--r);
+    background: var(--hw-bg);
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+  :root[data-theme="light"] .ds .hw {
+    --hw-tile: var(--n3);
+    --hw-focus: var(--v5);
+  }
+  @media (max-width: 59.99rem) {
+    .ds .hw {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 1rem;
+    }
+  }
+  .ds .hw-notes {
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    margin-top: 0.75rem;
+  }
+  .ds .hw p,
+  .ds .hw dl,
+  .ds .hw dd {
+    margin: 0;
+  }
+  .ds .hw__pn {
+    position: relative;
+    min-width: 0;
+    padding: 0.95rem 0.9rem 0.8rem;
+    border: 1px solid var(--hw-line);
+    border-radius: var(--r-ctl);
+  }
+  /* A list's rows and readout run to the frame and pad themselves. */
+  .ds .hw__pn--list {
+    padding-inline: 0;
+    padding-bottom: 0;
+  }
+  .ds .hw__pn.is-focus {
+    border-color: color-mix(in oklch, var(--hw-focus) 72%, transparent);
+  }
+  .ds .hw__lbl {
+    position: absolute;
+    padding: 0 0.5rem;
+    background: var(--hw-bg);
+    font-size: 0.6875rem;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--faint);
+  }
+  .ds .hw__lbl--t {
+    top: 0;
+    left: 0.6rem;
+    transform: translateY(-55%);
+  }
+  .ds .hw__pn > .hw__lbl--t {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .ds .hw__pn.is-focus > .hw__lbl--t {
+    color: var(--accent-text);
+  }
+  .ds .hw__lbl--tr {
+    top: 0;
+    right: 0.6rem;
+    transform: translateY(-55%);
+  }
+  .ds .hw__lbl--bl {
+    bottom: 0;
+    left: 0.6rem;
+    transform: translateY(50%);
+  }
+  .ds .hw__lbl--br {
+    bottom: 0;
+    right: 0.6rem;
+    transform: translateY(50%);
+  }
+  .ds .hw__row {
+    display: flex;
+    align-items: baseline;
+    gap: 1.05rem;
+    padding: 0.55rem 0.9rem;
+  }
+  .ds .hw__row.is-sel {
+    background: var(--hw-sel);
+  }
+  .ds .is-focus .hw__row.is-sel {
+    background: color-mix(in oklab, var(--n12) 9%, transparent);
+  }
+  .ds .hw__row > * {
+    white-space: nowrap;
+  }
+  .ds .hw__row b {
+    font-weight: 500;
+  }
+  .ds .hw__date,
+  .ds .hw__num {
+    font-size: 0.75rem;
+  }
+  .ds .hw__title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-family: var(--grotesk);
+    font-size: 0.875rem;
+    text-overflow: ellipsis;
+  }
+  /* A phone: each post is two lines, the title, then its metadata and result. */
+  @media (max-width: 45.99rem) {
+    .ds .hw__row {
+      flex-wrap: wrap;
+      gap: 0.2rem 0.9rem;
+      padding-block: 0.5rem;
+    }
+    .ds .hw__title {
+      order: -1;
+      flex-basis: 100%;
+      font-size: 0.9375rem;
+    }
+    .ds .hw__row > :last-child {
+      margin-left: auto;
+    }
+  }
+  /* The readout: the selected row's result, with its file name in the rule. */
+  .ds .hw__pv {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.4rem;
+    margin-top: 0.75rem;
+    padding: 1rem 0.9rem 1.05rem;
+    border-top: 1px solid var(--hw-line);
+  }
+  .ds .hw__stat {
+    font-family: var(--head);
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+  .ds .hw__cap {
+    display: grid;
+    min-width: 0;
+    font-size: 0.75rem;
+    line-height: 1.45;
+  }
+  /* fastfetch: the favicon's own shapes in the page's colours, as tall as
+     the rows beside it (rows x one line, less a hair), the rule Fetch.astro
+     keeps at every width. */
+  .ds .hw__pn--who {
+    container: hw-who / inline-size;
+  }
+  .ds .hw__ff {
+    --rows: 4;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: 1.2rem;
+    align-items: start;
+  }
+  .ds .hw__mark {
+    display: block;
+    width: calc(var(--rows) * 1.5em - 0.4rem);
+    aspect-ratio: 1;
+    margin-block: 0.2rem;
+    overflow: visible;
+  }
+  .ds .hw__mark .is-tile {
+    fill: var(--hw-tile);
+    stroke: var(--line);
+    vector-effect: non-scaling-stroke;
+  }
+  .ds .hw__mark .is-was {
+    fill: var(--n8);
+  }
+  .ds .hw__mark .is-now {
+    fill: var(--accent-text);
+  }
+  .ds .hw__kv > div {
+    display: grid;
+    grid-template-columns: 5ch minmax(0, 1fr);
+    column-gap: 1.5ch;
+    align-items: baseline;
+  }
+  .ds .hw__kv dt {
+    color: var(--syn-type);
+  }
+  .ds .hw__kv dd {
+    min-width: 0;
+    white-space: nowrap;
+  }
+  .ds .hw__kv .is-name dd {
+    display: flex;
+    column-gap: 0.5ch;
+    align-items: baseline;
+  }
+  .ds .hw__cjk {
+    font-family: var(--cjk);
+    line-height: 1;
+    color: var(--muted);
+  }
+  /* Narrower, the role row goes first and the mark follows the rows down;
+     narrower still, the newest date goes and the two names take a line each. */
+  @container hw-who (max-width: 24.49rem) {
+    .ds .hw__ff {
+      --rows: 3;
+      column-gap: 0.8rem;
+    }
+    .ds .hw__kv .is-role {
+      display: none;
+    }
+  }
+  @container hw-who (max-width: 17.49rem) {
+    .ds .hw__ff {
+      --rows: 4;
+    }
+    .ds .hw__dim {
+      display: none;
+    }
+    .ds .hw__kv .is-name dd {
+      flex-direction: column;
+    }
+    .ds .hw__cjk {
+      line-height: inherit;
+    }
+  }
+  .ds .hw__key {
+    color: var(--syn-type);
+  }
+  .ds .hw__date {
+    color: var(--syn-fn);
+  }
+  .ds .hw__num {
+    color: var(--syn-num);
+  }
+  .ds .hw__path {
+    color: var(--syn-str);
   }
   .ds .dot {
     display: inline-block;

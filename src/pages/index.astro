@@ -3,9 +3,8 @@
 // is a component in src/components/home/; its data is in src/data/.
 
 import Hero from "../components/home/Hero.astro";
-import Projects from "../components/home/Projects.astro";
 import Reach from "../components/home/Reach.astro";
-import Terminal from "../components/home/Terminal.astro";
+import Window from "../components/home/Window.astro";
 import WorkedAt from "../components/home/WorkedAt.astro";
 import Base from "../layouts/Base.astro";
 ---
@@ -17,9 +16,8 @@ import Base from "../layouts/Base.astro";
   home
 >
   <Hero />
-  <Terminal />
+  <Window />
   <WorkedAt />
-  <Projects />
   <Reach />
 </Base>
 
@@ -28,15 +26,27 @@ import Base from "../layouts/Base.astro";
     -webkit-text-size-adjust: 100%;
   }
   /* The homepage sets its own spacing: no default margins on headings,
-     paragraphs and lists, and lists without bullets. */
-  :where(.shell--home) :where(h1, h2, p, ul) {
+     paragraphs, lists and figures, and lists without bullets or numbers. */
+  :where(.shell--home) :where(h1, h2, p, ul, ol, dl, dd, figure) {
     margin: 0;
   }
-  :where(.shell--home) :where(ul) {
+  :where(.shell--home) :where(ul, ol) {
     padding: 0;
     list-style: none;
   }
-  /* Sections below the terminal rise in as they scroll into view. */
+  /* Read aloud, not shown: what a drawing or a bare number leaves unsaid. */
+  .shell--home .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  /* Sections below the window rise in as they scroll into view. */
   [data-reveal].is-armed {
     opacity: 0;
     transform: translateY(12px);

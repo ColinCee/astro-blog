@@ -1,0 +1,161 @@
+---
+// The dissertation's figure: reward over one 12-hour training run, the 2026
+// GPU agent against the 2018 CPU one. It is the Glasgow panel's line chart at
+// full size, on the same Plot. The two curves are drawn here once; the dots
+// where they end are placed from each path's own last point, and the pointer
+// readout (projects.ts) measures the same paths, so nothing is stated twice.
+import Plot from "../Plot.astro";
+
+// The plot box in the curves' units: 0 to 12 h across, the baseline at 130.
+const box = { x: 40, y: 2, w: 270, h: 128 };
+const runs = [
+  {
+    year: 2018,
+    on: "cpu",
+    d: "M40 128 C80 126 110 120 150 104 S230 70 310 62",
+    old: true,
+  },
+  {
+    year: 2026,
+    on: "gpu",
+    d: "M40 128 C55 120 62 90 80 70 S120 34 170 28 S260 22 310 20",
+    old: false,
+  },
+];
+// How far down the plot a path ends, in percent.
+const endTop = (d: string) => {
+  const y = Number(d.trim().split(/\s+/).pop());
+  return `${(((y - box.y) / box.h) * 100).toFixed(2)}%`;
+};
+const hours = [0, 3, 6, 9, 12];
+---
+
+<div class="ch">
+  <Plot
+    viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`}
+    class="ch__plot"
+    data-ch-plot
+    role="img"
+    aria-label="Reward over a 12 hour run: the 2026 GPU agent climbs early and plateaus high; the 2018 CPU agent climbs slowly"
+  >
+    <path
+      class="plot__area"
+      d={`${runs[1].d} L${box.x + box.w} ${box.y + box.h} L${box.x} ${box.y + box.h} Z`}
+    ></path>
+    {runs.map((r) => (
+      <path
+        class:list={["plot__line", { ch__old: r.old }]}
+        d={r.d}
+        data-ch-curve
+      />
+    ))}
+    <Fragment slot="marks">
+      {/* Stacked, the panel's title is the project's name, so the word that
+           says these curves are drawn by hand sits here. */}
+      {/* biome-ignore format: a line break would show as a space before the comma */}
+      <span class="lbl lbl--t ch__y"
+        >reward<span class="ch__sk">, sketched</span></span
+      >
+      {runs.map((r) => (
+        <i
+          class:list={["plot__end ch__end", { "is-old": r.old }]}
+          style={`left:100%;top:${endTop(r.d)}`}
+        >
+          {/* biome-ignore format: a line break would show as a space */}
+          <b><span>{r.year}</span> · {r.on}</b>
+        </i>
+      ))}
+      <i class="plot__cross" data-ch-cross hidden />
+      {runs.map((r) => (
+        <i class:list={["plot__dot", { "is-old": r.old }]} data-ch-dot hidden />
+      ))}
+    </Fragment>
+  </Plot>
+  <div class="ch__ticks" aria-hidden="true">
+    {hours.map((h) => (
+      <span style={`left:${((h / 12) * 100).toFixed(0)}%`}>
+        {h ? `${h} h` : "0"}
+      </span>
+    ))}
+  </div>
+</div>
+
+<style>
+  .ch {
+    --plot-dur: var(--dur-line);
+    --plot-end: 1.1s; /* the dots wait for most of the line */
+    display: grid;
+    grid-template-rows: 10.5rem auto;
+    min-width: 0;
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .ch__plot {
+    cursor: crosshair;
+    touch-action: pan-y;
+  }
+  .ch__y {
+    color: var(--win-key);
+  }
+  /* The two runs differ by more than a shade: solid against dashed, each
+     with its name at its end. */
+  .ch__plot .ch__old {
+    stroke: var(--n8);
+    stroke-dasharray: 3 4;
+  }
+  .ch__plot .ch__end.is-old {
+    border-color: var(--n9);
+  }
+  .ch__plot .plot__dot.is-old {
+    background-color: var(--n9);
+  }
+  .ch__end b {
+    position: absolute;
+    right: 0.85rem;
+    bottom: 0.55rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--muted);
+  }
+  .ch__end.is-old b {
+    color: var(--faint);
+  }
+  .ch__end span {
+    color: var(--win-date);
+  }
+  .ch__ticks {
+    position: relative;
+    height: 1.15rem;
+    color: var(--win-date);
+  }
+  .ch__ticks span {
+    position: absolute;
+    top: 0.4rem;
+    line-height: 1;
+    white-space: nowrap;
+    transform: translateX(-50%);
+  }
+  .ch__ticks span:first-child {
+    transform: none;
+  }
+  .ch__ticks span:last-child {
+    transform: translateX(-100%);
+  }
+  @media (max-width: 45.99rem) {
+    .ch {
+      grid-template-rows: 8.5rem auto;
+    }
+  }
+  /* Beside the picker the chart takes the panel's height. */
+  @media (min-width: 60rem) {
+    :global(.win__app[data-live]) .ch {
+      grid-template-rows: minmax(11rem, 1fr) auto;
+    }
+    /* The panel's title says "sketched" there. */
+    :global(.win__app[data-live]) .ch__sk {
+      display: none;
+    }
+  }
+</style>

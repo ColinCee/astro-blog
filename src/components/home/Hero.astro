@@ -47,17 +47,17 @@ const quips = [
     </div>
   </div>
 
-  <!-- The one-liners as a reel: only the current one shows; the bar over it
+  {/* The one-liners as a reel: only the current one shows; the bar over it
        (the time left) and the count say another is coming. One every 5 s;
        hover or focus pauses, a click, Enter or Space skips. Under reduced
-       motion it waits for a click. -->
+       motion it waits for a click. */}
   <div class="reel" data-reel data-quips={JSON.stringify(quips)}>
     <p class="reel__head" aria-hidden="true">
       <span class="reel__bar"><i data-reel-bar></i></span>
       <span data-reel-n>01 / {String(quips.length).padStart(2, "0")}</span>
     </p>
     <div class="reel__list">
-      <!-- The whole reel is the skip button: a real button laid over it -->
+      {/* The whole reel is the skip button: a real button laid over it */}
       <button
         class="reel__next"
         type="button"
@@ -80,9 +80,10 @@ const quips = [
     gap: clamp(2rem, 5vw, 4rem);
     align-items: center;
     max-width: var(--w-poster);
-    min-height: 24rem;
-    margin: 0 auto;
-    padding: clamp(1rem, 4vw, 3rem) 0 clamp(2rem, 4vw, 3rem);
+    /* Close under the nav and close over the window, so the first screen
+       ends just inside the window's lower half. */
+    margin: clamp(-0.75rem, -1vw, 0rem) auto 0;
+    padding: 0 0 clamp(1.6rem, 2.8vw, 2rem);
   }
   .hero__name {
     font-family: var(--head);
@@ -209,7 +210,6 @@ const quips = [
   @media (max-width: 56rem) {
     .hero {
       grid-template-columns: 1fr;
-      min-height: 0;
     }
     .reel__list {
       height: 4.75rem;
@@ -222,8 +222,8 @@ const quips = [
   }
 </style>
 
-<!-- Global: the one-liners arrive as HTML (set:html, then innerHTML), which
-     scoped styles do not reach. -->
+{/* Global: the one-liners arrive as HTML (set:html, then innerHTML), which
+     scoped styles do not reach. */}
 <style is:global>
   /* The one-liners: Sora at 200 in ink. Only the current one shows: the next
      fades in as it rises into place and the old one fades as it leaves. */

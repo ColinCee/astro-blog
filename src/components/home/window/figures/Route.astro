@@ -1,0 +1,195 @@
+---
+// colincheung.dev's figure: how this page reached you, as one line with four
+// stops. Three of the numbers are computed: the commit this page was built
+// from and the post count at build time, and at the end this visit's own
+// time to first byte, measured in the browser (projects.ts). Until it is
+// measured, or where it cannot be, that last number is a dash. The fourth,
+// the cities Cloudflare serves from, is a constant typed here and carried
+// over from the old page: it is not read live and has no dated source.
+import { homePosts } from "../data";
+import Cloud from "./Cloud.astro";
+
+const build = __BUILD__;
+const posts = (await homePosts()).length;
+const stops = [
+  { k: "git push", v: build.hash || "main", s: "github" },
+  { k: "astro build", v: posts, unit: "posts", s: "cloudflare workers" },
+  { k: "cloudflare edge", v: 330, unit: "cities", kind: "cloud" },
+  { k: "you", unit: "ms", s: "your first byte", kind: "you" },
+];
+---
+
+<ol class="rt">
+  {stops.map((stop, i) => (
+    <li class="rt__stop" style={`--i:${i}`}>
+      <span class="rt__k">{stop.k}</span>
+      <span class="rt__rail" aria-hidden="true">
+        <i class:list={["rt__node", stop.kind && `is-${stop.kind}`]}>
+          {stop.kind === "cloud" && <Cloud box="20 24 214 84" />}
+        </i>
+        {i < stops.length - 1 && <i class="rt__line" />}
+      </span>
+      {/* biome-ignore format: a line break would show as a space */}
+      <span class="rt__v">{stop.kind === "you" ? <span data-ttfb>–</span> : stop.v}{stop.unit && <small>{stop.unit}</small>}</span>
+      <span class="rt__s">{stop.s}</span>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .rt {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) max-content;
+    align-self: center;
+    width: 100%;
+    max-width: 45rem;
+    margin-inline: auto;
+  }
+  .rt__stop {
+    display: grid;
+    align-content: start;
+    min-width: 0;
+  }
+  /* The stops arrive in order, a beat apart, each line reaching for the
+     next; the beat is this figure's own timing. */
+  .rt__k,
+  .rt__v,
+  .rt__s,
+  .rt__node {
+    transition: opacity var(--dur-base) var(--ease-out) calc(var(--i, 0) * 0.3s);
+  }
+  .rt__k {
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    color: var(--win-key);
+  }
+  .rt__rail {
+    display: flex;
+    align-items: center;
+    height: 3.1rem;
+  }
+  .rt__node {
+    flex: none;
+    width: 11px;
+    height: 11px;
+    border: 1.5px solid var(--n10);
+    border-radius: 50%;
+  }
+  .rt__node.is-cloud {
+    width: 30px;
+    height: 16px;
+    margin-left: -3px;
+    border: 0;
+    border-radius: 0;
+  }
+  .rt__node :global(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .rt__node :global(path) {
+    fill: none;
+    stroke: var(--n10);
+    stroke-width: 1.25px;
+    vector-effect: non-scaling-stroke;
+  }
+  /* The last stop is the reader: solid, with a ring. */
+  .rt__node.is-you {
+    border-color: var(--ink);
+    background: var(--ink);
+    box-shadow:
+      0 0 0 3px var(--win-bg),
+      0 0 0 4px var(--n8);
+  }
+  .rt__line {
+    flex: 1;
+    height: 1px;
+    margin-inline: 7px;
+    background: var(--n8);
+    transform-origin: left;
+    transition: transform var(--dur-slow) var(--ease-out)
+      calc(var(--i, 0) * 0.3s + 0.1s);
+  }
+  .rt__v {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .rt__v small {
+    margin-left: 0.5em;
+    font-size: 0.8125rem;
+    letter-spacing: 0;
+    color: var(--muted);
+  }
+  .rt__s {
+    margin-top: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--faint);
+  }
+  :global(.win__app.is-armed)
+    :global(.fg:not(.is-drawn))
+    :is(.rt__k, .rt__v, .rt__s, .rt__node) {
+    opacity: 0;
+  }
+  :global(.win__app.is-armed) :global(.fg:not(.is-drawn)) .rt__line {
+    transform: scaleX(0);
+  }
+
+  /* A narrow panel: the line runs down, each stop a row beside it. */
+  @container win-fig (max-width: 38rem) {
+    .rt {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 17rem;
+    }
+    .rt__stop {
+      grid-template-columns: 1.9rem max-content minmax(0, 1fr);
+      /* biome-ignore lint/correctness/noInvalidGridAreas: every row has the same cells; Biome misreads strings in .astro styles */
+      grid-template-areas: "rail k k" "rail v s";
+      align-items: baseline;
+      padding-bottom: 1.1rem;
+    }
+    .rt__stop:last-child {
+      padding-bottom: 0;
+    }
+    .rt__k {
+      grid-area: k;
+    }
+    .rt__v {
+      grid-area: v;
+      margin-right: 0.7rem;
+      font-size: 1.1875rem;
+    }
+    .rt__s {
+      grid-area: s;
+      margin-top: 0;
+    }
+    .rt__rail {
+      grid-area: rail;
+      align-self: stretch;
+      flex-direction: column;
+      align-items: center;
+      width: 11px;
+      height: auto;
+      margin: 0.3rem 0 -1.4rem;
+    }
+    .rt__stop:last-child .rt__rail {
+      margin-bottom: 0;
+    }
+    .rt__line {
+      width: 1px;
+      height: auto;
+      margin: 6px 0;
+      transform-origin: top;
+    }
+    .rt__node.is-cloud {
+      width: 22px;
+      height: 12px;
+      margin-left: 0;
+    }
+    :global(.win__app.is-armed) :global(.fg:not(.is-drawn)) .rt__line {
+      transform: scaleY(0);
+    }
+  }
+</style>

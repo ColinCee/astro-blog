@@ -1,0 +1,263 @@
+---
+// The five project figures, each a panel of the home window: the
+// dissertation's reward curve, the Heathrow radar, the home lab, a card from
+// the Anki deck and how this page reached you. Which drawing a project gets
+// goes by its id; everything said around it is src/data/projects.json.
+//
+// They are one set of panels with two layouts. As written they are a stack:
+// one under another across the window, each named by its project, which is
+// what a phone gets, and any screen without the script. Where the script
+// runs and the window is 60rem or wider (`.win__app[data-live]`), they share
+// one place in the grid beside the picker and only the open one (is-open)
+// shows, titled by what it draws. The script moves is-open; the layout is
+// all here, so nothing jumps when it arrives.
+import Arrow from "./Arrow.astro";
+import { homeProjects } from "./data";
+import Anki from "./figures/Anki.astro";
+import Chart from "./figures/Chart.astro";
+import Lab from "./figures/Lab.astro";
+import Radar from "./figures/Radar.astro";
+import Route from "./figures/Route.astro";
+import Panel from "./Panel.astro";
+
+const projects = await homeProjects();
+const kinds: Record<string, string> = {
+  dissertation: "ch",
+  "flight-tracker": "rd",
+  "home-lab": "lab",
+  "anki-chinese": "ak",
+  "colincheung.dev": "rt",
+};
+// A repo's host goes when there is no room; its path is the part to keep.
+const hosted = (repo: string) => /^(github\.com\/)?(.*)$/.exec(repo)!;
+---
+
+{projects.map((p, i) => {
+  const kind = kinds[p.id];
+  const [, host, path] = hosted(p.repo);
+  return (
+    <Panel
+      name={`fig-${i}`}
+      class={i === 0 ? "pn--fig is-open" : "pn--fig"}
+      label={`${p.id}: ${p.caption}`}
+      id={`win-fig-${i}`}
+      data-f={p.id}
+    >
+      <Fragment slot="title">
+        <span class="pn__id">{p.id}</span>
+        <span class="pn__cap">{p.caption}</span>
+      </Fragment>
+      <Fragment slot="tr">
+        <span class="lbl lbl--tr pn__desc">{p.desc}</span>
+        {/* What the pointer is reading on the chart. */}
+        {kind === "ch" && (
+          <span class="lbl lbl--tr pn__note" data-ch-note aria-hidden="true" />
+        )}
+        {/* One pause for everything that moves on its own: the scope and
+               the tunnel's traffic. */}
+        {(kind === "rd" || kind === "lab") && (
+          <button
+            class:list={[
+              "lbl lbl--tr pn__ctl",
+              { "pn__ctl--flow": kind === "lab" },
+            ]}
+            type="button"
+            aria-pressed="false"
+            data-pause
+          >
+            pause
+          </button>
+        )}
+        {kind === "ak" && (
+            // biome-ignore format: a line break would show as a space before the arrow
+            <button class="lbl lbl--tr pn__ctl" type="button" data-anki-next>next card<Arrow dir="e" /></button>
+          )}
+        {/* Says the first byte was measured, once it has been. */}
+        {kind === "rt" && (
+          <span class="lbl lbl--tr pn__note" data-rt-note aria-hidden="true" />
+        )}
+      </Fragment>
+      <div class:list={["fg", kind && `fg--${kind}`]}>
+        {kind === "ch" && <Chart />}
+        {kind === "rd" && <Radar note={p.caption.split(" · ")[1]} />}
+        {kind === "lab" && <Lab />}
+        {kind === "ak" && <Anki />}
+        {kind === "rt" && <Route />}
+      </div>
+      {/* biome-ignore format: a line break would show as a space in the path */}
+      <a slot="br" class="lbl lbl--br pn__link" href={p.href}>{host && <span class="pn__host">{host}</span>}{path}<Arrow dir="ne" /></a>
+    </Panel>
+  );
+})}
+
+<style>
+  /* A little more than a panel gap above: the panel before ends in labels on
+     its bottom border, and this one's title needs a line of its own. */
+  .pn.pn--fig {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.65rem;
+    padding: 0;
+    container: win-fig / inline-size;
+  }
+  /* Over the figure, which runs to the frame (the radar fills it). */
+  .pn--fig > :global(.lbl) {
+    z-index: 2;
+  }
+  /* Cut along the line only, which is all the ellipsis needs: on this 12px
+     line anything that also cut above and below took the tails off g, p
+     and y. */
+  .pn--fig > :global(.pn__t) {
+    max-width: calc(100% - 1.2rem);
+    overflow-x: clip;
+    overflow-y: visible;
+    text-overflow: ellipsis;
+  }
+  /* Stacked, the title is the project's name and its few words sit top
+     right. Beside the picker, which already names it, the title is what the
+     figure shows, and the top right is the figure's own note or control. */
+  .pn__cap,
+  .pn__note,
+  .pn__host {
+    display: none;
+  }
+  /* A control does nothing without the script, and there is nothing to
+     pause for a reader who asked for stillness. */
+  :global(.win__app:not([data-live])) .pn__ctl {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pn__ctl[data-pause] {
+      display: none;
+    }
+  }
+
+  .fg {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    padding: 1.6rem 1.2rem 1.5rem;
+  }
+  /* The scope runs edge to edge; its counts pad themselves. */
+  .fg.fg--rd {
+    position: relative;
+    display: block;
+    padding: 0 0 1.25rem;
+  }
+  /* A figure about to draw again goes back to nothing at once, not through
+     its transitions. */
+  .fg.is-cut :global(*) {
+    transition: none !important;
+  }
+
+  @media (max-width: 59.99rem) {
+    /* The control moves to the bottom border; the top one names the project. */
+    .pn__ctl {
+      top: auto;
+      right: auto;
+      bottom: 0;
+      left: 0.6rem;
+      transform: translateY(52%);
+    }
+    /* The tunnel's traffic plays a few seconds a view here: nothing to pause. */
+    .pn__ctl--flow {
+      display: none;
+    }
+    /* The link leaves the control its corner. */
+    .pn--fig:has([data-pause]:not(.pn__ctl--flow)) .pn__link {
+      max-width: calc(100% - 3.5rem);
+    }
+    .pn--fig:has([data-anki-next]) .pn__link {
+      max-width: calc(100% - 7.4rem);
+    }
+  }
+  @media (max-width: 45.99rem) {
+    .fg {
+      padding: 1.4rem var(--win-pad) 1.25rem;
+    }
+    .fg.fg--lab {
+      padding-block: 1.25rem 1.2rem;
+    }
+    .fg.fg--rd {
+      padding: 0 0 1.05rem;
+    }
+  }
+  /* A small phone: the control and the link sit closer to their corners, so
+     neither covers the other. */
+  @container win-fig (max-width: 20.5rem) {
+    .pn__ctl {
+      left: 0.35rem;
+      padding-inline: 0.4rem;
+    }
+    .pn__link {
+      right: 0.35rem;
+      padding-inline: 0.4rem;
+    }
+    .pn--fig:has([data-pause]:not(.pn__ctl--flow)) .pn__link {
+      max-width: calc(100% - 3.75rem);
+    }
+    .pn--fig:has([data-anki-next]) .pn__link {
+      max-width: calc(100% - 6.6rem);
+    }
+  }
+  /* The narrowest: a project's name has the top border to itself. */
+  @container win-fig (max-width: 18.4rem) {
+    .pn__desc {
+      display: none;
+    }
+  }
+
+  /* The picker's layout: all five in one place, one showing, tall enough
+     that the window keeps its height whichever is open. */
+  @keyframes win-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @media (min-width: 60rem) {
+    :global(.win__app[data-live]) .pn.pn--fig {
+      grid-area: fig;
+      min-height: 22.5rem;
+    }
+    :global(.win__app[data-live]) .pn--fig:not(.is-open) {
+      display: none;
+    }
+    :global(.win__app[data-live]) :is(.pn__id, .pn__desc) {
+      display: none;
+    }
+    :global(.win__app[data-live]) :is(.pn__cap, .pn__host) {
+      display: inline;
+    }
+    :global(.win__app[data-live]) .pn__note:not(:empty) {
+      display: block;
+    }
+    /* Roomy where the terminal above is tight; each fades in as it opens. */
+    :global(.win__app[data-live]) .fg {
+      padding: 2.1rem 2.4rem 2rem;
+      animation: win-in var(--dur-base) var(--ease-out) both;
+    }
+    :global(.win__app[data-live]) .fg.fg--rd {
+      padding: 0;
+    }
+    /* The home lab upright is the tallest of the five. With less air above
+       and below it fits the height the panel has for the other four, so the
+       window is the same height whichever is open. */
+    @container win-fig (max-width: 43.99rem) {
+      :global(.win__app[data-live]) .fg.fg--lab {
+        padding-block: 1.3rem;
+      }
+    }
+    @container win-fig (max-width: 38rem) {
+      :global(.win__app[data-live]) .fg:not(.fg--rd) {
+        padding: 1.9rem 1.1rem 1.8rem;
+      }
+    }
+  }
+  /* Narrower, the home lab stands upright and is the tallest of the five. */
+  @media (min-width: 60rem) and (max-width: 79.99rem) {
+    :global(.win__app[data-live]) .pn.pn--fig {
+      min-height: 26rem;
+    }
+  }
+</style>
