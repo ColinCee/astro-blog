@@ -28,12 +28,14 @@ const MANDARIN: Record<number, number[]> = {
   3: [2, 1, 4],
   4: [5, 1],
 };
+// Chao's tone letters as Wikipedia's "Cantonese phonology" gives them: 55,
+// 35, 33, 21, 13, 22 (checked 15 Nov 2026).
 const CANTONESE: Record<number, number[]> = {
   1: [5, 5],
-  2: [2, 5],
+  2: [3, 5],
   3: [3, 3],
   4: [2, 1],
-  5: [2, 3],
+  5: [1, 3],
   6: [2, 2],
 };
 

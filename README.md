@@ -14,7 +14,7 @@ Static, fast, and every post leads with the number it's about.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/readme-dark.png">
-  <img alt="The homepage: the name, a rotating one-liner, and a terminal with the latest posts" src="docs/readme-light.png" width="860">
+  <img alt="The homepage: the name, a rotating one-liner, and one terminal window with fastfetch, skills, Glasgow weather, the latest posts and the projects" src="docs/readme-light.png" width="860">
 </picture>
 
 </div>
