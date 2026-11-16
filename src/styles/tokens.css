@@ -70,7 +70,7 @@
   /* Section and list headings */
   --text-heading: clamp(1.2rem, 2vw, 1.5rem);
   /* The big Sora lines: the one-liners, worked-at names, a post's stat */
-  --text-voice: clamp(1.4rem, 2.4vw, 2rem);
+  --text-voice: clamp(1.5rem, 2.4vw, 2rem);
   /* A post's title, the closing line, a page's one heading */
   --text-headline: clamp(1.8rem, 4.6vw, 3rem);
   /* The name */

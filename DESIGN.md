@@ -33,7 +33,7 @@ typography:
     letterSpacing: "-0.045em"
   voice:
     fontFamily: "Sora, Geist, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(1.4rem, 2.4vw, 2rem)"
+    fontSize: "clamp(1.5rem, 2.4vw, 2rem)"
     fontWeight: 200
     lineHeight: 1.3
     letterSpacing: "-0.03em"
@@ -365,7 +365,7 @@ Every size is a `--text-*` role in `tokens.css`; nothing else.
 | `base` `lg` `xl` `2xl` | 16, 20, 24, 32px | UI text, small headings, readouts |
 | `read` | 16–17px, fluid | a post's body |
 | `heading` | 19–24px, fluid | section and list headings |
-| `voice` | 22–32px, fluid | the one-liners, worked-at names, a post's stat |
+| `voice` | 24–32px, fluid | the one-liners, worked-at names, a post's stat |
 | `headline` | 29–48px, fluid | a post's title, the closing line, a page's one heading |
 | `display` | 42–68px, fluid | the name |
 | `inline` | 0.875em | code and numbers inside a line, sized to it |
