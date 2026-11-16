@@ -11,11 +11,11 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
-    "@axe-core/playwright": "^4.14.0",
+    "@axe-core/playwright": "4.14.0",
     "@biomejs/biome": "2.6.2",
     "@playwright/test": "1.64.1",
     "modern-web-guidance": "1.0.0",
-    "postcss-html": "^2.0.0",
+    "postcss-html": "2.0.0",
     "stylelint": "18.0.0",
     "wrangler": "4.152.0"
   },
