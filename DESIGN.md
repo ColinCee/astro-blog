@@ -215,8 +215,9 @@ lightness. Swatches are on the design page.
 ### Roles (`tokens.css`)
 Every colour on the site is one of these, and `tests/colours.spec.ts` fails
 anything else: a colour typed by hand, a step of a scale, a one-off mix.
-`tests/contrast.spec.ts` measures every word on every page against what it
-sits on, in both themes: 4.5:1, or 3:1 for large text.
+`tests/contrast.spec.ts` runs axe-core's contrast rule on every page in both
+themes: 4.5:1, or 3:1 for large text. Text axe cannot place on one background
+(a label on a panel's border, the hero line under its button) goes unchecked.
 
 | Role | Dark | Light | For |
 |---|---|---|---|
