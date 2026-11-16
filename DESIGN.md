@@ -511,10 +511,9 @@ to purple gradients in TUI fetch ?".
   has one, else its punchline word (`<b>`) in `--accent-text` at weight 300.
   Never bold: heavier Sora reads thick next to the 200 voice. Below 56rem the
   reel stacks under the name.
-- The hero has no minimum height. It sits close under the nav and close over
-  the window, so a laptop's first screen is the name, the reel and the
-  window's upper panels. (Inferred: the spacing was tightened in the build;
-  Colin has not been asked about it.)
+- The hero has no minimum height, but it has room: clear space under the nav,
+  between the name and the reel, and over the window, so they don't read as
+  one block. Colin found the tight version collapsed (Nov 2026).
 - The role is said here; the fastfetch panel repeats it as a row and drops
   that row first when it narrows. Contact is here and in Reach, not in the
   window.
