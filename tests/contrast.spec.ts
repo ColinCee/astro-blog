@@ -14,7 +14,9 @@ const lowContrast = (page: Page) =>
     const paint = document.createElement("canvas").getContext("2d", {
       willReadFrequently: true,
     })!;
-    // Any CSS colour as sRGB 0-255 and alpha 0-1.
+    // Any CSS colour as sRGB 0-255 and alpha 0-1. Text on a gradient or an
+    // image is measured against the colour under it, and text drawn in a
+    // canvas or ::before content is not measured.
     const rgba = (css: string) => {
       paint.clearRect(0, 0, 1, 1);
       paint.fillStyle = "#000";
@@ -48,18 +50,27 @@ const lowContrast = (page: Page) =>
     for (let n = walker.nextNode(); n; n = walker.nextNode()) {
       const el = n.parentElement;
       if (!el || !n.textContent?.trim()) continue;
+      // [data-decor] marks a glyph that is decoration, not words (WCAG 1.4.3's
+      // own exception): the worked-at slash.
       if (
-        el.closest(
-          "astro-dev-toolbar, script, style, svg, .sr-only, [aria-hidden='true']",
-        )
+        el.closest("astro-dev-toolbar, script, style, .sr-only, [data-decor]")
       )
         continue;
       const r = el.getBoundingClientRect();
       if (!r.width || !r.height) continue;
       const cs = getComputedStyle(el);
-      if (cs.visibility === "hidden" || Number(cs.opacity) === 0) continue;
-      const bg = backdrop(el);
-      const fg = over(rgba(cs.color), bg);
+      if (cs.visibility === "hidden") continue;
+      // What is seen is the colour faded by every ancestor's opacity; text
+      // faded out entirely (a one-liner waiting its turn) is not read.
+      let alpha = 1;
+      for (let a: Element | null = el; a; a = a.parentElement)
+        alpha *= Number(getComputedStyle(a).opacity);
+      if (alpha < 0.05) continue;
+      // SVG text is painted with its fill, on whatever the drawing sits on.
+      const svg = el.closest("svg");
+      const ink = rgba(svg ? cs.fill : cs.color);
+      const bg = backdrop(svg ? svg.parentElement : el);
+      const fg = over([ink[0], ink[1], ink[2], ink[3] * alpha], bg);
       const [hi, lo] = [lum(fg), lum(bg)].sort((a, b) => b - a);
       const ratio = (hi + 0.05) / (lo + 0.05);
       const px = parseFloat(cs.fontSize);

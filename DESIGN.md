@@ -236,8 +236,11 @@ sits on, in both themes: 4.5:1, or 3:1 for large text.
 | `--gain`, `--loss` | ok11, danger11 | ok11, danger11 | a real gain and a real drop |
 | `--gain-wash`, `--loss-wash`, `--warn-wash` | the dot colour at 30% | the same | status as a fill, words on it stay ink |
 
-Ink to dim is 2.1:1 apart, so the two text tones never read as one; the three
-surfaces step 1.2:1 or more apart. The home window's small print also takes
+Ink to dim is 2.1:1 apart, so the two text tones never read as one. A panel
+stands 1.2:1 off the page, and a well 1.17:1 (dark) or 1.34:1 (light) off its
+panel. Bars are 3:1 or more on a panel, where charts sit; on the light page
+itself they are 2.8:1. The worked-at slash is decoration (`data-decor`), the
+one text the contrast test skips. The home window's small print also takes
 four of the code theme's hues (`--win-key`, `--win-date`, `--win-num`,
 `--win-path` in `Window.astro`, from `--syn-type`, `--syn-fn`, `--syn-num` and
 `--syn-str`): small print only, never a title, a result or a fill, and never
@@ -444,8 +447,8 @@ to purple gradients in TUI fetch ?".
   the links in `Head.astro` when it changes.
 - **In the home window it is drawn as itself, as tall as its rows.** The
   fastfetch panel shows it where fastfetch prints a logo: the same three
-  rectangles as the file, drawn inline in the page's tokens (tile n1, light
-  n3; bars n8 and `--accent`), and as tall as the rows of text beside
+  rectangles as the file, drawn inline in the page's roles (tile `--page`;
+  bars `--bar` and `--accent`), and as tall as the rows of text beside
   it. Both are decided (Nov 2026). Its real geometry: a pixel-grid redrawing
   was dropped ("if it's supposed to be my favicon it doesn't really look like
   it"). Its size: a mark taller than its rows was dropped ("The fast fetch
@@ -528,7 +531,7 @@ to purple gradients in TUI fetch ?".
   no faint next line: both distracted from it); over it a thin bar for the time
   left and a mono `01 / 18` count say another is coming. One every 5 s;
   hover pauses, a click skips. Lines are Voice type in ink; some carry a small
-  inline drawing with neutral marks (n5–n8) and the punchline mark in
+  inline drawing with neutral marks (`--bar` on a `--line` track) and the punchline mark in
   `--accent-solid`, a deeper purple than the text accent so the marks read rich,
   not electric; the counter is a solid `--accent-solid` chip with `--accent-ink`
   (white). Each line has exactly one purple thing: the drawing or counter if it
@@ -1017,7 +1020,7 @@ curve in a component is a bug unless it is a content timing.
   panel floating in the right margin (only where the margin fits it), the passed
   steps in ink and the current one in the accent, shown from the "Step 1"
   heading until the `until` one.
-  Marks are neutral (`--bar` / n7, the baseline striped); only the result takes
+  Marks are neutral (`--bar`, the baseline striped); only the result takes
   the accent, and two neutral things never differ by grey shade alone (the No
   Grey Pairs Rule). The chart palette and forms are drawn on the
   design page. Aim for at least one figure

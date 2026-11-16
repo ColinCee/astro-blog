@@ -17,7 +17,7 @@ const SKIP = new Set([
 const RULES: [string, RegExp][] = [
   [
     "a step of a scale",
-    /var\(--(?:n|v)\d+\)|var\(--(?:ok|warn|danger)\d+\)|["'`]--(?:n|v)\d+["'`]/,
+    /var\(--(?:n|v|ok|warn|danger)\d+[,)]|["'`]--(?:n|v)\d+["'`]/,
   ],
   ["a one-off mix", /color-mix\(/],
   [
@@ -25,12 +25,13 @@ const RULES: [string, RegExp][] = [
     /--(?:bg|panel|pane|well|muted|faint|line-strong|accent-text|accent-hover|win-bg|win-line|win-tile)(?![\w-])/,
   ],
 ];
-// Colours typed by hand, looked for in styles only: in markup a "#" starts a
-// link, and in scripts a hex can be data.
+// Colours typed by hand, looked for where a style is set: in markup a "#"
+// starts a link, and elsewhere in a script a hex can be data.
 const LITERAL: [string, RegExp] = [
   "a colour typed by hand",
-  /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklch|oklab)\(/i,
+  /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklch|oklab|lab|lch|hwb|color|light-dark)\(|^\s*[a-z-]+:\s*(?:white|black|red|green|blue|gray|grey)\b/i,
 ];
+const SETS_STYLE = /\bstyle=|\.style\b|setProperty|fillStyle|strokeStyle/;
 
 const files = (dir: string): string[] =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
@@ -60,7 +61,7 @@ test("every colour is a role", () => {
         line.includes("colour exception:") ||
         (lines[i - 1] ?? "").includes("colour exception:");
       if (excused) return;
-      const styled = inStyle || /\bstyle=/.test(line);
+      const styled = inStyle || SETS_STYLE.test(line);
       for (const [what, re] of styled ? [...RULES, LITERAL] : RULES)
         if (re.test(line)) found.push(`${file}:${i + 1} ${what}`);
     });
