@@ -154,8 +154,8 @@ new step, added to the scale and the design page, or it is an exception.
   (`tokens.css`). The rest
   are on the design page under Foundations; one still marked proposed there is
   not adopted yet. Each one lands with its check and the move onto it, in one
-  change (colour: `tests/colours.spec.ts` and `tests/contrast.spec.ts`; type:
-  `tests/typography.spec.ts`).
+  change (colour and type: Stylelint, `stylelint.config.ts`; contrast:
+  `tests/contrast.spec.ts`; type at runtime: `tests/typography.spec.ts`).
 - Off the scale on purpose, each marked on its line with the reason: a figure's
   drawing (its own geometry), the home window's container sizes (tuned to its
   content and held by tests), optical nudges of 1–2px, a post's em-based prose
@@ -214,7 +214,7 @@ lightness. Swatches are on the design page.
   for "info".
 
 ### Roles (`tokens.css`)
-Every colour on the site is one of these, and `tests/colours.spec.ts` fails
+Every colour on the site is one of these, and Stylelint (`pnpm lint:css`) fails
 anything else: a colour typed by hand, a step of a scale, a one-off mix.
 `tests/contrast.spec.ts` runs axe-core's contrast rule on every page in both
 themes: 4.5:1, or 3:1 for large text. Text axe cannot place on one background
@@ -248,7 +248,8 @@ four of the code theme's hues (`--win-key`, `--win-date`, `--win-num`,
 `--syn-str`): small print only, never a title, a result or a fill, and never
 `--syn-kw`, which sits in the accent's hue (the Window Hues Exception, below).
 
-A colour exception says why on its own line (`colour exception: ...`): a
+An exception says why on the line before
+(`/* stylelint-disable-next-line <rule> -- why */`): a
 cube's shaded faces, a mask's alpha, the CV's paper palette, a figure whose
 accent strength is its data, and the radar's canvas, which draws with the
 scale's own greys.
@@ -357,7 +358,7 @@ same".)
 **Reading:** Geist (`--grotesk`), 400–600, with `ss01` on.
 **Data:** DM Mono (`--mono`), 300–500.
 
-### Scale (enforced by `tests/typography.spec.ts`)
+### Scale (enforced by `stylelint.config.ts`)
 Every size is a `--text-*` role in `tokens.css`; nothing else.
 
 | Role | Size | For |
@@ -374,8 +375,8 @@ Every size is a `--text-*` role in `tokens.css`; nothing else.
 Line-heights are `1` (a row of data, a number, a big line), `1.3` (headings,
 titles, labels) or `1.6` (anything read as a paragraph). Weights are 200, 300,
 400, 500, 600. A figure's `--k` scales a role (`calc(var(--text-xs) * var(--k,
-1))`). A size, line-height or weight that must be off the scale says why on its
-line (`type exception: ...`): a drawn character, a unit beside its number, a
+1))`). A size, line-height or weight that must be off the scale says why on the
+line before, as a colour exception does: a drawn character, a unit beside its number, a
 line-height that is a length a layout is built from.
 **CJK:** `--cjk` stack (PingFang TC / Noto Sans TC/SC) for names like 張志權.
 

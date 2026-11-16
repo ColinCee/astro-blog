@@ -60,25 +60,25 @@
   border: 1.5px solid var(--ink);
   transform: translateZ(calc(var(--d) / 2 + 1px));
 }
+/* stylelint-disable function-disallowed-list -- a cube's faces and slices, shaded from the roles */
 /* --slices on a cube rules its depth faces into that many layers (the
    screen block: one per frame it sees). */
 .prose .cube[style*="--slices"] i:nth-child(2) {
   background-image: repeating-linear-gradient(
     0deg,
-    color-mix(in oklch, var(--ink) 30%, transparent) 0 1px /* colour exception: a cube's slices, shaded */,
+    color-mix(in oklch, var(--ink) 30%, transparent) 0 1px,
     transparent 1px calc(var(--d) / var(--slices))
   );
 }
 .prose .cube[style*="--slices"] i:nth-child(3) {
   background-image: repeating-linear-gradient(
     90deg,
-    color-mix(in oklch, var(--ink) 30%, transparent) 0 1px /* colour exception: a cube's slices, shaded */,
+    color-mix(in oklch, var(--ink) 30%, transparent) 0 1px,
     transparent 1px calc(var(--d) / var(--slices))
   );
 }
 .prose .cube i:nth-child(1) {
   inset: 0;
-  /* colour exception: a cube's face, shaded */
   background: color-mix(in oklch, var(--bar) 85%, var(--raised));
   transform: translateZ(calc(var(--d) / 2));
 }
@@ -87,7 +87,6 @@
   width: var(--w);
   height: var(--d);
   top: calc((var(--h) - var(--d)) / 2);
-  /* colour exception: a cube's face, shaded */
   background: color-mix(in oklch, var(--bar) 55%, var(--raised));
   transform: rotateX(90deg) translateZ(calc(var(--h) / 2));
 }
@@ -103,13 +102,12 @@
   background: var(--accent);
 }
 .prose .cube--hi i:nth-child(2) {
-  /* colour exception: a cube's face, shaded */
   background: color-mix(in oklch, var(--accent) 70%, var(--raised));
 }
 .prose .cube--hi i:nth-child(3) {
-  /* colour exception: a cube's face, shaded */
   background: color-mix(in oklch, var(--accent) 80%, var(--ink));
 }
+/* stylelint-enable function-disallowed-list */
 .prose .arch figcaption {
   display: grid;
   align-self: start;
