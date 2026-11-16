@@ -69,13 +69,13 @@
 .prose .slab figcaption {
   display: grid;
   justify-items: center;
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--ink);
   white-space: nowrap;
 }
 .prose .slab small {
   color: var(--dim);
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
 }
 .prose .slab--out span {
   padding: 0.5rem 0.7rem;

@@ -22,7 +22,7 @@ import Items from "../site/Items.astro";
     margin: 0;
     font-family: var(--head);
     font-weight: 600;
-    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    font-size: var(--text-display);
     line-height: 1;
     letter-spacing: -0.05em;
     color: var(--ink);
@@ -31,16 +31,16 @@ import Items from "../site/Items.astro";
   .cv__role {
     margin: 0.8rem 0 0;
     font-family: var(--mono);
-    font-size: clamp(0.78rem, 1.4vw, 0.86rem);
+    font-size: var(--text-md);
     color: var(--dim);
   }
   .cv__lede {
     margin: 1rem 0 0;
     max-width: 86ch;
     font-family: var(--grotesk);
-    font-weight: 450;
-    font-size: 0.95rem;
-    line-height: 1.55;
+    font-weight: 400;
+    font-size: var(--text-base);
+    line-height: 1.6;
     color: var(--dim);
     text-wrap: pretty;
   }
@@ -50,7 +50,7 @@ import Items from "../site/Items.astro";
     gap: 0.5rem 1.4rem;
     margin: 1rem 0 0;
     font-family: var(--mono);
-    font-size: 0.76rem;
+    font-size: var(--text-sm);
     letter-spacing: 0.01em;
   }
   .cv__contact a {

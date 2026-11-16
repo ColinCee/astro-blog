@@ -75,14 +75,14 @@ import Plot from "./Plot.astro";
   }
   .wx__temp {
     font-family: var(--head);
-    font-size: 1.75rem;
+    font-size: var(--text-2xl);
     font-weight: 600;
     letter-spacing: -0.04em;
-    line-height: 1.1;
+    line-height: 1;
   }
   .wx__temp small {
     margin-left: 0.1em;
-    font-size: 0.6em;
+    font-size: 0.6em; /* type exception: a unit beside its number */
     font-weight: 400;
     letter-spacing: 0;
     color: var(--dim);
@@ -101,7 +101,7 @@ import Plot from "./Plot.astro";
     grid-template-rows: minmax(3rem, 1fr) auto;
     column-gap: 0.5rem;
     padding-top: 0.75rem; /* room for "now" over a reading at the day's high */
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
     color: var(--dim);
   }
   /* Wide enough for "10°" before the scale is known, for the same reason. */

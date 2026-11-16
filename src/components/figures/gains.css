@@ -32,7 +32,7 @@
 }
 .prose .gain strong {
   color: var(--ink);
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
@@ -47,7 +47,7 @@
 }
 .prose .gain--hi strong {
   color: var(--accent);
-  font-size: 1.25rem;
+  font-size: var(--text-lg);
 }
 @media (max-width: 34rem) {
   .prose .gain {

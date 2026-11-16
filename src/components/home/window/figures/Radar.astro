@@ -48,8 +48,8 @@ const { note } = Astro.props;
     gap: 0.3rem 1.5rem;
     padding: 0.85rem var(--win-pad) 0;
     border-top: 1px solid var(--line);
-    font-size: 0.75rem;
-    line-height: 1.45;
+    font-size: var(--text-sm);
+    line-height: 1.3;
   }
   /* The number first, in a column wide enough for three digits, so the words
      do not move when it replaces the dash. */
@@ -61,7 +61,7 @@ const { note } = Astro.props;
   .rd__cnt dd {
     order: -1;
     font-family: var(--head);
-    font-size: 1.05rem;
+    font-size: var(--text-base);
     font-weight: 600;
     letter-spacing: -0.03em;
     line-height: 1;
@@ -81,7 +81,7 @@ const { note } = Astro.props;
   .rd__note {
     margin-top: 0.55rem;
     padding: 0 var(--win-pad) 0 calc(var(--win-pad) + 2.4rem);
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
     color: var(--dim);
   }
   :global(.win__app:not([data-live])) :is(.rd__scope, .rd__note) {
@@ -97,7 +97,7 @@ const { note } = Astro.props;
     .rd__cnt {
       flex-direction: column;
       row-gap: 0.5rem;
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
     }
     /* No room for both on one line on a small phone, so always two. */
     .rd__cnt i,

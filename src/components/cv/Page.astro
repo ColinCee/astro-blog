@@ -41,7 +41,7 @@ const { title, description } = Astro.props;
   .cv__sec-head {
     margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
     font-weight: 400;
     color: var(--dim);
   }
@@ -56,7 +56,7 @@ const { title, description } = Astro.props;
     background: none;
     font: inherit;
     font-family: var(--mono);
-    font-size: 0.72rem;
+    font-size: var(--text-sm);
     color: var(--dim);
     cursor: pointer;
     transition:
@@ -78,7 +78,7 @@ const { title, description } = Astro.props;
   .tag {
     padding: 0.18rem 0.62rem;
     font-family: var(--mono);
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
     letter-spacing: 0.01em;
     color: var(--dim);
     border: 1px solid var(--line);

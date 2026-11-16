@@ -9,7 +9,7 @@
   align-items: center;
   gap: 0 0.8rem;
   font-family: var(--mono);
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
 }
 .prose .pts__r > * {
   padding: 0.2rem 0;
@@ -18,7 +18,7 @@
   display: contents;
 }
 .prose .pts__h {
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
 }
 .prose .pts__wh {
@@ -30,7 +30,7 @@
 }
 .prose .pts__k small {
   display: block;
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
 }
 .prose .pts__t {
@@ -87,7 +87,7 @@
 }
 .prose .pts em small {
   grid-column: 2;
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   text-align: left;
   color: var(--ink);
 }
@@ -128,14 +128,14 @@
   margin: 0.6rem 0 0;
   padding-top: 0.5rem;
   border-top: 1px solid var(--line);
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
 }
 .prose .pts__key span {
   position: relative;
 }
 .prose .pts__key sup {
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   position: absolute;
   left: 100%;
   top: -0.2rem;
@@ -189,7 +189,7 @@
   position: absolute;
   left: calc(var(--x) * 100%);
   transform: translateX(-50%);
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
   white-space: nowrap;
 }
@@ -236,7 +236,7 @@
     display: none;
   }
   .prose .pts__axis span {
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
   }
   /* The bar column is too narrow for five ticks: 75 and a right-aligned
      100 ran together. Keep 0, 50 and 100. */

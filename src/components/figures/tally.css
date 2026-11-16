@@ -12,13 +12,13 @@
 }
 .prose .tally dt {
   align-self: end;
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
 }
 .prose .tally dd {
   margin: 0.2rem 0 0;
   font-family: var(--head);
-  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  font-size: var(--text-voice);
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.04em;

@@ -3,8 +3,8 @@
    by a component's scoped styles. */
 .prose {
   max-width: var(--measure, 44rem);
-  font-size: var(--prose-size);
-  line-height: 1.65;
+  font-size: var(--text-read);
+  line-height: 1.6;
   color: var(--prose-ink);
 }
 .prose > :first-child {
@@ -22,7 +22,7 @@
   scroll-margin-top: 3.5rem;
   font-family: var(--head);
   font-weight: 600;
-  font-size: clamp(1.2rem, 2.4vw, 1.35rem);
+  font-size: var(--text-heading);
   letter-spacing: -0.03em;
   color: var(--ink);
 }
@@ -31,7 +31,7 @@
   font-family: var(--head);
   font-weight: 600;
   letter-spacing: -0.025em;
-  font-size: 1.2rem;
+  font-size: var(--text-lg);
   color: var(--ink);
 }
 .prose a {
@@ -76,7 +76,6 @@
   background: var(--raised);
   border-radius: var(--r);
   color: var(--ink);
-  font-size: 0.97em;
   line-height: 1.6;
 }
 .prose blockquote p {
@@ -104,17 +103,17 @@
   left: 0.2rem;
   top: 1.05rem;
   font-family: var(--mono);
-  font-size: 0.8em;
+  font-size: var(--text-inline);
   font-weight: 500;
   color: var(--accent);
 }
 /* Footnotes (Markdown [^1]): a quiet source list, not numbered takeaways. */
 .prose .footnotes {
-  font-size: 0.85em;
+  font-size: var(--text-md);
   color: var(--dim);
 }
 .prose .footnotes h2 {
-  font-size: 1rem;
+  font-size: var(--text-base);
 }
 .prose .footnotes ol > li {
   padding: 0.3rem 0 0.3rem 2rem;
@@ -150,14 +149,14 @@
   width: 100%;
   margin: 1.8rem 0;
   border-collapse: collapse;
-  font-size: 0.95rem;
-  line-height: 1.55;
+  font-size: var(--text-base);
+  line-height: 1.6;
   text-align: left;
 }
 .prose thead th {
   padding: 0 0 0.6rem;
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   color: var(--dim);
   vertical-align: bottom;
@@ -188,7 +187,7 @@
 .prose th[style*="text-align:right"],
 .prose td[style*="text-align:right"] {
   font-family: var(--mono);
-  font-size: 0.86em;
+  font-size: var(--text-inline);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -198,7 +197,7 @@
 }
 @media (max-width: 34rem) {
   .prose table {
-    font-size: 0.9rem;
+    font-size: var(--text-md);
   }
   .prose th + th,
   .prose td + td {
@@ -208,7 +207,7 @@
 /* Inline code only. Fenced blocks are styled by Expressive Code. */
 .prose :not(pre) > code {
   font-family: var(--mono);
-  font-size: 0.86em;
+  font-size: var(--text-inline);
   padding: 0.1em 0.38em;
   border-radius: var(--r-chip);
   background: var(--hover);

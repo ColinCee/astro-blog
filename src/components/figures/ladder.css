@@ -51,5 +51,5 @@
 }
 .prose .ladder [data-out] small {
   color: var(--dim);
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
 }

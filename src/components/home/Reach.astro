@@ -24,15 +24,15 @@ import links from "../../data/links.json";
   }
   .reach__tag {
     font-family: var(--mono);
-    font-size: 0.8125rem;
+    font-size: var(--text-md);
     color: var(--dim);
     margin: 0 0 clamp(1rem, 2.5vw, 1.6rem);
   }
   .reach__line {
     font-family: var(--head);
     font-weight: 600;
-    font-size: clamp(1.8rem, 4.6vw, 3.4rem);
-    line-height: 1.08;
+    font-size: var(--text-headline);
+    line-height: 1;
     letter-spacing: -0.045em;
     color: var(--ink);
     margin: 0;
@@ -47,7 +47,7 @@ import links from "../../data/links.json";
   .reach__alt {
     margin: 1rem 0 0;
     font-family: var(--mono);
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
     color: var(--dim);
   }
   .reach__alt a {
@@ -61,7 +61,7 @@ import links from "../../data/links.json";
   .reach__line a span,
   .reach__alt a span {
     display: inline-block;
-    font-size: 0.9em;
+    font-size: var(--text-xs);
     margin-left: 0.1em;
     transition: transform var(--dur-fast) var(--ease);
   }

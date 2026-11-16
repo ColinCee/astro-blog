@@ -48,6 +48,6 @@
 }
 .prose .ctl output[data-at] {
   flex: 1 1 12rem;
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
 }

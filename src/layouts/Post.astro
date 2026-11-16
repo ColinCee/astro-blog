@@ -268,8 +268,6 @@ const statParts = stat?.includes("→")
      column plus gap), so plain posts and timeline posts share a left edge and
      the dates sit in the margin. */
   .post {
-    /* Body size for long-form: 16-17px. Larger read as heavy at this weight. */
-    --prose-size: clamp(1rem, 0.96rem + 0.18vw, 1.0625rem);
     /* One reading measure for the header, prose, timeline and footer, in rem
        so it does not change with each block's font size. */
     --measure: 44rem;
@@ -302,7 +300,7 @@ const statParts = stat?.includes("→")
   .post__head,
   .post__foot {
     max-width: var(--measure, 44rem);
-    font-size: var(--prose-size);
+    font-size: var(--text-read);
   }
   .post__head {
     margin-bottom: clamp(2rem, 5vw, 3rem);
@@ -312,7 +310,7 @@ const statParts = stat?.includes("→")
     display: inline-block;
     margin-bottom: 1.4rem;
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
     color: var(--dim);
     transition: color var(--dur-fast) var(--ease);
   }
@@ -323,8 +321,8 @@ const statParts = stat?.includes("→")
     margin: 0;
     font-family: var(--head);
     font-weight: 600;
-    font-size: clamp(1.9rem, 5vw, 2.7rem);
-    line-height: 1.05;
+    font-size: var(--text-headline);
+    line-height: 1;
     letter-spacing: -0.045em;
     color: var(--ink);
     text-wrap: pretty;
@@ -348,14 +346,14 @@ const statParts = stat?.includes("→")
   }
   .figs dt {
     font-family: var(--mono);
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
     color: var(--dim);
   }
   .figs dd {
     margin: 0;
     font-family: var(--head);
     font-weight: 600;
-    font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+    font-size: var(--text-voice);
     line-height: 1;
     letter-spacing: -0.04em;
     font-variant-numeric: tabular-nums;
@@ -403,7 +401,7 @@ const statParts = stat?.includes("→")
   .post__meta {
     margin: 1.3rem 0 0;
     font-family: var(--mono);
-    font-size: 0.76rem;
+    font-size: var(--text-sm);
     color: var(--dim);
   }
   /* ---------------- timeline ---------------- */
@@ -420,11 +418,11 @@ const statParts = stat?.includes("→")
     padding-bottom: 0.8rem;
     border-bottom: 1px solid var(--line);
     max-width: var(--measure, 44rem);
-    font-size: var(--prose-size);
+    font-size: var(--text-read);
   }
   .tl__span > * {
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
   }
   .tl__k {
     color: var(--dim);
@@ -489,7 +487,7 @@ const statParts = stat?.includes("→")
     gap: 0.2rem 0.9rem;
     margin-bottom: 0.5rem;
     font-family: var(--mono);
-    font-size: 0.76rem;
+    font-size: var(--text-sm);
     color: var(--dim);
   }
   .tl__when time {
@@ -552,7 +550,7 @@ const statParts = stat?.includes("→")
     .tl__day {
       font-family: var(--head);
       font-weight: 600;
-      font-size: 1.7rem;
+      font-size: var(--text-xl);
       line-height: 1;
       letter-spacing: -0.04em;
       font-variant-numeric: tabular-nums;
@@ -560,7 +558,7 @@ const statParts = stat?.includes("→")
     .tl__yr {
       grid-column: 1 / -1;
       justify-self: end;
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
     }
   }
 
@@ -585,13 +583,13 @@ const statParts = stat?.includes("→")
   }
   .post__adj-k {
     font-family: var(--mono);
-    font-size: 0.72rem;
+    font-size: var(--text-sm);
     color: var(--dim);
   }
   .post__adj-t {
     font-weight: 400;
-    font-size: 1.1rem;
-    line-height: 1.25;
+    font-size: var(--text-base);
+    line-height: 1.3;
     letter-spacing: -0.01em;
     color: var(--ink);
     transition: color var(--dur-fast) var(--ease);
@@ -602,7 +600,7 @@ const statParts = stat?.includes("→")
   .post__more {
     position: relative;
     font-family: var(--mono);
-    font-size: 0.78rem;
+    font-size: var(--text-sm);
     color: var(--accent);
     transition: color var(--dur-fast) var(--ease);
   }

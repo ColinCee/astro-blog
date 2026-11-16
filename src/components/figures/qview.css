@@ -94,7 +94,7 @@
   flex: 0 0 auto;
   padding: 0 0.85rem;
   font-family: var(--mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -161,5 +161,5 @@
 }
 .prose .peek__zoom small {
   color: var(--dim);
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
 }

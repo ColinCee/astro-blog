@@ -91,7 +91,7 @@ const quips = [
   .hero__name {
     font-family: var(--head);
     font-weight: 600;
-    font-size: clamp(2.6rem, 5.5vw, 4.25rem);
+    font-size: var(--text-display);
     line-height: 1;
     letter-spacing: -0.05em;
     color: var(--ink);
@@ -99,7 +99,7 @@ const quips = [
   }
   .hero__role {
     margin-top: 0.7rem !important;
-    font-size: 1.0625rem;
+    font-size: var(--text-base);
     color: var(--dim);
   }
   .hero__social {
@@ -147,7 +147,7 @@ const quips = [
     gap: 0.8rem;
     margin: 0;
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
     color: var(--dim);
   }
   /* Tall enough for the longest line (two rows at 1.8rem, measured), so
@@ -235,8 +235,8 @@ const quips = [
     padding: 0 0 1.1rem;
     font-family: var(--head);
     font-weight: 200;
-    font-size: clamp(1.3rem, 2.1vw, 1.8rem);
-    line-height: 1.35;
+    font-size: var(--text-voice);
+    line-height: 1.3;
     letter-spacing: -0.03em;
     color: var(--ink);
     text-wrap: balance;
