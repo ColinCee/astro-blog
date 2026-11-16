@@ -24,7 +24,7 @@
   display: grid;
   justify-items: center;
   gap: 0.2rem;
-  color: var(--faint);
+  color: var(--dim);
   align-self: center;
   margin-bottom: 2.5rem;
 }
@@ -44,7 +44,7 @@
 }
 .prose .cube i {
   position: absolute;
-  border: 1px solid color-mix(in oklch, var(--ink) 35%, transparent);
+  border: 1px solid var(--bar);
   background-repeat: no-repeat;
   image-rendering: pixelated; /* a face may carry a real game frame (inline background-image) */
 }
@@ -65,20 +65,21 @@
 .prose .cube[style*="--slices"] i:nth-child(2) {
   background-image: repeating-linear-gradient(
     0deg,
-    color-mix(in oklch, var(--ink) 30%, transparent) 0 1px,
+    color-mix(in oklch, var(--ink) 30%, transparent) 0 1px /* colour exception: a cube's slices, shaded */,
     transparent 1px calc(var(--d) / var(--slices))
   );
 }
 .prose .cube[style*="--slices"] i:nth-child(3) {
   background-image: repeating-linear-gradient(
     90deg,
-    color-mix(in oklch, var(--ink) 30%, transparent) 0 1px,
+    color-mix(in oklch, var(--ink) 30%, transparent) 0 1px /* colour exception: a cube's slices, shaded */,
     transparent 1px calc(var(--d) / var(--slices))
   );
 }
 .prose .cube i:nth-child(1) {
   inset: 0;
-  background: color-mix(in oklch, var(--bar) 85%, var(--pane));
+  /* colour exception: a cube's face, shaded */
+  background: color-mix(in oklch, var(--bar) 85%, var(--raised));
   transform: translateZ(calc(var(--d) / 2));
 }
 .prose .cube i:nth-child(2) {
@@ -86,7 +87,8 @@
   width: var(--w);
   height: var(--d);
   top: calc((var(--h) - var(--d)) / 2);
-  background: color-mix(in oklch, var(--bar) 55%, var(--pane));
+  /* colour exception: a cube's face, shaded */
+  background: color-mix(in oklch, var(--bar) 55%, var(--raised));
   transform: rotateX(90deg) translateZ(calc(var(--h) / 2));
 }
 .prose .cube i:nth-child(3) {
@@ -101,9 +103,11 @@
   background: var(--accent);
 }
 .prose .cube--hi i:nth-child(2) {
-  background: color-mix(in oklch, var(--accent) 70%, var(--pane));
+  /* colour exception: a cube's face, shaded */
+  background: color-mix(in oklch, var(--accent) 70%, var(--raised));
 }
 .prose .cube--hi i:nth-child(3) {
+  /* colour exception: a cube's face, shaded */
   background: color-mix(in oklch, var(--accent) 80%, var(--ink));
 }
 .prose .arch figcaption {
@@ -112,7 +116,7 @@
   justify-items: center;
   text-align: center;
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
   white-space: nowrap;
 }
 .prose .arch figcaption b {

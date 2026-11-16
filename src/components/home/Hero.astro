@@ -100,7 +100,7 @@ const quips = [
   .hero__role {
     margin-top: 0.7rem !important;
     font-size: 1.0625rem;
-    color: var(--muted);
+    color: var(--dim);
   }
   .hero__social {
     display: flex;
@@ -114,8 +114,8 @@ const quips = [
     width: 2.6rem;
     height: 2.6rem;
     border-radius: var(--r-ctl);
-    background: var(--panel);
-    color: var(--muted);
+    background: var(--raised);
+    color: var(--dim);
     transition:
       color var(--dur-fast) var(--ease),
       background var(--dur-fast) var(--ease);
@@ -127,7 +127,7 @@ const quips = [
   }
   .hero__ico:hover {
     color: var(--ink);
-    background: var(--accent-hover);
+    background: var(--accent-tint);
     box-shadow: inset 0 0 0 1px var(--accent-solid);
   }
   .hero__ico:focus-visible {
@@ -148,7 +148,7 @@ const quips = [
     margin: 0;
     font-family: var(--mono);
     font-size: 0.75rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   /* Tall enough for the longest line (two rows at 1.8rem, measured), so
      nothing below moves when the line changes */
@@ -174,14 +174,14 @@ const quips = [
     width: 12rem;
     height: 2px;
     border-radius: 2px;
-    background: var(--well);
+    background: var(--inset);
     overflow: hidden;
   }
   .reel__bar i {
     display: block;
     width: 0;
     height: 100%;
-    background: var(--n9);
+    background: var(--bar);
   }
   .reel__bar i.is-running {
     animation: reel-run 5s linear forwards;
@@ -255,7 +255,7 @@ const quips = [
      the 200 voice; 300 only keeps the thin purple strokes as solid as ink. */
   .reel__item b {
     font-weight: 300;
-    color: var(--accent-text);
+    color: var(--accent);
   }
   .reel__item:has(.q-svg, .q-meter, .q-dots, .q-split, .q-ctr) b {
     font-weight: inherit;
@@ -271,7 +271,7 @@ const quips = [
   }
   .q-line {
     fill: none;
-    stroke: var(--n7);
+    stroke: var(--bar);
     stroke-width: 1.5;
   }
   .q-line--hot {
@@ -279,7 +279,7 @@ const quips = [
     stroke-width: 2;
   }
   .q-fill {
-    fill: var(--n7);
+    fill: var(--bar);
   }
   .q-fill--hot {
     fill: var(--accent-solid);
@@ -295,7 +295,7 @@ const quips = [
     animation-delay: 1.4s;
   }
   .q-node {
-    fill: var(--n7);
+    fill: var(--bar);
   }
   .q-node--tail {
     fill: var(--accent-solid);
@@ -316,7 +316,7 @@ const quips = [
   }
   @keyframes q-cool {
     to {
-      fill: var(--n7);
+      fill: var(--bar);
     }
   }
   .q-ctr {
@@ -345,7 +345,7 @@ const quips = [
     width: 3.2em;
     height: 0.6em;
     vertical-align: 0.1em;
-    background: var(--n5);
+    background: var(--line);
     border-radius: 1px;
     overflow: hidden;
   }
@@ -355,7 +355,7 @@ const quips = [
   }
   .q-meter--drain i {
     width: 12%;
-    background: var(--n8);
+    background: var(--bar);
     animation: q-drain 2.6s 0.3s var(--ease-in-out) backwards;
   }
   .q-meter--fill i {
@@ -386,7 +386,7 @@ const quips = [
     width: 0.5em;
     height: 0.5em;
     border-radius: 50%;
-    background: var(--n6);
+    background: var(--bar);
   }
   .q-dots .is-down {
     background: var(--accent-solid);
@@ -399,7 +399,7 @@ const quips = [
   .q-split i {
     flex: var(--w) 0 0;
     height: 100%;
-    background: var(--n5);
+    background: var(--line);
     border-radius: 1px;
   }
   .q-split .is-hot {

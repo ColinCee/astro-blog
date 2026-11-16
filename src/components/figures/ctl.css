@@ -25,15 +25,15 @@
 }
 .prose .ctl button[aria-pressed="true"] {
   border-color: var(--accent);
-  color: var(--accent-text);
+  color: var(--accent);
 }
 .prose .ctl button:hover {
-  background: var(--accent-hover);
+  background: var(--accent-tint);
   border-color: var(--accent-solid);
 }
 .prose .ctl button:disabled,
 .prose .ctl button:disabled:hover {
-  color: var(--faint);
+  color: var(--dim);
   border-color: var(--line);
   cursor: default;
 }
@@ -49,5 +49,5 @@
 .prose .ctl output[data-at] {
   flex: 1 1 12rem;
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
 }

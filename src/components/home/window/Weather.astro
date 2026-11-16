@@ -85,13 +85,13 @@ import Plot from "./Plot.astro";
     font-size: 0.6em;
     font-weight: 400;
     letter-spacing: 0;
-    color: var(--muted);
+    color: var(--dim);
   }
   /* One line kept for the words before they arrive. */
   .wx__text {
     min-height: 1.5em;
     margin-top: 0.15rem;
-    color: var(--muted);
+    color: var(--dim);
   }
   .wx__chart {
     flex: 1;
@@ -102,7 +102,7 @@ import Plot from "./Plot.astro";
     column-gap: 0.5rem;
     padding-top: 0.75rem; /* room for "now" over a reading at the day's high */
     font-size: 0.6875rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   /* Wide enough for "10°" before the scale is known, for the same reason. */
   .wx__yax {
@@ -128,7 +128,7 @@ import Plot from "./Plot.astro";
     font-style: normal;
     font-weight: 400;
     line-height: 1;
-    color: var(--muted);
+    color: var(--dim);
   }
   /* The script steps the label to whichever side the line leaves clear, and
      where it lands on the dashed top line it breaks the line, as the border
@@ -140,7 +140,7 @@ import Plot from "./Plot.astro";
     transform: translateX(-3px);
   }
   .wx__here.is-cut b {
-    background: var(--win-bg);
+    background: var(--raised);
   }
   /* While the pointer reads an hour, the readout in the border sits right
      above this label: step aside so the two never stack. Only for a pointer

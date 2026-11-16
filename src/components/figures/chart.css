@@ -19,7 +19,7 @@
 .prose .ladder text {
   font-family: var(--mono);
   font-size: calc(0.6875rem * var(--k, 1));
-  fill: var(--faint);
+  fill: var(--dim);
 }
 .prose .chart text.ink,
 .prose .chart text.hi {
@@ -38,7 +38,7 @@
   fill: none;
 }
 .prose .chart .ref {
-  stroke: var(--faint);
+  stroke: var(--dim);
   stroke-width: 1.5;
   stroke-dasharray: 4 4;
   fill: none;
@@ -48,13 +48,10 @@
   min-width: 0;
 }
 /* The band is the runs the chart is about (the result), so it takes the
-   accent; the line and dots it is read against stay neutral. */
+   accent, as a filled mark; the line and dots it is read against stay
+   neutral. */
 .prose .chart .band.band--runs {
-  fill: color-mix(in oklch, var(--accent) 55%, transparent);
-}
-/* On the light page 55% thins into a pale lilac; fuller there */
-:root[data-theme="light"] .prose .chart .band.band--runs {
-  fill: color-mix(in oklch, var(--accent) 80%, transparent);
+  fill: var(--accent-solid);
 }
 .prose .chart .band {
   fill: var(--bar);
@@ -78,7 +75,7 @@
   font-size: calc(0.8rem * var(--k, 1));
   font-weight: 500;
   paint-order: stroke;
-  stroke: var(--pane);
+  stroke: var(--raised);
   stroke-width: 4px;
   stroke-linejoin: round;
 }
@@ -87,11 +84,11 @@
   opacity: 1;
 }
 .prose .chart .mk {
-  fill: var(--muted);
+  fill: var(--dim);
   stroke: none;
 }
 .prose .chart .ln {
-  stroke: var(--muted);
+  stroke: var(--dim);
   stroke-width: 2;
   fill: none;
   stroke-linejoin: round;
@@ -111,7 +108,7 @@
   stroke: var(--accent);
 }
 .prose .chart text.hi {
-  fill: var(--accent-text);
+  fill: var(--accent);
   font-weight: 500;
 }
 .prose .chart text.ink {

@@ -13,7 +13,7 @@
 }
 .prose .ladder .ln {
   fill: none;
-  stroke: var(--muted);
+  stroke: var(--dim);
   stroke-width: 2;
 }
 .prose .ladder .riser {
@@ -31,7 +31,7 @@
 /* The picked step's column: a neutral band, so its riser is the one
    purple thing (a tinted band read as a surface in the accent). */
 .prose .ladder .hit.is-on {
-  fill: color-mix(in oklab, var(--ink) 6%, transparent);
+  fill: var(--hover);
 }
 .prose .ladder .hit:focus-visible {
   stroke: var(--accent);
@@ -47,9 +47,9 @@
   font-weight: 500;
 }
 .prose .ladder [data-out] strong {
-  color: var(--accent-text);
+  color: var(--accent);
 }
 .prose .ladder [data-out] small {
-  color: var(--faint);
+  color: var(--dim);
   font-size: 0.6875rem;
 }

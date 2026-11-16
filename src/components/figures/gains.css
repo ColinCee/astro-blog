@@ -15,7 +15,7 @@
 }
 .prose .gain em {
   font-style: normal;
-  color: var(--faint);
+  color: var(--dim);
   white-space: nowrap;
 }
 .prose .gain em b {
@@ -46,7 +46,7 @@
   height: 0.9rem;
 }
 .prose .gain--hi strong {
-  color: var(--accent-text);
+  color: var(--accent);
   font-size: 1.25rem;
 }
 @media (max-width: 34rem) {

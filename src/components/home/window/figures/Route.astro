@@ -81,7 +81,7 @@ const stops = [
     flex: none;
     width: 11px;
     height: 11px;
-    border: 1.5px solid var(--n10);
+    border: 1.5px solid var(--bar);
     border-radius: 50%;
   }
   .rt__node.is-cloud {
@@ -99,7 +99,7 @@ const stops = [
   }
   .rt__node :global(path) {
     fill: none;
-    stroke: var(--n10);
+    stroke: var(--bar);
     stroke-width: 1.25px;
     vector-effect: non-scaling-stroke;
   }
@@ -108,14 +108,14 @@ const stops = [
     border-color: var(--ink);
     background: var(--ink);
     box-shadow:
-      0 0 0 3px var(--win-bg),
-      0 0 0 4px var(--n8);
+      0 0 0 3px var(--raised),
+      0 0 0 4px var(--bar);
   }
   .rt__line {
     flex: 1;
     height: 1px;
     margin-inline: 7px;
-    background: var(--n8);
+    background: var(--bar);
     transform-origin: left;
     transition: transform var(--dur-slow) var(--ease-out)
       calc(var(--i, 0) * 0.3s + 0.1s);
@@ -130,12 +130,12 @@ const stops = [
     margin-left: 0.5em;
     font-size: 0.8125rem;
     letter-spacing: 0;
-    color: var(--muted);
+    color: var(--dim);
   }
   .rt__s {
     margin-top: 0.35rem;
     font-size: 0.75rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   /* The city that served this visit stays on one line however long its
      name ("Santiago de los Caballeros"), so the figure is the same height

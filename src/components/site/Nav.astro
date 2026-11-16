@@ -90,10 +90,10 @@ const active = (href: string) => {
     color: var(--ink);
   }
   .nav__mark span {
-    color: var(--muted);
+    color: var(--dim);
   }
   .nav__mark b {
-    color: var(--faint);
+    color: var(--dim);
     font-weight: 400;
   }
   .nav__links {
@@ -102,7 +102,7 @@ const active = (href: string) => {
     gap: 1.4rem;
     margin-left: auto;
     font-size: 0.9375rem;
-    color: var(--muted);
+    color: var(--dim);
   }
   /* The theme switch: a control, so ink and 6px, not the accent */
   .nav__theme {
@@ -113,7 +113,7 @@ const active = (href: string) => {
     padding: 0;
     border: 1px solid var(--line);
     border-radius: var(--r-ctl);
-    background: var(--panel);
+    background: var(--raised);
     color: var(--ink);
     cursor: pointer;
     transition:
@@ -121,7 +121,7 @@ const active = (href: string) => {
       border-color var(--dur-fast) var(--ease);
   }
   .nav__theme:hover {
-    background: var(--accent-hover);
+    background: var(--accent-tint);
     border-color: var(--accent-solid);
   }
   .nav__theme svg {

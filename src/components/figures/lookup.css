@@ -20,7 +20,7 @@
    not a border. */
 .prose .lookup__dict {
   padding: 0.6rem 0.8rem;
-  background: var(--well);
+  background: var(--inset);
   border-radius: var(--r-chip);
 }
 .prose .lookup__row {
@@ -36,7 +36,7 @@
   font-weight: 500;
 }
 .prose .lookup__row i {
-  color: var(--faint);
+  color: var(--dim);
   font-style: normal;
 }
 .prose .lookup__row b {
@@ -53,22 +53,24 @@
    one. */
 .prose .lookup .e0 {
   background: var(--bar);
+  color: var(--bar-ink);
 }
 .prose .lookup .e1 {
-  box-shadow: inset 0 0 0 1.5px var(--muted);
+  box-shadow: inset 0 0 0 1.5px var(--dim);
 }
 .prose .lookup .e2 {
   background: var(--ink);
-  color: var(--bg);
+  color: var(--page);
 }
 .prose .lookup .e3 {
-  box-shadow: inset 0 0 0 1.5px var(--muted);
+  box-shadow: inset 0 0 0 1.5px var(--dim);
   background: var(--bar);
+  color: var(--bar-ink);
 }
 /* Hover a row to light up every row with the same number, and its entry. */
 .prose .lookup:has([data-e="0"]:hover) [data-e="0"],
 .prose .lookup:has([data-e="1"]:hover) [data-e="1"],
 .prose .lookup:has([data-e="2"]:hover) [data-e="2"],
 .prose .lookup:has([data-e="3"]:hover) [data-e="3"] {
-  background: color-mix(in oklch, var(--accent) 12%, transparent);
+  background: var(--accent-tint);
 }

@@ -4,7 +4,7 @@
   padding: 0.9rem 1rem;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--bg);
+  background: var(--page);
   font-family: var(--mono);
   font-size: 0.75rem;
   line-height: 1.6;
@@ -19,8 +19,8 @@
    ink, strings a step quieter, punctuation faint. */
 .prose .json {
   --j-key: var(--ink);
-  --j-str: var(--muted);
-  --j-punct: var(--faint);
+  --j-str: var(--dim);
+  --j-punct: var(--dim);
 }
 /* Flex rows: the markup's line breaks between spans don't render as spaces. */
 .prose .json__l > span,
@@ -52,7 +52,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
-  text-decoration: underline dotted var(--faint);
+  text-decoration: underline dotted var(--dim);
   text-underline-offset: 0.25em;
   list-style: none;
 }

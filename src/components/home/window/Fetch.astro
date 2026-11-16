@@ -87,7 +87,7 @@ const since = await workSince();
     overflow: visible;
   }
   .ff__mark .is-tile {
-    fill: var(--win-tile);
+    fill: var(--page);
     stroke: var(--line);
     stroke-width: 1;
     vector-effect: non-scaling-stroke;
@@ -95,10 +95,10 @@ const since = await workSince();
   /* The mark, not a second accent: it is the same purple bar the browser tab
      shows. */
   .ff__mark .is-was {
-    fill: var(--n8);
+    fill: var(--bar);
   }
   .ff__mark .is-now {
-    fill: var(--accent-text);
+    fill: var(--accent);
   }
   /* In the opening round the two bars grow from the left, grey then purple. */
   .ff__mark .is-was,
@@ -140,10 +140,10 @@ const since = await workSince();
     line-height: 1;
     letter-spacing: 0.04em;
     white-space: nowrap;
-    color: var(--muted);
+    color: var(--dim);
   }
   .ff__dim {
-    color: var(--faint);
+    color: var(--dim);
   }
 
   /* A narrower panel, step by step: closer columns; then the role row goes

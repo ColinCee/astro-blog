@@ -15,13 +15,13 @@
   overflow: visible;
 }
 .prose .bal__out {
-  fill: color-mix(in oklch, var(--danger9) 26%, transparent);
+  fill: var(--loss-wash);
 }
 .prose .bal__in {
-  fill: color-mix(in oklch, var(--ok9) 34%, transparent);
+  fill: var(--gain-wash);
 }
 .prose .bal__zero {
-  stroke: var(--faint);
+  stroke: var(--dim);
   stroke-width: 1;
   stroke-dasharray: 3 4;
   vector-effect: non-scaling-stroke;
@@ -38,26 +38,26 @@
   left: -1.6rem;
   translate: 0 -50%;
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
 }
 .prose .bal__lbl,
 .prose .bal__days {
   position: absolute;
   display: grid;
   white-space: nowrap;
-  color: var(--muted);
+  color: var(--dim);
 }
 .prose .bal__lbl b {
   font-size: 0.8rem;
 }
 .prose .bal__lbl small {
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
 }
 /* where it ends is the result */
 .prose .bal__lbl small.bal__net {
   font-size: 0.8rem;
-  color: var(--accent-text);
+  color: var(--accent);
 }
 /* money out: just right of its step, above the line */
 .prose .bal__lbl--out {
@@ -89,7 +89,7 @@
   top: 0.4rem;
   translate: -50% 0;
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
 }
 @media (max-width: 30rem) {
   .prose .bal {

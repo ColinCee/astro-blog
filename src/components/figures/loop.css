@@ -10,7 +10,7 @@
   margin: 0 auto;
 }
 .prose .loop rect {
-  fill: var(--pane);
+  fill: var(--raised);
   stroke: var(--line);
   stroke-width: 1.2;
 }
@@ -25,11 +25,11 @@
 }
 .prose .loop text.sub {
   font-size: 11px;
-  fill: var(--faint);
+  fill: var(--dim);
 }
 .prose .loop .arr {
   fill: none;
-  stroke: var(--faint);
+  stroke: var(--dim);
   stroke-width: 1.2;
   marker-end: url(#loop-head);
 }

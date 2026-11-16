@@ -17,7 +17,7 @@
   gap: 1rem;
   margin: -0.2rem 0 0.8rem;
   font-size: 0.6875rem;
-  color: var(--muted);
+  color: var(--dim);
 }
 .prose .splits__key span::before {
   content: "";
@@ -40,7 +40,7 @@
 .prose .splits__k small {
   display: block;
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
 }
 .prose .sbar {
   display: flex;
@@ -56,10 +56,10 @@
   padding: 0 0.5rem;
   overflow: hidden;
   background: var(--bar);
+  color: var(--bar-ink);
   border-radius: 2px;
   font-style: normal;
   font-size: 0.8rem;
-  color: var(--ink);
   white-space: nowrap;
 }
 .prose .sbar i b {
@@ -71,7 +71,7 @@
 }
 .prose .sbar .sbar--a {
   background: var(--ink);
-  color: var(--bg);
+  color: var(--page);
 }
 .prose .sbar .sbar--thin {
   min-width: 3px;

@@ -313,11 +313,11 @@ const statParts = stat?.includes("→")
     margin-bottom: 1.4rem;
     font-family: var(--mono);
     font-size: 0.75rem;
-    color: var(--faint);
+    color: var(--dim);
     transition: color var(--dur-fast) var(--ease);
   }
   .post__back:hover {
-    color: var(--accent-text);
+    color: var(--accent);
   }
   .post__title {
     margin: 0;
@@ -349,7 +349,7 @@ const statParts = stat?.includes("→")
   .figs dt {
     font-family: var(--mono);
     font-size: 0.6875rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   .figs dd {
     margin: 0;
@@ -364,11 +364,11 @@ const statParts = stat?.includes("→")
   /* A result that got better: the old value in grey, the new one in the
      accent. A plain comparison ("82% vs 80%") stays ink. */
   .figs__was {
-    color: var(--faint);
+    color: var(--dim);
     font-weight: 400;
   }
   .figs__to {
-    color: var(--faint);
+    color: var(--dim);
   }
   .figs dd b {
     font-weight: 600;
@@ -404,7 +404,7 @@ const statParts = stat?.includes("→")
     margin: 1.3rem 0 0;
     font-family: var(--mono);
     font-size: 0.76rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   /* ---------------- timeline ---------------- */
   .tl {
@@ -427,10 +427,10 @@ const statParts = stat?.includes("→")
     font-size: 0.75rem;
   }
   .tl__k {
-    color: var(--faint);
+    color: var(--dim);
   }
   .tl__range {
-    color: var(--faint);
+    color: var(--dim);
   }
   .tl__span b {
     margin-left: auto;
@@ -467,8 +467,8 @@ const statParts = stat?.includes("→")
     width: 9px;
     height: 9px;
     border-radius: 50%;
-    background: var(--bg);
-    border: 2px solid var(--faint);
+    background: var(--page);
+    border: 2px solid var(--dim);
     transition:
       border-color var(--dur-fast) var(--ease),
       box-shadow var(--dur-fast) var(--ease),
@@ -490,7 +490,7 @@ const statParts = stat?.includes("→")
     margin-bottom: 0.5rem;
     font-family: var(--mono);
     font-size: 0.76rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   .tl__when time {
     display: inline-flex;
@@ -586,7 +586,7 @@ const statParts = stat?.includes("→")
   .post__adj-k {
     font-family: var(--mono);
     font-size: 0.72rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   .post__adj-t {
     font-weight: 400;
@@ -597,17 +597,17 @@ const statParts = stat?.includes("→")
     transition: color var(--dur-fast) var(--ease);
   }
   .post__adj:hover .post__adj-t {
-    color: var(--accent-text);
+    color: var(--accent);
   }
   .post__more {
     position: relative;
     font-family: var(--mono);
     font-size: 0.78rem;
-    color: var(--accent-text);
+    color: var(--accent);
     transition: color var(--dur-fast) var(--ease);
   }
   .post__more:hover {
-    color: var(--accent-text);
+    color: var(--accent);
   }
   /* Small mono links get a tap area of at least 32px without moving anything. */
   .post__back::before,

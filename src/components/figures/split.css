@@ -21,12 +21,12 @@
 }
 .prose .box small {
   font-size: 0.7rem;
-  color: var(--faint);
+  color: var(--dim);
 }
 .prose .box--slow {
   border-color: var(--bar);
-  background: color-mix(in oklch, var(--bar) 30%, transparent);
+  background: var(--inset);
 }
 .prose .box--fast {
-  border-color: var(--line-strong);
+  border-color: var(--line);
 }

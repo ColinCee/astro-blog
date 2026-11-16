@@ -14,7 +14,7 @@
     gap: 0.6rem;
     margin: 0;
     padding: 0.9rem 1rem;
-    background: var(--pane);
+    background: var(--raised);
     border-radius: 8px;
     font-family: var(--mono);
     font-size: 0.6875rem;
@@ -32,7 +32,7 @@
 }
 .recipe__k {
   margin: 0;
-  color: var(--faint);
+  color: var(--dim);
 }
 .recipe ol {
   display: grid;
@@ -46,7 +46,7 @@
   grid-template-columns: 1.1rem 1fr;
   margin: 0;
   padding: 0;
-  color: var(--faint);
+  color: var(--dim);
 }
 .recipe li::before {
   content: none;
@@ -58,7 +58,7 @@
   color: var(--ink);
 }
 .recipe li.is-now {
-  color: var(--accent-text);
+  color: var(--accent);
 }
 .recipe li.is-now b {
   font-weight: 500;

@@ -78,6 +78,9 @@ const stacks: Record<string, { p: Pt; th: number; lab: Pt }> = {
 };
 const airlines = ["BAW", "EZY", "VIR", "RYR", "DLH", "AFR", "KLM", "UAE"];
 
+// colour exception (file): a canvas drawing of a radar scope, with its own
+// greys read from the scale, as a figure's drawing keeps its own geometry.
+
 // The same colour at no opacity, so a gradient fades without greying.
 const clear = (hex: string) => {
   const m = /^#([0-9a-f]{6})$/i.exec(hex);
@@ -325,7 +328,7 @@ export function makeRadar(canvas: HTMLCanvasElement, still: boolean) {
       label: v("--n11"),
       // The scale's own label: the site's faint text grey. --n9 is too pale
       // for words on the light theme, though not for lines.
-      scale: v("--faint"),
+      scale: v("--dim"),
       // The planes with callsigns in ink: the window's purple is its focus.
       hot: v("--n12"),
       mono: v("--mono") || "monospace",

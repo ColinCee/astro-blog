@@ -7,29 +7,26 @@
   display: grid;
   gap: 0.35rem;
   padding: 0.9rem 1rem;
-  background: var(--well);
+  background: var(--inset);
   border-radius: var(--r-ctl);
   font-size: 0.75rem;
   line-height: 1.55;
-  color: var(--muted);
+  color: var(--dim);
 }
 .prose .doc__page p {
   margin: 0;
   overflow-wrap: anywhere;
 }
 .prose .doc__skip {
-  color: var(--faint);
+  color: var(--dim);
 }
 .prose .doc mark {
   padding: 0.05em 0.15em;
   border-radius: 2px;
   color: var(--ink);
   background:
-    linear-gradient(
-      color-mix(in oklch, var(--warn9) 34%, transparent),
-      color-mix(in oklch, var(--warn9) 34%, transparent)
-    )
-    no-repeat left / 100% 100%;
+    linear-gradient(var(--warn-wash), var(--warn-wash)) no-repeat left / 100%
+    100%;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
@@ -38,7 +35,7 @@
   font-weight: 500;
   font-size: 0.6875rem;
   line-height: 1;
-  color: var(--faint);
+  color: var(--dim);
   font-variant-numeric: tabular-nums;
 }
 .prose .doc sup {
@@ -53,7 +50,7 @@
   display: grid;
   grid-template-columns: 1.1rem minmax(0, 1fr);
   margin: 0;
-  color: var(--muted);
+  color: var(--dim);
 }
 .prose .doc__n {
   padding-top: 0.2rem;

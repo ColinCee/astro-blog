@@ -149,7 +149,7 @@ const { experience } = Astro.props;
   }
   @media (hover: hover) {
     .row__sum:hover {
-      background: var(--panel);
+      background: var(--raised);
     }
   }
   .row__sum:focus-visible {
@@ -164,8 +164,8 @@ const { experience } = Astro.props;
     height: 9px;
     translate: 0 -50%;
     border-radius: 50%;
-    background: var(--bg);
-    border: 2px solid var(--faint);
+    background: var(--page);
+    border: 2px solid var(--dim);
     transition:
       border-color var(--dur-fast) var(--ease),
       background-color var(--dur-fast) var(--ease);
@@ -175,7 +175,7 @@ const { experience } = Astro.props;
     box-shadow: var(--ring);
   }
   .row[open] .row__node {
-    background: var(--faint);
+    background: var(--dim);
   }
   .is-current .row[open] .row__node {
     background: var(--accent);
@@ -183,7 +183,7 @@ const { experience } = Astro.props;
   .row__when {
     font-family: var(--mono);
     font-size: 0.72rem;
-    color: var(--faint);
+    color: var(--dim);
     white-space: nowrap;
   }
   .row__dash {
@@ -199,7 +199,7 @@ const { experience } = Astro.props;
   }
   .row__now {
     font-weight: 500;
-    color: var(--accent-text);
+    color: var(--accent);
   }
   .row__who {
     display: flex;
@@ -218,14 +218,14 @@ const { experience } = Astro.props;
   .row__pos {
     font-family: var(--mono);
     font-size: 0.72rem;
-    color: var(--muted);
+    color: var(--dim);
   }
   .row__pill {
     padding: 0.12rem 0.55rem;
     font-family: var(--mono);
     font-size: 0.6875rem;
     color: var(--ink);
-    background: var(--well);
+    background: var(--inset);
     border-radius: var(--r-chip);
     align-self: center;
   }
@@ -241,7 +241,7 @@ const { experience } = Astro.props;
     white-space: nowrap;
   }
   .row__chev {
-    color: var(--faint);
+    color: var(--dim);
     transition: rotate var(--dur-base) var(--ease-out);
   }
   .row[open] .row__chev {
@@ -292,7 +292,7 @@ const { experience } = Astro.props;
     max-width: 70ch;
     font-size: 0.9rem;
     line-height: 1.55;
-    color: var(--muted);
+    color: var(--dim);
     text-wrap: pretty;
   }
   .row__point::before {
@@ -303,7 +303,7 @@ const { experience } = Astro.props;
     width: 5px;
     height: 5px;
     border-radius: 1px;
-    background: var(--faint);
+    background: var(--dim);
   }
   .row__stack {
     display: flex;

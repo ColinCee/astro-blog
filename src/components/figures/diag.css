@@ -10,7 +10,7 @@
   overflow: visible;
 }
 .prose .diag rect {
-  fill: var(--bg);
+  fill: var(--page);
   stroke: var(--line);
   stroke-width: 1.2;
 }
@@ -25,18 +25,18 @@
 }
 .prose .diag text.sub {
   font-size: calc(11px * max(1, var(--k, 1)));
-  fill: var(--faint);
+  fill: var(--dim);
 }
 .prose .diag text.hi {
-  fill: var(--accent-text);
+  fill: var(--accent);
 }
 .prose .diag .arr {
   fill: none;
-  stroke: var(--faint);
+  stroke: var(--dim);
   stroke-width: 1.2;
 }
 .prose .diag .head {
-  fill: var(--faint);
+  fill: var(--dim);
 }
 /* A diagram that fills its figure, scaling up on wide screens (capped so its
    text doesn't balloon). Its viewBox is phone width, so on a phone it's 1:1. */

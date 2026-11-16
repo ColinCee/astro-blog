@@ -48,7 +48,8 @@ function chain(root: HTMLElement) {
       const strength = Math.min(1, Math.abs(v[i]));
       if (strength > 0.01 && i < first) first = i;
       cells[i].style.fill =
-        `color-mix(in oklch, var(--accent) ${Math.round(strength * 100)}%, var(--panel))`;
+        // colour exception: the accent's strength is the cell's value
+        `color-mix(in oklch, var(--accent) ${Math.round(strength * 100)}%, var(--raised))`;
     }
     out.value = fmt.format(updates);
     reached.textContent =

@@ -246,12 +246,12 @@ const corners = [
         8px<br>panels, cards, figures
       </div>
       <div
-        style="width:8rem;height:2.6rem;border-radius:var(--r-ctl);border:1px solid var(--line-strong)"
+        style="width:8rem;height:2.6rem;border-radius:var(--r-ctl);border:1px solid var(--line)"
       >
         6px · controls
       </div>
       <div
-        style="width:5rem;height:1.6rem;border-radius:var(--r-chip);background:var(--well)"
+        style="width:5rem;height:1.6rem;border-radius:var(--r-chip);background:var(--inset)"
       >
         4px · chips
       </div>
@@ -270,97 +270,69 @@ const corners = [
       one exception: the home window, below.
     </p>
 
-    <h2>Foundations, proposed</h2>
+    <h2>Foundations</h2>
     <p>
       Fewer choices, each easy to tell apart. Every colour, size, gap and corner
       comes from the short lists below; anything else is an exception marked
-      where it is written, and a lint check fails the rest. The numbers in the
-      boxes are contrast ratios, measured live in the current theme: switch it
-      in the nav.
+      where it is written, and a check fails the rest. Colour is adopted; the
+      cards marked proposed are not yet. The numbers in the boxes are contrast
+      ratios, measured live in the current theme: switch it in the nav.
     </p>
 
     <div class="fd-cmp">
       <div class="fd-set">
-        <h3>colour today: 5 surfaces, 3 text greys</h3>
-        <div class="fd-surf" style="background:var(--bg)">
+        <h3>colour, adopted: 3 surfaces, 2 text tones</h3>
+        <div class="fd-surf" style="background:var(--page)">
           <span>page</span>
           <p style="color:var(--ink)" data-cr>ink</p>
-          <p style="color:var(--muted)" data-cr>muted</p>
-          <p style="color:var(--faint)" data-cr>faint</p>
+          <p style="color:var(--dim)" data-cr>dim</p>
           <p style="color:var(--accent)" data-cr>accent</p>
-          <div class="fd-surf" style="background:var(--panel)">
-            <span>panel</span>
-            <p style="color:var(--ink)" data-cr>ink</p>
-            <p style="color:var(--muted)" data-cr>muted</p>
-            <p style="color:var(--faint)" data-cr>faint</p>
-            <i style="background:var(--bar)" data-cr>bar</i>
-            <div class="fd-surf" style="background:var(--well)">
-              <span>well</span>
-              <p style="color:var(--faint)" data-cr>faint</p>
-            </div>
-          </div>
-        </div>
-        <dl class="fd-pairs">
-          <div>
-            <dt>muted to faint</dt>
-            <dd data-pair="--muted,--faint"></dd>
-          </div>
-          <div>
-            <dt>page to panel</dt>
-            <dd data-pair="--bg,--panel"></dd>
-          </div>
-          <div>
-            <dt>panel to well</dt>
-            <dd data-pair="--panel,--well"></dd>
-          </div>
-          <div>
-            <dt>bars on a panel</dt>
-            <dd>under 3:1</dd>
-          </div>
-        </dl>
-      </div>
-      <div class="fd-set">
-        <h3>colour proposed: 3 surfaces, 2 text tones</h3>
-        <div class="fd-surf" style="background:var(--p-page)">
-          <span>page</span>
-          <p style="color:var(--ink)" data-cr>ink</p>
-          <p style="color:var(--p-dim)" data-cr>dim</p>
-          <p style="color:var(--accent)" data-cr>accent</p>
-          <div class="fd-surf" style="background:var(--p-raised)">
+          <div class="fd-surf" style="background:var(--raised)">
             <span>raised</span>
             <p style="color:var(--ink)" data-cr>ink</p>
-            <p style="color:var(--p-dim)" data-cr>dim</p>
-            <i style="background:var(--p-bar)" data-cr>bar</i>
-            <div class="fd-surf" style="background:var(--p-inset)">
+            <p style="color:var(--dim)" data-cr>dim</p>
+            <p style="color:var(--accent)" data-cr>accent</p>
+            <i style="background:var(--bar)" data-cr>bar</i>
+            <div class="fd-surf" style="background:var(--inset)">
               <span>inset</span>
-              <p style="color:var(--p-dim)" data-cr>dim</p>
+              <p style="color:var(--dim)" data-cr>dim</p>
+              <p style="color:var(--accent)" data-cr>accent</p>
             </div>
           </div>
         </div>
+      </div>
+      <div class="fd-set">
+        <h3>what keeps it apart</h3>
         <dl class="fd-pairs">
           <div>
             <dt>ink to dim</dt>
-            <dd data-pair="--ink,--p-dim"></dd>
+            <dd data-pair="--ink,--dim"></dd>
           </div>
           <div>
             <dt>page to raised</dt>
-            <dd data-pair="--p-page,--p-raised"></dd>
+            <dd data-pair="--page,--raised"></dd>
           </div>
           <div>
             <dt>raised to inset</dt>
-            <dd data-pair="--p-raised,--p-inset"></dd>
+            <dd data-pair="--raised,--inset"></dd>
           </div>
           <div>
-            <dt>bars on a panel</dt>
-            <dd>3:1 or more</dd>
+            <dt>bar on raised</dt>
+            <dd data-pair="--bar,--raised"></dd>
           </div>
         </dl>
+        <p class="f">
+          Before: muted and faint were 1.24:1 apart and read as one grey; panels
+          sat 1.15:1 off the page and wells 1.08:1 off a panel; bars were under
+          3:1. Every word on the site is now checked at 4.5:1 on what it sits
+          on, in both themes.
+        </p>
       </div>
     </div>
 
     <div class="grid" style="margin-top:0.75rem">
       <div class="card">
-        <h3>card spacing, the same in every card</h3>
+        <h3>card spacing, proposed: the same in every card</h3>
         <div class="fd-pad">
           <div class="fd-in">
             <p class="fd-t">title</p>
@@ -393,28 +365,39 @@ const corners = [
         </p>
       </div>
       <div class="card">
-        <h3>the whole palette, proposed</h3>
+        <h3>the whole palette, adopted</h3>
         <p><b>3 surfaces</b> <span class="m">page, raised, inset</span></p>
         <p>
           <b>2 text tones</b>
           <span class="m">ink for what you read, dim for the rest</span>
         </p>
-        <p><b>1 line</b> <span class="m">every border and rule</span></p>
-        <p><b>1 bar grey</b> <span class="m">3:1 on its surface</span></p>
+        <p>
+          <b>1 line, 1 hover</b>
+          <span class="m">every border; a hovered row</span>
+        </p>
+        <p>
+          <b>1 bar grey</b>
+          <span class="m">3:1 on a panel, dark words on it</span>
+        </p>
         <p>
           <b>accent</b>
-          <span class="m">one colour, and one tint for a ring or a hover</span>
+          <span class="m"
+            >one purple, a deeper one for a fill with white words, and one
+            tint</span
+          >
         </p>
         <p>
           <b>status</b>
-          <span class="m">green, amber and red: a dot and its word</span>
+          <span class="m"
+            >green, amber and red: a dot and its word, or a wash</span
+          >
         </p>
         <p class="f">
-          Today: 20 colour roles, 9 window colours and 30 one-off mixes.
+          Before: 20 colour roles, 9 window colours and 30 one-off mixes.
         </p>
       </div>
       <div class="card">
-        <h3>text: 7 sizes, 3 line-heights, 4 weights</h3>
+        <h3>text, proposed: 7 sizes, 3 line-heights, 4 weights</h3>
         <div class="sc-text">
           {text.map((n) => (
             <p style={`font-size:${n / 16}rem`}>
@@ -440,7 +423,7 @@ const corners = [
 
     <div class="grid" style="margin-top:0.75rem">
       <div class="card">
-        <h3>space: 9 steps on a 4px grid</h3>
+        <h3>space, proposed: 9 steps on a 4px grid</h3>
         <div class="sc-space">
           {space.map((n) => (
             <div>
@@ -455,7 +438,7 @@ const corners = [
         </p>
       </div>
       <div class="card">
-        <h3>corners: 3, and round for status dots</h3>
+        <h3>corners, proposed: 3, and round for status dots</h3>
         <div class="fd-corners">
           {corners.map(([r, use, w, h]) => (
             <div>
@@ -472,7 +455,7 @@ const corners = [
         </p>
       </div>
       <div class="card">
-        <h3>one each</h3>
+        <h3>one each, proposed</h3>
         <p><b>focus</b> <span class="m">2px accent outline, 2px out</span></p>
         <p><b>control</b> <span class="m">2.75rem (44px) tall</span></p>
         <p><b>border</b> <span class="m">1px</span></p>
@@ -802,7 +785,7 @@ const corners = [
             width="220"
             height="120"
             rx="6"
-            fill="var(--well)"
+            fill="var(--inset)"
           />
           <rect x="45" y="10" width="130" height="8" rx="2" fill="var(--n8)" />
           <rect
@@ -821,17 +804,17 @@ const corners = [
             width="130"
             height="30"
             rx="3"
-            fill="var(--panel)"
+            fill="var(--raised)"
           />
           <rect x="45" y="94" width="130" height="3" fill="var(--n7)" />
           <rect x="45" y="101" width="110" height="3" fill="var(--n7)" />
-          <path d="M45 114H175" stroke="var(--faint)" stroke-dasharray="2 2" />
+          <path d="M45 114H175" stroke="var(--dim)" stroke-dasharray="2 2" />
           <text
             x="110"
             y="118"
             font-size="6"
             text-anchor="middle"
-            fill="var(--faint)"
+            fill="var(--dim)"
             style="font-family: var(--mono)"
           >
             44rem, one edge
@@ -844,7 +827,7 @@ const corners = [
       </div>
       <div class="card">
         <h3>header</h3>
-        <p class="t-mono" style="color:var(--faint)">// writing</p>
+        <p class="t-mono" style="color:var(--dim)">// writing</p>
         <p
           style="font-family:var(--head);font-weight:600;font-size:1.35rem;letter-spacing:-.04em;line-height:1.1;margin:.2rem 0 .7rem"
         >
@@ -854,7 +837,7 @@ const corners = [
         <p
           style="font-family:var(--head);font-weight:600;font-size:1.6rem;letter-spacing:-.04em;margin:0"
         >
-          <span style="color:var(--faint);font-weight:400">26 s</span>
+          <span style="color:var(--dim);font-weight:400">26 s</span>
           <span class="f"><StatArrow /></span>
           <span style="color:var(--accent)">20 s</span>
         </p>
@@ -883,7 +866,7 @@ const corners = [
     <h3 style="margin-top:1.6rem">figure anatomy</h3>
     <figure
       class="card"
-      style="margin:0;font-family:var(--mono);font-size:.8rem;color:var(--muted)"
+      style="margin:0;font-family:var(--mono);font-size:.8rem;color:var(--dim)"
     >
       <p class="t-mono" style="margin:0 0 .7rem;font-size:11px">
         a short title above · 11px
@@ -894,7 +877,7 @@ const corners = [
         <span>GitHub</span
         ><i
           style="height:.55rem;background:var(--n7);border-radius:1px;display:block"
-        ></i><b style="font-weight:500;text-align:right;color:var(--muted)"
+        ></i><b style="font-weight:500;text-align:right;color:var(--dim)"
           >26 s</b
         >
         <span style="color:var(--ink)">mini PC</span
@@ -904,7 +887,7 @@ const corners = [
           >20 s</b
         >
       </div>
-      <figcaption style="margin-top:.7rem;font-size:11px;color:var(--faint)">
+      <figcaption style="margin-top:.7rem;font-size:11px;color:var(--dim)">
         at most one line of caption below, for a note · labels on the marks at
         12.8px
       </figcaption>
@@ -949,14 +932,14 @@ const corners = [
         <p>
           <span
             class="dot"
-            style="border-radius:1px;width:1.4rem;height:.7rem;box-sizing:border-box;border:1.5px dashed var(--muted);background:none"
+            style="border-radius:1px;width:1.4rem;height:.7rem;box-sizing:border-box;border:1.5px dashed var(--dim);background:none"
           ></span
           >a second neutral thing: outlined, dashed or hatched, never a second
           grey
         </p>
         <p>
           <span
-            style="display:inline-block;width:1.4rem;border-top:1px dashed var(--muted);margin-right:.4rem;vertical-align:.25em"
+            style="display:inline-block;width:1.4rem;border-top:1px dashed var(--dim);margin-right:.4rem;vertical-align:.25em"
           ></span
           >a reference line, dashed, explained once
         </p>
@@ -975,7 +958,7 @@ const corners = [
           > <span class="f">a real drop</span>
         </p>
         <p>
-          <b style="color:var(--faint);font-family:var(--mono);font-weight:500"
+          <b style="color:var(--dim);font-family:var(--mono);font-weight:500"
             >+0.6</b
           > <span class="f">could be luck</span>
         </p>
@@ -1000,7 +983,7 @@ const corners = [
       <div class="card">
         <h3>A vs B · bars to scale</h3>
         <svg aria-hidden="true" viewBox="0 0 200 54" style="width:100%">
-          <g style="font-family: var(--mono)" font-size="8" fill="var(--muted)">
+          <g style="font-family: var(--mono)" font-size="8" fill="var(--dim)">
             <text x="0" y="13">Jest</text>
             <text x="0" y="33">Vitest</text>
             <text x="198" y="13" text-anchor="end">428 s</text>
@@ -1015,8 +998,8 @@ const corners = [
       <div class="card">
         <h3>options · dot plot on one axis</h3>
         <svg aria-hidden="true" viewBox="0 0 200 54" style="width:100%">
-          <path d="M50 50H190" stroke="var(--line-strong)" />
-          <g style="font-family: var(--mono)" font-size="8" fill="var(--muted)">
+          <path d="M50 50H190" stroke="var(--line)" />
+          <g style="font-family: var(--mono)" font-size="8" fill="var(--dim)">
             <text x="0" y="12">QEMU</text>
             <text x="0" y="26">Firecracker</text>
             <text x="0" y="40">Docker</text>
@@ -1037,7 +1020,7 @@ const corners = [
             height="12"
             fill="var(--accent-solid)"
           />
-          <g style="font-family: var(--mono)" font-size="8" fill="var(--muted)">
+          <g style="font-family: var(--mono)" font-size="8" fill="var(--dim)">
             <text x="0" y="40">80% loading the engine</text>
             <text x="200" y="40" text-anchor="end" fill="var(--accent)">
               20% running
@@ -1048,7 +1031,7 @@ const corners = [
       <div class="card">
         <h3>over time · line</h3>
         <svg aria-hidden="true" viewBox="0 0 200 70" style="width:100%">
-          <path d="M20 60H196M20 6V60" stroke="var(--line-strong)" />
+          <path d="M20 60H196M20 6V60" stroke="var(--line)" />
           <path
             d="M24 56L80 44L120 36L192 12"
             stroke="var(--n8)"
@@ -1061,8 +1044,8 @@ const corners = [
             fill="none"
             stroke-width="2"
           />
-          <path d="M20 30H196" stroke="var(--muted)" stroke-dasharray="3 3" />
-          <g style="font-family: var(--mono)" font-size="7" fill="var(--faint)">
+          <path d="M20 30H196" stroke="var(--dim)" stroke-dasharray="3 3" />
+          <g style="font-family: var(--mono)" font-size="7" fill="var(--dim)">
             <text x="196" y="68" text-anchor="end">test files →</text>
             <text x="2" y="10">min</text>
           </g>
@@ -1083,11 +1066,7 @@ const corners = [
             height="8"
             fill="var(--accent-solid)"
           />
-          <g
-            style="font-family: var(--mono)"
-            font-size="7.5"
-            fill="var(--muted)"
-          >
+          <g style="font-family: var(--mono)" font-size="7.5" fill="var(--dim)">
             <text x="0" y="9">GitHub</text>
             <text x="0" y="21">pickup</text>
             <text x="0" y="33">installs</text>
@@ -1119,10 +1098,10 @@ const corners = [
         <h3>code</h3>
         <pre
           style="margin:0;padding:.8rem 1rem;border-radius:var(--r);background:var(--n2);font-family:var(--mono);font-size:.8rem;line-height:1.6;color:var(--ink);overflow:auto"
-        ><span style="color:var(--syn-kw)">export default</span> <span style="color:var(--syn-fn)">defineConfig</span><span style="color:var(--faint)">({"{"}</span>
-  <span style="color:var(--faint)">// one engine per worker</span>
-  test: <span style="color:var(--faint)">{"{"}</span> isolate: <span style="color:var(--syn-num)">false</span>, pool: <span style="color:var(--syn-str)">"threads"</span> <span style="color:var(--faint)">{"}"}</span>,
-<span style="color:var(--faint)">{"}"});</span></pre>
+        ><span style="color:var(--syn-kw)">export default</span> <span style="color:var(--syn-fn)">defineConfig</span><span style="color:var(--dim)">({"{"}</span>
+  <span style="color:var(--dim)">// one engine per worker</span>
+  test: <span style="color:var(--dim)">{"{"}</span> isolate: <span style="color:var(--syn-num)">false</span>, pool: <span style="color:var(--syn-str)">"threads"</span> <span style="color:var(--dim)">{"}"}</span>,
+<span style="color:var(--dim)">{"}"});</span></pre>
         <p class="f" style="margin-top:.6rem">
           wrapped, never scrolling sideways. Five syntax hues at one lightness:
           <span style="color:var(--syn-kw)">keyword</span>
@@ -1141,11 +1120,11 @@ const corners = [
         >
           <span
             class="t-mono"
-            style="padding:.2rem 0;border-bottom:1px solid var(--line-strong)"
+            style="padding:.2rem 0;border-bottom:1px solid var(--line)"
             >claim</span
           ><span
             class="t-mono"
-            style="padding:.2rem 0;border-bottom:1px solid var(--line-strong);text-align:right"
+            style="padding:.2rem 0;border-bottom:1px solid var(--line);text-align:right"
             >£</span
           ><span style="padding:.3rem 0;border-bottom:1px solid var(--line)"
             >compensation</span
@@ -1165,7 +1144,7 @@ const corners = [
       <div class="card">
         <h3>quote · a numbered list</h3>
         <blockquote
-          style="margin:0 0 .7rem;padding:.6rem .8rem;border-radius:var(--r);background:var(--well);font-size:.9rem"
+          style="margin:0 0 .7rem;padding:.6rem .8rem;border-radius:var(--r);background:var(--inset);font-size:.9rem"
         >
           a quoted document sits on a tone, so it reads apart from narration
         </blockquote>
@@ -1183,7 +1162,6 @@ const corners = [
   /* The page's own names for the site's roles */
   .ds {
     --sans: var(--grotesk);
-    --accent: var(--accent-text);
     --line-2: color-mix(in oklab, var(--n12) 5%, transparent);
     max-width: var(--w-page);
     margin: 0 auto;
@@ -1204,14 +1182,14 @@ const corners = [
     font: inherit;
     font-size: 0.8125rem;
     color: var(--ink);
-    background: var(--panel);
-    border: 1px solid var(--line-strong);
+    background: var(--raised);
+    border: 1px solid var(--line);
     border-radius: var(--r-ctl);
     padding: 0.35rem 0.7rem;
     cursor: pointer;
   }
   .ds .ctl:hover {
-    background: var(--accent-hover);
+    background: var(--accent-tint);
     border-color: var(--accent-solid);
   }
   .ds .acc {
@@ -1239,7 +1217,7 @@ const corners = [
     font-weight: 600;
   }
   .ds .lede {
-    color: var(--muted);
+    color: var(--dim);
     max-width: 62ch;
     margin: 0 0 2.5rem;
     font-size: 1.0625rem;
@@ -1252,7 +1230,7 @@ const corners = [
     font-weight: 600;
   }
   .ds h2 + p {
-    color: var(--muted);
+    color: var(--dim);
     margin: 0 0 1.2rem;
     max-width: 64ch;
   }
@@ -1260,7 +1238,7 @@ const corners = [
     font-family: var(--mono);
     font-size: 0.75rem;
     font-weight: 400;
-    color: var(--faint);
+    color: var(--dim);
     margin: 0 0 0.5rem;
   }
   .ds .grid {
@@ -1269,7 +1247,7 @@ const corners = [
     gap: 0.75rem;
   }
   .ds .card {
-    background: var(--panel);
+    background: var(--raised);
     border-radius: var(--r);
     padding: 1.1rem 1.25rem;
   }
@@ -1288,7 +1266,7 @@ const corners = [
     gap: 0.5rem;
     font-family: var(--mono);
     font-size: 0.6875rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   .ds .sc-space i {
     height: 0.5rem;
@@ -1302,20 +1280,6 @@ const corners = [
     margin: 0 0 0.25rem;
     line-height: 1.2;
     font-family: var(--mono);
-  }
-  /* The proposed colour roles, drawn beside today's (Foundations) */
-  .ds {
-    --p-page: var(--n1);
-    --p-raised: var(--n4);
-    --p-inset: var(--n6);
-    --p-dim: var(--n10);
-    --p-bar: var(--n9);
-  }
-  :root[data-theme="light"] .ds {
-    --p-page: var(--n5);
-    --p-raised: var(--n2);
-    --p-inset: var(--n6);
-    --p-dim: var(--n11);
   }
   .ds .fd-cmp {
     display: grid;
@@ -1376,7 +1340,7 @@ const corners = [
     gap: 0.5rem;
   }
   .ds .fd-pairs dt {
-    color: var(--muted);
+    color: var(--dim);
   }
   .ds .fd-pairs dd {
     margin: 0;
@@ -1392,11 +1356,11 @@ const corners = [
   .ds .fd-pad {
     padding: 1rem;
     margin-bottom: 0.75rem;
-    background: var(--well);
+    background: var(--inset);
     border-radius: var(--r);
   }
   .ds .fd-in {
-    outline: 1px dashed var(--line-strong);
+    outline: 1px dashed var(--line);
   }
   .ds .fd-in p {
     margin: 0 0 0.25rem;
@@ -1405,7 +1369,7 @@ const corners = [
     margin-bottom: 0.5rem;
     font-family: var(--mono);
     font-size: 0.75rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   .ds .fd-in .fd-g {
     margin-top: 1rem;
@@ -1420,20 +1384,20 @@ const corners = [
   .ds .fd-corners i {
     display: block;
     margin-bottom: 0.5rem;
-    background: var(--well);
-    border: 1px solid var(--line-strong);
+    background: var(--inset);
+    border: 1px solid var(--line);
   }
   .ds .sc-text span {
     display: inline-block;
     width: 2.5rem;
     font-size: 0.6875rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   .ds .m {
-    color: var(--muted);
+    color: var(--dim);
   }
   .ds .f {
-    color: var(--faint);
+    color: var(--dim);
   }
   .ds ol.princ {
     margin: 0;
@@ -1445,7 +1409,7 @@ const corners = [
   }
   .ds ol.princ li {
     counter-increment: p;
-    background: var(--panel);
+    background: var(--raised);
     border-radius: var(--r);
     padding: 0.85rem 1.1rem 0.85rem 3rem;
     position: relative;
@@ -1477,7 +1441,7 @@ const corners = [
     padding: 0.2rem 0.35rem;
     font-family: var(--mono);
     font-size: 0.68rem;
-    color: var(--faint);
+    color: var(--dim);
     box-shadow: inset 0 0 0 1px var(--line-2);
   }
   .ds .sw.six {
@@ -1503,11 +1467,11 @@ const corners = [
   }
   .ds .btn--ink {
     background: var(--ink);
-    color: var(--panel);
+    color: var(--raised);
   }
   .ds .btn--ghost {
-    background: var(--panel);
-    border-color: var(--line-strong);
+    background: var(--raised);
+    border-color: var(--line);
     color: var(--ink);
   }
   .ds .ico {
@@ -1516,9 +1480,9 @@ const corners = [
     width: 2.4rem;
     height: 2.4rem;
     border-radius: var(--r-ctl);
-    background: var(--panel);
-    border: 1px solid var(--line-strong);
-    color: var(--muted);
+    background: var(--raised);
+    border: 1px solid var(--line);
+    color: var(--dim);
   }
   .ds .ico svg {
     width: 1rem;
@@ -1543,7 +1507,7 @@ const corners = [
     font-variant-numeric: tabular-nums;
   }
   .ds .stat .was {
-    color: var(--faint);
+    color: var(--dim);
     margin-right: 0.4rem;
   }
   .ds .stat b {
@@ -1592,8 +1556,7 @@ const corners = [
     --hw-line: color-mix(in oklab, var(--n12) 17%, transparent);
     --hw-sel: color-mix(in oklab, var(--n12) 6%, transparent);
     --hw-tile: var(--n1);
-    /* The site's --accent: this page renames --accent to the text accent, so
-       the sample names the step (dark v6, light v5). */
+    /* The accent's step, named so the sample shows which it is. */
     --hw-focus: var(--v6);
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
@@ -1647,7 +1610,7 @@ const corners = [
     font-size: 0.6875rem;
     line-height: 1;
     white-space: nowrap;
-    color: var(--faint);
+    color: var(--dim);
   }
   .ds .hw__lbl--t {
     top: 0;
@@ -1656,10 +1619,10 @@ const corners = [
   }
   .ds .hw__pn > .hw__lbl--t {
     font-size: 0.75rem;
-    color: var(--muted);
+    color: var(--dim);
   }
   .ds .hw__pn.is-focus > .hw__lbl--t {
-    color: var(--accent-text);
+    color: var(--accent);
   }
   .ds .hw__lbl--tr {
     top: 0;
@@ -1776,7 +1739,7 @@ const corners = [
     fill: var(--n8);
   }
   .ds .hw__mark .is-now {
-    fill: var(--accent-text);
+    fill: var(--accent);
   }
   .ds .hw__kv > div {
     display: grid;
@@ -1799,7 +1762,7 @@ const corners = [
   .ds .hw__cjk {
     font-family: var(--cjk);
     line-height: 1;
-    color: var(--muted);
+    color: var(--dim);
   }
   /* Narrower, the role row goes first and the mark follows the rows down;
      narrower still, the newest date goes and the two names take a line each. */
@@ -1884,13 +1847,13 @@ const corners = [
     letter-spacing: -0.01em;
   }
   .ds .card .t-body {
-    color: var(--muted);
+    color: var(--dim);
     max-width: 60ch;
   }
   .ds .card .t-mono {
     font-family: var(--mono);
     font-size: 0.8125rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   .ds .shape {
     display: flex;
@@ -1899,12 +1862,12 @@ const corners = [
     flex-wrap: wrap;
   }
   .ds .shape div {
-    background: var(--panel);
+    background: var(--raised);
     display: grid;
     place-items: center;
     font-family: var(--mono);
     font-size: 0.75rem;
-    color: var(--faint);
+    color: var(--dim);
     text-align: center;
   }
   .mo__row {
@@ -1928,7 +1891,7 @@ const corners = [
   .ds code {
     font-family: var(--mono);
     font-size: 0.85em;
-    background: var(--well);
+    background: var(--inset);
     padding: 0.05em 0.35em;
     border-radius: var(--r-chip);
   }

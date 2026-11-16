@@ -10,10 +10,10 @@
 .prose .flow__lab {
   margin: 0;
   font-size: 0.75rem;
-  color: var(--faint);
+  color: var(--dim);
 }
 .prose .flow__lab--back {
-  color: var(--accent-text);
+  color: var(--accent);
 }
 .prose .flow__lab--ink {
   color: var(--ink);
@@ -23,7 +23,7 @@
 .prose .flow__b.flow__b--over {
   background-image: repeating-linear-gradient(
     135deg,
-    color-mix(in oklch, var(--ink) 30%, transparent) 0 3px,
+    var(--bar) 0 3px,
     transparent 3px 7px
   );
 }
@@ -43,17 +43,18 @@
   border-radius: 4px;
 }
 .prose .flow__b {
+  /* colour exception: the accent's strength is the row's value */
   background: color-mix(
     in oklch,
     var(--accent) calc(var(--v, 0) * 70%),
-    var(--pane)
+    var(--raised)
   );
   transition: background-color var(--dur-base) var(--ease-out);
 }
 .prose .flow__b small,
 .prose .flow__win small {
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
 }
 .prose .flow__b b {
   font-size: 0.8rem;
@@ -64,7 +65,7 @@
   border-color: var(--accent);
 }
 .prose .flow__win b {
-  color: var(--accent-text);
+  color: var(--accent);
   font-size: 0.95rem;
 }
 @media (prefers-reduced-motion: reduce) {

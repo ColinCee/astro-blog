@@ -12,7 +12,7 @@
   align-content: start;
   gap: 0.45rem;
   padding: 0.85rem 0.95rem 0.9rem;
-  background: var(--well);
+  background: var(--inset);
   border-radius: var(--r-ctl);
 }
 .prose .rule p {
@@ -24,11 +24,11 @@
   justify-content: space-between;
   gap: 0.2rem 0.8rem;
   font-size: 0.75rem;
-  color: var(--muted);
+  color: var(--dim);
 }
 .prose .rule__tag {
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
 }
 .prose .rule__gives {
   font-family: var(--head);
@@ -39,7 +39,7 @@
   color: var(--ink);
 }
 .prose .rule--off .rule__gives {
-  color: var(--faint);
+  color: var(--dim);
 }
 .prose .rule__test {
   display: flex;
