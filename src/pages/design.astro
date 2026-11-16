@@ -16,6 +16,24 @@ const since = await workSince();
 const first = posts[0];
 const second = posts.slice(1).find((p) => p.before) ?? posts[1];
 const rows = [first, second].filter((p) => p !== undefined);
+
+// The proposed scales (Scales, below), in px at the 16px root. Each is fitted
+// to the values the site already uses, so moving onto it shifts nothing far.
+const space = [2, 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 64, 96];
+const text = [11, 12, 13, 14, 16, 18, 20, 24, 28, 32];
+const leading = [
+  ["1", "a row of data, the name"],
+  ["1.2", "headings and titles"],
+  ["1.4", "labels and captions"],
+  ["1.55", "body"],
+  ["1.65", "a post's prose"],
+];
+const breakpoints = [
+  ["34rem", "phone: figures stack"],
+  ["46rem", "tablet: the window's columns stack"],
+  ["60rem", "the picker beside the projects"],
+  ["80rem", "wide: the window's third column"],
+];
 ---
 
 <Base
@@ -252,6 +270,85 @@ const rows = [first, second].filter((p) => p !== undefined);
       worked-at marquee), the radar's sweep, and hard-stop patterns that draw a
       thing (the tunnel's dashes, hatching). No borders on panels either, with
       one exception: the home window, below.
+    </p>
+
+    <h2>Scales · proposed</h2>
+    <p>
+      One scale per property, so a gap, a size or a breakpoint is picked from a
+      short list instead of typed by hand. Today the site types 49 different
+      gaps, 25 font sizes, 18 line-heights and 22 breakpoints; each scale below
+      is fitted to those values, so moving onto it shifts nothing more than 4px.
+      A lint check fails a value that is not on the scale.
+    </p>
+    <div class="grid">
+      <div class="card">
+        <h3>space · 4px grid, 13 steps · <code>--space-N</code> = N px</h3>
+        <div class="sc-space">
+          {space.map((n) => (
+  <div>
+    <i style={`width:${n / 16}rem`} />
+    <span>{n}</span>
+  </div>
+))}
+        </div>
+        <p class="f">
+          today 49 values · 73% already within 1px of a step · largest move 4px
+        </p>
+      </div>
+      <div class="card">
+        <h3>text · 10 steps · <code>--text-N</code> = N px</h3>
+        <div class="sc-text">
+          {text.map((n) => (
+  <p style={`font-size:${n / 16}rem`}>
+    <span>{n}</span> 4.5 GB → 221 MB
+  </p>
+))}
+        </div>
+        <p class="f">
+          today 25 sizes · largest move 1.6px · the name, headlines, the voice
+          and titles keep their fluid sizes as roles (Type, above)
+        </p>
+      </div>
+    </div>
+    <div class="grid" style="margin-top:0.75rem">
+      <div class="card">
+        <h3>line-height · 5 steps</h3>
+        {leading.map(([v, use]) => (
+  <p>
+    <b>{v}</b> <span class="m">{use}</span>
+  </p>
+))}
+        <p class="f">today 18 values</p>
+      </div>
+      <div class="card">
+        <h3>breakpoints · 4, written as ranges</h3>
+        {breakpoints.map(([v, use]) => (
+  <p>
+    <b>{v}</b> <span class="m">{use}</span>
+  </p>
+))}
+        <p class="f">
+          today 22 · <code>(width &lt; 46rem)</code> replaces the 45.99rem hacks
+          · the four px ones move to rem
+        </p>
+      </div>
+      <div class="card">
+        <h3>and one each</h3>
+        <p><b>focus</b> <span class="m">2px accent outline, 2px out</span></p>
+        <p>
+          <b>tap</b> <span class="m">2.75rem (44px) for every control</span>
+        </p>
+        <p><b>bar</b> <span class="m">2px corner on bars and marks</span></p>
+        <p><b>weight</b> <span class="m">200 · 300 · 400 · 500 · 600</span></p>
+        <p class="f">today 4 focus styles, 4 control heights, 1–3px corners</p>
+      </div>
+    </div>
+    <p class="f" style="margin-top:0.8rem">
+      Off the scale on purpose, each marked where it is written: a figure's
+      drawing (its own geometry), the home window's container sizes (tuned to
+      its content and held by tests), optical nudges of 1–2px, a post's em-based
+      prose spacing, and content timings like the reel's 5s. Not scaled until
+      one is needed: z-index (4 values), opacity (4), icon sizes.
     </p>
 
     <h2>Marks and motion</h2>
@@ -1003,6 +1100,38 @@ const rows = [first, second].filter((p) => p !== undefined);
   .ds .card p {
     margin: 0 0 0.35rem;
     font-size: 0.9375rem;
+  }
+  .ds .sc-space {
+    display: grid;
+    gap: 0.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .ds .sc-space div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--faint);
+  }
+  .ds .sc-space i {
+    height: 0.5rem;
+    background: var(--bar);
+    border-radius: 2px;
+  }
+  .ds .sc-text {
+    margin-bottom: 0.75rem;
+  }
+  .ds .sc-text p {
+    margin: 0 0 0.25rem;
+    line-height: 1.2;
+    font-family: var(--mono);
+  }
+  .ds .sc-text span {
+    display: inline-block;
+    width: 2.5rem;
+    font-size: 0.6875rem;
+    color: var(--faint);
   }
   .ds .m {
     color: var(--muted);
