@@ -86,7 +86,7 @@ const years = Array.from({ length: thisYear - from }, (_, c) => from + c);
   }
   .sk__cell {
     border-radius: 2px;
-    background: var(--n10);
+    background: var(--bar);
     transition: opacity var(--dur-base) var(--ease-out)
       calc(var(--c, 0) * var(--stagger));
   }
@@ -96,7 +96,7 @@ const years = Array.from({ length: thisYear - from }, (_, c) => from + c);
     width: 2.6px;
     height: 2.6px;
     border-radius: 50%;
-    background: var(--n8);
+    background: var(--line);
   }
   /* In the opening round the blocks arrive year by year. */
   :global(.win__app.is-boot) .pn--skills:not(.is-on) .sk__cell {

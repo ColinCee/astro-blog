@@ -79,15 +79,15 @@ const companies = (await getCollection("companies"))
     -webkit-mask-image: linear-gradient(
       90deg,
       transparent,
-      #000 6%,
-      #000 94%,
+      #000 6% /* colour exception: a mask's alpha, not a colour */,
+      #000 94% /* colour exception: a mask's alpha, not a colour */,
       transparent
     );
     mask-image: linear-gradient(
       90deg,
       transparent,
-      #000 6%,
-      #000 94%,
+      #000 6% /* colour exception: a mask's alpha, not a colour */,
+      #000 94% /* colour exception: a mask's alpha, not a colour */,
       transparent
     );
   }

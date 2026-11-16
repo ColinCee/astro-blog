@@ -25,11 +25,8 @@
   border-radius: 2px;
   color: var(--ink);
   background:
-    linear-gradient(
-      color-mix(in oklch, var(--warn9) 34%, transparent),
-      color-mix(in oklch, var(--warn9) 34%, transparent)
-    )
-    no-repeat left / 100% 100%;
+    linear-gradient(var(--warn-wash), var(--warn-wash)) no-repeat left / 100%
+    100%;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }

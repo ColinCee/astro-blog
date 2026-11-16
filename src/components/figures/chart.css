@@ -48,13 +48,10 @@
   min-width: 0;
 }
 /* The band is the runs the chart is about (the result), so it takes the
-   accent; the line and dots it is read against stay neutral. */
+   accent, as a filled mark; the line and dots it is read against stay
+   neutral. */
 .prose .chart .band.band--runs {
-  fill: color-mix(in oklch, var(--accent) 55%, transparent);
-}
-/* On the light page 55% thins into a pale lilac; fuller there */
-:root[data-theme="light"] .prose .chart .band.band--runs {
-  fill: color-mix(in oklch, var(--accent) 80%, transparent);
+  fill: var(--accent-solid);
 }
 .prose .chart .band {
   fill: var(--bar);

@@ -72,5 +72,5 @@
 .prose .lookup:has([data-e="1"]:hover) [data-e="1"],
 .prose .lookup:has([data-e="2"]:hover) [data-e="2"],
 .prose .lookup:has([data-e="3"]:hover) [data-e="3"] {
-  background: color-mix(in oklch, var(--accent) 12%, transparent);
+  background: var(--accent-tint);
 }

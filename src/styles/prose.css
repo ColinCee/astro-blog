@@ -166,7 +166,7 @@
 .prose tbody td {
   padding: 0.72rem 0;
   vertical-align: baseline;
-  border-bottom: 1px solid color-mix(in oklch, var(--line) 55%, transparent);
+  border-bottom: 1px solid var(--line);
   text-wrap: pretty;
 }
 .prose tbody tr:last-child td {
@@ -211,7 +211,7 @@
   font-size: 0.86em;
   padding: 0.1em 0.38em;
   border-radius: var(--r-chip);
-  background: color-mix(in oklch, var(--ink) 10%, transparent);
+  background: var(--hover);
   color: var(--ink);
 }
 .prose .expressive-code {

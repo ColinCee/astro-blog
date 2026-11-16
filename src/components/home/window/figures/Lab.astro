@@ -92,7 +92,7 @@ const stacks = await homeStacks();
   }
   .lab__cloud :global(path) {
     fill: var(--raised);
-    stroke: var(--n8);
+    stroke: var(--bar);
     stroke-width: 1px;
     vector-effect: non-scaling-stroke;
   }
@@ -105,7 +105,7 @@ const stacks = await homeStacks();
     max-width: 11rem;
     height: 9px;
     margin-left: -1rem;
-    border-block: 1px solid var(--n8);
+    border-block: 1px solid var(--bar);
   }
   /* One pass is a content timing, like the reel's. Stacked, the traffic runs
      for five passes each time the panel comes on screen (is-live), then
@@ -116,7 +116,7 @@ const stacks = await homeStacks();
     inset: 3px 0;
     background: repeating-linear-gradient(
       90deg,
-      var(--n10) 0 3px,
+      var(--bar) 0 3px,
       transparent 3px 18px
     );
     animation: win-flow 1.6s linear 5;
@@ -270,13 +270,13 @@ const stacks = await homeStacks();
       height: 2.5rem;
       margin: -0.4rem 0 0;
       border-block: 0;
-      border-inline: 1px solid var(--n8);
+      border-inline: 1px solid var(--bar);
     }
     .lab__tun::before {
       inset: 0 3px;
       background: repeating-linear-gradient(
         180deg,
-        var(--n10) 0 3px,
+        var(--bar) 0 3px,
         transparent 3px 18px
       );
     }

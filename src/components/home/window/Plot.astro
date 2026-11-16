@@ -65,14 +65,14 @@ const { viewBox, wait = false, class: className, ...rest } = Astro.props;
   }
   .plot :global(.plot__line) {
     fill: none;
-    stroke: var(--n11);
+    stroke: var(--dim);
     stroke-width: 1.5px;
     stroke-linejoin: round;
     stroke-linecap: round;
     vector-effect: non-scaling-stroke;
   }
   .plot :global(.plot__area) {
-    fill: color-mix(in oklab, var(--n12) 7%, transparent);
+    fill: var(--hover);
     stroke: none;
   }
   .plot :global(.plot__cross) {

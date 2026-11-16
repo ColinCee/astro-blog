@@ -92,6 +92,13 @@
   /* A hovered button: a purple fill dark enough that its label stays bright,
      with the chroma to read purple, not grey-mauve (about Radix dark step 4) */
   --accent-tint: color-mix(in oklch, var(--accent) 20%, transparent);
+  /* A hovered or selected row, and inline code: a neutral wash of the ink */
+  --hover: color-mix(in oklab, var(--ink) 8%, transparent);
+  /* Status as a fill (money out, money back, a highlighter): the dot colour,
+     thinned, so the words on it stay ink */
+  --gain-wash: color-mix(in oklch, var(--ok9) 30%, transparent);
+  --loss-wash: color-mix(in oklch, var(--danger9) 30%, transparent);
+  --warn-wash: color-mix(in oklch, var(--warn9) 30%, transparent);
   --ring: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
 }
 

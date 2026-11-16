@@ -92,7 +92,7 @@ import Writing from "./window/Writing.astro";
 
 <style>
   .win {
-    --win-sel: color-mix(in oklab, var(--n12) 6%, transparent);
+    --win-sel: var(--hover);
     --win-pad: 0.9rem;
     /* The code theme's hues, used as a highlighter would: keys, dates and
        time axes, quantities, paths. Small print only; never a title, a
@@ -272,7 +272,7 @@ import Writing from "./window/Writing.astro";
 
   /* The focused panel: the window's one accent. */
   .win .pn.is-focus {
-    border-color: color-mix(in oklch, var(--accent) 72%, transparent);
+    border-color: var(--accent);
   }
   .win .pn.is-focus > .pn__t {
     color: var(--accent);
@@ -307,7 +307,7 @@ import Writing from "./window/Writing.astro";
     position: absolute;
     inset: 0 auto 0 5px;
     width: 2px;
-    background: var(--n11);
+    background: var(--dim);
     opacity: 0;
     transition: opacity var(--dur-base) var(--ease);
   }

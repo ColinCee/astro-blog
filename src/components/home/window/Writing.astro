@@ -108,7 +108,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
     background: var(--win-sel);
   }
   :global(.pn--writing.is-focus) .wr__row.is-sel {
-    background: color-mix(in oklab, var(--n12) 9%, transparent);
+    background: var(--hover);
   }
   /* Keyboard focus is a thin accent line on the row, not a second purple
      panel. */
@@ -131,7 +131,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
   }
   .wr__read i {
     font-style: normal;
-    color: color-mix(in oklab, var(--win-num) 50%, var(--dim));
+    color: var(--dim);
   }
   /* Titles read as prose; results stay ink, the old value grey: the window's
      purple is its focus, and a purple number on every row would be louder. */

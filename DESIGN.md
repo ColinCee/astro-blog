@@ -3,20 +3,18 @@ name: colincheung.dev
 description: Terminal-native personal site — cool grey, dark by default with a soft light toggle, one purple accent, Sora + Geist + DM Mono.
 # Dark values (the default). Light swaps the scales in scales.css; roles in tokens.css.
 colors:
-  bg: "#0c0d0f"
-  panel: "#1c1d1f"
-  pane: "#1c1d1f"
-  well: "#222426"
-  window: "#141516"
-  line: "color-mix(in oklab, #e8eff9 10%, transparent)"
-  line-strong: "color-mix(in oklab, #e8eff9 16%, transparent)"
-  window-line: "color-mix(in oklab, #e8eff9 17%, transparent)"
+  page: "#0c0d0f"
+  raised: "#222426"
+  inset: "#141516"
+  line: "color-mix(in oklab, #e8eff9 16%, transparent)"
+  hover: "color-mix(in oklab, #e8eff9 8%, transparent)"
   ink: "#e8eff9"
-  muted: "#b2b8bf"
-  faint: "#a0a5ac"
-  accent: "#b55df5"
+  dim: "#a0a5ac"
+  bar: "#81878d"
+  bar-ink: "#0c0d0f"
+  accent: "#bb64fc"
   accent-solid: "#7d39ac"
-  accent-text: "#b55df5"
+  accent-tint: "color-mix(in oklch, #bb64fc 20%, transparent)"
   accent-ink: "#fff"
   gain: "#7cd591"
   loss: "#fda19a"
@@ -155,8 +153,8 @@ new step, added to the scale and the design page, or it is an exception.
 - Colour, the three corner tokens, motion and widths are scales already
   (`tokens.css`). The rest
   are on the design page under Foundations; one still marked proposed there is
-  not adopted yet. Each one lands with its lint check (stylelint's
-  `declaration-strict-value`) and the move onto it, in one change.
+  not adopted yet. Each one lands with its check and the move onto it, in one
+  change (colour: `tests/colours.spec.ts` and `tests/contrast.spec.ts`).
 - Off the scale on purpose, each marked on its line with the reason: a figure's
   drawing (its own geometry), the home window's container sizes (tuned to its
   content and held by tests), optical nudges of 1–2px, a post's em-based prose
@@ -215,44 +213,48 @@ lightness. Swatches are on the design page.
   for "info".
 
 ### Roles (`tokens.css`)
-- **Surfaces:** `--page` page (dark n1, light n5), `--raised` and `--raised` raised
-  surfaces (dark n3; light n3 and n2), `--inset` a darker tone inside a panel (n4).
-  The home window has a tone of its own, `--raised` (n2 in both themes), under
-  a `--raised` title bar.
-- **Text:** `--ink` (n12) titles and values; `--dim` (n11) the line under a
-  title; `--dim` (n10) dates, labels and captions, still 4.5:1;
-  `--prose-ink` post body, a notch softer than ink in dark, ink in light.
-- **Edges:** `--line` and `--line`, cut from the ink at 10% and 16%, so
-  every border shares its tint. The home window's panel frames are `--line`,
-  the same ink at 17%, and its selected row is a band of ink at 6% (`--win-sel`;
-  9% while its panel has the focus).
-- **Accent:** each job is one spectrum step. Dark: `--accent` and
-  `--accent` are v6, the accent itself (bars, lines, results, links);
-  `--accent-solid` v4 for filled marks. Light and print step down one so they
-  hold contrast on a light page: `--accent` v5, `--accent` v4 (4.5:1).
-  `--accent-ink` (white) for text on a filled accent.
-  Derived: `--accent-line` (40%, inline link borders) and `--ring` (20%, the state
-  glow).
-- **Charts:** `--bar` (n7) the "before" bar; `--gain` (ok11) and `--loss`
-  (danger11) a real gain and a real drop.
-- **Syntax hues** (`--syn-fn`, `--syn-str`, `--syn-num`, `--syn-type`,
-  `--syn-kw`): the code theme's five (Blog Post, Code). Four of them have one
-  job outside code, the home window's small print, used as a highlighter
-  would mark a config file: keys in `--syn-type`, dates and time axes in
-  `--syn-fn`, quantities in `--syn-num`, paths in `--syn-str` (named
-  `--win-key`, `--win-date`, `--win-num`, `--win-path` in `Window.astro`).
-  Small print only: never a title, a result or a fill, and never `--syn-kw`,
-  which sits in the accent's hue. Nowhere else on the site: off the home
-  window, colour is still the accent and the status colours. The limits are
-  the Window Hues Exception, below.
+Every colour on the site is one of these, and `tests/colours.spec.ts` fails
+anything else: a colour typed by hand, a step of a scale, a one-off mix.
+`tests/contrast.spec.ts` measures every word on every page against what it
+sits on, in both themes: 4.5:1, or 3:1 for large text.
+
+| Role | Dark | Light | For |
+|---|---|---|---|
+| `--page` | n1 | n5 | the page |
+| `--raised` | n4 | n2 | a panel, a figure, the home window, a code block |
+| `--inset` | n2 | n6 | a well inside a panel, darker in both themes; the window's title bar |
+| `--ink` | n12 | n12 | what is read: titles, values, body |
+| `--dim` | n10 | n11 | everything else: the line under a title, dates, labels, captions |
+| `--prose-ink` | ink, a touch softer | ink | a post's body, for a long read |
+| `--line` | ink at 16% | ink at 16% | every border and rule |
+| `--hover` | ink at 8% | ink at 8% | a hovered or selected row, inline code |
+| `--bar` | n9 | n9 | every bar and mark, 3:1 or more on a panel |
+| `--bar-ink` | n1 | n12 | words drawn on a bar |
+| `--accent` | v6 | v4 | results, links, the one purple line or mark |
+| `--accent-solid` | v4 | v4 | a filled mark that carries white words (`--accent-ink`) |
+| `--accent-tint` | accent at 20% | accent at 20% | a ring, a selection, a hover |
+| `--gain`, `--loss` | ok11, danger11 | ok11, danger11 | a real gain and a real drop |
+| `--gain-wash`, `--loss-wash`, `--warn-wash` | the dot colour at 30% | the same | status as a fill, words on it stay ink |
+
+Ink to dim is 2.1:1 apart, so the two text tones never read as one; the three
+surfaces step 1.2:1 or more apart. The home window's small print also takes
+four of the code theme's hues (`--win-key`, `--win-date`, `--win-num`,
+`--win-path` in `Window.astro`, from `--syn-type`, `--syn-fn`, `--syn-num` and
+`--syn-str`): small print only, never a title, a result or a fill, and never
+`--syn-kw`, which sits in the accent's hue (the Window Hues Exception, below).
+
+A colour exception says why on its own line (`colour exception: ...`): a
+cube's shaded faces, a mask's alpha, the CV's paper palette, a figure whose
+accent strength is its data, and the radar's canvas, which draws with the
+scale's own greys.
 
 ### Print
-The CV re-declares the tokens inside `@media print` to flip to ink-on-white for a
-clean PDF: `--page`/`--raised`/`--raised` become `#ffffff`, `--ink` `#111111`,
-`--dim` `#333333`, `--dim` `#5a5a5a`, `--line` `#d5d5d5`; the accent takes the
-light theme's steps, as every printed page does. Site chrome (nav and footer) is hidden and
-entries use `break-inside: avoid`. This is the only place the palette leaves the
-two themes.
+The CV re-declares the roles inside `@media print` to flip to ink-on-white for
+a clean PDF: `--page` and `--raised` become `#ffffff`, `--ink` `#111111`,
+`--dim` `#333333`, `--line` `#d5d5d5`; the accent takes the light theme's step,
+as every printed page does. Site chrome (nav and footer) is hidden and entries
+use `break-inside: avoid`. This is the only place the palette leaves the two
+themes.
 
 ### Named Rules
 **The Accent Points Rule.** The accent marks results and links, nothing else:
@@ -265,7 +267,7 @@ two themes.
    A result bar and its own value are one result, so both stay purple.
    A list of results where something else on the page is already purple (the home
    window) stays ink.
-2. **Links**, in `--accent` (`--accent` in prose).
+2. **Links**, in `--accent`.
 3. **The one highlight in a hero drawing or one-liner.**
 4. **A hovered control:** a button fills with `--accent-tint` (dark: v3 half
    over the panel; light: v5 at 16%) and its border goes `--accent-solid`, while
@@ -390,7 +392,7 @@ none on mono. Letters never touch.
 ## 4. Elevation
 
 Flat. Depth comes from tone, not shadows or borders: page (`--page`), a raised
-panel (`--raised` / `--raised`), a darker well inside it (`--inset`): no drop
+panel (`--raised`), a darker well inside it (`--inset`): no drop
 shadows, no glow behind the page, and no gradient as a surface or a
 decoration (the few uses that stand are named in the rule below).
 
@@ -465,7 +467,7 @@ to purple gradients in TUI fetch ?".
 - No hover state — they are quiet texture, not controls.
 
 ### Controls
-- Ink on the panel tone (`--raised`, `--line` or `--line` border), 6px
+- Ink on the panel tone (`--raised`, `--line` border), 6px
   corners: the theme button, the hero's GitHub and LinkedIn icons, the worked-at
   pause button. Never the accent, never a pill.
 - In the home window a control is a label in a panel's border (`button.lbl`,
@@ -515,7 +517,7 @@ to purple gradients in TUI fetch ?".
   that the spine runs down the left edge and the date sits inline above the title.
 - A `// timeline` line above the list gives the first and last dates and the total
   span in days. Node state is the ring alone: unread `--dim`, passed filled
-  `--accent`, current `--accent` plus `--ring`.
+  `--accent`, current filled `--accent` with `--ring`.
 - Undated sections after the run (takeaways, reflections) render as ordinary prose
   below the timeline. Only use dated headings when the post really is a sequence.
 
@@ -545,7 +547,7 @@ This describes the window as it is built. Which of it Colin decided and
 which is only inferred from the version he picked is set out in the next
 section, How the home page grows; read that before changing the page.
 - `components/home/Window.astro` and `components/home/window/`: one window on
-  `--raised` (`--n2`), titled `~/ColinOS`, with a `--raised` title bar, three
+  `--raised`, titled `~/ColinOS`, with an `--inset` title bar, three
   grey dots and no status bar, holding a grid of six panels: fastfetch,
   skills and glasgow down the left, writing on the right, and under both the
   projects and the open project's figure. This is the scarce set-piece: do
@@ -1066,8 +1068,7 @@ curve in a component is a bug unless it is a content timing.
   grows only with the root size on large monitors (see "Large screens"); the answer
   to a cramped big monitor is a filled margin, not a longer line.
 - **Tables** are hairline data rails, not boxes: no outer border, a single
-  `--line` rule under a mono `--dim` header row, and `--line` at 55% between
-  rows. Column alignment in the Markdown drives the styling — a `---:`
+  `--line` rule under a mono `--dim` header row, and `--line` between rows. Column alignment in the Markdown drives the styling — a `---:`
   column renders mono, `tabular-nums` and `nowrap` so figures align on the decimal.
   A bold last row is a total, ruled off in ink.
   Below `40rem` the table scrolls horizontally in its own overflow container.
@@ -1112,8 +1113,7 @@ curve in a component is a bug unless it is a content timing.
 - **Do** provide a `prefers-reduced-motion` fallback for every animation; let
   hover pause anything that moves on its own.
 - **Do** take every value from a scale (One Scale Per Property, section 1):
-  the surface steps (`--page`, `--raised`, `--raised`, `--inset`), `--line` /
-  `--line`, `--accent-line`, `--ring`, `--gain` / `--loss`, the corners
+  the colour roles (Colours, Roles), `--accent-line`, `--ring`, the corners
   (`--r`, `--r-ctl`, `--r-chip`), the motion scale (`--dur-*`, `--ease*`) with
   the shared `rise` keyframe, and the widths (`--w-prose`/`--w-page`/`--w-poster`).
 - **Do** listen for `themechange` in anything drawn in a canvas.

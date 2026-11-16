@@ -91,11 +91,11 @@ const { title, description } = Astro.props;
   @media print {
     /* Outranks both theme blocks in tokens.css, so the CV always prints light. */
     :root:root:root {
-      --page: #ffffff;
-      --raised: #ffffff;
-      --line: #d5d5d5;
-      --ink: #111111;
-      --dim: #333333;
+      --page: #ffffff; /* colour exception: paper */
+      --raised: #ffffff; /* colour exception: paper */
+      --line: #d5d5d5; /* colour exception: paper */
+      --ink: #111111; /* colour exception: paper */
+      --dim: #333333; /* colour exception: paper */
       color-scheme: light;
     }
     @page {
@@ -104,8 +104,8 @@ const { title, description } = Astro.props;
     .shell {
       min-height: 0 !important;
       padding: 0 !important;
-      background: #fff !important;
-      color: #111 !important;
+      background: #fff !important; /* colour exception: paper */
+      color: #111 !important; /* colour exception: paper */
     }
     .nav,
     .foot,
@@ -135,10 +135,10 @@ const { title, description } = Astro.props;
       content-visibility: visible;
     }
     .tag {
-      border-color: #c8c8c8;
+      border-color: #c8c8c8; /* colour exception: paper */
     }
     .cv__contact a {
-      color: #0e7490;
+      color: #0e7490; /* colour exception: paper */
     }
     * {
       -webkit-print-color-adjust: exact;

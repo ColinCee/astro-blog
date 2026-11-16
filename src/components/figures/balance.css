@@ -15,10 +15,10 @@
   overflow: visible;
 }
 .prose .bal__out {
-  fill: color-mix(in oklch, var(--danger9) 26%, transparent);
+  fill: var(--loss-wash);
 }
 .prose .bal__in {
-  fill: color-mix(in oklch, var(--ok9) 34%, transparent);
+  fill: var(--gain-wash);
 }
 .prose .bal__zero {
   stroke: var(--dim);

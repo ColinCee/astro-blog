@@ -23,7 +23,7 @@
 .prose .flow__b.flow__b--over {
   background-image: repeating-linear-gradient(
     135deg,
-    color-mix(in oklch, var(--ink) 30%, transparent) 0 3px,
+    var(--bar) 0 3px,
     transparent 3px 7px
   );
 }
@@ -43,6 +43,7 @@
   border-radius: 4px;
 }
 .prose .flow__b {
+  /* colour exception: the accent's strength is the row's value */
   background: color-mix(
     in oklch,
     var(--accent) calc(var(--v, 0) * 70%),
