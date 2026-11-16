@@ -362,16 +362,16 @@ const corners = [
         <h3>text · 7 sizes, 3 line-heights, 4 weights</h3>
         <div class="sc-text">
           {text.map((n) => (
-              <p style={`font-size:${n / 16}rem`}>
-                <span>{n}</span> 221 MB
-              </p>
-            ))}
-        </div>
-        {leading.map(([v, use]) => (
-            <p>
-              <b>{v}</b> <span class="m">{use}</span>
+            <p style={`font-size:${n / 16}rem`}>
+              <span>{n}</span> 221 MB
             </p>
           ))}
+        </div>
+        {leading.map(([v, use]) => (
+          <p>
+            <b>{v}</b> <span class="m">{use}</span>
+          </p>
+        ))}
         <p>
           <b>200 · 400 · 500 · 600</b>
           <span class="m">voice · reading · data · names</span>
@@ -385,11 +385,11 @@ const corners = [
         <h3>space · 9 steps on a 4px grid</h3>
         <div class="sc-space">
           {space.map((n) => (
-              <div>
-                <i style={`width:${n / 16}rem`} />
-                <span>{n}</span>
-              </div>
-            ))}
+            <div>
+              <i style={`width:${n / 16}rem`} />
+              <span>{n}</span>
+            </div>
+          ))}
         </div>
         <p class="f">
           today at least 49 gaps · largest move 8px · plus one fluid gap between
@@ -403,13 +403,13 @@ const corners = [
         <h3>corners · 3, and round for dots</h3>
         <div class="fd-corners">
           {corners.map(([r, use, w, h]) => (
-              <div>
-                <i style={`border-radius:${r};width:${w};height:${h}`} />
-                <p>
-                  <b>{r}</b> <span class="m">{use}</span>
-                </p>
-              </div>
-            ))}
+            <div>
+              <i style={`border-radius:${r};width:${w};height:${h}`} />
+              <p>
+                <b>{r}</b> <span class="m">{use}</span>
+              </p>
+            </div>
+          ))}
         </div>
         <p class="f">
           today 4 tokens and 1, 2, 3, 6px by hand · controls go from 6 to 4px
