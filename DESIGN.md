@@ -154,7 +154,7 @@ new step, added to the scale and the design page, or it is an exception.
 
 - Colour, the three corner tokens, motion and widths are scales already
   (`tokens.css`). The rest
-  are on the design page under Scales; a scale still marked proposed there is
+  are on the design page under Foundations; one still marked proposed there is
   not adopted yet. Each one lands with its lint check (stylelint's
   `declaration-strict-value`) and the move onto it, in one change.
 - Off the scale on purpose, each marked on its line with the reason: a figure's

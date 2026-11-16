@@ -17,22 +17,20 @@ const first = posts[0];
 const second = posts.slice(1).find((p) => p.before) ?? posts[1];
 const rows = [first, second].filter((p) => p !== undefined);
 
-// The proposed scales (Scales, below), in px at the 16px root. Each is fitted
-// to the values the site already uses, so moving onto it shifts nothing far.
-const space = [2, 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 64, 96];
-const text = [11, 12, 13, 14, 16, 18, 20, 24, 28, 32];
+// The proposed foundations (Foundations, below), in px at the 16px root. Each
+// is fitted to the values the site already uses, then cut to as few steps as
+// that fit allows.
+const space = [2, 4, 8, 12, 16, 24, 32, 48, 64];
+const text = [11, 12, 14, 16, 20, 24, 32];
 const leading = [
-  ["1", "a row of data, the name"],
-  ["1.2", "headings and titles"],
-  ["1.4", "labels and captions"],
-  ["1.55", "body"],
-  ["1.65", "a post's prose"],
+  ["1", "a row of data, the name, a number"],
+  ["1.3", "headings, titles, labels"],
+  ["1.6", "anything read as a paragraph"],
 ];
-const breakpoints = [
-  ["34rem", "phone: figures stack"],
-  ["46rem", "tablet: the window's columns stack"],
-  ["60rem", "the picker beside the projects"],
-  ["80rem", "wide: the window's third column"],
+const corners = [
+  ["8px", "panels, figures", "8rem", "4rem"],
+  ["4px", "controls and chips", "6rem", "2.6rem"],
+  ["2px", "bars and marks", "6rem", "0.7rem"],
 ];
 ---
 
@@ -272,85 +270,193 @@ const breakpoints = [
       one exception: the home window, below.
     </p>
 
-    <h2>Scales · proposed</h2>
+    <h2>Foundations · proposed</h2>
     <p>
-      One scale per property, so a gap, a size or a breakpoint is picked from a
-      short list instead of typed by hand. Outside figures the site types at
-      least 49 different gaps and 25 font sizes, and 18 line-heights and 16
-      viewport breakpoints in all; each scale below is fitted to those values,
-      so moving onto it shifts nothing outside a figure more than 4px. A lint
-      check fails a value that is not on the scale.
+      Fewer choices, each easy to tell apart. Every colour, size, gap and corner
+      comes from the short lists below; anything else is an exception marked
+      where it is written, and a lint check fails the rest. The numbers in the
+      boxes are contrast ratios, measured live in the current theme: switch it
+      in the nav.
     </p>
-    <div class="grid">
-      <div class="card">
-        <h3>space · 4px grid, 13 steps · <code>--space-N</code> = N px</h3>
-        <div class="sc-space">
-          {space.map((n) => (
-            <div>
-              <i style={`width:${n / 16}rem`} />
-              <span>{n}</span>
+
+    <div class="fd-cmp">
+      <div class="fd-set">
+        <h3>colour today · 5 surfaces, 3 text greys</h3>
+        <div class="fd-surf" style="background:var(--bg)">
+          <span>page</span>
+          <p style="color:var(--ink)" data-cr>ink</p>
+          <p style="color:var(--muted)" data-cr>muted</p>
+          <p style="color:var(--faint)" data-cr>faint</p>
+          <p style="color:var(--accent)" data-cr>accent</p>
+          <div class="fd-surf" style="background:var(--panel)">
+            <span>panel</span>
+            <p style="color:var(--ink)" data-cr>ink</p>
+            <p style="color:var(--muted)" data-cr>muted</p>
+            <p style="color:var(--faint)" data-cr>faint</p>
+            <i style="background:var(--bar)" data-cr>bar</i>
+            <div class="fd-surf" style="background:var(--well)">
+              <span>well</span>
+              <p style="color:var(--faint)" data-cr>faint</p>
             </div>
-          ))}
+          </div>
         </div>
-        <p class="f">
-          today 49 values · 73% already within 1px of a step · largest move 4px
+        <p class="fd-note">
+          muted to faint <b data-pair="--muted,--faint"></b> · page to panel
+          <b data-pair="--bg,--panel"></b>
+          · panel to well
+          <b data-pair="--panel,--well"></b>
+          · bars under 3:1 on a panel
         </p>
       </div>
-      <div class="card">
-        <h3>text · 10 steps · <code>--text-N</code> = N px</h3>
-        <div class="sc-text">
-          {text.map((n) => (
-            <p style={`font-size:${n / 16}rem`}>
-              <span>{n}</span> 4.5 GB → 221 MB
-            </p>
-          ))}
+      <div class="fd-set fd-new">
+        <h3>colour proposed · 3 surfaces, 2 text tones</h3>
+        <div class="fd-surf" style="background:var(--p-page)">
+          <span>page</span>
+          <p style="color:var(--ink)" data-cr>ink</p>
+          <p style="color:var(--p-dim)" data-cr>dim</p>
+          <p style="color:var(--accent)" data-cr>accent</p>
+          <div class="fd-surf" style="background:var(--p-raised)">
+            <span>raised</span>
+            <p style="color:var(--ink)" data-cr>ink</p>
+            <p style="color:var(--p-dim)" data-cr>dim</p>
+            <i style="background:var(--p-bar)" data-cr>bar</i>
+            <div class="fd-surf" style="background:var(--p-inset)">
+              <span>inset</span>
+              <p style="color:var(--p-dim)" data-cr>dim</p>
+            </div>
+          </div>
         </div>
-        <p class="f">
-          today 25 sizes · largest move 1.6px · the name, headlines, the voice
-          and titles keep their fluid sizes as roles (Type, above)
+        <p class="fd-note">
+          ink to dim <b data-pair="--ink,--p-dim"></b> · page to raised
+          <b data-pair="--p-page,--p-raised"></b>
+          · raised to inset
+          <b data-pair="--p-raised,--p-inset"></b>
+          · bars 3:1 or more on a panel
         </p>
       </div>
     </div>
+
     <div class="grid" style="margin-top:0.75rem">
       <div class="card">
-        <h3>line-height · 5 steps</h3>
-        {leading.map(([v, use]) => (
-          <p>
-            <b>{v}</b> <span class="m">{use}</span>
-          </p>
-        ))}
-        <p class="f">today 18 values</p>
-      </div>
-      <div class="card">
-        <h3>breakpoints · 4, written as ranges</h3>
-        {breakpoints.map(([v, use]) => (
-          <p>
-            <b>{v}</b> <span class="m">{use}</span>
-          </p>
-        ))}
-        <p class="f">
-          today 16 · <code>(width &lt; 46rem)</code> replaces the 45.99rem hacks
-          · 30, 40, 56, 64 and 78rem and the four px ones each go to a step or
-          stay as an exception, decided when breakpoints move
-        </p>
-      </div>
-      <div class="card">
-        <h3>and one each</h3>
-        <p><b>focus</b> <span class="m">2px accent outline, 2px out</span></p>
+        <h3>the whole palette, proposed</h3>
+        <p><b>3 surfaces</b> <span class="m">page · raised · inset</span></p>
         <p>
-          <b>tap</b> <span class="m">2.75rem (44px) for every control</span>
+          <b>2 text tones</b>
+          <span class="m">ink for what you read, dim for the rest</span>
         </p>
-        <p><b>bar</b> <span class="m">2px corner on bars and marks</span></p>
-        <p><b>weight</b> <span class="m">200 · 300 · 400 · 500 · 600</span></p>
-        <p class="f">today 4 focus styles, 4 control heights, 1–3px corners</p>
+        <p><b>1 line</b> <span class="m">every border and rule</span></p>
+        <p><b>1 bar grey</b> <span class="m">3:1 on its surface</span></p>
+        <p>
+          <b>accent</b>
+          <span class="m">one colour, and one tint for a ring or a hover</span>
+        </p>
+        <p>
+          <b>status</b>
+          <span class="m">green, amber, red: a dot and its word</span>
+        </p>
+        <p class="f">
+          today 20 colour roles, 9 window colours and 30 one-off mixes
+        </p>
+      </div>
+      <div class="card">
+        <h3>text · 7 sizes, 3 line-heights, 4 weights</h3>
+        <div class="sc-text">
+          {text.map((n) => (
+              <p style={`font-size:${n / 16}rem`}>
+                <span>{n}</span> 221 MB
+              </p>
+            ))}
+        </div>
+        {leading.map(([v, use]) => (
+            <p>
+              <b>{v}</b> <span class="m">{use}</span>
+            </p>
+          ))}
+        <p>
+          <b>200 · 400 · 500 · 600</b>
+          <span class="m">voice · reading · data · names</span>
+        </p>
+        <p class="f">
+          today 25 sizes, 18 line-heights, 6 weights · largest move 4px · the
+          name, headlines and the voice keep their fluid sizes
+        </p>
+      </div>
+      <div class="card">
+        <h3>space · 9 steps on a 4px grid</h3>
+        <div class="sc-space">
+          {space.map((n) => (
+              <div>
+                <i style={`width:${n / 16}rem`} />
+                <span>{n}</span>
+              </div>
+            ))}
+        </div>
+        <p class="f">
+          today at least 49 gaps · largest move 8px · plus one fluid gap between
+          sections
+        </p>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:0.75rem">
+      <div class="card">
+        <h3>corners · 3, and round for dots</h3>
+        <div class="fd-corners">
+          {corners.map(([r, use, w, h]) => (
+              <div>
+                <i style={`border-radius:${r};width:${w};height:${h}`} />
+                <p>
+                  <b>{r}</b> <span class="m">{use}</span>
+                </p>
+              </div>
+            ))}
+        </div>
+        <p class="f">
+          today 4 tokens and 1, 2, 3, 6px by hand · controls go from 6 to 4px
+        </p>
+      </div>
+      <div class="card">
+        <h3>one each</h3>
+        <p><b>focus</b> <span class="m">2px accent outline, 2px out</span></p>
+        <p><b>control</b> <span class="m">2.75rem (44px) tall</span></p>
+        <p><b>border</b> <span class="m">1px</span></p>
+        <p>
+          <b>motion</b>
+          <span class="m">fast and slow, and draw for a chart</span>
+        </p>
+        <p>
+          <b>breakpoints</b> <span class="m">46 · 60 · 80rem, as ranges</span>
+        </p>
+        <p class="f">
+          today 4 focus styles, 4 control heights, 5 durations, 16 breakpoints
+        </p>
+      </div>
+      <div class="card">
+        <h3>shared parts, not copies</h3>
+        <p>
+          <b>label</b>
+          <span class="m">the small mono line, written out 11 times</span>
+        </p>
+        <p>
+          <b>panel</b> <span class="m">surface, corner, padding, border</span>
+        </p>
+        <p><b>control</b> <span class="m">button and icon button</span></p>
+        <p>
+          <b>chart marks</b>
+          <span class="m">bar, baseline, result, change</span>
+        </p>
+        <p class="f">
+          one class or component each, so a page says what it shows, not how it
+          looks
+        </p>
       </div>
     </div>
     <p class="f" style="margin-top:0.8rem">
-      Off the scale on purpose, each marked where it is written: a figure's
+      Off the lists on purpose, each marked where it is written: a figure's
       drawing (its own geometry), the home window's container sizes (tuned to
-      its content and held by tests), optical nudges of 1–2px, a post's em-based
-      prose spacing, and content timings like the reel's 5s. Not scaled until
-      one is needed: z-index (4 values), opacity (4), icon sizes.
+      its content and held by tests) and its code hues, optical nudges of 1–2px,
+      a post's em-based prose spacing, and content timings like the reel's 5s.
+      Not listed until one is needed: z-index, opacity, icon sizes.
     </p>
 
     <h2>Marks and motion</h2>
@@ -1129,6 +1235,80 @@ const breakpoints = [
     line-height: 1.2;
     font-family: var(--mono);
   }
+  /* The proposed colour roles, drawn beside today's (Foundations) */
+  .ds {
+    --p-page: var(--n1);
+    --p-raised: var(--n4);
+    --p-inset: var(--n6);
+    --p-dim: var(--n10);
+    --p-bar: var(--n9);
+  }
+  :root[data-theme="light"] .ds {
+    --p-page: var(--n5);
+    --p-raised: var(--n2);
+    --p-inset: var(--n6);
+    --p-dim: var(--n11);
+  }
+  .ds .fd-cmp {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 0.75rem;
+  }
+  .ds .fd-surf {
+    padding: 0.75rem;
+    border-radius: var(--r);
+  }
+  .ds .fd-surf > .fd-surf {
+    margin-top: 0.75rem;
+  }
+  .ds .fd-surf > span {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--ink);
+  }
+  .ds .fd-surf > p {
+    display: inline-block;
+    margin: 0 1rem 0.25rem 0;
+    font-size: 0.9375rem;
+  }
+  .ds .fd-surf > i {
+    display: inline-block;
+    padding: 0 0.5rem;
+    border-radius: 2px;
+    font-style: normal;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--ink);
+  }
+  .ds [data-cr]::after {
+    content: " " attr(data-v);
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+  }
+  .ds .fd-note {
+    margin: 0.5rem 0 0;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .ds .fd-note b {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .ds .fd-corners {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .ds .fd-corners i {
+    display: block;
+    margin-bottom: 0.5rem;
+    background: var(--well);
+    border: 1px solid var(--line-strong);
+  }
   .ds .sc-text span {
     display: inline-block;
     width: 2.5rem;
@@ -1680,4 +1860,46 @@ const breakpoints = [
     "s",
     ["ok", "warn", "danger"].flatMap((h) => [h + 3, h + 9, h + 11]),
   );
+
+  // Contrast ratios (WCAG), measured from what the browser paints, so any
+  // colour CSS can write (a mix, a variable) is read the same way.
+  const paint = document.createElement("canvas").getContext("2d", {
+    willReadFrequently: true,
+  })!;
+  const rgb = (css: string) => {
+    paint.clearRect(0, 0, 1, 1);
+    paint.fillStyle = css;
+    paint.fillRect(0, 0, 1, 1);
+    return [...paint.getImageData(0, 0, 1, 1).data.slice(0, 3)];
+  };
+  const lum = (css: string) => {
+    const [r, g, b] = rgb(css).map((c) => {
+      const s = c / 255;
+      return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const ratio = (a: string, b: string) => {
+    const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+    return `${((hi + 0.05) / (lo + 0.05)).toFixed(2).replace(/0$/, "")}:1`;
+  };
+  const surface = (el: Element) =>
+    getComputedStyle(el.closest(".fd-surf")!).backgroundColor;
+  const measure = () => {
+    for (const el of document.querySelectorAll<HTMLElement>("[data-cr]")) {
+      const style = getComputedStyle(el);
+      const fg = el.tagName === "I" ? style.backgroundColor : style.color;
+      el.dataset.v = ratio(fg, surface(el));
+    }
+    const root = getComputedStyle(document.querySelector(".ds")!);
+    for (const el of document.querySelectorAll<HTMLElement>("[data-pair]")) {
+      const [a, b] = el.dataset.pair!.split(",");
+      el.textContent = ratio(
+        root.getPropertyValue(a).trim(),
+        root.getPropertyValue(b).trim(),
+      );
+    }
+  };
+  measure();
+  window.addEventListener("themechange", () => requestAnimationFrame(measure));
 </script>
