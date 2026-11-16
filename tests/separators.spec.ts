@@ -25,7 +25,13 @@ for (const width of [390, 1440])
     }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(path);
-      await page.waitForLoadState("networkidle");
+      // The home window keeps fetching, so the network never goes quiet:
+      // wait for its scripts to have drawn it instead.
+      if (path === "/")
+        await expect(page.locator(".win__app")).toHaveAttribute(
+          "data-ready",
+          "",
+        );
       const dots = await page.evaluate(() => {
         const found: string[] = [];
         const skip = "astro-dev-toolbar, script, style, title";
