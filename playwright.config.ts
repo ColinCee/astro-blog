@@ -11,6 +11,7 @@ export default defineConfig({
   testDir: "tests",
   // The speed budgets need the built site: playwright.speed.config.ts.
   testIgnore: "speed.spec.ts",
+  globalSetup: "./tests/warm-up.ts",
   fullyParallel: true,
   reporter: "list",
   use: { baseURL: `http://localhost:${port}` },
