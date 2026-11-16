@@ -35,9 +35,17 @@ const lab = (page: Page, live: boolean, minutesOld?: number) =>
 const fig = (page: Page, id: string) =>
   page.locator(`.pn--fig[data-f="${id}"]`);
 // The lower half's script has run: it names the figure panels "fig" once the
-// picker is working.
-const pickerReady = (page: Page) =>
-  expect(page.locator('.pn--fig[data-pn="fig"]')).toHaveCount(projects.length);
+// picker is working. It loads only once the window is near the screen.
+const pickerReady = async (page: Page) => {
+  await page
+    .locator(".win")
+    .evaluate((el) =>
+      el.scrollIntoView({ block: "start", behavior: "instant" }),
+    );
+  await expect(page.locator('.pn--fig[data-pn="fig"]')).toHaveCount(
+    projects.length,
+  );
+};
 // The numbers have landed, or their absence has been said.
 const answered = (page: Page) =>
   expect(page.locator(".lab__live [data-stats-age]")).toHaveText(
