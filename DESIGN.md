@@ -152,7 +152,8 @@ bespoke styling rules" (Nov 2026), after "the spacing and margins for text to
 box is really inconsistent and bad" (Oct 2026). A value the scale lacks is a
 new step, added to the scale and the design page, or it is an exception.
 
-- Colour, corners, motion and widths are scales already (`tokens.css`). The rest
+- Colour, the three corner tokens, motion and widths are scales already
+  (`tokens.css`). The rest
   are on the design page under Scales; a scale still marked proposed there is
   not adopted yet. Each one lands with its lint check (stylelint's
   `declaration-strict-value`) and the move onto it, in one change.
@@ -160,7 +161,8 @@ new step, added to the scale and the design page, or it is an exception.
   drawing (its own geometry), the home window's container sizes (tuned to its
   content and held by tests), optical nudges of 1–2px, a post's em-based prose
   spacing, and content timings such as the reel's 5s.
-- Things line up (decided, from his corrections on figures): a mark sits on its
+- Things line up (inferred from his corrections on figures, such as wanting
+  "more consistent spacing between and same with text"): a mark sits on its
   line, bars in a set share a width and a baseline, a label is centred on what
   it labels, and inside a component the gaps between boxes, and from a box's
   edge to its text, are one step each.
@@ -1109,8 +1111,11 @@ curve in a component is a bug unless it is a content timing.
 - **Do** check every change in dark, light and at 375px.
 - **Do** provide a `prefers-reduced-motion` fallback for every animation; let
   hover pause anything that moves on its own.
-- **Do** take every value from a scale (One Scale Per Property, section 1),
-  with the shared `rise` keyframe for anything arriving.
+- **Do** take every value from a scale (One Scale Per Property, section 1):
+  the surface steps (`--bg`, `--panel`, `--pane`, `--well`), `--line` /
+  `--line-strong`, `--accent-line`, `--ring`, `--gain` / `--loss`, the corners
+  (`--r`, `--r-ctl`, `--r-chip`), the motion scale (`--dur-*`, `--ease*`) with
+  the shared `rise` keyframe, and the widths (`--w-prose`/`--w-page`/`--w-poster`).
 - **Do** listen for `themechange` in anything drawn in a canvas.
 
 ### Don't:

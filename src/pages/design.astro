@@ -275,21 +275,22 @@ const breakpoints = [
     <h2>Scales · proposed</h2>
     <p>
       One scale per property, so a gap, a size or a breakpoint is picked from a
-      short list instead of typed by hand. Today the site types 49 different
-      gaps, 25 font sizes, 18 line-heights and 22 breakpoints; each scale below
-      is fitted to those values, so moving onto it shifts nothing more than 4px.
-      A lint check fails a value that is not on the scale.
+      short list instead of typed by hand. Outside figures the site types at
+      least 49 different gaps and 25 font sizes, and 18 line-heights and 16
+      viewport breakpoints in all; each scale below is fitted to those values,
+      so moving onto it shifts nothing outside a figure more than 4px. A lint
+      check fails a value that is not on the scale.
     </p>
     <div class="grid">
       <div class="card">
         <h3>space · 4px grid, 13 steps · <code>--space-N</code> = N px</h3>
         <div class="sc-space">
           {space.map((n) => (
-  <div>
-    <i style={`width:${n / 16}rem`} />
-    <span>{n}</span>
-  </div>
-))}
+            <div>
+              <i style={`width:${n / 16}rem`} />
+              <span>{n}</span>
+            </div>
+          ))}
         </div>
         <p class="f">
           today 49 values · 73% already within 1px of a step · largest move 4px
@@ -299,10 +300,10 @@ const breakpoints = [
         <h3>text · 10 steps · <code>--text-N</code> = N px</h3>
         <div class="sc-text">
           {text.map((n) => (
-  <p style={`font-size:${n / 16}rem`}>
-    <span>{n}</span> 4.5 GB → 221 MB
-  </p>
-))}
+            <p style={`font-size:${n / 16}rem`}>
+              <span>{n}</span> 4.5 GB → 221 MB
+            </p>
+          ))}
         </div>
         <p class="f">
           today 25 sizes · largest move 1.6px · the name, headlines, the voice
@@ -314,22 +315,23 @@ const breakpoints = [
       <div class="card">
         <h3>line-height · 5 steps</h3>
         {leading.map(([v, use]) => (
-  <p>
-    <b>{v}</b> <span class="m">{use}</span>
-  </p>
-))}
+          <p>
+            <b>{v}</b> <span class="m">{use}</span>
+          </p>
+        ))}
         <p class="f">today 18 values</p>
       </div>
       <div class="card">
         <h3>breakpoints · 4, written as ranges</h3>
         {breakpoints.map(([v, use]) => (
-  <p>
-    <b>{v}</b> <span class="m">{use}</span>
-  </p>
-))}
+          <p>
+            <b>{v}</b> <span class="m">{use}</span>
+          </p>
+        ))}
         <p class="f">
-          today 22 · <code>(width &lt; 46rem)</code> replaces the 45.99rem hacks
-          · the four px ones move to rem
+          today 16 · <code>(width &lt; 46rem)</code> replaces the 45.99rem hacks
+          · 30, 40, 56, 64 and 78rem and the four px ones each go to a step or
+          stay as an exception, decided when breakpoints move
         </p>
       </div>
       <div class="card">
