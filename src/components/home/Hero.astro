@@ -77,13 +77,16 @@ const quips = [
   .hero {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-    gap: clamp(2rem, 5vw, 4rem);
+    gap: clamp(2.5rem, 6vw, 5rem);
     align-items: center;
+    align-content: center;
     max-width: var(--w-poster);
-    /* Close under the nav and close over the window, so the first screen
-       ends just inside the window's lower half. */
-    margin: clamp(-0.75rem, -1vw, 0rem) auto 0;
-    padding: 0 0 clamp(1.6rem, 2.8vw, 2rem);
+    /* Under half the first screen, with the window's top panels below it.
+       svh, not dvh: the hero stays put as a phone's address bar comes and
+       goes, so the window under it never jumps. */
+    min-height: 40svh;
+    margin: 0 auto;
+    padding: 2rem 0 clamp(3rem, 6vw, 4.5rem);
   }
   .hero__name {
     font-family: var(--head);

@@ -31,10 +31,19 @@ const ready = async (page: Page) => {
 // "fig" once the picker is working. A key or a click before that does nothing.
 const pickerReady = async (page: Page) => {
   await ready(page);
+  await toWindow(page);
   await expect(page.locator('.pn--fig[data-pn="fig"]')).toHaveCount(
     projects.length,
   );
 };
+// The keys and the lower half wait for the window to be on screen, which
+// under the hero on load it may not be.
+const toWindow = (page: Page) =>
+  page
+    .locator(".win")
+    .evaluate((el) =>
+      el.scrollIntoView({ block: "start", behavior: "instant" }),
+    );
 const tab = (page: Page, id: string) =>
   page.locator(`[role="tab"][data-pick="${id}"]`);
 const openFig = (page: Page) => page.locator(".pn--fig.is-open");
@@ -349,6 +358,7 @@ test.describe("laptop", () => {
   }) => {
     await page.goto("/");
     await ready(page);
+    await toWindow(page);
     const rows = page.locator(".wr [data-post]");
     const row = rows.nth(2);
     await row.hover();
@@ -416,7 +426,7 @@ test.describe("laptop", () => {
     expect(await state()).toEqual({ sel: 0, at: null });
 
     // Back at the window, they move the selection and the real focus.
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+    await toWindow(page);
     await page.keyboard.press("j");
     const second = await rows.nth(1).getAttribute("data-slug");
     await expect.poll(state).toEqual({ sel: 1, at: second });
@@ -476,6 +486,7 @@ test.describe("laptop", () => {
     // With the keyboard nowhere and the list on screen the same key does
     // act, so it was the control that held it back above. Shift+enter is
     // not enter: it opens nothing. Read once after a wait.
+    await toWindow(page);
     await page.evaluate(() => {
       (document.activeElement as HTMLElement).blur();
       window.scrollTo({ top: 0, behavior: "instant" });
