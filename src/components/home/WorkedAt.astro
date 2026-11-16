@@ -76,20 +76,22 @@ const companies = (await getCollection("companies"))
   .strip__view {
     min-width: 0;
     overflow: hidden;
+    /* stylelint-disable color-no-hex -- a mask's alpha, not a colour */
     -webkit-mask-image: linear-gradient(
       90deg,
       transparent,
-      #000 6% /* colour exception: a mask's alpha, not a colour */,
-      #000 94% /* colour exception: a mask's alpha, not a colour */,
+      #000 6%,
+      #000 94%,
       transparent
     );
     mask-image: linear-gradient(
       90deg,
       transparent,
-      #000 6% /* colour exception: a mask's alpha, not a colour */,
-      #000 94% /* colour exception: a mask's alpha, not a colour */,
+      #000 6%,
+      #000 94%,
       transparent
     );
+    /* stylelint-enable color-no-hex */
   }
   .strip__track {
     display: flex;

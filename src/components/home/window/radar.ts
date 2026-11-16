@@ -78,7 +78,7 @@ const stacks: Record<string, { p: Pt; th: number; lab: Pt }> = {
 };
 const airlines = ["BAW", "EZY", "VIR", "RYR", "DLH", "AFR", "KLM", "UAE"];
 
-// colour exception (file): a canvas drawing of a radar scope, with its own
+// A canvas drawing of a radar scope, with its own
 // greys read from the scale, as a figure's drawing keeps its own geometry.
 
 // The same colour at no opacity, so a gradient fades without greying.
@@ -349,7 +349,7 @@ export function makeRadar(canvas: HTMLCanvasElement, still: boolean) {
     const Y = (y: number) => cy + y * R;
     const far = hypot(cx, cy);
     g.lineWidth = 1;
-    g.font = `${label}px ${c.mono}`; // type exception: --text-xs, in pixels
+    g.font = `${label}px ${c.mono}`; // --text-xs, in pixels
     g.textBaseline = "alphabetic";
 
     // The sweep: a soft wedge trailing the beam. Not in the still scope.

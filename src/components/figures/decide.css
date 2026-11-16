@@ -10,7 +10,8 @@
 .prose .decide__k {
   align-self: end;
   font-size: var(--text-xs);
-  line-height: 0.55rem; /* type exception: a length that lines each label up with its bar */
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- a length that lines each label up with its bar */
+  line-height: 0.55rem;
   color: var(--dim);
 }
 /* A pass: its output on top, centred, then the bar. */

@@ -64,7 +64,8 @@ const voices = [
   }
   .ak__hz {
     font-family: var(--cjk);
-    font-size: 8.5rem; /* type exception: a drawn character, the card's subject */
+    /* stylelint-disable-next-line declaration-property-value-allowed-list -- a drawn character, the card's subject */
+    font-size: 8.5rem;
     font-weight: 400;
     line-height: 1;
   }
@@ -157,7 +158,7 @@ const voices = [
       max-width: 7.6rem;
     }
     .ak__hz {
-      /* type exception: a drawn character, the card's subject */
+      /* stylelint-disable-next-line declaration-property-value-allowed-list -- a drawn character, the card's subject */
       font-size: clamp(4.5rem, 21cqi, 6.5rem);
     }
     .ak__mn {

@@ -90,12 +90,13 @@ const { title, description } = Astro.props;
   /* Print: flip the terminal palette to ink-on-white, hide site chrome, and keep entries whole. */
   @media print {
     /* Outranks both theme blocks in tokens.css, so the CV always prints light. */
+    /* stylelint-disable color-no-hex -- paper: the CV prints ink on white */
     :root:root:root {
-      --page: #ffffff; /* colour exception: paper */
-      --raised: #ffffff; /* colour exception: paper */
-      --line: #d5d5d5; /* colour exception: paper */
-      --ink: #111111; /* colour exception: paper */
-      --dim: #333333; /* colour exception: paper */
+      --page: #ffffff;
+      --raised: #ffffff;
+      --line: #d5d5d5;
+      --ink: #111111;
+      --dim: #333333;
       color-scheme: light;
     }
     @page {
@@ -104,9 +105,10 @@ const { title, description } = Astro.props;
     .shell {
       min-height: 0 !important;
       padding: 0 !important;
-      background: #fff !important; /* colour exception: paper */
-      color: #111 !important; /* colour exception: paper */
+      background: #fff !important;
+      color: #111 !important;
     }
+    /* stylelint-enable color-no-hex */
     .nav,
     .foot,
     .cv__toggle,
@@ -135,10 +137,12 @@ const { title, description } = Astro.props;
       content-visibility: visible;
     }
     .tag {
-      border-color: #c8c8c8; /* colour exception: paper */
+      /* stylelint-disable-next-line color-no-hex -- paper */
+      border-color: #c8c8c8;
     }
     .cv__contact a {
-      color: #0e7490; /* colour exception: paper */
+      /* stylelint-disable-next-line color-no-hex -- paper */
+      color: #0e7490;
     }
     * {
       -webkit-print-color-adjust: exact;

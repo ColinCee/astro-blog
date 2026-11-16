@@ -88,7 +88,7 @@
   left: 0;
   top: 0;
   width: 1ch;
-  /* type exception: a grid row: --lh is a length the frames are placed by */
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- a grid row: --lh is a length the frames are placed by */
   line-height: var(--lh);
   text-align: center;
   color: var(--c);

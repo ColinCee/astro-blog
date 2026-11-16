@@ -31,7 +31,8 @@
 }
 .prose .flash__zh {
   font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: 3.5rem; /* type exception: a drawn character, the figure's subject */
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- a drawn character, the figure's subject */
+  font-size: 3.5rem;
   font-weight: 500;
   line-height: 1.3;
   color: var(--ink);

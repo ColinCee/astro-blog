@@ -43,7 +43,7 @@
   border-radius: 4px;
 }
 .prose .flow__b {
-  /* colour exception: the accent's strength is the row's value */
+  /* stylelint-disable-next-line function-disallowed-list -- the accent's strength is the row's value */
   background: color-mix(
     in oklch,
     var(--accent) calc(var(--v, 0) * 70%),

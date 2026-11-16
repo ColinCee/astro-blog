@@ -49,6 +49,9 @@ jobs:
       - name: Lint and format check
         run: pnpm biome ci .
 
+      - name: Design system check (colours and type on the scale)
+        run: pnpm lint:css
+
       - name: Legacy web pattern scan
         run: pnpm legacy-scan
 

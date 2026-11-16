@@ -82,7 +82,8 @@ import Plot from "./Plot.astro";
   }
   .wx__temp small {
     margin-left: 0.1em;
-    font-size: 0.6em; /* type exception: a unit beside its number */
+    /* stylelint-disable-next-line declaration-property-value-allowed-list -- a unit beside its number */
+    font-size: 0.6em;
     font-weight: 400;
     letter-spacing: 0;
     color: var(--dim);

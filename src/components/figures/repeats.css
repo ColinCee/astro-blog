@@ -18,7 +18,8 @@
   font-size: var(--text-sm);
   font-weight: 500;
   color: var(--ink);
-  line-height: 1.9; /* type exception: room above and below the highlighted chips */
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- room above and below the highlighted chips */
+  line-height: 1.9;
 }
 .prose .repeats__text span {
   white-space: pre-wrap;
@@ -38,5 +39,6 @@
   color: var(--bar-ink);
   font-size: var(--text-xs);
   font-weight: 500;
-  line-height: 1.7; /* type exception: a chip's height inside the line */
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- a chip's height inside the line */
+  line-height: 1.7;
 }
