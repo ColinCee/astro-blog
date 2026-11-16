@@ -20,17 +20,17 @@
 
   /* ---- Surfaces: page, two raised surfaces, a well inside them ---- */
   --bg: var(--n1);
-  --panel: var(--n3);
-  --pane: var(--n3);
-  --well: var(--n4);
+  --panel: var(--n4);
+  --pane: var(--n4);
+  --well: var(--n2);
   /* Edges are cut from the ink, so every border shares its tint. */
-  --line: color-mix(in oklab, var(--n12) 10%, transparent);
+  --line: color-mix(in oklab, var(--n12) 16%, transparent);
   --line-strong: color-mix(in oklab, var(--n12) 16%, transparent);
 
   /* Text */
   --ink: var(--n12);
-  --muted: var(--n11);
-  --faint: var(--n10);
+  --muted: var(--n10);
+  --faint: var(--muted);
   --prose-ink: color-mix(in oklab, var(--n12) 82%, var(--n11));
 
   /* ---- Accent: three jobs, each a step of the purple spectrum (v1-v6,
@@ -46,8 +46,10 @@
   --gain: var(--ok11);
   --loss: var(--danger11);
 
-  /* The "before" bar in before/after comparisons */
-  --bar: var(--n7);
+  /* The grey of every bar and mark, 3:1 or more on a panel, and the dark ink
+     of any words drawn on it */
+  --bar: var(--n9);
+  --bar-ink: var(--n1);
 
   /* Flat: no shadows, no glow behind the page */
   --wash: none;
@@ -92,7 +94,7 @@
   --accent-line: color-mix(in oklch, var(--accent) 40%, transparent);
   /* A hovered button: a purple fill dark enough that its label stays bright,
      with the chroma to read purple, not grey-mauve (about Radix dark step 4) */
-  --accent-hover: color-mix(in oklch, var(--v3) 50%, var(--panel));
+  --accent-hover: color-mix(in oklch, var(--accent) 20%, transparent);
   --ring: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
 }
 
@@ -100,20 +102,21 @@
 :root[data-theme="light"] {
   color-scheme: light;
   --bg: var(--n5);
-  --panel: var(--n3);
+  --panel: var(--n2);
   --pane: var(--n2);
-  --well: var(--n4);
+  --well: var(--n6);
+  --muted: var(--n11);
+  --bar-ink: var(--n12);
   --prose-ink: var(--n12);
-  --accent: var(--v5);
+  --accent: var(--v4);
   --accent-text: var(--v4);
-  --accent-hover: color-mix(in oklch, var(--v5) 16%, var(--panel));
 }
 
 /* Paper is light in any theme (scales.css flips the greys), so the accent
    takes the light theme's steps too. */
 @media print {
   :root:root {
-    --accent: var(--v5);
+    --accent: var(--v4);
     --accent-text: var(--v4);
   }
 }

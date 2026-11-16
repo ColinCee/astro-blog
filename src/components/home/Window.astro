@@ -92,12 +92,12 @@ import Writing from "./window/Writing.astro";
 
 <style>
   .win {
-    --win-bg: var(--n2);
-    --win-line: color-mix(in oklab, var(--n12) 17%, transparent);
+    --win-bg: var(--panel);
+    --win-line: var(--line);
     --win-sel: color-mix(in oklab, var(--n12) 6%, transparent);
     --win-pad: 0.9rem;
     /* The tile behind the favicon's bars: the page colour, as the tab has it. */
-    --win-tile: var(--n1);
+    --win-tile: var(--bg);
     /* The code theme's hues, used as a highlighter would: keys, dates and
        time axes, quantities, paths. Small print only; never a title, a
        result or a fill. */
@@ -113,15 +113,12 @@ import Writing from "./window/Writing.astro";
     overflow: clip; /* clip, not hidden: the phone readout sticks to the viewport */
     animation: rise var(--dur-slow) var(--ease-out) var(--stagger) both;
   }
-  :global(:root[data-theme="light"]) .win {
-    --win-tile: var(--n3);
-  }
   .win__bar {
     display: flex;
     align-items: center;
     gap: 0.7rem;
     padding: 0.6rem 1rem;
-    background: var(--panel);
+    background: var(--well);
     font-family: var(--mono);
     font-size: 0.75rem;
     color: var(--muted);
@@ -134,7 +131,7 @@ import Writing from "./window/Writing.astro";
     width: 11px;
     height: 11px;
     border-radius: 50%;
-    background: var(--n6);
+    background: var(--line);
   }
 
   /* One grid of panels. Wide: the left column beside writing, then the

@@ -56,10 +56,10 @@
   padding: 0 0.5rem;
   overflow: hidden;
   background: var(--bar);
+  color: var(--bar-ink);
   border-radius: 2px;
   font-style: normal;
   font-size: 0.8rem;
-  color: var(--ink);
   white-space: nowrap;
 }
 .prose .sbar i b {
