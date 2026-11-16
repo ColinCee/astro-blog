@@ -48,9 +48,6 @@
   --bar: var(--n9);
   --bar-ink: var(--n1);
 
-  /* Flat: no shadows, no glow behind the page */
-  --wash: none;
-
   /* Type */
   --grotesk: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --head: var(--font-sora), var(--grotesk);
