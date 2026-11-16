@@ -14,7 +14,7 @@ const files = (dir: string): string[] =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
     e.isDirectory()
       ? files(join(dir, e.name))
-      : /\.(astro|css|ts)$/.test(e.name)
+      : /\.(astro|css|ts|mdx?)$/.test(e.name)
         ? [join(dir, e.name).replaceAll("\\", "/")]
         : [],
   );

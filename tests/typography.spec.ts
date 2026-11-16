@@ -108,7 +108,10 @@ const SCAN_SKIP = new Set(["src/styles/tokens.css"]);
 const LEADINGS = new Set(["1", "1.3", "1.6", "inherit"]);
 const WEIGHTS = new Set(["200", "300", "400", "500", "600", "inherit"]);
 const value = (text: string, prop: string) =>
-  text.match(new RegExp(`(?:^|[;{"'\`])\\s*${prop}:\\s*([^;"}]+)`))?.[1].trim();
+  text
+    .match(new RegExp(`(?:^|[;{"'\`])\\s*${prop}:\\s*([^;"}]+)`))?.[1]
+    .replace("!important", "")
+    .trim();
 
 test("every size, line-height and weight is on the scale", () => {
   const found: string[] = [];
