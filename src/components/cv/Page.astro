@@ -43,7 +43,7 @@ const { title, description } = Astro.props;
     font-family: var(--mono);
     font-size: 0.75rem;
     font-weight: 400;
-    color: var(--faint);
+    color: var(--dim);
   }
   .cv__sec-bar .cv__sec-head {
     margin: 0;
@@ -57,7 +57,7 @@ const { title, description } = Astro.props;
     font: inherit;
     font-family: var(--mono);
     font-size: 0.72rem;
-    color: var(--muted);
+    color: var(--dim);
     cursor: pointer;
     transition:
       color var(--dur-fast) var(--ease),
@@ -80,7 +80,7 @@ const { title, description } = Astro.props;
     font-family: var(--mono);
     font-size: 0.6875rem;
     letter-spacing: 0.01em;
-    color: var(--muted);
+    color: var(--dim);
     border: 1px solid var(--line);
     border-radius: var(--r-chip);
   }
@@ -91,13 +91,11 @@ const { title, description } = Astro.props;
   @media print {
     /* Outranks both theme blocks in tokens.css, so the CV always prints light. */
     :root:root:root {
-      --bg: #ffffff;
-      --panel: #ffffff;
-      --pane: #ffffff;
+      --page: #ffffff;
+      --raised: #ffffff;
       --line: #d5d5d5;
       --ink: #111111;
-      --muted: #333333;
-      --faint: #5a5a5a;
+      --dim: #333333;
       color-scheme: light;
     }
     @page {

@@ -17,12 +17,12 @@
   height: auto;
   image-rendering: pixelated;
   border-radius: 4px;
-  background: var(--panel);
+  background: var(--raised);
 }
 .prose .vid b {
   font-weight: 500;
   color: var(--ink);
 }
 .prose .vid--hi b {
-  color: var(--accent-text);
+  color: var(--accent);
 }

@@ -131,7 +131,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
   }
   .wr__read i {
     font-style: normal;
-    color: color-mix(in oklab, var(--win-num) 50%, var(--faint));
+    color: color-mix(in oklab, var(--win-num) 50%, var(--dim));
   }
   /* Titles read as prose; results stay ink, the old value grey: the window's
      purple is its focus, and a purple number on every row would be louder. */
@@ -146,7 +146,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
     white-space: nowrap;
   }
   .wr__was {
-    color: var(--faint);
+    color: var(--dim);
   }
   .wr__stat b {
     font-weight: 500;
@@ -155,7 +155,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
     align-items: center;
     padding: 0.2rem var(--win-pad) 0.1rem;
     font-size: 0.6875rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   .wr__year span {
     text-align: right;
@@ -176,7 +176,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
     gap: 0.3rem 1.4rem;
     margin-top: 0.75rem;
     padding: 1rem var(--win-pad) 1.05rem;
-    border-top: 1px solid var(--win-line);
+    border-top: 1px solid var(--line);
   }
   .pv__slug {
     color: var(--win-path);
@@ -202,7 +202,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
   .pv__stat:empty::before {
     content: "–";
     font-weight: 300;
-    color: var(--faint);
+    color: var(--dim);
   }
   .pv__cap {
     display: grid;
@@ -211,14 +211,14 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
     line-height: 1.45;
   }
   .pv__label {
-    color: var(--muted);
+    color: var(--dim);
   }
   /* Set as a word among words, so with a space's room either side. */
   .pv__label :global(.stat-arrow) {
     margin-inline: 0.7em !important;
   }
   .pv__meta {
-    color: var(--faint);
+    color: var(--dim);
   }
 
   @media (max-width: 79.99rem) {
@@ -284,7 +284,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
       margin-top: 0.9rem;
       padding: 0.95rem var(--win-pad)
         calc(0.85rem + env(safe-area-inset-bottom, 0px));
-      background: var(--win-bg);
+      background: var(--raised);
       border-radius: 0 0 5px 5px;
     }
     /* Never see-through, even in the opening round: it can sit over the list. */
@@ -316,7 +316,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
       position: absolute;
       inset: auto 0 calc(100% + 1px);
       height: 1.6rem;
-      background: linear-gradient(to top, var(--win-bg) 25%, transparent);
+      background: linear-gradient(to top, var(--raised) 25%, transparent);
       pointer-events: none;
     }
   }

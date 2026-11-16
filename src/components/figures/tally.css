@@ -13,7 +13,7 @@
 .prose .tally dt {
   align-self: end;
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
 }
 .prose .tally dd {
   margin: 0.2rem 0 0;
@@ -26,5 +26,5 @@
   color: var(--ink);
 }
 .prose .tally div:first-child dd {
-  color: var(--accent-text);
+  color: var(--accent);
 }

@@ -71,7 +71,7 @@ const companies = (await getCollection("companies"))
   .strip__span {
     font-family: var(--mono);
     font-size: 0.8125rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   .strip__view {
     min-width: 0;
@@ -114,7 +114,7 @@ const companies = (await getCollection("companies"))
     padding: 0 0.6rem;
     font-family: var(--mono);
     font-size: 0.75rem;
-    color: var(--muted);
+    color: var(--dim);
     background: none;
     border: 1px solid var(--line);
     border-radius: var(--r-ctl);
@@ -126,7 +126,7 @@ const companies = (await getCollection("companies"))
   }
   .strip__toggle:hover {
     color: var(--ink);
-    background: var(--accent-hover);
+    background: var(--accent-tint);
     border-color: var(--accent-solid);
   }
   .strip__item {
@@ -145,7 +145,7 @@ const companies = (await getCollection("companies"))
     font-weight: 400;
     font-size: 0.75rem;
     letter-spacing: 0;
-    color: var(--faint);
+    color: var(--dim);
   }
   /* The separator keeps a hint of the accent, faded so the names lead */
   .strip__item i {

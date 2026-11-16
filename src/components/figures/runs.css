@@ -12,7 +12,7 @@
   color: var(--ink);
 }
 .prose .runs small {
-  color: var(--faint);
+  color: var(--dim);
   font-size: 0.6875rem;
 }
 .prose .runs > div {
@@ -37,7 +37,7 @@
   background: var(--accent);
 }
 .prose .runs--hi b {
-  color: var(--accent-text);
+  color: var(--accent);
 }
 .prose .runs--axis > div {
   height: auto;
@@ -47,7 +47,7 @@
 }
 .prose .runs--axis em {
   font-style: normal;
-  color: var(--faint);
+  color: var(--dim);
   font-size: 0.6875rem;
 }
 @media (max-width: 34rem) {

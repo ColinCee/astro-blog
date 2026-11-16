@@ -215,21 +215,21 @@ lightness. Swatches are on the design page.
   for "info".
 
 ### Roles (`tokens.css`)
-- **Surfaces:** `--bg` page (dark n1, light n5), `--panel` and `--pane` raised
-  surfaces (dark n3; light n3 and n2), `--well` a darker tone inside a panel (n4).
-  The home window has a tone of its own, `--win-bg` (n2 in both themes), under
-  a `--panel` title bar.
-- **Text:** `--ink` (n12) titles and values; `--muted` (n11) the line under a
-  title; `--faint` (n10) dates, labels and captions, still 4.5:1;
+- **Surfaces:** `--page` page (dark n1, light n5), `--raised` and `--raised` raised
+  surfaces (dark n3; light n3 and n2), `--inset` a darker tone inside a panel (n4).
+  The home window has a tone of its own, `--raised` (n2 in both themes), under
+  a `--raised` title bar.
+- **Text:** `--ink` (n12) titles and values; `--dim` (n11) the line under a
+  title; `--dim` (n10) dates, labels and captions, still 4.5:1;
   `--prose-ink` post body, a notch softer than ink in dark, ink in light.
-- **Edges:** `--line` and `--line-strong`, cut from the ink at 10% and 16%, so
-  every border shares its tint. The home window's panel frames are `--win-line`,
+- **Edges:** `--line` and `--line`, cut from the ink at 10% and 16%, so
+  every border shares its tint. The home window's panel frames are `--line`,
   the same ink at 17%, and its selected row is a band of ink at 6% (`--win-sel`;
   9% while its panel has the focus).
 - **Accent:** each job is one spectrum step. Dark: `--accent` and
-  `--accent-text` are v6, the accent itself (bars, lines, results, links);
+  `--accent` are v6, the accent itself (bars, lines, results, links);
   `--accent-solid` v4 for filled marks. Light and print step down one so they
-  hold contrast on a light page: `--accent` v5, `--accent-text` v4 (4.5:1).
+  hold contrast on a light page: `--accent` v5, `--accent` v4 (4.5:1).
   `--accent-ink` (white) for text on a filled accent.
   Derived: `--accent-line` (40%, inline link borders) and `--ring` (20%, the state
   glow).
@@ -248,8 +248,8 @@ lightness. Swatches are on the design page.
 
 ### Print
 The CV re-declares the tokens inside `@media print` to flip to ink-on-white for a
-clean PDF: `--bg`/`--panel`/`--pane` become `#ffffff`, `--ink` `#111111`,
-`--muted` `#333333`, `--faint` `#5a5a5a`, `--line` `#d5d5d5`; the accent takes the
+clean PDF: `--page`/`--raised`/`--raised` become `#ffffff`, `--ink` `#111111`,
+`--dim` `#333333`, `--dim` `#5a5a5a`, `--line` `#d5d5d5`; the accent takes the
 light theme's steps, as every printed page does. Site chrome (nav and footer) is hidden and
 entries use `break-inside: avoid`. This is the only place the palette leaves the
 two themes.
@@ -258,16 +258,16 @@ two themes.
 **The Accent Points Rule.** The accent marks results and links, nothing else:
 1. **The result**, the number or mark a page or figure exists to show: a post's
    headline value and a chart's result bar or line in full `--accent`; a result
-   in small text (a table, the blog index) in `--accent-text`. The old value is
-   `--faint` before an arrow; a plain comparison like "82% vs 80%" stays ink.
+   in small text (a table, the blog index) in `--accent`. The old value is
+   `--dim` before an arrow; a plain comparison like "82% vs 80%" stays ink.
    One purple per figure: where a figure has two candidates (a curve and a bar,
    a count and the planes it counts), the result keeps it and the other goes ink.
    A result bar and its own value are one result, so both stay purple.
    A list of results where something else on the page is already purple (the home
    window) stays ink.
-2. **Links**, in `--accent-text` (`--accent-text` in prose).
+2. **Links**, in `--accent` (`--accent` in prose).
 3. **The one highlight in a hero drawing or one-liner.**
-4. **A hovered control:** a button fills with `--accent-hover` (dark: v3 half
+4. **A hovered control:** a button fills with `--accent-tint` (dark: v3 half
    over the panel; light: v5 at 16%) and its border goes `--accent-solid`, while
    its label or icon stays bright ink (a purple icon read dimmer than the white one at rest); a
    link's underline goes `--accent`. One at a time, so it
@@ -287,7 +287,7 @@ the homepage loud while the post results read pale.)
 
 **The exception: the home page's first screen.** Three purple things share
 that glance: the hero's one highlight (job 3), the window's focus (job 5), and
-the favicon in the fastfetch panel, whose short bar is `--accent-text` as it is
+the favicon in the fastfetch panel, whose short bar is `--accent` as it is
 in the browser tab. That is more than one accent per glance, and this
 paragraph is the one place it is allowed. Nothing else may join the three on
 that screen. (A hovered control, job 4, and the outline on a row that holds
@@ -306,7 +306,7 @@ these are its limits:
 2. **Only small print:** mono at `0.6875rem` to `0.8125rem` (a row's date and
    read time, a key, an axis tick, a count, a file name or repo in a border).
    A panel's title, a post's title, a result and a readout stay ink; the old
-   value of a result stays `--faint`.
+   value of a result stays `--dim`.
 3. **Never a fill or a mark.** The hues colour text only. Lines, blocks, bars,
    dots and frames in the window are ink and grey; the two that are purple,
    the focus and the favicon's short bar, are the accent's (the Accent Points
@@ -363,13 +363,13 @@ Sora and DM Mono 400 are preloaded. Geist Mono was tried and clashed with Sora.
 - **Headline** (Sora 600): post titles (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em),
   the reach-out line, section headings (`1–1.35rem`, −0.02 to −0.03em), and
   the home window's readouts (`1.6rem`, −0.04em; a number still waiting is a
-  300 dash in `--faint`) and its temperature (`1.75rem`).
+  300 dash in `--dim`) and its temperature (`1.75rem`).
 - **Voice** (Sora 200, the punchline 300 in the accent, −0.03em): the one-liners and the worked-at
   names. Heavier weights read as thick.
 - **Title** (Geist 400, −0.01em): post and list titles. Never 500 or heavier in
   lists.
 - **Body** (Geist 400, 16–17px, lh 1.55; posts 1.65): prose, ledes, the line
-  under a title in `--muted`. Bold is 600.
+  under a title in `--dim`. Bold is 600.
 - **Label** (DM Mono 300–500, `0.6875–0.8125rem`, no added tracking): the
   home window, dates, stats, captions, kickers, tags, figure text. Each DM
   Mono weight is a file of its own (about 9 KB); the homepage uses 400 and 500
@@ -377,9 +377,9 @@ Sora and DM Mono 400 are preloaded. Geist Mono was tried and clashed with Sora.
 
 ### Named Rules
 **The `//` Kicker System.** Sections are marked with a lowercase mono comment —
-`// writing`, `// experience`, `// reach out` — always in `--faint`: a label
+`// writing`, `// experience`, `// reach out` — always in `--dim`: a label
 is chrome, so it never takes the accent (a post's `// writing` back-link turns
-`--accent-text` on hover). Keep it
+`--accent` on hover). Keep it
 lowercase, mono and comment-prefixed: never an all-caps tracked eyebrow, never
 `01 / 02` numbered markers.
 
@@ -389,8 +389,8 @@ none on mono. Letters never touch.
 
 ## 4. Elevation
 
-Flat. Depth comes from tone, not shadows or borders: page (`--bg`), a raised
-panel (`--panel` / `--pane`), a darker well inside it (`--well`): no drop
+Flat. Depth comes from tone, not shadows or borders: page (`--page`), a raised
+panel (`--raised` / `--raised`), a darker well inside it (`--inset`): no drop
 shadows, no glow behind the page, and no gradient as a surface or a
 decoration (the few uses that stand are named in the rule below).
 
@@ -398,12 +398,12 @@ decoration (the few uses that stand are named in the rule below).
 **The Flat-By-Tone Rule.** No shadows on cards, panels, inputs or figures, and no
 borders on panels, except the home window's (section 5): a terminal app is
 drawn with lines, so its panels are 1px frames on one flat tone. The limits of
-that exception: one line (`--win-line`, 1px, 6px corners), one tone under all
-of it (`--win-bg`), no fill inside a frame, no shadow, no panel raised on a
+that exception: one line (`--line`, 1px, 6px corners), one tone under all
+of it (`--raised`), no fill inside a frame, no shadow, no panel raised on a
 second surface. Inside a figure the same line may draw a thing that is a box
 (the home lab's mini-PC and its services' chips, the two tone plots beside an
 Anki card) or a rule over a readout, and nothing heavier. No other page gets
-a frame; figures in posts stay borderless on `--pane`. The one sanctioned glow
+a frame; figures in posts stay borderless on `--raised`. The one sanctioned glow
 is **`--ring`**
 (`0 0 0 4px` accent at 20%), a response to state: the current or hovered node on
 the blog index, the CV ledger and a post's timeline. Never ambient.
@@ -421,13 +421,13 @@ to purple gradients in TUI fetch ?".
 
 ### Navigation
 - One `components/site/Nav.astro` on every page. A mono mark
-  `colin@glasgow:~$` (ink, the `@` `--muted`, `:~$` faint) on the left; links
-  **Writing** and **CV** (Geist, `0.9375rem`, `--muted`) and the theme button on
+  `colin@glasgow:~$` (ink, the `@` `--dim`, `:~$` faint) on the left; links
+  **Writing** and **CV** (Geist, `0.9375rem`, `--dim`) and the theme button on
   the right. (No About; contact lives on the homepage.)
 - **Hover:** `--ink` with an accent `border-bottom`. **Active:** `--ink` with a
   `--line` border.
-- **Theme button:** a control — ink icon (moon / sun), `--panel` fill, `--line`
-  border, 6px corners; hovered, it fills `--accent-hover` with an
+- **Theme button:** a control — ink icon (moon / sun), `--raised` fill, `--line`
+  border, 6px corners; hovered, it fills `--accent-tint` with an
   `--accent-solid` border, the icon staying ink. `aria-pressed` says whether light
   is on.
 - Centered on `--w-page`, so the mark lines up with the content's left edge and
@@ -443,7 +443,7 @@ to purple gradients in TUI fetch ?".
 - **In the home window it is drawn as itself, as tall as its rows.** The
   fastfetch panel shows it where fastfetch prints a logo: the same three
   rectangles as the file, drawn inline in the page's tokens (tile n1, light
-  n3; bars n8 and `--accent-text`), and as tall as the rows of text beside
+  n3; bars n8 and `--accent`), and as tall as the rows of text beside
   it. Both are decided (Nov 2026). Its real geometry: a pixel-grid redrawing
   was dropped ("if it's supposed to be my favicon it doesn't really look like
   it"). Its size: a mark taller than its rows was dropped ("The fast fetch
@@ -454,53 +454,53 @@ to purple gradients in TUI fetch ?".
   spoken about the fastfetch panel, so ask before treating this as settled.
 
 ### Footer
-- One `components/site/Footer.astro`: `Colin Cheung` (mono, `--muted`) and
-  `© {year}` and `built in Glasgow` (`--faint`, a gap between), centered on `--w-page`, `1px` top
-  rule. On the homepage it spans `--w-poster`, its meta is `--muted`, and it ends
+- One `components/site/Footer.astro`: `Colin Cheung` (mono, `--dim`) and
+  `© {year}` and `built in Glasgow` (`--dim`, a gap between), centered on `--w-page`, `1px` top
+  rule. On the homepage it spans `--w-poster`, its meta is `--dim`, and it ends
   with `last deploy <hash>`, linking the commit.
 
 ### Tags / Chips
-- Mono, 11px, `--muted`, `1px solid var(--line)`, 4px corners,
+- Mono, 11px, `--dim`, `1px solid var(--line)`, 4px corners,
   `0.18rem 0.62rem` padding, no fill. Used for the CV's stack lists.
 - No hover state — they are quiet texture, not controls.
 
 ### Controls
-- Ink on the panel tone (`--panel`, `--line` or `--line-strong` border), 6px
+- Ink on the panel tone (`--raised`, `--line` or `--line` border), 6px
   corners: the theme button, the hero's GitHub and LinkedIn icons, the worked-at
   pause button. Never the accent, never a pill.
 - In the home window a control is a label in a panel's border (`button.lbl`,
-  `a.lbl`: `pause`, `next card`, `all N posts`): `--muted` mono text that
+  `a.lbl`: `pause`, `next card`, `all N posts`): `--dim` mono text that
   turns ink on hover, no fill and no box, padded so the target is full size.
   A link in a bottom border is a path, so it takes `--win-path`. Only there.
 
 ### Links (inline)
-- `--accent-text` text with a `1px` **`--accent-line`** `border-bottom` that goes
+- `--accent` text with a `1px` **`--accent-line`** `border-bottom` that goes
   solid `--accent` on hover. Never underlined by default; the border is the
   affordance.
 
 ### Timeline (signature component)
 - Blog index, CV ledger, and long-form article navigation share the **node**; the
   blog index and articles also share a vertical spine (`1px var(--line)`) with a
-  **node** per entry: an 8–9px dot, `--bg` fill, `2px solid var(--faint)` ring.
+  **node** per entry: an 8–9px dot, `--page` fill, `2px solid var(--dim)` ring.
   The **current / active / hovered** node switches its ring to `--accent` plus
   `--ring`. A mono date rail sits to the left of the spine; body content to the
   right.
 - **Blog index (`pages/blog/index.astro`):** a `// writing` kicker and a Sora
   lede, then one row per post from its frontmatter: year, month and read time in
   the rail; the title in Geist 400, ink, an `--accent` underline on hover; under it the stat in
-  mono (old value `--faint`, new one `--accent-text`, a `vs` comparison in
-  ink) and its `statLabel` in `--faint`.
+  mono (old value `--dim`, new one `--accent`, a `vs` comparison in
+  ink) and its `statLabel` in `--dim`.
 - **CV ledger (`pages/cv.astro`):** one `<details>` row per role, so the whole
   career fits one laptop screen closed. Closed, a row is the evidence: node, mono
-  dates (`now` in `--accent-text` for the current role), company in Sora 600,
-  title in mono with a `contract` chip (ink on `--well`, 4px) where it applies,
+  dates (`now` in `--accent` for the current role), company in Sora 600,
+  title in mono with a `contract` chip (ink on `--inset`, 4px) where it applies,
   and the headline result right-aligned in ink (six in a column would sprinkle the accent). Open, it unfolds in
   place (`::details-content` height and opacity, the page's one authored motion)
   into the context line, bullets and stack tags, indented to the company column.
   An `open all` / `close all` mono control sits on the section line, and every
-  row opens for print. Hover tint is `--panel`, pointer devices only. Below 720px
+  row opens for print. Hover tint is `--raised`, pointer devices only. Below 720px
   the row stacks dates, company, title and result with the chevron at the right.
-  The `//` kickers on the CV are `--faint`, like every kicker; a metric inside a
+  The `//` kickers on the CV are `--dim`, like every kicker; a metric inside a
   bullet is bold ink. Content is `data/cv.ts`; the pieces are `components/cv/`.
 - **Article timeline (`layouts/Post.astro`):** the third use of the spine, and it is
   in the flow of the article, not a sidebar. When a post opens with three or more
@@ -514,14 +514,14 @@ to purple gradients in TUI fetch ?".
   `+3 days`, `+8 weeks`, `+3 months`), with the spine and a node in the gap. Below
   that the spine runs down the left edge and the date sits inline above the title.
 - A `// timeline` line above the list gives the first and last dates and the total
-  span in days. Node state is the ring alone: unread `--faint`, passed filled
+  span in days. Node state is the ring alone: unread `--dim`, passed filled
   `--accent`, current `--accent` plus `--ring`.
 - Undated sections after the run (takeaways, reflections) render as ordinary prose
   below the timeline. Only use dated headings when the post really is a sequence.
 
 ### Hero (homepage)
 - `components/home/Hero.astro`. Left: the name (Display), "Senior Software
-  Engineer" in `--muted`, and GitHub / LinkedIn icon controls. No slogan.
+  Engineer" in `--dim`, and GitHub / LinkedIn icon controls. No slogan.
 - Right: the one-liners as a **reel**: only the current line shows (no caption,
   no faint next line: both distracted from it); over it a thin bar for the time
   left and a mono `01 / 18` count say another is coming. One every 5 s;
@@ -530,7 +530,7 @@ to purple gradients in TUI fetch ?".
   `--accent-solid`, a deeper purple than the text accent so the marks read rich,
   not electric; the counter is a solid `--accent-solid` chip with `--accent-ink`
   (white). Each line has exactly one purple thing: the drawing or counter if it
-  has one, else its punchline word (`<b>`) in `--accent-text` at weight 300.
+  has one, else its punchline word (`<b>`) in `--accent` at weight 300.
   Never bold: heavier Sora reads thick next to the 200 voice. Below 56rem the
   reel stacks under the name.
 - The hero takes about two-fifths of the first screen (`min-height: 40svh`),
@@ -545,7 +545,7 @@ This describes the window as it is built. Which of it Colin decided and
 which is only inferred from the version he picked is set out in the next
 section, How the home page grows; read that before changing the page.
 - `components/home/Window.astro` and `components/home/window/`: one window on
-  `--win-bg` (`--n2`), titled `~/ColinOS`, with a `--panel` title bar, three
+  `--raised` (`--n2`), titled `~/ColinOS`, with a `--raised` title bar, three
   grey dots and no status bar, holding a grid of six panels: fastfetch,
   skills and glasgow down the left, writing on the right, and under both the
   projects and the open project's figure. This is the scarce set-piece: do
@@ -559,8 +559,8 @@ section, How the home page grows; read that before changing the page.
   original. That looks the best". The Projects section is gone: the projects
   are panels of the window.
 - **Its vocabulary** is six things, and every panel is made of them:
-  1. the **window tone**, one flat `--win-bg` under everything;
-  2. the **hairline panel**, a 1px `--win-line` frame (ink at 17%) with 6px
+  1. the **window tone**, one flat `--raised` under everything;
+  2. the **hairline panel**, a 1px `--line` frame (ink at 17%) with 6px
      corners and no fill;
   3. the **title in the border**, and a label in any other corner (`.lbl`);
   4. the **selected band**, the chosen row of a list on ink at 6%
@@ -572,8 +572,8 @@ section, How the home page grows; read that before changing the page.
      picker);
   6. the **one focus**, the accent on one panel's border and title.
 - **Panel** (`window/Panel.astro`): the frame. Its title is set into the top
-  border (`--muted`, `0.75rem`), and the other three corners take a label the
-  same way (`.lbl`, `--faint`, `0.6875rem`): top right a readout or a
+  border (`--dim`, `0.75rem`), and the other three corners take a label the
+  same way (`.lbl`, `--dim`, `0.6875rem`): top right a readout or a
   control, bottom left the key hints, bottom right a position or a link.
   A label that is a control keeps a full-size target; only its line of text
   cuts the border.
@@ -898,14 +898,14 @@ rest on his words say so.
 ### Worked at (homepage)
 - `components/home/WorkedAt.astro`: a "Worked at" heading with `<first year> →
   now`, then a thin marquee of the companies, oldest first: each name in Sora 200
-  with the year it started beside it in DM Mono `--faint`, a thin `--accent-line`
+  with the year it started beside it in DM Mono `--dim`, a thin `--accent-line`
   slash between names. No icons, logos or job lengths. 70 s loop, paused on hover
   or focus, with a `pause` / `play` control; under reduced motion it stands still
   and wraps. Data: `src/data/companies.json`.
 
 ### Reach out (homepage)
-- `components/home/Reach.astro`: a `// reach out` kicker in `--faint`, then the
-  Headline line "Best way to reach me is LinkedIn ↗" (the link in `--accent-text`)
+- `components/home/Reach.astro`: a `// reach out` kicker in `--dim`, then the
+  Headline line "Best way to reach me is LinkedIn ↗" (the link in `--accent`)
   and a mono line linking GitHub.
 
 ### Motion
@@ -962,7 +962,7 @@ curve in a component is a bug unless it is a content timing.
   radar one still frame, no `pause` buttons.
 
 ### Metric Highlight
-- `.hl` — inline `<b>` in `--accent-text`, weight 600, `tabular-nums`, in post
+- `.hl` — inline `<b>` in `--accent`, weight 600, `tabular-nums`, in post
   prose. Wraps the one number in a paragraph that is the point; any other number
   stays bold ink.
 
@@ -981,12 +981,12 @@ curve in a component is a bug unless it is a content timing.
   margin and plain and timeline posts share one left edge. Content carries a `// writing` back-kicker, a Sora 600 title
   (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em), and a mono meta line (the date, then N min read, as `.items`).
 - **Headline stat:** the post's `stat` renders under the title between hairlines,
-  its `statLabel` above it in 11px mono `--faint`, the value in Sora 600. A result
-  that got better shows the old value in `--faint`, an arrow, and the new one in
+  its `statLabel` above it in 11px mono `--dim`, the value in Sora 600. A result
+  that got better shows the old value in `--dim`, an arrow, and the new one in
   `--accent`; a `vs` comparison stays ink.
-- **Quotes** are excerpts on the raised surface (`--pane`, 8px, no border or rule),
+- **Quotes** are excerpts on the raised surface (`--raised`, 8px, no border or rule),
   so quoted documents read differently from narration. **Ordered lists** are
-  numbered takeaways: hairline-separated rows with mono `--accent-text` numerals.
+  numbered takeaways: hairline-separated rows with mono `--accent` numerals.
 - **Body size:** `--prose-size`, 16-17px (`clamp(1rem, 0.96rem + 0.18vw, 1.0625rem)`),
   line-height 1.65. Larger sizes read as heavy; do not raise it.
 - **Figures** are components in `src/components/figures/`, used by name in a
@@ -994,7 +994,7 @@ curve in a component is a bug unless it is a content timing.
   bars, positions and shares. Each one's styles sit beside it as a `.css` file,
   global and under `.prose`, all loaded for every post through `figures.css` in
   the order they apply. `<Fig title caption>` is the frame: one panel on
-  `--pane`, 8px, no border, a short title above, a caption below. Every figure
+  `--raised`, 8px, no border, a short title above, a caption below. Every figure
   draws itself in once when seen (`draw.css`), so there is no prop for it.
   Inside it: `<Cmp>` (before/after bars to scale; `base` stripes the baseline row, `from` makes a step of a
   waterfall, drawn hollow, `ref` a dashed reference line, `cols` the column widths; the value column grows to the longest value, so none spills out of the figure), `<Dots>` (a
@@ -1060,13 +1060,13 @@ curve in a component is a bug unless it is a content timing.
 - **Sections:** each `##` (Sora 600) gets a hairline above it so long posts scan as sections.
 - **`.prose`** styles the slotted Markdown: `--prose-ink`, `--prose-size`, line-height
   `1.65`, measure `--measure` (`44rem`). Headings are Sora 600 `--ink`; links are
-  `--accent-text` with an `--accent-line` bottom border; list markers are
-  `--accent-text`; bold is ink 600.
+  `--accent` with an `--accent-line` bottom border; list markers are
+  `--accent`; bold is ink 600.
 - **A wide screen grows the type, never the measure.** The measure is in rem, so it
   grows only with the root size on large monitors (see "Large screens"); the answer
   to a cramped big monitor is a filled margin, not a longer line.
 - **Tables** are hairline data rails, not boxes: no outer border, a single
-  `--line` rule under a mono `--faint` header row, and `--line` at 55% between
+  `--line` rule under a mono `--dim` header row, and `--line` at 55% between
   rows. Column alignment in the Markdown drives the styling — a `---:`
   column renders mono, `tabular-nums` and `nowrap` so figures align on the decimal.
   A bold last row is a total, ruled off in ink.
@@ -1075,11 +1075,11 @@ curve in a component is a bug unless it is a content timing.
   theme (`src/styles/code-theme.ts`, read from `scales.css`): five syntax hues at
   one lightness per theme (`--syn-kw` in the accent's hue, `--syn-fn` blue,
   `--syn-str` green, `--syn-num` amber, `--syn-type` teal, each 5:1 or more on the
-  pane), names in ink, comments and punctuation `--faint`. Code, and the home
+  pane), names in ink, comments and punctuation `--dim`. Code, and the home
   window's small print (the Window Hues Exception), are the only places colour
   goes beyond the accent and the status colours: in both it says what kind of
   thing a token is, never a result. Switched by the site's `data-theme`, not the system
-  setting; DM Mono, 8px corners, `--pane` with `--line` borders, no shadow and no
+  setting; DM Mono, 8px corners, `--raised` with `--line` borders, no shadow and no
   coloured tab marker (set in `astro.config`); inline code
   is a mono chip on a faint `--ink` 10% wash, 4px corners. Never hand-restyle
   Expressive Code blocks.
@@ -1092,7 +1092,7 @@ curve in a component is a bug unless it is a content timing.
   exception is the home window's small print (the Window Hues Exception).
 - **Do** give the accent only its jobs: the improved value, links, small
   marks at the one thing, and on the homepage the window's one moving focus.
-  Leave the sentence around a number `--muted` or ink.
+  Leave the sentence around a number `--dim` or ink.
 - **Do** read How the home page grows before changing the home page. It says
   which of the home-page rules in these two lists Colin decided and which are
   inferred; ask him about an inferred one before treating it as settled.
@@ -1112,8 +1112,8 @@ curve in a component is a bug unless it is a content timing.
 - **Do** provide a `prefers-reduced-motion` fallback for every animation; let
   hover pause anything that moves on its own.
 - **Do** take every value from a scale (One Scale Per Property, section 1):
-  the surface steps (`--bg`, `--panel`, `--pane`, `--well`), `--line` /
-  `--line-strong`, `--accent-line`, `--ring`, `--gain` / `--loss`, the corners
+  the surface steps (`--page`, `--raised`, `--raised`, `--inset`), `--line` /
+  `--line`, `--accent-line`, `--ring`, `--gain` / `--loss`, the corners
   (`--r`, `--r-ctl`, `--r-chip`), the motion scale (`--dur-*`, `--ease*`) with
   the shared `rise` keyframe, and the widths (`--w-prose`/`--w-page`/`--w-poster`).
 - **Do** listen for `themechange` in anything drawn in a canvas.

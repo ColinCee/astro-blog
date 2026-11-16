@@ -20,7 +20,7 @@
   background: var(--bar);
 }
 .prose .days__k--now {
-  color: var(--accent-text);
+  color: var(--accent);
   font-weight: 500;
 }
 .prose .days__k--now::before {
@@ -46,6 +46,6 @@
 .prose .days__note {
   margin: 0;
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
   text-align: right;
 }

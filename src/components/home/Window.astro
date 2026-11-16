@@ -92,12 +92,8 @@ import Writing from "./window/Writing.astro";
 
 <style>
   .win {
-    --win-bg: var(--panel);
-    --win-line: var(--line);
     --win-sel: color-mix(in oklab, var(--n12) 6%, transparent);
     --win-pad: 0.9rem;
-    /* The tile behind the favicon's bars: the page colour, as the tab has it. */
-    --win-tile: var(--bg);
     /* The code theme's hues, used as a highlighter would: keys, dates and
        time axes, quantities, paths. Small print only; never a title, a
        result or a fill. */
@@ -108,7 +104,7 @@ import Writing from "./window/Writing.astro";
 
     max-width: var(--w-poster);
     margin: 0 auto;
-    background: var(--win-bg);
+    background: var(--raised);
     border-radius: var(--r);
     overflow: clip; /* clip, not hidden: the phone readout sticks to the viewport */
     animation: rise var(--dur-slow) var(--ease-out) var(--stagger) both;
@@ -118,10 +114,10 @@ import Writing from "./window/Writing.astro";
     align-items: center;
     gap: 0.7rem;
     padding: 0.6rem 1rem;
-    background: var(--well);
+    background: var(--inset);
     font-family: var(--mono);
     font-size: 0.75rem;
-    color: var(--muted);
+    color: var(--dim);
   }
   .win__dots {
     display: inline-flex;
@@ -199,13 +195,13 @@ import Writing from "./window/Writing.astro";
     position: absolute;
     margin: 0;
     padding: 0 0.5rem;
-    background: var(--win-bg);
+    background: var(--raised);
     font-family: var(--mono);
     font-size: 0.6875rem;
     font-weight: 400;
     line-height: 1;
     white-space: nowrap;
-    color: var(--faint);
+    color: var(--dim);
   }
   :where(.win) .lbl:empty {
     display: none;
@@ -250,9 +246,9 @@ import Writing from "./window/Writing.astro";
     border: 0;
     padding-block: 0.45rem;
     background:
-      linear-gradient(var(--win-bg), var(--win-bg)) center / 100% 1.2em
+      linear-gradient(var(--raised), var(--raised)) center / 100% 1.2em
       no-repeat;
-    color: var(--muted);
+    color: var(--dim);
     cursor: pointer;
     transition: color var(--dur-fast) var(--ease);
   }
@@ -279,14 +275,14 @@ import Writing from "./window/Writing.astro";
     border-color: color-mix(in oklch, var(--accent) 72%, transparent);
   }
   .win .pn.is-focus > .pn__t {
-    color: var(--accent-text);
+    color: var(--accent);
   }
   /* A phone, or anything without hover: the focus is the title alone (a
      purple box the height of the writing list is too much there), and there
      are no keys to hint at. */
   @media (max-width: 45.99rem), (hover: none) {
     .win .pn.is-focus {
-      border-color: var(--win-line);
+      border-color: var(--line);
     }
     :where(.win) .lbl--bl {
       display: none;

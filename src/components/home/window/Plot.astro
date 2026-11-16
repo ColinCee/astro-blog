@@ -40,13 +40,13 @@ const { viewBox, wait = false, class: className, ...rest } = Astro.props;
 <style>
   .plot {
     position: relative;
-    border-bottom: 1px solid var(--win-line);
+    border-bottom: 1px solid var(--line);
   }
   .plot::before {
     content: "";
     position: absolute;
     inset: 0 0 auto;
-    border-top: 1px dashed var(--win-line);
+    border-top: 1px dashed var(--line);
   }
   /* Clipped with room above and below, so a line at the very top or bottom
      keeps its full stroke. */
@@ -80,7 +80,7 @@ const { viewBox, wait = false, class: className, ...rest } = Astro.props;
     top: 0;
     bottom: 0;
     width: 1px;
-    background: var(--line-strong);
+    background: var(--line);
   }
   /* The pointer's dot is solid and a line's end is hollow, so one never
      reads as the other. */
@@ -89,7 +89,7 @@ const { viewBox, wait = false, class: className, ...rest } = Astro.props;
     width: 9px;
     height: 9px;
     margin: -4.5px 0 0 -4.5px;
-    border: 2px solid var(--win-bg);
+    border: 2px solid var(--raised);
     border-radius: 50%;
     background: var(--ink);
     background-clip: padding-box;
@@ -101,7 +101,7 @@ const { viewBox, wait = false, class: className, ...rest } = Astro.props;
     margin: -4px 0 0 -4px;
     border: 1.5px solid var(--ink);
     border-radius: 50%;
-    background: var(--win-bg);
+    background: var(--raised);
     transition: opacity var(--dur-base) var(--ease)
       var(--plot-end, var(--dur-slow));
   }

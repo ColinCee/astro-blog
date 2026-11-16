@@ -4,7 +4,7 @@
 .prose details.more {
   margin: 2rem 0;
   border-radius: 8px;
-  background: var(--panel);
+  background: var(--raised);
 }
 .prose details.more > summary {
   display: flex;
@@ -27,8 +27,8 @@
   flex: none;
   width: 0.55rem;
   height: 0.55rem;
-  border-right: 2px solid var(--accent-text);
-  border-bottom: 2px solid var(--accent-text);
+  border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
   transform: translateY(-25%) rotate(45deg);
   transition: transform var(--dur-base) var(--ease-out);
 }
@@ -37,7 +37,7 @@
 }
 .prose details.more > summary:hover,
 .prose details.more > summary:focus-visible {
-  color: var(--accent-text);
+  color: var(--accent);
   outline: none;
 }
 .prose details.more[open] > summary {

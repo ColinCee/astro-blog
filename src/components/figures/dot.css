@@ -27,7 +27,7 @@
   width: 0.7rem;
   height: 0.7rem;
   border-radius: 50%;
-  background: var(--muted);
+  background: var(--dim);
   transform: translate(-50%, -50%);
 }
 .prose .dot b {
@@ -40,7 +40,7 @@
   background: var(--accent);
 }
 .prose .dot--after b {
-  color: var(--accent-text);
+  color: var(--accent);
   font-weight: 500;
 }
 /* A range around the dot (a confidence interval): a whisker with end caps,
@@ -53,7 +53,7 @@
   min-width: 1px;
   height: 0.6rem;
   transform: translateY(-50%);
-  color: var(--muted);
+  color: var(--dim);
   border: solid currentColor;
   border-width: 0 1.5px;
   background:
@@ -75,8 +75,8 @@
 /* An axis that starts below 0 marks 0 on every row */
 .prose .dot[style*="--zero"] i {
   background:
-    linear-gradient(var(--faint), var(--faint)) no-repeat
-    calc(var(--zero) * 100%) 0 / 1px 100%;
+    linear-gradient(var(--dim), var(--dim)) no-repeat calc(var(--zero) * 100%) 0
+    / 1px 100%;
 }
 .prose .dot--axis[style*="--zero"] i {
   background: none;
@@ -95,7 +95,7 @@
   transform: translateX(-50%);
   font-style: normal;
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
   white-space: nowrap;
 }
 .prose .dot--axis em:first-child {
@@ -138,7 +138,7 @@
   height: auto;
   font-style: normal;
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
   text-align: center;
 }
 /* A later group's title stands clear of the group above it */

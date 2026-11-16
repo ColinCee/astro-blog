@@ -74,13 +74,13 @@
   white-space: nowrap;
 }
 .prose .slab small {
-  color: var(--faint);
+  color: var(--dim);
   font-size: 0.6875rem;
 }
 .prose .slab--out span {
   padding: 0.5rem 0.7rem;
   border: 1px solid var(--accent);
   border-radius: 6px;
-  color: var(--accent-text);
+  color: var(--accent);
   white-space: nowrap;
 }

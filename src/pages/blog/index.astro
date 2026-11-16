@@ -109,7 +109,7 @@ const entries = posts.map((post) => {
     margin: 0 0 1rem;
     font-family: var(--mono);
     font-size: 0.75rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   .log__lede {
     margin: 0;
@@ -157,8 +157,8 @@ const entries = posts.map((post) => {
     height: 8px;
     translate: -50% 0;
     border-radius: 50%;
-    background: var(--bg);
-    border: 2px solid var(--faint);
+    background: var(--page);
+    border: 2px solid var(--dim);
     transition:
       border-color var(--dur-fast) var(--ease),
       box-shadow var(--dur-fast) var(--ease);
@@ -182,16 +182,16 @@ const entries = posts.map((post) => {
   .log__year {
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--muted);
+    color: var(--dim);
   }
   .log__mon {
     font-size: 0.72rem;
-    color: var(--faint);
+    color: var(--dim);
   }
   .log__read {
     margin-top: 0.35rem;
     font-size: 0.6875rem;
-    color: var(--faint);
+    color: var(--dim);
   }
 
   .log__body {
@@ -222,15 +222,15 @@ const entries = posts.map((post) => {
     font-family: var(--mono);
     font-weight: 400;
     font-size: 0.9375rem;
-    color: var(--faint);
+    color: var(--dim);
     font-variant-numeric: tabular-nums;
   }
   .log__was {
-    color: var(--faint);
+    color: var(--dim);
   }
   .log__sig b {
     font-weight: 500;
-    color: var(--accent-text);
+    color: var(--accent);
   }
   .log__sig--flat b {
     color: var(--ink);
@@ -240,7 +240,7 @@ const entries = posts.map((post) => {
     font-family: var(--mono);
     font-size: 0.6875rem;
     font-weight: 400;
-    color: var(--faint);
+    color: var(--dim);
   }
 
   .log__end {
@@ -254,7 +254,7 @@ const entries = posts.map((post) => {
     border-top: 1px solid var(--line);
     font-family: var(--mono);
     font-size: 0.76rem;
-    color: var(--faint);
+    color: var(--dim);
   }
 
   @media (max-width: 640px) {

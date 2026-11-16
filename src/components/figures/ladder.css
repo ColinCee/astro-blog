@@ -13,7 +13,7 @@
 }
 .prose .ladder .ln {
   fill: none;
-  stroke: var(--muted);
+  stroke: var(--dim);
   stroke-width: 2;
 }
 .prose .ladder .riser {
@@ -47,9 +47,9 @@
   font-weight: 500;
 }
 .prose .ladder [data-out] strong {
-  color: var(--accent-text);
+  color: var(--accent);
 }
 .prose .ladder [data-out] small {
-  color: var(--faint);
+  color: var(--dim);
   font-size: 0.6875rem;
 }

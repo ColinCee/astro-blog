@@ -18,29 +18,26 @@
 :root {
   color-scheme: dark;
 
-  /* ---- Surfaces: page, two raised surfaces, a well inside them ---- */
-  --bg: var(--n1);
-  --panel: var(--n4);
-  --pane: var(--n4);
-  --well: var(--n2);
-  /* Edges are cut from the ink, so every border shares its tint. */
+  /* ---- Surfaces: the page, a raised panel on it, a recessed well inside
+     that (darker in both themes) ---- */
+  --page: var(--n1);
+  --raised: var(--n4);
+  --inset: var(--n2);
+  /* Every border and rule, cut from the ink so all share its tint. */
   --line: color-mix(in oklab, var(--n12) 16%, transparent);
-  --line-strong: color-mix(in oklab, var(--n12) 16%, transparent);
 
-  /* Text */
+  /* Text: ink for what is read, dim for the rest; prose-ink is a post's body,
+     a touch softer than ink for a long read. */
   --ink: var(--n12);
-  --muted: var(--n10);
-  --faint: var(--muted);
+  --dim: var(--n10);
   --prose-ink: color-mix(in oklab, var(--n12) 82%, var(--n11));
 
-  /* ---- Accent: three jobs, each a step of the purple spectrum (v1-v6,
-     dark purple up to the accent) ----
-     --accent: bars, lines and a post's big result. --accent-text: links and
-     small results. --accent-solid: filled marks (the one-liner drawings).
-     Where each may go is DESIGN.md's Accent Points Rule. */
-  --accent-solid: var(--v4);
+  /* ---- Accent: one purple for text, lines and marks; a deeper step for a
+     filled mark that carries white words; and one tint for a ring, a
+     selection or a hover. Where it may go is DESIGN.md's Accent Points
+     Rule. ---- */
   --accent: var(--v6);
-  --accent-text: var(--v6);
+  --accent-solid: var(--v4);
   --accent-ink: #fff;
   /* A chart's real gain and real drop: the status green and red. */
   --gain: var(--ok11);
@@ -94,22 +91,20 @@
   --accent-line: color-mix(in oklch, var(--accent) 40%, transparent);
   /* A hovered button: a purple fill dark enough that its label stays bright,
      with the chroma to read purple, not grey-mauve (about Radix dark step 4) */
-  --accent-hover: color-mix(in oklch, var(--accent) 20%, transparent);
+  --accent-tint: color-mix(in oklch, var(--accent) 20%, transparent);
   --ring: 0 0 0 4px color-mix(in oklch, var(--accent) 20%, transparent);
 }
 
 /* Light, the toggle: soft, so a long read doesn't glare. */
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: var(--n5);
-  --panel: var(--n2);
-  --pane: var(--n2);
-  --well: var(--n6);
-  --muted: var(--n11);
+  --page: var(--n5);
+  --raised: var(--n2);
+  --inset: var(--n6);
+  --dim: var(--n11);
   --bar-ink: var(--n12);
   --prose-ink: var(--n12);
   --accent: var(--v4);
-  --accent-text: var(--v4);
 }
 
 /* Paper is light in any theme (scales.css flips the greys), so the accent
@@ -117,7 +112,6 @@
 @media print {
   :root:root {
     --accent: var(--v4);
-    --accent-text: var(--v4);
   }
 }
 

@@ -19,7 +19,7 @@
 }
 .prose .pts__h {
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
 }
 .prose .pts__wh {
   text-align: center;
@@ -31,7 +31,7 @@
 .prose .pts__k small {
   display: block;
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
 }
 .prose .pts__t {
   position: relative;
@@ -45,7 +45,7 @@
   z-index: 1;
   pointer-events: none;
   background:
-    repeating-linear-gradient(var(--faint) 0 3px, transparent 3px 6px) no-repeat
+    repeating-linear-gradient(var(--dim) 0 3px, transparent 3px 6px) no-repeat
     calc(var(--r1) * 100%) 0 / 1px 100%;
 }
 .prose .pts__t i {
@@ -71,7 +71,7 @@
   border-width: 0 1.5px;
   background:
     linear-gradient(var(--ink), var(--ink)) no-repeat 0 50% / 100% 1.5px;
-  filter: drop-shadow(0 0 1px var(--bg)) drop-shadow(0 0 1px var(--bg));
+  filter: drop-shadow(0 0 1px var(--page)) drop-shadow(0 0 1px var(--page));
 }
 .prose .pts em {
   /* value right-aligned, change in its own slot, so both line up down a column */
@@ -92,7 +92,7 @@
   color: var(--ink);
 }
 .prose .pts em small.pts__same {
-  color: var(--faint);
+  color: var(--dim);
 }
 .prose .pts .pts__plus {
   color: var(--gain);
@@ -101,7 +101,7 @@
   color: var(--loss);
 }
 .prose .pts .pts__w {
-  color: var(--muted);
+  color: var(--dim);
 }
 .prose .pts__r--hi .pts__t i {
   background: var(--accent);
@@ -109,13 +109,13 @@
 /* The post's subject is named in the accent too, so the chart needs no colour key. */
 .prose .pts__r--hi .pts__k b {
   font-weight: 500;
-  color: var(--accent-text);
+  color: var(--accent);
 }
 /* My 2018 version, the baseline: striped, the same in every chart. */
 .prose .pts__r--base .pts__t i:first-child {
   background: repeating-linear-gradient(
     135deg,
-    var(--muted) 0 2px,
+    var(--dim) 0 2px,
     var(--bar) 2px 5px
   );
 }
@@ -129,7 +129,7 @@
   padding-top: 0.5rem;
   border-top: 1px solid var(--line);
   font-size: 0.6875rem;
-  color: var(--muted);
+  color: var(--dim);
 }
 .prose .pts__key span {
   position: relative;
@@ -146,13 +146,13 @@
   height: 0.7rem;
   margin-right: 0.4rem;
   vertical-align: -0.1rem;
-  border-left: 1px dashed var(--faint);
+  border-left: 1px dashed var(--dim);
 }
 .prose .pts__key b {
   font-weight: 500;
 }
 .prose .pts__key .pts__same {
-  color: var(--faint);
+  color: var(--dim);
 }
 /* Hover or tap a row and the others fade, to read one row across. */
 .prose .pts__k {
@@ -190,7 +190,7 @@
   left: calc(var(--x) * 100%);
   transform: translateX(-50%);
   font-size: 0.6875rem;
-  color: var(--faint);
+  color: var(--dim);
   white-space: nowrap;
 }
 .prose .pts__axis span {

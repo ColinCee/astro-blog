@@ -238,7 +238,7 @@ const cells = (p: HomeProject): Cell[] => {
   }
   .pk__name {
     font-size: 0.875rem;
-    color: var(--muted);
+    color: var(--dim);
     transition: color var(--dur-fast) var(--ease);
   }
   .pk__sub {
@@ -249,7 +249,7 @@ const cells = (p: HomeProject): Cell[] => {
     text-align: right;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: var(--faint);
+    color: var(--dim);
   }
   .pk__row:hover .pk__name,
   .pk__row.is-sel .pk__name {
@@ -259,7 +259,7 @@ const cells = (p: HomeProject): Cell[] => {
     background: var(--win-sel);
   }
   .pk__row.is-sel .pk__sub {
-    color: var(--muted);
+    color: var(--dim);
   }
   :global(.pn--pick.is-focus) .pk__row.is-sel {
     background: color-mix(in oklab, var(--n12) 9%, transparent);
@@ -311,7 +311,7 @@ const cells = (p: HomeProject): Cell[] => {
     position: relative;
     margin-top: 0.7rem;
     padding: 1.05rem var(--win-pad) 1.1rem;
-    border-top: 1px solid var(--win-line);
+    border-top: 1px solid var(--line);
   }
   .rv__t {
     color: var(--win-path);
@@ -344,22 +344,22 @@ const cells = (p: HomeProject): Cell[] => {
     font-size: 0.6em;
     font-weight: 400;
     letter-spacing: 0;
-    color: var(--muted);
+    color: var(--dim);
   }
   /* A live number that is still a dash. */
   .rv__live:not(.is-set) {
     font-weight: 300;
-    color: var(--faint);
+    color: var(--dim);
   }
   .rv__l {
     font-size: 0.75rem;
     line-height: 1.45;
-    color: var(--muted);
+    color: var(--dim);
   }
   .rv__l i {
     display: block;
     font-style: normal;
-    color: var(--faint);
+    color: var(--dim);
   }
   .rv__l .is-dates {
     color: var(--win-date);

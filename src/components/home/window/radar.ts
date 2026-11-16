@@ -325,7 +325,7 @@ export function makeRadar(canvas: HTMLCanvasElement, still: boolean) {
       label: v("--n11"),
       // The scale's own label: the site's faint text grey. --n9 is too pale
       // for words on the light theme, though not for lines.
-      scale: v("--faint"),
+      scale: v("--dim"),
       // The planes with callsigns in ink: the window's purple is its focus.
       hot: v("--n12"),
       mono: v("--mono") || "monospace",
