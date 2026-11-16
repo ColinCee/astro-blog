@@ -51,7 +51,10 @@ const copies = pieces.length - pieces.filter((p) => "lit" in p).length;
 
 <div class="repeats">
   <div class="repeats__row">
-    <span class="repeats__k">before · {s.length} bytes</span>
+    <span class="repeats__k items">
+      <span>before</span>
+      <span>{s.length} bytes</span>
+    </span>
     <span class="repeats__text">
       {before.map((p) => (
         <span class:list={{ copied: p.copied }} set:text={p.text} />
@@ -59,8 +62,9 @@ const copies = pieces.length - pieces.filter((p) => "lit" in p).length;
     </span>
   </div>
   <div class="repeats__row">
-    <span class="repeats__k">
-      after · {kept} bytes + {copies} {copies === 1 ? "copy" : "copies"}
+    <span class="repeats__k items">
+      <span>after</span>
+      <span> {kept} bytes + {copies} {copies === 1 ? "copy" : "copies"} </span>
     </span>
     <span class="repeats__text">
       {pieces.map((p) =>

@@ -52,7 +52,7 @@ test.describe("the picker", () => {
     await page.goto("/");
     const lab = await open(page, "home-lab");
     await expect(lab.locator(".lab__live")).toHaveText(
-      "all up · live, 2 min ago",
+      "all up live, 2 min ago",
     );
     await expect(lab.locator("[data-lab]")).toHaveAttribute("data-up", "");
     await expect(lab.locator(".lab__now")).toHaveText("tracking 237 now");
@@ -151,7 +151,7 @@ test.describe("the picker", () => {
     await page.goto("/");
     const lab = await open(page, "home-lab");
     const live = lab.locator(".lab__live");
-    await expect(live).toHaveText("all up · live, 2 min ago");
+    await expect(live).toHaveText("all up live, 2 min ago");
 
     await hide(page, true);
     await page.clock.fastForward("03:00:00");
@@ -161,7 +161,7 @@ test.describe("the picker", () => {
     expect(asked, "asked while the tab was hidden").toBe(1);
 
     await hide(page, false);
-    await expect(live).toHaveText("all up · live, just now");
+    await expect(live).toHaveText("all up live, just now");
     await expect(lab.locator("[data-lab]")).toHaveAttribute("data-up", "");
     await expect(lab.locator(".lab__now")).toHaveText("tracking 300 now");
     expect(asked).toBe(2);
@@ -206,11 +206,11 @@ test.describe("the picker", () => {
     await page.goto("/");
     const lab = await open(page, "home-lab");
     await expect(lab.locator(".lab__live")).toHaveText(
-      "all up · live, 2 min ago",
+      "all up live, 2 min ago",
     );
     await page.clock.fastForward("05:01");
     await expect(lab.locator(".lab__live")).toHaveText(
-      "all up · live, 7 min ago",
+      "all up live, 7 min ago",
     );
     expect(asked).toBe(2);
     await expect(lab.locator(".lab__now")).toHaveText("tracking 237 now");
@@ -393,17 +393,14 @@ for (const vp of [
     await expect(panel.locator(".rd__note")).toContainText(
       "radar simulated here",
     );
-    // What joins the two is drawn, not typed: a dot where they share a line,
-    // nothing on a phone, where the age has a line of its own.
-    const join = await age.evaluate((el) => ({
-      dot: getComputedStyle(el, "::before").content,
-      own: getComputedStyle(el).display === "block",
-    }));
-    expect(join).toEqual(
-      vp.width < 736
-        ? { dot: "none", own: true }
-        : { dot: '" · "', own: false },
+    // A gap joins the two where they share a line; on a phone the age has a
+    // line of its own.
+    const own = await age.evaluate(
+      (el) =>
+        el.getBoundingClientRect().top >
+        el.previousElementSibling!.getBoundingClientRect().top,
     );
+    expect(own).toBe(vp.width < 736);
   });
 
 test("the Worker accepts only the known numbers, freshly gathered", () => {

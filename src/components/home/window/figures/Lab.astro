@@ -26,10 +26,10 @@ const stacks = await homeStacks();
   </div>
   <div class="lab__host">
     <span class="lbl lbl--t lab__host__t">mini-PC</span>
-    {/* biome-ignore format: the two parts read as one phrase, with no space but their own */}
-    <span class="lbl lbl--tr lab__live"
-      ><span data-stats-up></span><span data-stats-age></span></span
-    >
+    <span class="lbl lbl--tr lab__live items">
+      <span data-stats-up></span>
+      <span data-stats-age></span>
+    </span>
     <dl class="lab__host__kv">
       {stacks.map((s, i) => {
         const { shown, more } = chips(s.services);

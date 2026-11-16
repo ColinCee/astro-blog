@@ -82,7 +82,7 @@ const hosted = (repo: string) => /^(github\.com\/)?(.*)$/.exec(repo)!;
       </Fragment>
       <div class:list={["fg", kind && `fg--${kind}`]}>
         {kind === "ch" && <Chart />}
-        {kind === "rd" && <Radar note={p.caption.split(" · ")[1]} />}
+        {kind === "rd" && <Radar note={p.note} />}
         {kind === "lab" && <Lab />}
         {kind === "ak" && <Anki />}
         {kind === "rt" && <Route />}

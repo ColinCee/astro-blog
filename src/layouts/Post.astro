@@ -188,25 +188,13 @@ const statParts = stat?.includes("→")
           </div>
         </dl>
       )}
-      <p class="post__meta">
+      <p class="post__meta items">
         <FormattedDate date={pubDate} />
-        {minutesRead && (
-          <Fragment>
-            <span class="post__dot" aria-hidden="true">
-              ·
-            </span>
-            <span>{minutesRead} min read</span>
-          </Fragment>
-        )}
+        {minutesRead && <span>{minutesRead} min read</span>}
         {updatedDate && (
-          <Fragment>
-            <span class="post__dot" aria-hidden="true">
-              ·
-            </span>
-            <span>
-              updated <FormattedDate date={updatedDate} />
-            </span>
-          </Fragment>
+          <span>
+            updated <FormattedDate date={updatedDate} />
+          </span>
         )}
       </p>
     </header>
@@ -414,18 +402,10 @@ const statParts = stat?.includes("→")
 
   .post__meta {
     margin: 1.3rem 0 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.4rem 0.7rem;
     font-family: var(--mono);
     font-size: 0.76rem;
     color: var(--faint);
   }
-  .post__dot {
-    color: var(--line);
-  }
-
   /* ---------------- timeline ---------------- */
   .tl {
     margin-top: clamp(2.5rem, 6vw, 4rem);

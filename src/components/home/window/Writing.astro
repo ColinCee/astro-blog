@@ -33,7 +33,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
         )}
         <li>
           {/* biome-ignore format: a line break inside a cell would show as a space beside the value */}
-          <a class:list={["wr__row", { "is-sel": i === 0 }]} href={p.href} data-post data-dim style={turn(i)} data-slug={p.slug} data-label={p.label} data-meta={`${p.date} ${p.year} · ${p.minutes} min read`}>
+          <a class:list={["wr__row", { "is-sel": i === 0 }]} href={p.href} data-post data-dim style={turn(i)} data-slug={p.slug} data-label={p.label} data-date={`${p.date} ${p.year}`} data-read={`${p.minutes} min read`}>
             <span class="wr__date">{p.date}</span>
             <span class="wr__read">{p.minutes}<i> min</i><span class="sr-only"> read</span></span>
             <span class="wr__title">{p.title}</span>
@@ -56,8 +56,11 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
       <p class="pv__cap">
         {/* biome-ignore format: no space around the arrow but its own margin */}
         <span class="pv__label" data-pv-label>{first.label.split("→").map((part, k) => (<>{k > 0 && <StatArrow />}{part.trim()}</>))}</span>
-        <span class="pv__meta" data-pv-meta>
-          {first.date} {first.year} · {first.minutes} min read
+        <span class="pv__meta items">
+          <span data-pv-date>
+            {first.date} {first.year}
+          </span>
+          <span data-pv-read>{first.minutes} min read</span>
         </span>
       </p>
     </div>

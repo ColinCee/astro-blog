@@ -2,8 +2,12 @@
 // the pieces src/components/cv/. the PDF in Colin's notes is the other copy of these facts.
 
 export const name = "Colin Cheung";
-export const role =
-  "Senior Software Engineer · Technical Lead · Glasgow, UK · remote";
+export const role = [
+  "Senior Software Engineer",
+  "Technical Lead",
+  "Glasgow, UK",
+  "remote",
+];
 export const lede =
   "Senior engineer who leads projects end to end as a hands-on IC, from solo delivery to technical lead for 3–4 engineer sub-teams, on EDF Energy's debt platform (1.6M accounts a day). Nine years across energy, media and travel, strongest in TypeScript/Node.js and event-driven AWS serverless. Known for simplifying architecture, shortening feedback loops and making teams measurably faster with AI-assisted development.";
 
@@ -254,7 +258,7 @@ export const skills: { label: string; items: string[] }[] = [
 
 export const education = {
   school: "University of Strathclyde",
-  meta: "Glasgow, UK · 2013–2018",
+  meta: ["Glasgow, UK", "2013–2018"],
   degree: "BEng Computer & Electronic Systems",
   honours: "1st Class Honours",
   note: "Dissertation on reinforcement learning for video games: DQN, Double DQN, prioritised experience replay and dueling networks in GVGAI.",
@@ -265,12 +269,12 @@ export const projects = [
     name: "anki-chinese",
     href: "https://github.com/ColinCee/anki-chinese",
     desc: "Python CLI and terminal UI (~20k lines, 55 test files) that builds Anki decks from canonical character data: pinyin and jyutping generation, Gemini-generated example sentences, pluggable TTS providers with rate limiting and retries, and preview-first live card activation over AnkiConnect. Built for my own Mandarin study.",
-    stack: "Python · Typer · Textual · Gemini · AnkiConnect",
+    stack: ["Python", "Typer", "Textual", "Gemini", "AnkiConnect"],
   },
   {
     name: "colincheung.dev",
     href: "https://github.com/ColinCee/astro-blog",
     desc: "This site: Astro on Cloudflare Workers with GitHub Actions deploys. Writing on real problems, including shrinking a 4.5 GB JSONL dataset to 221 MB with Parquet and cutting ts-jest test times.",
-    stack: "Astro · Cloudflare Workers · GitHub Actions",
+    stack: ["Astro", "Cloudflare Workers", "GitHub Actions"],
   },
 ];

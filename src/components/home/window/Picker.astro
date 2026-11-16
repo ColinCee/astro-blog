@@ -161,7 +161,7 @@ const cells = (p: HomeProject): Cell[] => {
              counts are. */}
         {(p.runsOn || p.id === "flight-tracker") && (
           // biome-ignore format: the two parts read as one phrase
-          <span class="lbl lbl--tr rv__note">{p.id === "flight-tracker" && <span data-stats-age />}{p.runsOn && <span class="rv__more">runs on {p.runsOn}</span>}</span>
+          <span class="lbl lbl--tr rv__note items">{p.id === "flight-tracker" && <span data-stats-age />}{" "}{p.runsOn && <span class="rv__more">runs on {p.runsOn}</span>}</span>
         )}
         <div class="rv__cells">
           {cells(p).map((c) => (
@@ -319,9 +319,6 @@ const cells = (p: HomeProject): Cell[] => {
   /* The project's name on the left is longer than a panel's title. */
   .rv__note {
     max-width: calc(100% - 8.2rem);
-  }
-  [data-stats-age]:not(:empty) + .rv__more::before {
-    content: " · ";
   }
   .rv__cells {
     display: flex;

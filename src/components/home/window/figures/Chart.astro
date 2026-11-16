@@ -61,8 +61,10 @@ const hours = [0, 3, 6, 9, 12];
           class:list={["plot__end ch__end", { "is-old": r.old }]}
           style={`left:100%;top:${endTop(r.d)}`}
         >
-          {/* biome-ignore format: a line break would show as a space */}
-          <b><span>{r.year}</span> · {r.on}</b>
+          <b class="items">
+            <span>{r.year}</span>
+            <span>{r.on}</span>
+          </b>
         </i>
       ))}
       <i class="plot__cross" data-ch-cross hidden />

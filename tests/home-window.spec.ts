@@ -376,8 +376,11 @@ test.describe("laptop", () => {
     expect(await page.locator("[data-pv-stat]").textContent()).toBe(
       await result(row),
     );
-    await expect(page.locator("[data-pv-meta]")).toHaveText(
-      (await row.getAttribute("data-meta"))!,
+    await expect(page.locator("[data-pv-date]")).toHaveText(
+      (await row.getAttribute("data-date"))!,
+    );
+    await expect(page.locator("[data-pv-read]")).toHaveText(
+      (await row.getAttribute("data-read"))!,
     );
     // The label's arrow, if it has one, is drawn; its words are the row's.
     const label = (await row.getAttribute("data-label"))!;
@@ -749,7 +752,7 @@ test.describe("laptop", () => {
       position: { x: (box.width * 6) / 23, y: box.height / 2 },
     });
     await expect(page.locator("[data-wx-note]")).toHaveText(
-      `06:00 · ${hours[6]}°`,
+      `06:00 ${hours[6]}°`,
     );
     await expect(page.locator("[data-wx-cross]")).toBeVisible();
     await expect(page.locator("[data-wx-dot]")).toBeVisible();
@@ -896,7 +899,7 @@ test.describe("laptop", () => {
       position: { x: (box.width * 6) / 23, y: box.height / 2 },
     });
     await expect(page.locator("[data-wx-note]")).toHaveText(
-      `06:00 · ${later.hourly.temperature_2m[6]}°`,
+      `06:00 ${later.hourly.temperature_2m[6]}°`,
     );
     await expect(page.locator("[data-wx-cross]:not([hidden])")).toHaveCount(1);
   });
@@ -930,9 +933,7 @@ test.describe("laptop", () => {
     await plot.hover({
       position: { x: (box.width * 6) / 23, y: box.height / 2 },
     });
-    await expect(note).toHaveText(
-      `06:00 · ${weather.hourly.temperature_2m[6]}°`,
-    );
+    await expect(note).toHaveText(`06:00 ${weather.hourly.temperature_2m[6]}°`);
     await page.locator(".win__bar").hover();
     await expect(note).toHaveText("last seen 13:00");
 

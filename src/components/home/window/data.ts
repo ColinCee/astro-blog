@@ -83,6 +83,8 @@ export interface HomeProject {
   href: string;
   desc: string;
   caption: string;
+  /** A second line under a figure, where the data has one. */
+  note?: string;
   /** The tie to its posts as the data has it: a slug prefix, "*" or nothing. */
   posts?: string;
   /** The id of the project it runs on, where the data names one. */
@@ -135,6 +137,7 @@ export async function homeProjects(): Promise<HomeProject[]> {
       href: data.href,
       desc: data.desc,
       caption: data.caption,
+      note: data.note,
       posts: tie,
       runsOn,
       tied: tie

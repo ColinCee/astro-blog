@@ -26,13 +26,12 @@ const { note } = Astro.props;
   {flightCounts.map((c) => (
     <div>
       {/* biome-ignore format: a line break would show as a space */}
-      <dt>{c.label}<i>{c.where}</i></dt>
+      <dt class="items"><span>{c.label}</span> <i>{c.where}</i></dt>
       <dd data-stat={c.stat}>–</dd>
     </div>
   ))}
 </dl>
-{/* biome-ignore format: no space before the age: its separator is drawn */}
-<p class="rd__note">{note}<span data-stats-age></span></p>
+<p class="rd__note items"><span>{note}</span> <span data-stats-age></span></p>
 
 <style>
   .rd__scope {
@@ -79,17 +78,11 @@ const { note } = Astro.props;
     font-style: normal;
     color: var(--faint);
   }
-  .rd__cnt i::before {
-    content: " · ";
-  }
   .rd__note {
     margin-top: 0.55rem;
     padding: 0 var(--win-pad) 0 calc(var(--win-pad) + 2.4rem);
     font-size: 0.6875rem;
     color: var(--faint);
-  }
-  .rd__note [data-stats-age]:not(:empty)::before {
-    content: " · ";
   }
   :global(.win__app:not([data-live])) :is(.rd__scope, .rd__note) {
     display: none;
@@ -111,14 +104,14 @@ const { note } = Astro.props;
     .rd__note [data-stats-age] {
       display: block;
     }
+    .rd__cnt .items > i,
+    .rd__note.items > [data-stats-age] {
+      margin-inline-start: 0;
+    }
     /* The age has its line before it has its words, so nothing under this
        panel moves when the server answers. */
     .rd__note [data-stats-age] {
       min-height: 1lh;
-    }
-    .rd__cnt i::before,
-    .rd__note [data-stats-age]:not(:empty)::before {
-      content: none;
     }
   }
   /* Beside the picker the scope is the whole panel and the border its bezel. */

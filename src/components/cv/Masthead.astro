@@ -1,11 +1,12 @@
 ---
 // Name, role line, lede and contact.
 import { contact, lede, name, role } from "../../data/cv";
+import Items from "../site/Items.astro";
 ---
 
 <header class="cv__head">
   <h1 class="cv__name">{name}</h1>
-  <p class="cv__role">{role}</p>
+  <Items as="p" class="cv__role" list={role} />
   <p class="cv__lede">{lede}</p>
   <nav class="cv__contact" aria-label="Contact">
     {contact.map((c) => <a href={c.href}>{c.label}</a>)}
