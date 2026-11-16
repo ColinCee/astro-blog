@@ -63,14 +63,14 @@ const companies = (await getCollection("companies"))
   }
   .strip__label {
     font-family: var(--head);
-    font-size: 1rem;
+    font-size: var(--text-base);
     font-weight: 600;
     letter-spacing: -0.02em;
     color: var(--ink);
   }
   .strip__span {
     font-family: var(--mono);
-    font-size: 0.8125rem;
+    font-size: var(--text-md);
     color: var(--dim);
   }
   .strip__view {
@@ -113,7 +113,7 @@ const companies = (await getCollection("companies"))
     min-height: 1.75rem;
     padding: 0 0.6rem;
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
     color: var(--dim);
     background: none;
     border: 1px solid var(--line);
@@ -134,7 +134,7 @@ const companies = (await getCollection("companies"))
     align-items: baseline;
     font-family: var(--head);
     font-weight: 200;
-    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+    font-size: var(--text-voice);
     letter-spacing: -0.03em;
     color: var(--ink);
     white-space: nowrap;
@@ -143,7 +143,7 @@ const companies = (await getCollection("companies"))
     margin-left: 0.7rem;
     font-family: var(--mono);
     font-weight: 400;
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
     letter-spacing: 0;
     color: var(--dim);
   }

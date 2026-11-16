@@ -20,7 +20,7 @@
 }
 .prose .trow span small {
   display: block;
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
 }
 .prose .trow i {
@@ -48,7 +48,7 @@
 .prose .trow em small {
   display: inline-block;
   min-width: 2.6rem;
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
 }
 .prose .trow--hi span b,

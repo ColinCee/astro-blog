@@ -9,7 +9,7 @@
 }
 .prose .flow__lab {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   color: var(--dim);
 }
 .prose .flow__lab--back {
@@ -53,11 +53,11 @@
 }
 .prose .flow__b small,
 .prose .flow__win small {
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
 }
 .prose .flow__b b {
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
@@ -66,7 +66,7 @@
 }
 .prose .flow__win b {
   color: var(--accent);
-  font-size: 0.95rem;
+  font-size: var(--text-base);
 }
 @media (prefers-reduced-motion: reduce) {
   .prose .flow__b {
@@ -75,6 +75,6 @@
 }
 @media (max-width: 34rem) {
   .prose .flow__b b {
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
   }
 }

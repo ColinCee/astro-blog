@@ -35,7 +35,7 @@
   color: var(--dim);
   font: inherit;
   font-family: var(--mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   text-align: left;
   cursor: pointer;
   transition:
@@ -74,13 +74,13 @@
   position: relative;
   height: calc(var(--h) * var(--lh));
   font-family: var(--mono);
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   overflow: hidden;
   transition: height var(--d) 0.1s;
 }
 @media (max-width: 34rem) {
   .prose .frames__box {
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
   }
 }
 .prose .frames__box span {
@@ -88,6 +88,7 @@
   left: 0;
   top: 0;
   width: 1ch;
+  /* type exception: a grid row: --lh is a length the frames are placed by */
   line-height: var(--lh);
   text-align: center;
   color: var(--c);

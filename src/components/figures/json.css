@@ -6,7 +6,7 @@
   border-radius: 8px;
   background: var(--page);
   font-family: var(--mono);
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   line-height: 1.6;
   color: var(--j-punct);
 }

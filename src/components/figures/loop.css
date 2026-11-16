@@ -20,11 +20,11 @@
 }
 .prose .loop text {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-sm);
   fill: var(--ink);
 }
 .prose .loop text.sub {
-  font-size: 11px;
+  font-size: var(--text-xs);
   fill: var(--dim);
 }
 .prose .loop .arr {

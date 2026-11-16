@@ -20,11 +20,11 @@
 }
 .prose .diag text {
   font-family: var(--mono);
-  font-size: calc(12.8px * max(1, var(--k, 1)));
+  font-size: calc(var(--text-sm) * max(1, var(--k, 1)));
   fill: var(--ink);
 }
 .prose .diag text.sub {
-  font-size: calc(11px * max(1, var(--k, 1)));
+  font-size: calc(var(--text-xs) * max(1, var(--k, 1)));
   fill: var(--dim);
 }
 .prose .diag text.hi {

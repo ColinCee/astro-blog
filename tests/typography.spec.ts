@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { styleLines } from "./style-scan";
 
 // Typography standards, enforced. The numbers are documented in DESIGN.md
 // ("Typography standards"); change them there and here together.
@@ -99,3 +100,39 @@ for (const vp of viewports) {
     });
   });
 }
+
+// Every size is a --text-* role from src/styles/tokens.css, and every
+// line-height and weight one of the few below (DESIGN.md, Type). Exceptions
+// are marked as style-scan.ts says, with "type".
+const SCAN_SKIP = new Set(["src/styles/tokens.css"]);
+const LEADINGS = new Set(["1", "1.3", "1.6", "inherit"]);
+const WEIGHTS = new Set(["200", "300", "400", "500", "600", "inherit"]);
+const value = (text: string, prop: string) =>
+  text
+    .match(new RegExp(`(?:^|[;{"'\`])\\s*${prop}:\\s*([^;"}]+)`))?.[1]
+    .replace("!important", "")
+    .trim();
+
+test("every size, line-height and weight is on the scale", () => {
+  const found: string[] = [];
+  for (const { at, text, styled } of styleLines("type", SCAN_SKIP)) {
+    if (/\bfont-size="|\.fontSize\s*=[^=]|\.font\s*=[^=]/.test(text))
+      found.push(`${at} a size set outside CSS`);
+    if (!styled) continue;
+    const size = value(text, "font-size");
+    if (size && size !== "inherit" && !/^(calc\()?var\(--text-/.test(size))
+      found.push(`${at} a size that is not a role: ${size}`);
+    const leading = value(text, "line-height");
+    if (leading && !LEADINGS.has(leading))
+      found.push(`${at} a line-height off the scale: ${leading}`);
+    const weight = value(text, "font-weight");
+    if (weight && !WEIGHTS.has(weight))
+      found.push(`${at} a weight off the scale: ${weight}`);
+    const font = value(text, "font");
+    if (font && font !== "inherit")
+      found.push(`${at} a font shorthand: ${font}`);
+    if (/font-variation-settings:[^;]*wght/.test(text))
+      found.push(`${at} a weight set by its axis`);
+  }
+  expect(found, "type off the scale").toEqual([]);
+});

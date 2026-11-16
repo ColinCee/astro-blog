@@ -33,14 +33,14 @@
 }
 .prose .said time {
   color: var(--dim);
-  font-size: 0.75rem;
-  line-height: 1.5;
+  font-size: var(--text-sm);
+  line-height: 1.6;
   white-space: nowrap;
 }
 .prose .said__yr {
   display: block;
   margin-top: -1.1rem;
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
 }
 .prose .said .said__row:has(.said__yr) {
@@ -64,14 +64,14 @@
 }
 .prose .said__what {
   padding-bottom: 0.85rem;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--ink);
 }
 .prose .said__row:last-child .said__what {
   padding-bottom: 0;
 }
 .prose .said__ans {
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   line-height: 1.6;
   white-space: nowrap;

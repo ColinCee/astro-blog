@@ -27,33 +27,33 @@ typography:
     letterSpacing: "-0.05em"
   headline:
     fontFamily: "Sora, Geist, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(1.8rem, 4.6vw, 3.4rem)"
+    fontSize: "clamp(1.8rem, 4.6vw, 3rem)"
     fontWeight: 600
-    lineHeight: 1.08
+    lineHeight: 1
     letterSpacing: "-0.045em"
   voice:
     fontFamily: "Sora, Geist, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(1.3rem, 2.1vw, 1.8rem)"
+    fontSize: "clamp(1.5rem, 2.4vw, 2rem)"
     fontWeight: 200
-    lineHeight: 1.35
+    lineHeight: 1.3
     letterSpacing: "-0.03em"
   title:
     fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(1.2rem, 2vw, 1.5rem)"
     fontWeight: 400
-    lineHeight: 1.2
+    lineHeight: 1.3
     letterSpacing: "-0.01em"
   body:
     fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
     fontSize: "1rem"
     fontWeight: 400
-    lineHeight: 1.55
+    lineHeight: 1.6
     letterSpacing: "normal"
   label:
     fontFamily: "DM Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
     fontSize: "0.75rem"
     fontWeight: 400
-    lineHeight: 1.4
+    lineHeight: 1.3
     letterSpacing: "normal"
 rounded:
   bar: "1px"
@@ -127,7 +127,7 @@ with a fallback. The rule is `AGENTS.md`'s; `pnpm legacy-scan`, part of
 | Rule | Value | Why |
 |---|---|---|
 | Body text (long-form) | 16-19px at every screen size | Below 16 strains; above ~19 reads as heavy. |
-| Body line-height | 1.5-1.8 (currently 1.65) | WCAG 1.4.12 asks for at least 1.5. |
+| Body line-height | 1.5-1.8 (currently 1.6) | WCAG 1.4.12 asks for at least 1.5. |
 | Line length | 45-90 characters (currently ~88) | 45-75 is the classic ideal; WCAG 1.4.8 suggests 80. 88 is a deliberate choice for a wider column; do not go past 90. |
 | Smallest text anywhere | 11px (`0.6875rem`) | Mono labels and metadata. Nothing smaller, including on phones. |
 | Contrast | 4.5:1 body, 3:1 large text | WCAG 1.4.3 (not yet automated; `tokens.mts` checks the scales). |
@@ -150,11 +150,12 @@ bespoke styling rules" (Nov 2026), after "the spacing and margins for text to
 box is really inconsistent and bad" (Oct 2026). A value the scale lacks is a
 new step, added to the scale and the design page, or it is an exception.
 
-- Colour, the three corner tokens, motion and widths are scales already
+- Colour, type, the three corner tokens, motion and widths are scales already
   (`tokens.css`). The rest
   are on the design page under Foundations; one still marked proposed there is
   not adopted yet. Each one lands with its check and the move onto it, in one
-  change (colour: `tests/colours.spec.ts` and `tests/contrast.spec.ts`).
+  change (colour: `tests/colours.spec.ts` and `tests/contrast.spec.ts`; type:
+  `tests/typography.spec.ts`).
 - Off the scale on purpose, each marked on its line with the reason: a figure's
   drawing (its own geometry), the home window's container sizes (tuned to its
   content and held by tests), optical nudges of 1–2px, a post's em-based prose
@@ -355,6 +356,27 @@ same".)
 **Names, headings, the voice:** Sora (`--head`), weights 200–600.
 **Reading:** Geist (`--grotesk`), 400–600, with `ss01` on.
 **Data:** DM Mono (`--mono`), 300–500.
+
+### Scale (enforced by `tests/typography.spec.ts`)
+Every size is a `--text-*` role in `tokens.css`; nothing else.
+
+| Role | Size | For |
+|---|---|---|
+| `xs` `sm` `md` | 11, 12, 14px | labels, data, the home window, figure text, nav |
+| `base` `lg` `xl` `2xl` | 16, 20, 24, 32px | UI text, small headings, readouts |
+| `read` | 16–17px, fluid | a post's body |
+| `heading` | 19–24px, fluid | section and list headings |
+| `voice` | 24–32px, fluid | the one-liners, worked-at names, a post's stat |
+| `headline` | 29–48px, fluid | a post's title, the closing line, a page's one heading |
+| `display` | 42–68px, fluid | the name |
+| `inline` | 0.875em | code and numbers inside a line, sized to it |
+
+Line-heights are `1` (a row of data, a number, a big line), `1.3` (headings,
+titles, labels) or `1.6` (anything read as a paragraph). Weights are 200, 300,
+400, 500, 600. A figure's `--k` scales a role (`calc(var(--text-xs) * var(--k,
+1))`). A size, line-height or weight that must be off the scale says why on its
+line (`type exception: ...`): a drawn character, a unit beside its number, a
+line-height that is a length a layout is built from.
 **CJK:** `--cjk` stack (PingFang TC / Noto Sans TC/SC) for names like 張志權.
 
 All three are served from the site itself by Astro's font API (`fonts` in
@@ -364,19 +386,19 @@ sized to match the visitor's system font so nothing moves when they arrive
 Sora and DM Mono 400 are preloaded. Geist Mono was tried and clashed with Sora.
 
 ### Hierarchy
-- **Display** (Sora 600, `clamp(2.6rem, 5.5vw, 4.25rem)`, −0.05em): the hero
-  name. One per view, sentence case.
-- **Headline** (Sora 600): post titles (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em),
-  the reach-out line, section headings (`1–1.35rem`, −0.02 to −0.03em), and
-  the home window's readouts (`1.6rem`, −0.04em; a number still waiting is a
-  300 dash in `--dim`) and its temperature (`1.75rem`).
+- **Display** (Sora 600, `--text-display`, −0.05em): the hero name and the
+  CV's. One per view, sentence case.
+- **Headline** (Sora 600): post titles and the reach-out line
+  (`--text-headline`, −0.045em), section headings (`--text-heading`, −0.02 to
+  −0.03em), and the home window's readouts (`--text-xl`, −0.04em; a number
+  still waiting is a 300 dash in `--dim`) and its temperature (`--text-2xl`).
 - **Voice** (Sora 200, the punchline 300 in the accent, −0.03em): the one-liners and the worked-at
   names. Heavier weights read as thick.
 - **Title** (Geist 400, −0.01em): post and list titles. Never 500 or heavier in
   lists.
-- **Body** (Geist 400, 16–17px, lh 1.55; posts 1.65): prose, ledes, the line
-  under a title in `--dim`. Bold is 600.
-- **Label** (DM Mono 300–500, `0.6875–0.8125rem`, no added tracking): the
+- **Body** (Geist 400, 16–17px, lh 1.6): prose, ledes, the line under a title
+  in `--dim`. Bold is 600.
+- **Label** (DM Mono 300–500, `--text-xs` to `--text-md`, no added tracking): the
   home window, dates, stats, captions, kickers, tags, figure text. Each DM
   Mono weight is a file of its own (about 9 KB); the homepage uses 400 and 500
   only, so a 300 there is one more download.
@@ -428,7 +450,7 @@ to purple gradients in TUI fetch ?".
 ### Navigation
 - One `components/site/Nav.astro` on every page. A mono mark
   `colin@glasgow:~$` (ink, the `@` `--dim`, `:~$` faint) on the left; links
-  **Writing** and **CV** (Geist, `0.9375rem`, `--dim`) and the theme button on
+  **Writing** and **CV** (Geist, `--text-base`, `--dim`) and the theme button on
   the right. (No About; contact lives on the homepage.)
 - **Hover:** `--ink` with an accent `border-bottom`. **Active:** `--ink` with a
   `--line` border.
@@ -993,8 +1015,8 @@ curve in a component is a bug unless it is a content timing.
 - **Quotes** are excerpts on the raised surface (`--raised`, 8px, no border or rule),
   so quoted documents read differently from narration. **Ordered lists** are
   numbered takeaways: hairline-separated rows with mono `--accent` numerals.
-- **Body size:** `--prose-size`, 16-17px (`clamp(1rem, 0.96rem + 0.18vw, 1.0625rem)`),
-  line-height 1.65. Larger sizes read as heavy; do not raise it.
+- **Body size:** `--text-read`, 16-17px, line-height 1.6. Larger sizes read as
+  heavy; do not raise it.
 - **Figures** are components in `src/components/figures/`, used by name in a
   post's MDX (no import needed): give them the raw numbers and they compute the
   bars, positions and shares. Each one's styles sit beside it as a `.css` file,
@@ -1028,8 +1050,8 @@ curve in a component is a bug unless it is a content timing.
   per post so no screen is text alone. Explanations sit next to what they explain
   (a short title above, labels on the marks), not in a paragraph under the figure.
   Every chart axis says what it measures and in what units. Figure text comes in two
-  sizes only, at any screen width: 11px for titles, ticks and notes, 12.8px for labels
-  on the marks and values. SVG charts get there through `--k` (set by the layout
+  sizes only, at any screen width: `--text-xs` (11px) for titles, ticks and notes,
+  `--text-sm` (12px) for labels on the marks and values. SVG charts get there through `--k` (set by the layout
   script), so their text never scales with the drawing.
 - **Interactive figures** are components too, and load `src/scripts/widgets.ts`
   only on posts that use one: `<LineChart>` (a line chart from data: axes, an
@@ -1064,8 +1086,8 @@ curve in a component is a bug unless it is a content timing.
   pulled the eye off the text.
 - **Post footer:** `older` / `newer` links by publish date, then `all writing`.
 - **Sections:** each `##` (Sora 600) gets a hairline above it so long posts scan as sections.
-- **`.prose`** styles the slotted Markdown: `--prose-ink`, `--prose-size`, line-height
-  `1.65`, measure `--measure` (`44rem`). Headings are Sora 600 `--ink`; links are
+- **`.prose`** styles the slotted Markdown: `--prose-ink`, `--text-read`, line-height
+  `1.6`, measure `--measure` (`44rem`). Headings are Sora 600 `--ink`; links are
   `--accent` with an `--accent-line` bottom border; list markers are
   `--accent`; bold is ink 600.
 - **A wide screen grows the type, never the measure.** The measure is in rem, so it

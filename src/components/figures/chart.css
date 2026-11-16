@@ -18,12 +18,12 @@
 .prose .chart text,
 .prose .ladder text {
   font-family: var(--mono);
-  font-size: calc(0.6875rem * var(--k, 1));
+  font-size: calc(var(--text-xs) * var(--k, 1));
   fill: var(--dim);
 }
 .prose .chart text.ink,
 .prose .chart text.hi {
-  font-size: calc(0.8rem * var(--k, 1));
+  font-size: calc(var(--text-sm) * var(--k, 1));
 }
 /* Narrow charts fit a phone without scrolling: their 12px text still
    renders at 11px or more down to a ~300px column. */
@@ -72,7 +72,7 @@
 }
 .prose .chart .pt text {
   fill: var(--ink);
-  font-size: calc(0.8rem * var(--k, 1));
+  font-size: calc(var(--text-sm) * var(--k, 1));
   font-weight: 500;
   paint-order: stroke;
   stroke: var(--raised);

@@ -59,14 +59,14 @@ import Items from "../site/Items.astro";
     margin: 0;
     font-family: var(--head);
     font-weight: 600;
-    font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+    font-size: var(--text-heading);
     letter-spacing: -0.01em;
     color: var(--ink);
   }
   .edu__meta {
     margin: 0.35rem 0 0;
     font-family: var(--mono);
-    font-size: 0.72rem;
+    font-size: var(--text-sm);
     color: var(--dim);
   }
   .edu__degree {
@@ -77,14 +77,14 @@ import Items from "../site/Items.astro";
     margin: 1rem 0 0;
     font-family: var(--grotesk);
     font-weight: 500;
-    font-size: 1rem;
+    font-size: var(--text-base);
     color: var(--ink);
   }
   .edu__note {
     margin: 0.75rem 0 0;
     max-width: 48ch;
-    font-size: 0.86rem;
-    line-height: 1.5;
+    font-size: var(--text-md);
+    line-height: 1.6;
     color: var(--dim);
     text-wrap: pretty;
   }
@@ -100,7 +100,7 @@ import Items from "../site/Items.astro";
     margin: 0;
     font-family: var(--head);
     font-weight: 600;
-    font-size: 1.02rem;
+    font-size: var(--text-base);
     letter-spacing: -0.01em;
     color: var(--ink);
   }
@@ -115,15 +115,15 @@ import Items from "../site/Items.astro";
   .proj__desc {
     margin: 0.35rem 0 0;
     max-width: 54ch;
-    font-size: 0.86rem;
-    line-height: 1.5;
+    font-size: var(--text-md);
+    line-height: 1.6;
     color: var(--dim);
     text-wrap: pretty;
   }
   .proj__stack {
     margin: 0.45rem 0 0;
     font-family: var(--mono);
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
     color: var(--dim);
   }
 
@@ -138,7 +138,7 @@ import Items from "../site/Items.astro";
     padding-top: 1.5rem;
     border-top: 1px solid var(--line);
     font-family: var(--mono);
-    font-size: 0.76rem;
+    font-size: var(--text-sm);
     color: var(--dim);
   }
   .cv__end a {

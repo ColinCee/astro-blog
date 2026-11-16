@@ -11,8 +11,8 @@
   background: var(--raised);
   border-radius: var(--r);
   font-family: var(--mono);
-  font-size: 0.8rem;
-  line-height: 1.5;
+  font-size: var(--text-sm);
+  line-height: 1.6;
   color: var(--dim);
 }
 /* DM Mono stops at 500: a plain <b> would be synthesised at 700 and read
@@ -22,11 +22,11 @@
   font-weight: 500;
 }
 .prose .fig figcaption {
-  font-size: 0.74rem;
+  font-size: var(--text-sm);
   color: var(--dim);
 }
 .prose .fig__k {
   margin: 0 0 0.45rem;
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
 }

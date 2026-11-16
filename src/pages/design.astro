@@ -21,7 +21,22 @@ const rows = [first, second].filter((p) => p !== undefined);
 // is fitted to the values the site already uses, then cut to as few steps as
 // that fit allows.
 const space = [2, 4, 8, 12, 16, 24, 32, 48, 64];
-const text = [11, 12, 14, 16, 20, 24, 32];
+const text = [
+  ["xs", "11"],
+  ["sm", "12"],
+  ["md", "14"],
+  ["base", "16"],
+  ["lg", "20"],
+  ["xl", "24"],
+  ["2xl", "32"],
+];
+const fluid = [
+  ["read", "16–17", "a post's body"],
+  ["heading", "19–24", "section and list headings"],
+  ["voice", "24–32", "one-liners, worked-at, a stat"],
+  ["headline", "29–48", "a post's title, the closing line"],
+  ["display", "42–68", "the name"],
+];
 const leading = [
   ["1", "a row of data, the name, a number"],
   ["1.3", "headings, titles, labels"],
@@ -224,7 +239,7 @@ const corners = [
         Geist 400 · post and list titles; never 500 or heavier in lists
       </p>
       <p class="t-body" style="margin-top:1rem">
-        Body at 16–17px, line-height 1.55, muted when it sits under a title.
+        Body at 16–17px, line-height 1.6, muted when it sits under a title.
       </p>
       <p class="t-mono">Geist 400</p>
       <p class="t-mono" style="margin-top:1rem;color:var(--ink)">
@@ -397,26 +412,37 @@ const corners = [
         </p>
       </div>
       <div class="card">
-        <h3>text, proposed: 7 sizes, 3 line-heights, 4 weights</h3>
+        <h3>type, adopted: 12 sizes, 3 line-heights, 5 weights</h3>
         <div class="sc-text">
-          {text.map((n) => (
-            <p style={`font-size:${n / 16}rem`}>
-              <span>{n}</span> 221 MB
+          {text.map(([n, px]) => (
+            <p style={`font-size:var(--text-${n})`}>
+              <span>
+                {n} {px}
+              </span>{" "}
+              221 MB
             </p>
           ))}
         </div>
+        {fluid.map(([n, px, use]) => (
+          <p>
+            <b>
+              {n} {px}
+            </b>{" "}
+            <span class="m">{use}</span>
+          </p>
+        ))}
         {leading.map(([v, use]) => (
           <p>
             <b>{v}</b> <span class="m">{use}</span>
           </p>
         ))}
         <p>
-          <b>200, 400, 500, 600</b>
-          <span class="m">voice, reading, data, names</span>
+          <b>200, 300, 400, 500, 600</b>
+          <span class="m">voice, light data, reading, data, names</span>
         </p>
         <p class="f">
-          Today: 25 sizes, 18 line-heights and 6 weights. The largest move is
-          4px; the name, headlines and the voice keep their fluid sizes.
+          Before: 71 sizes, 20 line-heights and 7 weights. Most text moved
+          1–2px; the post title, the closing line and the CV name moved most.
         </p>
       </div>
     </div>
@@ -809,16 +835,18 @@ const corners = [
           <rect x="45" y="94" width="130" height="3" fill="var(--n7)" />
           <rect x="45" y="101" width="110" height="3" fill="var(--n7)" />
           <path d="M45 114H175" stroke="var(--dim)" stroke-dasharray="2 2" />
-          <text
-            x="110"
-            y="118"
-            font-size="6"
-            text-anchor="middle"
-            fill="var(--dim)"
-            style="font-family: var(--mono)"
-          >
-            44rem, one edge
-          </text>
+          {/* type exception: a sketch, in its own units */}
+          <g font-size="6">
+            <text
+              x="110"
+              y="118"
+              text-anchor="middle"
+              fill="var(--dim)"
+              style="font-family: var(--mono)"
+            >
+              44rem, one edge
+            </text>
+          </g>
         </svg>
         <p class="f" style="margin-top:.6rem">
           a wide screen grows the type a little, never the line length; a
@@ -829,13 +857,13 @@ const corners = [
         <h3>header</h3>
         <p class="t-mono" style="color:var(--dim)">// writing</p>
         <p
-          style="font-family:var(--head);font-weight:600;font-size:1.35rem;letter-spacing:-.04em;line-height:1.1;margin:.2rem 0 .7rem"
+          style="font-family:var(--head);font-weight:600;font-size:var(--text-lg);letter-spacing:-.04em;line-height:1;margin:.2rem 0 .7rem"
         >
           CI faster than GitHub's, for free
         </p>
         <p class="t-mono" style="margin:0">vs GitHub</p>
         <p
-          style="font-family:var(--head);font-weight:600;font-size:1.6rem;letter-spacing:-.04em;margin:0"
+          style="font-family:var(--head);font-weight:600;font-size:var(--text-xl);letter-spacing:-.04em;margin:0"
         >
           <span style="color:var(--dim);font-weight:400">26 s</span>
           <span class="f"><StatArrow /></span>
@@ -845,8 +873,8 @@ const corners = [
       </div>
       <div class="card">
         <h3>prose</h3>
-        <p style="font-size:1.0625rem;line-height:1.65;margin:0 0 .5rem">
-          Geist 400 at 16–17px, line-height 1.65.
+        <p style="font-size:var(--text-base);line-height:1.6;margin:0 0 .5rem">
+          Geist 400 at 16–17px, line-height 1.6.
           <b style="font-weight:600">Bold</b>
           is 600.
           <a href="/blog/">Links</a>
@@ -866,13 +894,13 @@ const corners = [
     <h3 style="margin-top:1.6rem">figure anatomy</h3>
     <figure
       class="card"
-      style="margin:0;font-family:var(--mono);font-size:.8rem;color:var(--dim)"
+      style="margin:0;font-family:var(--mono);font-size:var(--text-sm);color:var(--dim)"
     >
-      <p class="t-mono" style="margin:0 0 .7rem;font-size:11px">
+      <p class="t-mono" style="margin:0 0 .7rem;font-size:var(--text-xs)">
         a short title above · 11px
       </p>
       <div
-        style="display:grid;grid-template-columns:5rem 1fr 4rem;gap:.45rem .8rem;align-items:center;font-size:12.8px"
+        style="display:grid;grid-template-columns:5rem 1fr 4rem;gap:.45rem .8rem;align-items:center;font-size:var(--text-sm)"
       >
         <span>GitHub</span
         ><i
@@ -887,14 +915,16 @@ const corners = [
           >20 s</b
         >
       </div>
-      <figcaption style="margin-top:.7rem;font-size:11px;color:var(--dim)">
+      <figcaption
+        style="margin-top:.7rem;font-size:var(--text-xs);color:var(--dim)"
+      >
         at most one line of caption below, for a note · labels on the marks at
-        12.8px
+        12px
       </figcaption>
     </figure>
     <p class="f" style="margin-top:.6rem">
       One panel on the well tone, 8px, no border. Text in two sizes only, at any
-      width: 11px for titles, ticks and notes; 12.8px for labels and values.
+      width: 11px for titles, ticks and notes; 12px for labels and values.
       Explanation goes in one sentence of prose, not under the chart.
     </p>
 
@@ -969,7 +999,7 @@ const corners = [
       </div>
       <div class="card">
         <h3>every chart</h3>
-        <p class="f" style="font-size:.9rem">
+        <p class="f" style="font-size:var(--text-md)">
           a short title · axis titles with units, "win rate (%)" · the baseline
           first · two things never told apart by two greys · numbers in their
           own aligned column · even row spacing · every mark explained once ·
@@ -983,6 +1013,7 @@ const corners = [
       <div class="card">
         <h3>A vs B · bars to scale</h3>
         <svg aria-hidden="true" viewBox="0 0 200 54" style="width:100%">
+          {/* type exception: a sketch, in its own units */}
           <g style="font-family: var(--mono)" font-size="8" fill="var(--dim)">
             <text x="0" y="13">Jest</text>
             <text x="0" y="33">Vitest</text>
@@ -999,6 +1030,7 @@ const corners = [
         <h3>options · dot plot on one axis</h3>
         <svg aria-hidden="true" viewBox="0 0 200 54" style="width:100%">
           <path d="M50 50H190" stroke="var(--line)" />
+          {/* type exception: a sketch, in its own units */}
           <g style="font-family: var(--mono)" font-size="8" fill="var(--dim)">
             <text x="0" y="12">QEMU</text>
             <text x="0" y="26">Firecracker</text>
@@ -1020,6 +1052,7 @@ const corners = [
             height="12"
             fill="var(--accent-solid)"
           />
+          {/* type exception: a sketch, in its own units */}
           <g style="font-family: var(--mono)" font-size="8" fill="var(--dim)">
             <text x="0" y="40">80% loading the engine</text>
             <text x="200" y="40" text-anchor="end" fill="var(--accent)">
@@ -1045,6 +1078,7 @@ const corners = [
             stroke-width="2"
           />
           <path d="M20 30H196" stroke="var(--dim)" stroke-dasharray="3 3" />
+          {/* type exception: a sketch, in its own units */}
           <g style="font-family: var(--mono)" font-size="7" fill="var(--dim)">
             <text x="196" y="68" text-anchor="end">test files →</text>
             <text x="2" y="10">min</text>
@@ -1066,6 +1100,7 @@ const corners = [
             height="8"
             fill="var(--accent-solid)"
           />
+          {/* type exception: a sketch, in its own units */}
           <g style="font-family: var(--mono)" font-size="7.5" fill="var(--dim)">
             <text x="0" y="9">GitHub</text>
             <text x="0" y="21">pickup</text>
@@ -1080,7 +1115,7 @@ const corners = [
           data-days
           style="display:grid;grid-template-columns:repeat(20,1fr);gap:2px"
         ></div>
-        <p class="t-mono" style="margin-top:.5rem;font-size:11px">
+        <p class="t-mono" style="margin-top:.5rem;font-size:var(--text-xs)">
           60 days then · <span style="color:var(--accent)">9 days now</span>
         </p>
       </div>
@@ -1097,7 +1132,7 @@ const corners = [
       <div class="card">
         <h3>code</h3>
         <pre
-          style="margin:0;padding:.8rem 1rem;border-radius:var(--r);background:var(--n2);font-family:var(--mono);font-size:.8rem;line-height:1.6;color:var(--ink);overflow:auto"
+          style="margin:0;padding:.8rem 1rem;border-radius:var(--r);background:var(--n2);font-family:var(--mono);font-size:var(--text-sm);line-height:1.6;color:var(--ink);overflow:auto"
         ><span style="color:var(--syn-kw)">export default</span> <span style="color:var(--syn-fn)">defineConfig</span><span style="color:var(--dim)">({"{"}</span>
   <span style="color:var(--dim)">// one engine per worker</span>
   test: <span style="color:var(--dim)">{"{"}</span> isolate: <span style="color:var(--syn-num)">false</span>, pool: <span style="color:var(--syn-str)">"threads"</span> <span style="color:var(--dim)">{"}"}</span>,
@@ -1116,7 +1151,7 @@ const corners = [
       <div class="card">
         <h3>table · hairline rails</h3>
         <div
-          style="font-size:.85rem;display:grid;grid-template-columns:1fr auto;gap:0"
+          style="font-size:var(--text-md);display:grid;grid-template-columns:1fr auto;gap:0"
         >
           <span
             class="t-mono"
@@ -1144,11 +1179,11 @@ const corners = [
       <div class="card">
         <h3>quote · a numbered list</h3>
         <blockquote
-          style="margin:0 0 .7rem;padding:.6rem .8rem;border-radius:var(--r);background:var(--inset);font-size:.9rem"
+          style="margin:0 0 .7rem;padding:.6rem .8rem;border-radius:var(--r);background:var(--inset);font-size:var(--text-md)"
         >
           a quoted document sits on a tone, so it reads apart from narration
         </blockquote>
-        <p style="margin:0;font-size:.9rem">
+        <p style="margin:0;font-size:var(--text-md)">
           <span class="t-mono" style="color:var(--accent);margin-right:.5rem"
             >1</span
           >takeaways are numbered rows with hairlines
@@ -1175,12 +1210,12 @@ const corners = [
     flex-wrap: wrap;
     margin-bottom: 2.5rem;
     font-family: var(--mono);
-    font-size: 0.875rem;
+    font-size: var(--text-md);
   }
   .ds .ctl {
     appearance: none;
     font: inherit;
-    font-size: 0.8125rem;
+    font-size: var(--text-md);
     color: var(--ink);
     background: var(--raised);
     border: 1px solid var(--line);
@@ -1210,8 +1245,8 @@ const corners = [
   }
   .ds h1 {
     font-family: var(--head);
-    font-size: clamp(2.2rem, 5vw, 3.4rem);
-    line-height: 1.02;
+    font-size: var(--text-headline);
+    line-height: 1;
     letter-spacing: -0.05em;
     margin: 0 0 0.6rem;
     font-weight: 600;
@@ -1220,11 +1255,11 @@ const corners = [
     color: var(--dim);
     max-width: 62ch;
     margin: 0 0 2.5rem;
-    font-size: 1.0625rem;
+    font-size: var(--text-base);
   }
   .ds h2 {
     font-family: var(--head);
-    font-size: 1.3rem;
+    font-size: var(--text-lg);
     letter-spacing: -0.03em;
     margin: 3.2rem 0 0.3rem;
     font-weight: 600;
@@ -1236,7 +1271,7 @@ const corners = [
   }
   .ds h3 {
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
     font-weight: 400;
     color: var(--dim);
     margin: 0 0 0.5rem;
@@ -1253,7 +1288,7 @@ const corners = [
   }
   .ds .card p {
     margin: 0 0 0.35rem;
-    font-size: 0.9375rem;
+    font-size: var(--text-base);
   }
   .ds .sc-space {
     display: grid;
@@ -1265,7 +1300,7 @@ const corners = [
     align-items: center;
     gap: 0.5rem;
     font-family: var(--mono);
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
     color: var(--dim);
   }
   .ds .sc-space i {
@@ -1278,7 +1313,7 @@ const corners = [
   }
   .ds .sc-text p {
     margin: 0 0 0.25rem;
-    line-height: 1.2;
+    line-height: 1.3;
     font-family: var(--mono);
   }
   .ds .fd-cmp {
@@ -1297,13 +1332,13 @@ const corners = [
     display: block;
     margin-bottom: 0.5rem;
     font-family: var(--mono);
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
     color: var(--ink);
   }
   .ds .fd-surf > p {
     display: inline-block;
     margin: 0 1rem 0.25rem 0;
-    font-size: 0.9375rem;
+    font-size: var(--text-base);
   }
   .ds .fd-surf > i {
     display: inline-block;
@@ -1311,13 +1346,13 @@ const corners = [
     border-radius: 2px;
     font-style: normal;
     font-family: var(--mono);
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
     color: var(--ink);
   }
   .ds [data-cr]::after {
     content: " " attr(data-v);
     font-family: var(--mono);
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
   }
   .ds .fd-set {
     display: flex;
@@ -1332,7 +1367,7 @@ const corners = [
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.25rem 1rem;
     margin: 0.5rem 0 0;
-    font-size: 0.875rem;
+    font-size: var(--text-md);
   }
   .ds .fd-pairs div {
     display: flex;
@@ -1345,7 +1380,7 @@ const corners = [
   .ds .fd-pairs dd {
     margin: 0;
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
     color: var(--ink);
   }
   .ds .card .fd-pairs {
@@ -1368,7 +1403,7 @@ const corners = [
   .ds .fd-in .fd-t {
     margin-bottom: 0.5rem;
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
     color: var(--dim);
   }
   .ds .fd-in .fd-g {
@@ -1390,7 +1425,7 @@ const corners = [
   .ds .sc-text span {
     display: inline-block;
     width: 2.5rem;
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
     color: var(--dim);
   }
   .ds .m {
@@ -1440,7 +1475,7 @@ const corners = [
     align-items: flex-end;
     padding: 0.2rem 0.35rem;
     font-family: var(--mono);
-    font-size: 0.68rem;
+    font-size: var(--text-xs);
     color: var(--dim);
     box-shadow: inset 0 0 0 1px var(--line-2);
   }
@@ -1461,7 +1496,7 @@ const corners = [
     padding: 0.5rem 0.9rem;
     border-radius: var(--r-ctl);
     font-weight: 500;
-    font-size: 0.9375rem;
+    font-size: var(--text-base);
     border: 1px solid transparent;
     text-decoration: none;
   }
@@ -1519,7 +1554,7 @@ const corners = [
     align-items: center;
     gap: 0.4rem;
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
     padding: 0.12rem 0.5rem;
     border-radius: var(--r-chip);
   }
@@ -1566,8 +1601,8 @@ const corners = [
     border-radius: var(--r);
     background: var(--hw-bg);
     font-family: var(--mono);
-    font-size: 0.8125rem;
-    line-height: 1.5;
+    font-size: var(--text-md);
+    line-height: 1.6;
   }
   :root[data-theme="light"] .ds .hw {
     --hw-tile: var(--n3);
@@ -1607,7 +1642,7 @@ const corners = [
     position: absolute;
     padding: 0 0.5rem;
     background: var(--hw-bg);
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
     line-height: 1;
     white-space: nowrap;
     color: var(--dim);
@@ -1618,7 +1653,7 @@ const corners = [
     transform: translateY(-55%);
   }
   .ds .hw__pn > .hw__lbl--t {
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
     color: var(--dim);
   }
   .ds .hw__pn.is-focus > .hw__lbl--t {
@@ -1659,14 +1694,14 @@ const corners = [
   }
   .ds .hw__date,
   .ds .hw__num {
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
   }
   .ds .hw__title {
     flex: 1;
     min-width: 0;
     overflow: hidden;
     font-family: var(--grotesk);
-    font-size: 0.875rem;
+    font-size: var(--text-md);
     text-overflow: ellipsis;
   }
   /* A phone: each post is two lines, the title, then its metadata and result. */
@@ -1679,7 +1714,7 @@ const corners = [
     .ds .hw__title {
       order: -1;
       flex-basis: 100%;
-      font-size: 0.9375rem;
+      font-size: var(--text-base);
     }
     .ds .hw__row > :last-child {
       margin-left: auto;
@@ -1698,17 +1733,17 @@ const corners = [
   }
   .ds .hw__stat {
     font-family: var(--head);
-    font-size: 1.6rem;
+    font-size: var(--text-xl);
     font-weight: 600;
     letter-spacing: -0.04em;
-    line-height: 1.15;
+    line-height: 1;
     white-space: nowrap;
   }
   .ds .hw__cap {
     display: grid;
     min-width: 0;
-    font-size: 0.75rem;
-    line-height: 1.45;
+    font-size: var(--text-sm);
+    line-height: 1.3;
   }
   /* fastfetch: the favicon's own shapes in the page's colours, as tall as
      the rows beside it (rows x one line, less a hair), the rule Fetch.astro
@@ -1812,7 +1847,7 @@ const corners = [
     color: var(--accent-solid);
     font-family: var(--head);
     font-weight: 200;
-    font-size: 1.6rem;
+    font-size: var(--text-xl);
     margin: 0 0.6rem;
   }
   .ds .type p {
@@ -1820,14 +1855,14 @@ const corners = [
   }
   .ds .card .t-name {
     font-family: var(--head);
-    font-size: clamp(2.6rem, 6vw, 4.25rem);
+    font-size: var(--text-display);
     font-weight: 600;
     letter-spacing: -0.05em;
     line-height: 1;
   }
   .ds .card .t-line {
     font-family: var(--head);
-    font-size: 1.8rem;
+    font-size: var(--text-2xl);
     font-weight: 200;
     letter-spacing: -0.03em;
     line-height: 1.3;
@@ -1837,12 +1872,12 @@ const corners = [
   }
   .ds .card .t-head {
     font-family: var(--head);
-    font-size: 1.3rem;
+    font-size: var(--text-lg);
     font-weight: 600;
     letter-spacing: -0.03em;
   }
   .ds .card .t-title {
-    font-size: 1.0625rem;
+    font-size: var(--text-base);
     font-weight: 400;
     letter-spacing: -0.01em;
   }
@@ -1852,7 +1887,7 @@ const corners = [
   }
   .ds .card .t-mono {
     font-family: var(--mono);
-    font-size: 0.8125rem;
+    font-size: var(--text-md);
     color: var(--dim);
   }
   .ds .shape {
@@ -1866,7 +1901,7 @@ const corners = [
     display: grid;
     place-items: center;
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
     color: var(--dim);
     text-align: center;
   }
@@ -1890,7 +1925,7 @@ const corners = [
   }
   .ds code {
     font-family: var(--mono);
-    font-size: 0.85em;
+    font-size: var(--text-md);
     background: var(--inset);
     padding: 0.05em 0.35em;
     border-radius: var(--r-chip);

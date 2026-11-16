@@ -5,12 +5,12 @@
   grid-template-columns: 3.4rem repeat(var(--n), minmax(0, 1fr));
   gap: 0.2rem 0.25rem;
   align-items: end;
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
 }
 .prose .decide__k {
   align-self: end;
-  font-size: 0.6875rem;
-  line-height: 0.55rem;
+  font-size: var(--text-xs);
+  line-height: 0.55rem; /* type exception: a length that lines each label up with its bar */
   color: var(--dim);
 }
 /* A pass: its output on top, centred, then the bar. */
@@ -62,6 +62,6 @@
   margin-top: 0.4rem;
   padding-top: 0.3rem;
   border-top: 1px solid var(--line);
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   color: var(--dim);
 }

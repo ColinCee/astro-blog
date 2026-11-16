@@ -119,7 +119,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
   }
   .wr__date,
   .wr__read {
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
     text-align: right;
     white-space: nowrap;
   }
@@ -137,9 +137,9 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
      purple is its focus, and a purple number on every row would be louder. */
   .wr__title {
     font-family: var(--grotesk);
-    font-size: 0.875rem;
+    font-size: var(--text-md);
     letter-spacing: -0.005em;
-    line-height: 1.35;
+    line-height: 1.3;
   }
   .wr__stat {
     text-align: right;
@@ -154,7 +154,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
   .wr__year {
     align-items: center;
     padding: 0.2rem var(--win-pad) 0.1rem;
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
     color: var(--dim);
   }
   .wr__year span {
@@ -186,10 +186,10 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
   }
   .pv__stat {
     font-family: var(--head);
-    font-size: 1.6rem;
+    font-size: var(--text-xl);
     font-weight: 600;
     letter-spacing: -0.04em;
-    line-height: 1.15;
+    line-height: 1;
     white-space: nowrap;
   }
   .pv__stat .wr__was {
@@ -207,8 +207,8 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
   .pv__cap {
     display: grid;
     min-width: 0;
-    font-size: 0.75rem;
-    line-height: 1.45;
+    font-size: var(--text-sm);
+    line-height: 1.3;
   }
   .pv__label {
     color: var(--dim);
@@ -252,7 +252,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
     }
     .wr__title {
       grid-area: title;
-      font-size: 0.9375rem;
+      font-size: var(--text-base);
     }
     .wr__date {
       grid-area: date;
@@ -295,7 +295,7 @@ const turn = (i: number) => `--i:${Math.min(i, 12)}`;
       display: block;
     }
     .pv__stat {
-      font-size: 1.45rem;
+      font-size: var(--text-xl);
     }
     .pv__meta {
       display: none;

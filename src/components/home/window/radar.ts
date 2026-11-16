@@ -333,8 +333,10 @@ export function makeRadar(canvas: HTMLCanvasElement, still: boolean) {
       hot: v("--n12"),
       mono: v("--mono") || "monospace",
     };
+    // The labels are --text-xs, which a canvas needs in pixels
     label =
-      0.6875 * parseFloat(getComputedStyle(document.documentElement).fontSize);
+      parseFloat(v("--text-xs")) *
+      parseFloat(getComputedStyle(document.documentElement).fontSize);
   };
 
   const draw = () => {
@@ -347,7 +349,7 @@ export function makeRadar(canvas: HTMLCanvasElement, still: boolean) {
     const Y = (y: number) => cy + y * R;
     const far = hypot(cx, cy);
     g.lineWidth = 1;
-    g.font = `${label}px ${c.mono}`;
+    g.font = `${label}px ${c.mono}`; // type exception: --text-xs, in pixels
     g.textBaseline = "alphabetic";
 
     // The sweep: a soft wedge trailing the beam. Not in the still scope.

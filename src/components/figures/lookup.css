@@ -5,7 +5,7 @@
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: 1.2rem 2rem;
   font-family: var(--mono);
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
 }
 .prose .lookup .fig__k {
   margin: 0 0 0.4rem;

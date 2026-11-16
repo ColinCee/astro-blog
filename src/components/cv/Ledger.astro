@@ -182,7 +182,7 @@ const { experience } = Astro.props;
   }
   .row__when {
     font-family: var(--mono);
-    font-size: 0.72rem;
+    font-size: var(--text-sm);
     color: var(--dim);
     white-space: nowrap;
   }
@@ -211,19 +211,19 @@ const { experience } = Astro.props;
   .row__co {
     font-family: var(--head);
     font-weight: 600;
-    font-size: 1.08rem;
+    font-size: var(--text-base);
     letter-spacing: -0.01em;
     color: var(--ink);
   }
   .row__pos {
     font-family: var(--mono);
-    font-size: 0.72rem;
+    font-size: var(--text-sm);
     color: var(--dim);
   }
   .row__pill {
     padding: 0.12rem 0.55rem;
     font-family: var(--mono);
-    font-size: 0.6875rem;
+    font-size: var(--text-xs);
     color: var(--ink);
     background: var(--inset);
     border-radius: var(--r-chip);
@@ -234,7 +234,7 @@ const { experience } = Astro.props;
   .row__result {
     font-family: var(--grotesk);
     font-weight: 400;
-    font-size: 0.95rem;
+    font-size: var(--text-base);
     letter-spacing: -0.005em;
     color: var(--ink);
     text-align: right;
@@ -274,8 +274,8 @@ const { experience } = Astro.props;
   .row__ctx {
     margin: 0;
     max-width: 68ch;
-    font-size: 0.94rem;
-    line-height: 1.5;
+    font-size: var(--text-base);
+    line-height: 1.6;
     color: var(--ink);
     text-wrap: pretty;
   }
@@ -290,8 +290,8 @@ const { experience } = Astro.props;
     position: relative;
     padding-left: 1.15rem;
     max-width: 70ch;
-    font-size: 0.9rem;
-    line-height: 1.55;
+    font-size: var(--text-md);
+    line-height: 1.6;
     color: var(--dim);
     text-wrap: pretty;
   }
@@ -335,7 +335,7 @@ const { experience } = Astro.props;
     .row__result {
       text-align: left;
       white-space: normal;
-      font-size: 0.9rem;
+      font-size: var(--text-md);
     }
     .row__chev {
       grid-column: 2;
