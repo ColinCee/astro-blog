@@ -20,7 +20,10 @@ const after = distinct.join("").length + Math.ceil((values.length * bits) / 8);
 
 <div class="lookup">
   <div class="lookup__col">
-    <p class="fig__k">{name} · {sizes?.[0] ?? `${before} bytes`}</p>
+    <p class="fig__k items">
+      <span>{name}</span>
+      <span>{sizes?.[0] ?? `${before} bytes`}</span>
+    </p>
     {values.map((v) => (
       <div class="lookup__row" data-e={distinct.indexOf(v)}>
         <span>{v}</span>
@@ -30,8 +33,9 @@ const after = distinct.join("").length + Math.ceil((values.length * bits) / 8);
     ))}
   </div>
   <div class="lookup__dict">
-    <p class="fig__k">
-      dictionary + numbers · {sizes?.[1] ?? `${after} bytes`}
+    <p class="fig__k items">
+      <span>dictionary + numbers</span>
+      <span>{sizes?.[1] ?? `${after} bytes`}</span>
     </p>
     {distinct.map((v, i) => (
       <div class="lookup__row" data-e={i}>

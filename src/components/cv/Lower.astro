@@ -1,6 +1,7 @@
 ---
 // Education and projects side by side, then the end cap.
 import { education, projects } from "../../data/cv";
+import Items from "../site/Items.astro";
 ---
 
 <div class="cv__lower">
@@ -8,7 +9,7 @@ import { education, projects } from "../../data/cv";
     <h2 class="cv__sec-head" id="ed-h">// education</h2>
     <div class="edu">
       <h3 class="edu__school">{education.school}</h3>
-      <p class="edu__meta">{education.meta}</p>
+      <Items as="p" class="edu__meta" list={education.meta} />
       <p class="edu__degree">
         {education.degree}
         <b class="hl">{education.honours}</b>
@@ -28,7 +29,7 @@ import { education, projects } from "../../data/cv";
             </a>
           </h3>
           <p class="proj__desc">{p.desc}</p>
-          <p class="proj__stack">{p.stack}</p>
+          <Items as="p" class="proj__stack" list={p.stack} />
         </li>
       ))}
     </ul>
@@ -36,7 +37,7 @@ import { education, projects } from "../../data/cv";
 </div>
 
 <p class="cv__end">
-  <span>Open to remote roles · Glasgow, UK</span>
+  <Items list={["Open to remote roles", "Glasgow, UK"]} />
   <a href="https://www.linkedin.com/in/colin-cheung/">
     Let's talk <span aria-hidden="true">↗</span>
   </a>

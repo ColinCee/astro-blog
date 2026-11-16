@@ -1,6 +1,7 @@
 ---
 // Skills as a compact two-column list of plain text under mono labels.
 import { skills } from "../../data/cv";
+import Items from "../site/Items.astro";
 ---
 
 <section class="cv__sec" aria-labelledby="sk-h">
@@ -9,7 +10,7 @@ import { skills } from "../../data/cv";
     {skills.map((g) => (
       <div class="skill">
         <dt class="skill__label">{g.label}</dt>
-        <dd class="skill__items">{g.items.join(" · ")}</dd>
+        <Items as="dd" class="skill__items" list={g.items} />
       </div>
     ))}
   </dl>

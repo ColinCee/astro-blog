@@ -46,9 +46,9 @@ const since = await workSince();
       </div>
       <div data-dim style="--i:3">
         <dt>posts</dt>
-        <dd>
-          {posts.length}
-          {posts[0] && <span class="ff__dim">· newest {posts[0].date}</span>}
+        <dd class="items">
+          <span>{posts.length}</span>
+          {posts[0] && <span class="ff__dim">newest {posts[0].date}</span>}
         </dd>
       </div>
     </dl>

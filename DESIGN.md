@@ -308,8 +308,8 @@ it. Ask him before loosening one or treating one as his.
 badges, always with a word, never colour alone. Red in the chrome would mean a
 real failure; a result that got worse stays ink. No status dot or badge is in
 the chrome today: the home-lab figure had a green dot per stack until Nov
-2026, and the home window says status in words instead (`all up · live, 2 min
-ago`, `offline`). The status colours now show only in post figures. In charts,
+2026, and the home window says status in words instead (`all up`, then `live, 2 min
+ago` after a gap, or `offline`). The status colours now show only in post figures. In charts,
 `--gain` and `--loss` appear only on charts that compare runs, with a key.
 
 **The No Grey Pairs Rule.** Two things a chart tells apart never differ by a
@@ -433,7 +433,7 @@ to purple gradients in TUI fetch ?".
 
 ### Footer
 - One `components/site/Footer.astro`: `Colin Cheung` (mono, `--muted`) and
-  `© {year} · built in Glasgow` (`--faint`), centered on `--w-page`, `1px` top
+  `© {year}` and `built in Glasgow` (`--faint`, a gap between), centered on `--w-page`, `1px` top
   rule. On the homepage it spans `--w-poster`, its meta is `--muted`, and it ends
   with `last deploy <hash>`, linking the commit.
 
@@ -957,7 +957,7 @@ curve in a component is a bug unless it is a content timing.
   single `--w-prose` column. At `64rem` and up the post sits on `--w-page`, inset by
   `--rail` (`9rem`) plus `--rail-gap` (`3.5rem`), so timeline dates sit in the left
   margin and plain and timeline posts share one left edge. Content carries a `// writing` back-kicker, a Sora 600 title
-  (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em), and a mono meta line (date · N min read).
+  (`clamp(1.9rem, 5vw, 2.7rem)`, −0.045em), and a mono meta line (the date, then N min read, as `.items`).
 - **Headline stat:** the post's `stat` renders under the title between hairlines,
   its `statLabel` above it in 11px mono `--faint`, the value in Sora 600. A result
   that got better shows the old value in `--faint`, an arrow, and the new one in
@@ -1108,6 +1108,12 @@ curve in a component is a bug unless it is a content timing.
 - **Don't** tell two things in a chart apart by two greys; the subject takes
   the accent, or they are ink against grey, or differ by fill, outline or
   hatching.
+- **Don't** separate items with a dot (`·`); a gap, a column or a line does it
+  (decided: "If you ever need dots, that means you've not thought about better
+  layouts or separations"). A row of items takes the shared `.items` class
+  (`components/site/Items.astro` for a list from data); `tests/separators.spec.ts`
+  fails a dot in the text of any built page. A browser tab's title keeps its
+  dot, as the one exception: it is not on the page.
 - **Don't** strike text through, in a figure or a stat. It makes the words hard
   to read; grey them and say what changed in a word instead.
 - **Don't** use cards as the default container, nested cards, or `border-left`/

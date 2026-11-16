@@ -24,7 +24,8 @@ export function makeWriting(
     pos: one("data-pv-pos"),
     stat: one("data-pv-stat"),
     label: one("data-pv-label"),
-    meta: one("data-pv-meta"),
+    date: one("data-pv-date"),
+    read: one("data-pv-read"),
   };
   const pos = one("data-wr-pos");
   let sel = 0;
@@ -50,7 +51,8 @@ export function makeWriting(
       if (k) pv.label.insertAdjacentHTML("beforeend", statArrow);
       pv.label.append(part.trim());
     });
-    pv.meta.textContent = row.dataset.meta ?? "";
+    pv.date.textContent = row.dataset.date ?? "";
+    pv.read.textContent = row.dataset.read ?? "";
   };
 
   rows.forEach((row, i) => {

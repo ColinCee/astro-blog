@@ -12,20 +12,17 @@ const build = __BUILD__;
 
 <footer class:list={["foot", { "foot--home": home }]}>
   <span class="foot__name">Colin Cheung</span>
-  <span class="foot__meta">
-    © {year} · built in Glasgow
+  <span class="foot__meta items">
+    <span>© {year}</span>
+    <span>built in Glasgow</span>
     {home && build.hash && (
-      <Fragment>
-        {" "}
-        ·{" "}
-        <a
-          class="foot__build"
-          href={`https://github.com/ColinCee/astro-blog/commit/${build.hash}`}
-          title={build.subject}
-        >
-          last deploy {build.hash}
-        </a>
-      </Fragment>
+      <a
+        class="foot__build"
+        href={`https://github.com/ColinCee/astro-blog/commit/${build.hash}`}
+        title={build.subject}
+      >
+        last deploy {build.hash}
+      </a>
     )}
   </span>
 </footer>

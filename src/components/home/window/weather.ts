@@ -152,7 +152,11 @@ export function initWeather(app: HTMLElement, boot: WindowCtx["boot"]) {
     place(cross, i);
     place(dot, i);
     reading = true;
-    note.textContent = `${String(i).padStart(2, "0")}:00 · ${signed(Math.round(h[i] * 10) / 10)}°`;
+    const hour = document.createElement("span");
+    const temp = document.createElement("span");
+    hour.textContent = `${String(i).padStart(2, "0")}:00`;
+    temp.textContent = `${signed(Math.round(h[i] * 10) / 10)}°`;
+    note.replaceChildren(hour, " ", temp);
   });
   plot.addEventListener("pointerleave", () => {
     cross.hidden = dot.hidden = true;

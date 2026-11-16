@@ -412,7 +412,7 @@ test.describe("the flight tracker's counts", () => {
 });
 
 // On the narrowest phones the box's status is its longest, on the bottom
-// border: all of it shows, not "all up · live, 2 m…".
+// border: all of it shows, not "all up live, 2 m…".
 test("320: the mini-PC's status is not cut short", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 640 });
   // As old as it can be and still be live: the longest it gets.
@@ -424,7 +424,7 @@ test("320: the mini-PC's status is not cut short", async ({ page }) => {
     el.scrollIntoView({ block: "center", behavior: "instant" }),
   );
   const live = panel.locator(".lab__live");
-  await expect(live).toHaveText("all up · live, 20 min ago");
+  await expect(live).toHaveText("all up live, 20 min ago");
   await expect(live).toBeVisible();
   expect(
     await live.evaluate(async (el) => {

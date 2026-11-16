@@ -48,7 +48,7 @@ export function initStats(root: HTMLElement) {
     sayAge(fresh ? `live, ${ago}` : `last seen ${ago}`);
     // "All up" is only worth saying while it is news.
     const up = fresh && !!stats.allUp;
-    for (const u of ups) u.textContent = up ? "all up · " : "";
+    for (const u of ups) u.textContent = up ? "all up" : "";
     // State for tests and future styling: no CSS reads data-up yet.
     lab?.toggleAttribute("data-up", up);
   };

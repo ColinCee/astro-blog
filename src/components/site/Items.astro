@@ -1,0 +1,22 @@
+---
+// A list of short items in a row, told apart by a gap, never a dot
+// (DESIGN.md, Don'ts). The spaces between them keep copied text readable.
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"span"> {
+  list: string[];
+  as?: "span" | "p" | "dd";
+}
+// The rest carries the caller's scoped-style attribute, so its class styles
+// reach this element.
+const { list, as: Tag = "span", class: className, ...rest } = Astro.props;
+---
+
+<Tag class:list={["items", className]} {...rest}>
+  {list.map((item, i) => (
+    <Fragment>
+      {i > 0 && " "}
+      <span>{item}</span>
+    </Fragment>
+  ))}
+</Tag>

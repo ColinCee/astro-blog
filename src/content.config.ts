@@ -33,6 +33,8 @@ const projects = defineCollection({
     desc: z.string(),
     // The caption over the project's figure
     caption: z.string(),
+    // A second line under the figure, where it has one
+    note: z.string().optional(),
     // The posts that write the project up: what their slugs start with, or
     // "*" for every post. Only ties that are plainly true (see Colin first).
     posts: z.string().optional(),

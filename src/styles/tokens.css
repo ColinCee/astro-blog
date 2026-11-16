@@ -130,6 +130,14 @@ html {
   background: color-mix(in oklch, var(--accent) 26%, transparent);
 }
 
+/* Items in a row, told apart by a gap, never a dot (DESIGN.md, Don'ts):
+   a space and this margin, so copied text keeps its spaces, a line can break
+   between items and a border label still ends in an ellipsis. An empty item
+   (a reading not yet in) takes no gap. */
+.items > :not(:empty) ~ :not(:empty) {
+  margin-inline-start: 1rem;
+}
+
 /* Shared entrance: fade + rise. Consumers gate it behind
    prefers-reduced-motion in their own scope. */
 @keyframes rise {

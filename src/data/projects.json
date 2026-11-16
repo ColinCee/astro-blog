@@ -14,7 +14,8 @@
     "repo": "flight-tracker-at-home.pages.dev",
     "href": "https://flight-tracker-at-home.pages.dev",
     "desc": "London airspace, live",
-    "caption": "london airspace · radar simulated here",
+    "caption": "london airspace",
+    "note": "radar simulated here",
     "runsOn": "home-lab"
   },
   {
