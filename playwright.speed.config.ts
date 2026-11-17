@@ -10,8 +10,10 @@ export default defineConfig({
   testMatch: "speed.spec.ts",
   workers: 1,
   fullyParallel: false,
-  // Timing on a shared CI machine can spike once; bytes never need this.
+  // A budget missed once and met on the retry is reported as flaky and still
+  // fails: a spike is something to explain, not to absorb.
   retries: 1,
+  failOnFlakyTests: true,
   reporter: "list",
   use: { baseURL: `http://localhost:${port}` },
   webServer: {
