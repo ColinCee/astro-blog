@@ -344,9 +344,25 @@ test.describe("laptop", () => {
     await page.locator(".win__bar").hover();
     await expect.poll(() => focused(page)).toEqual(["writing"]);
 
-    // The keyboard takes it too, and it rests where the keyboard is.
+    // The keyboard takes it too, and it rests where the keyboard is, even
+    // when reaching it scrolls another panel under the resting pointer.
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+    await page.mouse.move(720, 450);
     await tab(page, projects[0]).focus();
-    await expect.poll(() => focused(page)).toEqual(["pick"]);
+    await expect
+      .poll(() => page.evaluate(() => window.scrollY))
+      .toBeGreaterThan(0);
+    // The browser reports the pointer entering after the scroll's frame.
+    await page.evaluate(
+      () =>
+        new Promise((done) =>
+          requestAnimationFrame(() => requestAnimationFrame(done)),
+        ),
+    );
+    expect(await focused(page)).toEqual(["pick"]);
+    // The wheel gives it back to the pointer, without the pointer moving.
+    await page.mouse.wheel(0, -300);
+    await expect.poll(() => focused(page)).not.toEqual(["pick"]);
     await page.locator('.pn[data-pn="skills"]').hover();
     await expect.poll(() => focused(page)).toEqual(["skills"]);
     await page.locator(".win__bar").hover();

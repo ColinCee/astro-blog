@@ -23,10 +23,12 @@ const laptop = { width: 1440, height: 900 };
 const phone = { width: 390, height: 844 };
 
 // Stops the page's clock at the present, before the page is opened: its
-// timers and frames then run only when the test moves the clock on.
+// timers and frames then run only when the test moves the clock on. The
+// installed clock runs until paused, so it starts a second early: pausing at
+// a time it has already passed throws.
 const stopClock = async (page: Page) => {
   const at = Date.now();
-  await page.clock.install({ time: at });
+  await page.clock.install({ time: at - 1000 });
   await page.clock.pauseAt(at);
   return at;
 };

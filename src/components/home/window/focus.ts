@@ -31,8 +31,29 @@ export function makeFocus(
 
   // The pointer moves the focus as it enters a panel, and leaving the window
   // puts it back at rest. Not during the opening round, which is moving it.
+  // Once the keyboard has placed it, the page scrolling under a still pointer
+  // does not take it: the browser reports that as the pointer entering
+  // whatever is now under it, at the spot where it last moved. The mouse
+  // takes it back by moving or by scrolling the wheel.
+  let keyed = false;
+  let lastX = Number.NaN;
+  let lastY = Number.NaN;
+  // The whole page's: the pointer may rest outside the window.
+  document.addEventListener("pointermove", (e) => {
+    keyed = false;
+    lastX = e.clientX;
+    lastY = e.clientY;
+  });
+  document.addEventListener(
+    "wheel",
+    () => {
+      keyed = false;
+    },
+    { passive: true },
+  );
   app.addEventListener("pointerover", (e) => {
     if (boot.running() || byScroll()) return;
+    if (keyed && e.clientX === lastX && e.clientY === lastY) return;
     const name = (e.target as Element).closest<HTMLElement>(".pn")?.dataset.pn;
     if (name && name !== cur) set(name);
   });
@@ -41,7 +62,10 @@ export function makeFocus(
   });
   app.addEventListener("focusin", (e) => {
     const name = (e.target as Element).closest<HTMLElement>(".pn")?.dataset.pn;
-    if (name) set(name);
+    if (name) {
+      keyed = true;
+      set(name);
+    }
   });
 
   let scrolled = false;
