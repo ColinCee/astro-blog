@@ -23,7 +23,7 @@
     "astro": "astro",
     "dev": "astro dev",
     "build": "astro build",
-    "check": "pnpm typecheck && biome ci . && pnpm lint:css && node scripts/wrap.ts --check && pnpm legacy-scan && astro build && wrangler deploy --dry-run && playwright test && playwright test -c playwright.speed.config.ts",
+    "check": "pnpm typecheck && biome ci . && pnpm lint:css && node scripts/wrap.ts --check && node scripts/no-js.ts && pnpm legacy-scan && astro build && wrangler deploy --dry-run && playwright test && playwright test -c playwright.speed.config.ts",
     "lint:css": "stylelint \"src/**/*.{astro,css,mdx}\"",
     "format": "biome check --write . && node scripts/wrap.ts",
     "test": "astro build && playwright test",
