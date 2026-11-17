@@ -13,12 +13,18 @@ export default defineConfig({
   testIgnore: "speed.spec.ts",
   globalSetup: "./tests/warm-up.ts",
   fullyParallel: true,
+  // A failed test runs once more, so a flaky one is named as flaky, with a
+  // trace of its second run; the run still fails, since a flaky test is a bug.
+  retries: 1,
+  failOnFlakyTests: true,
   reporter: "list",
-  use: { baseURL: `http://localhost:${port}` },
+  use: { baseURL: `http://localhost:${port}`, trace: "on-first-retry" },
   webServer: {
     command: `pnpm astro dev --port ${port} --ignore-lock`,
     url: `http://localhost:${port}`,
     reuseExistingServer: false,
     timeout: 120_000,
+    // The server's own log beside a failure: a restart would show here.
+    stdout: "pipe",
   },
 });
