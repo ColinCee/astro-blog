@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
+import { devOnly } from "./warm-up.ts";
 
 // Why the arrow is drawn: DESIGN.md, "Stat arrow".
 const MAX_OFF_EM = 0.04;
@@ -16,9 +17,9 @@ const views = [
 
 for (const vp of views)
   for (const path of ["/", "/blog/", "/design/", ...arrowPosts]) {
-    test(`${vp.name} ${path}: stat arrows sit on the middle of the digits`, async ({
-      page,
-    }) => {
+    test(`${vp.name} ${path}: stat arrows sit on the middle of the digits`, {
+      tag: devOnly.includes(path) ? "@dev" : [],
+    }, async ({ page }) => {
       await page.setViewportSize(vp);
       await page.goto(path);
       const arrows = page.locator(".stat-arrow");

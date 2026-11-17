@@ -11,13 +11,13 @@ import { fixWeather } from "./weather.ts";
 //
 // The waits (4, 8 and 20 seconds) are the page's own timers, so each test
 // stops the page's clock and moves it on by hand: just short of a wait and
-// just past it are then exact, however slow the machine. The dev server
-// serves each module by its path; the routes below hold or fail those.
+// just past it are then exact, however slow the machine. The routes below
+// hold or fail the window's modules, by the names the build gives them.
 
 // The window's entry module (the script in Window.astro) and the lower
 // half's code it fetches later.
-const ENTRY = /Window\.astro\?[^/]*type=script/;
-const LOWER = /window\/projects\.ts/;
+const ENTRY = /\/_astro\/Window\.astro_astro_type_script[^/]*\.js$/;
+const LOWER = /\/_astro\/projects\.[\w-]+\.js$/;
 
 const laptop = { width: 1440, height: 900 };
 const phone = { width: 390, height: 844 };
@@ -266,7 +266,11 @@ test.describe("the entry module", () => {
     // The module did throw, and the error was passed on to the console,
     // not swallowed by the tidying up.
     expect(
-      thrown.filter((err) => /no observers here.*window\/main\.ts/s.test(err)),
+      thrown.filter((err) =>
+        /no observers here.*\/_astro\/Window\.astro_astro_type_script/s.test(
+          err,
+        ),
+      ),
     ).toHaveLength(1);
   });
 });

@@ -52,6 +52,9 @@ jobs:
       - name: Design system check (colours and type on the scale)
         run: pnpm lint:css
 
+      - name: No JavaScript files
+        run: node scripts/no-js.ts
+
       - name: Legacy web pattern scan
         run: pnpm legacy-scan
 
@@ -70,7 +73,7 @@ jobs:
         run: sudo apt-get install -y --no-install-recommends fonts-roboto
 
       - name: Layout and typography tests
-        run: pnpm test
+        run: pnpm playwright test
 
       - name: Speed budgets
         run: pnpm playwright test -c playwright.speed.config.ts

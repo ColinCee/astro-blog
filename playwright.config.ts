@@ -1,15 +1,28 @@
 import { defineConfig } from "@playwright/test";
 
-// The tests start their own dev server, on PORT or 4380, so they never test a
-// server another checkout left running on Astro's default 4321.
-// --ignore-lock keeps the server in the foreground: when Astro sees an AI
-// agent it otherwise starts it in the background and exits, which Playwright
+// The tests run against the built site, as it ships: `astro preview` of
+// dist/, so run `pnpm build` first (`pnpm test` does). The dev server, which
+// compiles each page on its first visit, serves only what the build leaves
+// out: the design page. Each server is started here, on PORT or 4380 and two
+// above it, so the tests never use one another checkout left running.
+// --ignore-lock keeps a server in the foreground: when Astro sees an AI agent
+// it otherwise starts it in the background and exits, which Playwright
 // reports as "exited early".
 const port = Number(process.env.PORT ?? 4380);
+// Two on, not one: the speed budgets serve the build on 4381.
+const devPort = port + 2;
+const server = (command: string, at: number) => ({
+  command: `pnpm astro ${command} --port ${at} --ignore-lock`,
+  url: `http://localhost:${at}`,
+  reuseExistingServer: false,
+  timeout: 120_000,
+  // The server's own log beside a failure: a restart would show here.
+  stdout: "pipe" as const,
+});
 
 export default defineConfig({
   testDir: "tests",
-  // The speed budgets need the built site: playwright.speed.config.ts.
+  // The speed budgets: playwright.speed.config.ts.
   testIgnore: "speed.spec.ts",
   globalSetup: "./tests/warm-up.ts",
   fullyParallel: true,
@@ -18,13 +31,19 @@ export default defineConfig({
   retries: 1,
   failOnFlakyTests: true,
   reporter: "list",
-  use: { baseURL: `http://localhost:${port}`, trace: "on-first-retry" },
-  webServer: {
-    command: `pnpm astro dev --port ${port} --ignore-lock`,
-    url: `http://localhost:${port}`,
-    reuseExistingServer: false,
-    timeout: 120_000,
-    // The server's own log beside a failure: a restart would show here.
-    stdout: "pipe",
-  },
+  use: { trace: "on-first-retry" },
+  projects: [
+    {
+      name: "built",
+      grepInvert: /@dev/,
+      use: { baseURL: `http://localhost:${port}` },
+    },
+    // Tests tagged @dev: pages only the dev server has.
+    {
+      name: "dev",
+      grep: /@dev/,
+      use: { baseURL: `http://localhost:${devPort}` },
+    },
+  ],
+  webServer: [server("preview", port), server("dev", devPort)],
 });
