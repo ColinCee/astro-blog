@@ -223,11 +223,10 @@ test.describe("phone", () => {
   });
 
   test("the lower half's code loads only when it is near", async ({ page }) => {
-    // The dev server serves each module by its path; the built site's check
-    // is in speed.spec.ts.
+    // The modules by the names the build gives them.
     const lower: string[] = [];
     page.on("request", (req) => {
-      const file = /window\/(projects|radar)/.exec(req.url());
+      const file = /\/_astro\/(projects|radar)\.[\w-]+\.js$/.exec(req.url());
       if (file) lower.push(file[1]);
     });
     await page.goto("/", { waitUntil: "networkidle" });

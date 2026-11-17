@@ -26,7 +26,7 @@
     "check": "pnpm typecheck && biome ci . && pnpm lint:css && node scripts/wrap.ts --check && pnpm legacy-scan && astro build && wrangler deploy --dry-run && playwright test && playwright test -c playwright.speed.config.ts",
     "lint:css": "stylelint \"src/**/*.{astro,css,mdx}\"",
     "format": "biome check --write . && node scripts/wrap.ts",
-    "test": "playwright test",
+    "test": "astro build && playwright test",
     "speed": "astro build && playwright test -c playwright.speed.config.ts",
     "preview": "astro build && wrangler dev",
     "deploy": "astro build && wrangler deploy",
