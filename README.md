@@ -60,13 +60,17 @@ src/pages/        routes: home, blog/, cv
 src/content/blog/ the posts, one MDX file each
 src/components/   site/ (head, nav, footer) · home/ · figures/ · cv/
 src/styles/       tokens.css, the design system's colours, type and motion
-worker/index.ts   one route, /homelab.json, for the home lab's live numbers and stacks
-scripts/          tooling (social cards, captures, charts); edge-cities.ts also runs in the build
+worker/           index.ts, one route, /homelab.json, for the home lab's live numbers and stacks;
+                  edge-cities.ts, Cloudflare's data centres, which the build fetches
+og/               the link-preview images and icons (`pnpm og`)
+pr-media/         screenshots, videos and charts for pull requests
+checks/           repo checks: no JavaScript files, catch-all folder names, post prose
+                  wrapped at 100 columns (`pnpm format` rewraps it)
 ```
 
 Astro builds everything to static files; a Cloudflare Worker serves them. Pushes to `main` deploy through GitHub Actions after the same checks pull requests run, with the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets.
 
-The build reads two things from outside: Cloudflare's list of data centres (`scripts/edge-cities.ts`, for the edge's city count and the Worker's city names) and the home server's list of stacks from the live `/homelab.json` (`src/components/home/window/data.ts`). Either one missing, it uses the dated snapshot committed beside it (`worker/edge-cities.snapshot.json`, `src/data/homelab-stacks.snapshot.json`) and prints a warning; it never rewrites a tracked file.
+The build reads two things from outside: Cloudflare's list of data centres (`worker/edge-cities.ts`, for the edge's city count and the Worker's city names) and the home server's list of stacks from the live `/homelab.json` (`src/components/home/window/data.ts`). Either one missing, it uses the dated snapshot committed beside it (`worker/edge-cities.snapshot.json`, `src/data/homelab-stacks.snapshot.json`) and prints a warning; it never rewrites a tracked file.
 
 **Deploy order with the homelab repo.** The Worker refuses a body with a key it does not know. When the body the home server PUTs to `/homelab.json` changes shape, deploy this site first, with a Worker that takes both the old and the new body, and the home server second. (Nov 2026: `stacks` was added this way.)
 

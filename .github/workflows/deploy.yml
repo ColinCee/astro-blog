@@ -53,10 +53,13 @@ jobs:
         run: pnpm lint:css
 
       - name: Post prose wrapped at 100 columns
-        run: node scripts/wrap.ts --check
+        run: node checks/wrap.ts --check
 
       - name: No JavaScript files
-        run: node scripts/no-js.ts
+        run: node checks/no-js.ts
+
+      - name: No catch-all folder names
+        run: node checks/folders.ts
 
       - name: Legacy web pattern scan
         run: pnpm legacy-scan

@@ -11,7 +11,7 @@
 // taken, and warns. Nothing the build runs writes a tracked file; the
 // snapshot changes only when someone runs
 //
-//   node scripts/edge-cities.ts --snapshot
+//   node worker/edge-cities.ts --snapshot
 //
 // and commits it.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -19,11 +19,8 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const SOURCE = "https://www.cloudflarestatus.com/api/v2/components.json";
-const OUT = new URL("../worker/edge-cities.json", import.meta.url);
-const SNAPSHOT = new URL(
-  "../worker/edge-cities.snapshot.json",
-  import.meta.url,
-);
+const OUT = new URL("./edge-cities.json", import.meta.url);
+const SNAPSHOT = new URL("./edge-cities.snapshot.json", import.meta.url);
 
 export interface EdgeCities {
   /** The day the list was read, as YYYY-MM-DD. */
@@ -102,7 +99,7 @@ if (run && process.argv.includes("--snapshot")) {
   writeFileSync(
     SNAPSHOT,
     json({
-      note: `Cloudflare's data centres as ${SOURCE} listed them on ${list.taken}. The build uses this only when it cannot read that page (scripts/edge-cities.ts).`,
+      note: `Cloudflare's data centres as ${SOURCE} listed them on ${list.taken}. The build uses this only when it cannot read that page (worker/edge-cities.ts).`,
       ...list,
     }),
   );

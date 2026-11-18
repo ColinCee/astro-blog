@@ -657,7 +657,7 @@ section, How the home page grows; read that before changing the page.
 
   No number is typed. The Cloudflare city count in `figures/Route.astro` is
   counted at build from the data centres Cloudflare's status page lists
-  (`scripts/edge-cities.ts`; a dated snapshot, with a warning, when the build
+  (`worker/edge-cities.ts`; a dated snapshot, with a warning, when the build
   cannot read it). It was a typed 330 until Nov 2026. The other numbers are
   computed at build (posts, years, the commit) or come from the home server
   (stacks) or read live (below). The home lab's stacks and their services

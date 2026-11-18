@@ -4,8 +4,8 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
 import expressiveCode from "astro-expressive-code";
-import { writeEdgeCities } from "./scripts/edge-cities.ts";
 import { codeThemes } from "./src/styles/code-theme";
+import { writeEdgeCities } from "./worker/edge-cities.ts";
 
 // The commit the site is built from, for the homepage status bar, footer and
 // the site's own tile. Read once here and handed to pages as __BUILD__. In CI
@@ -104,7 +104,7 @@ export default defineConfig({
   integrations: [
     // Cloudflare's data centres, for the Worker and the colincheung.dev
     // figure: read afresh for a build, kept as they are for the dev server
-    // and `astro sync` (scripts/edge-cities.ts).
+    // and `astro sync` (worker/edge-cities.ts).
     {
       name: "edge-cities",
       hooks: {
