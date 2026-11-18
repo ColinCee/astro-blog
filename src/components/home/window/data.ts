@@ -4,8 +4,8 @@
 // changed.
 import { getCollection } from "astro:content";
 import { isStacks, type Stack } from "../../../../worker/stacks";
+import { readMinutes } from "../../../content/read-minutes";
 import snapshot from "../../../data/homelab-stacks.snapshot.json";
-import { readMinutes } from "../../../scripts/read-minutes";
 
 export const thisYear = new Date().getFullYear();
 

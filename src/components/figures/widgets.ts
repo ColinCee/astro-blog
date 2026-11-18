@@ -1,7 +1,7 @@
 // Interactive figures, loaded by layouts/Post.astro only on posts that have a
 // [data-widget] element. Each widget reads its numbers from data- attributes in
 // the post, so the post stays the one place its figures live.
-import { onceSeen, still } from "./in-view";
+import { onceSeen, still } from "../../motion/in-view";
 import { chartHeight, type LineData, lineChart } from "./line-chart";
 
 const fmt = new Intl.NumberFormat("en-GB");
@@ -444,7 +444,7 @@ function svgEl(svg: SVGSVGElement) {
   };
 }
 
-// Lines: a line chart from data (src/scripts/line-chart.ts), drawn in screen
+// Lines: a line chart from data (line-chart.ts), drawn in screen
 // pixels at the figure's width and redrawn when it changes. The SVG in the
 // page is the no-script fallback, drawn from the same data at build time.
 function lines(root: HTMLElement) {

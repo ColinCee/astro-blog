@@ -1,14 +1,10 @@
 ---
-// A line chart from data (see src/scripts/line-chart.ts for its shape). The
+// A line chart from data (see line-chart.ts for its shape). The
 // lines widget redraws it at the figure's real width; without script the
 // same chart shows, drawn here at build time. Styles: chart.css.
 
-import {
-  chartHeight,
-  type LineData,
-  lineChart,
-} from "../../scripts/line-chart";
 import Fig from "./Fig.astro";
+import { chartHeight, type LineData, lineChart } from "./line-chart";
 
 interface Props {
   title: string;

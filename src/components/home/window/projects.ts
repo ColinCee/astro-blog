@@ -8,7 +8,7 @@
 // This moves classes, text and `hidden`, never markup: which project is open,
 // which figures have been drawn, the numbers only the browser knows.
 import cards from "../../../data/anki-cards.json";
-import { onceSeen } from "../../../scripts/in-view";
+import { onceSeen } from "../../../motion/in-view";
 import type { WindowCtx } from "./context";
 import type { makeRadar } from "./radar";
 import { initStats } from "./stats";

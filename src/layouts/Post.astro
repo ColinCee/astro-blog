@@ -631,7 +631,7 @@ const statParts = stat?.includes("→")
 </style>
 
 <script>
-  import { onceSeen, still } from "../scripts/in-view";
+  import { onceSeen, still } from "../motion/in-view";
 
   // A link to a collapsed <details> (#internals) opens it before jumping.
   const openTarget = () => {
@@ -722,7 +722,8 @@ const statParts = stat?.includes("→")
   }
 
   // Interactive figures load their code only on posts that use them.
-  if (document.querySelector("[data-widget]")) import("../scripts/widgets");
+  if (document.querySelector("[data-widget]"))
+    import("../components/figures/widgets");
 
   // Timeline scroll-spy: the entry crossing a line 40% down the viewport is
   // current; entries above it are past. Their nodes fill in as you read.

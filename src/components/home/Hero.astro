@@ -408,7 +408,7 @@ const quips = [
 </style>
 
 <script>
-  import { still as reduce } from "../../scripts/in-view";
+  import { still as reduce } from "../../motion/in-view";
 
   for (const reel of document.querySelectorAll<HTMLElement>("[data-reel]")) {
     const quips = JSON.parse(reel.dataset.quips || "[]") as string[];
