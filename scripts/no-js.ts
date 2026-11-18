@@ -1,5 +1,5 @@
 // Scripts are TypeScript, which Node runs directly: this fails on any tracked
-// .js, .mjs or .cjs file but the few a tool will only read as JavaScript.
+// .js, .jsx, .mjs or .cjs file but the few a tool will only read as JavaScript.
 //
 //   node scripts/no-js.ts
 
@@ -12,7 +12,7 @@ const allowed = new Map([
 
 const found = execFileSync(
   "git",
-  ["ls-files", "-z", "--", "*.js", "*.mjs", "*.cjs"],
+  ["ls-files", "-z", "--", "*.js", "*.jsx", "*.mjs", "*.cjs"],
   { encoding: "utf8" },
 )
   .split("\0")
