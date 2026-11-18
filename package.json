@@ -2,22 +2,22 @@
   "name": "colincheung-dev",
   "description": "Colin Cheung's terminal-native personal site and engineering blog (colincheung.dev).",
   "dependencies": {
-    "@astrojs/mdx": "8.1.1",
-    "@astrojs/sitemap": "3.7.4",
-    "astro": "7.4.2",
+    "@astrojs/mdx": "8.1.6",
+    "@astrojs/sitemap": "3.7.5",
+    "astro": "7.4.12",
     "astro-expressive-code": "0.44.3",
-    "cookie": "2.0.1",
+    "cookie": "2.0.2",
     "typescript": "7.0.2"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
     "@axe-core/playwright": "4.14.0",
-    "@biomejs/biome": "2.6.2",
-    "@playwright/test": "1.64.1",
+    "@biomejs/biome": "2.6.8",
+    "@playwright/test": "1.65.1",
     "modern-web-guidance": "1.0.0",
     "postcss-html": "2.0.0",
     "stylelint": "18.0.0",
-    "wrangler": "4.152.0"
+    "wrangler": "4.162.0"
   },
   "scripts": {
     "astro": "astro",
@@ -40,7 +40,7 @@
   },
   "type": "module",
   "volta": {
-    "node": "24.22.1"
+    "node": "24.22.3"
   },
-  "packageManager": "pnpm@12.15.0"
+  "packageManager": "pnpm@12.21.0"
 }
