@@ -1,5 +1,5 @@
 {
-  "note": "Cloudflare's data centres as https://www.cloudflarestatus.com/api/v2/components.json listed them on 2026-11-15. The build uses this only when it cannot read that page (scripts/edge-cities.ts).",
+  "note": "Cloudflare's data centres as https://www.cloudflarestatus.com/api/v2/components.json listed them on 2026-11-15. The build uses this only when it cannot read that page (worker/edge-cities.ts).",
   "taken": "2026-11-15",
   "from": "https://www.cloudflarestatus.com/api/v2/components.json",
   "places": {

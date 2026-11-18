@@ -9,7 +9,7 @@ Colin wants to see a visual change from the PR itself, before he merges, without
 
 ## Decide what to show
 
-Show only what a reader would see change. When the pages look the same (a speed, refactor or test change), say so in one line and add no screenshots: identical before and after pictures tell Colin nothing. When the change has numbers instead (time, size, a score), show them as a chart, not a list: he scans a PR, and bars show the gain faster than text. `pnpm chart <data.json> <out.png>` makes a before/after bar chart (the format is at the top of `scripts/chart.ts`); one chart per measure, before and after measured the same way.
+Show only what a reader would see change. When the pages look the same (a speed, refactor or test change), say so in one line and add no screenshots: identical before and after pictures tell Colin nothing. When the change has numbers instead (time, size, a score), show them as a chart, not a list: he scans a PR, and bars show the gain faster than text. `pnpm chart <data.json> <out.png>` makes a before/after bar chart (the format is at the top of `pr-media/chart.ts`); one chart per measure, before and after measured the same way.
 
 That part is yours, per PR: which page and path, which interaction, and which views changed (phone, desktop, or both).
 
@@ -21,7 +21,7 @@ That part is yours, per PR: which page and path, which interaction, and which vi
 
 ## Make the files
 
-The commands do the mechanics. Options and the recipe for building each version in its own worktree are at the top of `scripts/capture.ts`.
+The commands do the mechanics. Options and the recipe for building each version in its own worktree are at the top of `pr-media/capture.ts`.
 
 1. Build and serve each version as it ships (`pnpm astro build`, `pnpm astro preview --port <n>`), each on its own port.
 2. Capture each version: `pnpm screenshot <url> <dir> [path]` for PNGs, or `pnpm record` with the same arguments for MP4s, plus what the change needs:

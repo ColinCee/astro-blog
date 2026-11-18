@@ -13,7 +13,7 @@
 //
 // A GET also says which of Cloudflare's cities served it (`edge`), from the
 // data centre's airport code and the list the build fetched
-// (scripts/edge-cities.ts). The list ships here, not in the page.
+// (worker/edge-cities.ts). The list ships here, not in the page.
 //
 // Deploy order: this Worker before the home server. A Worker refuses a key
 // it does not know, so a server that sent `stacks` to an older one would

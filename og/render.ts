@@ -1,5 +1,5 @@
-// Renders the link-preview images: scripts/og/og.html to public/og.png (the
-// site's, 1200x630), and scripts/og/post.html once per post to
+// Renders the link-preview images: og/og.html to public/og.png (the
+// site's, 1200x630), and og/post.html once per post to
 // public/og/<slug>.png, filled from the post's frontmatter (title, stat,
 // statLabel). Also the icons the SVG favicon can't cover: favicon.ico (asked
 // for by tools and older browsers) and apple-touch-icon.png (a phone's home
@@ -10,11 +10,11 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { chromium } from "@playwright/test";
-import { statArrow } from "../../src/components/site/stat-arrow.ts";
+import { statArrow } from "../src/components/site/stat-arrow.ts";
 
 const here = (p: string) => fileURLToPath(new URL(p, import.meta.url));
-const blog = here("../../src/content/blog");
-mkdirSync(here("../../public/og"), { recursive: true });
+const blog = here("../src/content/blog");
+mkdirSync(here("../public/og"), { recursive: true });
 
 // The three fields the card needs, from a post's frontmatter block.
 function front(file: string) {
@@ -36,7 +36,7 @@ const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
 
 await page.goto(`file://${here("./og.html")}`);
 await page.evaluate(() => document.fonts.ready);
-await page.screenshot({ path: here("../../public/og.png") });
+await page.screenshot({ path: here("../public/og.png") });
 console.log("wrote public/og.png");
 
 for (const file of readdirSync(blog).filter((f) => /\.mdx?$/.test(f))) {
@@ -72,14 +72,14 @@ for (const file of readdirSync(blog).filter((f) => /\.mdx?$/.test(f))) {
       value.style.fontSize = `${px}px`;
     }
   });
-  await page.screenshot({ path: here(`../../public/og/${slug}.png`) });
+  await page.screenshot({ path: here(`../public/og/${slug}.png`) });
   console.log(`wrote public/og/${slug}.png`);
 }
 // The favicon, dark. The phone's is square on the page colour, since a phone
 // rounds the corners itself and shows a transparent one black; the .ico keeps
 // the tile's own rounded corners.
 const icon = await browser.newPage({ colorScheme: "dark" });
-const svg = readFileSync(here("../../public/favicon.svg"), "utf8");
+const svg = readFileSync(here("../public/favicon.svg"), "utf8");
 const shot = async (px: number, bg: string) => {
   await icon.setViewportSize({ width: px, height: px });
   await icon.setContent(
@@ -88,7 +88,7 @@ const shot = async (px: number, bg: string) => {
   return icon.screenshot({ omitBackground: bg === "transparent" });
 };
 writeFileSync(
-  here("../../public/apple-touch-icon.png"),
+  here("../public/apple-touch-icon.png"),
   await shot(180, "#0c0d0f"),
 );
 console.log("wrote public/apple-touch-icon.png");
@@ -103,6 +103,6 @@ ico.writeUInt16LE(1, 10);
 ico.writeUInt16LE(32, 12);
 ico.writeUInt32LE(png.length, 14);
 ico.writeUInt32LE(22, 18);
-writeFileSync(here("../../public/favicon.ico"), Buffer.concat([ico, png]));
+writeFileSync(here("../public/favicon.ico"), Buffer.concat([ico, png]));
 console.log("wrote public/favicon.ico");
 await browser.close();

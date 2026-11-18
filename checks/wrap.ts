@@ -2,8 +2,8 @@
 // without side-scrolling. Biome does not format MDX, so this does the one
 // thing wanted from a formatter there.
 //
-//   node scripts/wrap.ts            rewrap every post in place
-//   node scripts/wrap.ts --check    exit 1 and list posts that need it
+//   node checks/wrap.ts            rewrap every post in place
+//   node checks/wrap.ts --check    exit 1 and list posts that need it
 //
 // Only plain paragraphs, list items and footnotes are touched: a paragraph's
 // line breaks are spaces to Markdown, so the page comes out the same. Left

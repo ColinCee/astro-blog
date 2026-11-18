@@ -15,7 +15,7 @@
   "[html]": { "editor.defaultFormatter": "biomejs.biome" },
   "[astro]": { "editor.defaultFormatter": "biomejs.biome" },
   // Biome does not format posts; `pnpm format` wraps their prose at 100
-  // columns (scripts/wrap.ts). The editor shows long lines wrapped at the
+  // columns (checks/wrap.ts). The editor shows long lines wrapped at the
   // same width, with a ruler there.
   "[mdx]": {
     "editor.formatOnSave": false,

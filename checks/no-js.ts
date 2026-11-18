@@ -1,7 +1,7 @@
 // Scripts are TypeScript, which Node runs directly: this fails on any tracked
 // .js, .jsx, .mjs or .cjs file but the few a tool will only read as JavaScript.
 //
-//   node scripts/no-js.ts
+//   node checks/no-js.ts
 
 import { execFileSync } from "node:child_process";
 
@@ -20,7 +20,7 @@ const found = execFileSync(
 
 if (found.length) {
   console.error(
-    `JavaScript files; write them in TypeScript, or add each to the list in scripts/no-js.ts with why a tool needs JavaScript:\n${found.map((f) => `  ${f}`).join("\n")}`,
+    `JavaScript files; write them in TypeScript, or add each to the list in checks/no-js.ts with why a tool needs JavaScript:\n${found.map((f) => `  ${f}`).join("\n")}`,
   );
   process.exit(1);
 }

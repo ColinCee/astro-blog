@@ -1,5 +1,5 @@
 // The arrow in a stat like "32 → 9 min", for the pages (StatArrow.astro) and
-// the share cards (scripts/og/render.ts). Drawn, not typed: the site's fonts
+// the share cards (og/render.ts). Drawn, not typed: the site's fonts
 // are Latin subsets with no →, so a typed one comes from the visitor's system
 // font, at that font's height. 0.5em tall with its middle at 0.36em: the
 // middle of Sora and DM Mono digits.
