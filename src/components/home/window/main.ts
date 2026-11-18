@@ -1,7 +1,7 @@
 // The home window's scripts, started once from Window.astro. The top half
 // (the focus, the writing list, the weather, the opening round) loads with
 // the page; the lower half is fetched when it is near.
-import { onceSeen, still } from "../../../scripts/in-view";
+import { onceSeen, still } from "../../../motion/in-view";
 import { makeBoot } from "./boot";
 import type { WindowCtx } from "./context";
 import { makeFocus } from "./focus";

@@ -1054,10 +1054,10 @@ curve in a component is a bug unless it is a content timing.
   sizes only, at any screen width: `--text-xs` (11px) for titles, ticks and notes,
   `--text-sm` (12px) for labels on the marks and values. SVG charts get there through `--k` (set by the layout
   script), so their text never scales with the drawing.
-- **Interactive figures** are components too, and load `src/scripts/widgets.ts`
+- **Interactive figures** are components too, and load `src/components/figures/widgets.ts`
   only on posts that use one: `<LineChart>` (a line chart from data: axes, an
   optional band, a line, dots, a dashed `ref` line where something changed, its name above its top end, and a legend; pointing at a point shows its value; the y axis's title reads level above the plot; the band takes the accent unless `accent` gives it to the dots; one function in
-  `src/scripts/line-chart.ts` draws it at build time as the no-script fallback and
+  `src/components/figures/line-chart.ts` draws it at build time as the no-script fallback and
   in the browser at the figure's real width), `<Ladder>` (a step chart of a
   sequence of speed changes, x axis the change number; tap or drag across a step
   for its detail) and `<QView>` (a recording with the network's value for each
