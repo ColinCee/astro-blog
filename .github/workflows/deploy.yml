@@ -52,6 +52,9 @@ jobs:
       - name: Design system check (colours and type on the scale)
         run: pnpm lint:css
 
+      - name: Post prose wrapped at 100 columns
+        run: node scripts/wrap.ts --check
+
       - name: No JavaScript files
         run: node scripts/no-js.ts
 
